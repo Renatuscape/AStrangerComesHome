@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class StationShop : MonoBehaviour
@@ -34,12 +35,14 @@ public class StationShop : MonoBehaviour
 
     public void OnMouseOver()
     {
-        if (transientData.cameraView == CameraView.Normal)
-            transientData.MousePop($"{shopType.shopName}");
+        if (transientData.gameState == GameState.Overworld && transientData.cameraView == CameraView.Normal)
+        {
+            transientData.PrintFloatText($"{shopType.shopName}");
+        }
     }
 
     public void OnMouseExit()
     {
-        transientData.MousePop(" ");
+        transientData.DisableFloatText();
     }
 }

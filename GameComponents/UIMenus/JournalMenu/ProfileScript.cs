@@ -10,7 +10,6 @@ public class ProfileScript : MonoBehaviour
     public GameObject profileSkillPrefab;
     public GameObject skillPrefabContainer;
     public GameObject upgradePrefabContainer;
-    public MenuFloatTextScript floatText;
 
     public TextMeshProUGUI playerName;
     public TextMeshProUGUI playerTime;
@@ -67,17 +66,17 @@ public class ProfileScript : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        floatText.DisableFloatText();
+        transientData.DisableFloatText();
     }
 
     public void PrintFloatText(string text)
     {
-        floatText.PrintFloatText(text);
+        transientData.PrintFloatText(text);
     }
 
     public void DisableFloatText()
     {
-        floatText.DisableFloatText();
+        transientData.DisableFloatText();
     }
 
     public void SkillClick(MotherObject skill)

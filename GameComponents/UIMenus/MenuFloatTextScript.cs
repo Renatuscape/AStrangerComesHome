@@ -24,9 +24,6 @@ public class MenuFloatTextScript : MonoBehaviour
     void Update()
     {
         transform.position = Input.mousePosition; //Only works for ScreenSpaceOverlay type of Canvas RenderMode
-
-        if (transientData.gameState == GameState.Overworld)
-            DisableFloatText();
     }
 
     public void PrintFloatText(string content)

@@ -84,7 +84,7 @@ public class TransientDataScript : MonoBehaviour
 
     //UI FUNCTIONS
     public PushAlertManager pushAlertManager;
-    public MousePopManager mousePopManager;
+    public MenuFloatTextScript floatText;
 
     //COACH DATA
     public float currentSpeed;
@@ -124,9 +124,20 @@ public class TransientDataScript : MonoBehaviour
     {
         pushAlertManager.QueueAlert(alert);
     }
-    public void MousePop(string content)
+    public void PrintFloatText(string content)
     {
-        mousePopManager.MousePopText(content);
+        //mousePopManager.MousePopText(content);
+        if (gameState != GameState.MainMenu && gameState != GameState.Loading && gameState != GameState.Dialogue)
+        {
+            floatText.PrintFloatText(content);
+        }
+        else
+            DisableFloatText();
+    }
+
+    public void DisableFloatText()
+    {
+        floatText.DisableFloatText();
     }
 
     public void PurgePrefabs()

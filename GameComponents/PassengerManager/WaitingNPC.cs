@@ -98,8 +98,17 @@ public class WaitingNPC : MonoBehaviour
 
     public void OnMouseOver()
     {
-        var locationToString = destination.ToString();
-        var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
-        transientData.MousePop("\'I'd like to go to " + locationName + ", please.\'");
+        if (transientData.gameState == GameState.Overworld && transientData.cameraView == CameraView.Normal)
+        {
+            var locationToString = destination.ToString();
+            var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
+            transientData.PrintFloatText("\'I'd like to go to\n" + locationName + ", please.\'");
+        }
+
+    }
+
+    public void OnMouseExit()
+    {
+        transientData.DisableFloatText();
     }
 }
