@@ -37,28 +37,32 @@ public class SynthMenu : MonoBehaviour
     public Item failedExperiment;
     public List<Recipe> recipeList;
 
-
-
     public Canvas dInvenCanvas;
     public DynamicInventory dInven;
 
-    public Item ingredientA;
     public TextMeshProUGUI ingNameA;
-    public Item ingredientB;
     public TextMeshProUGUI ingNameB;
-    public Item ingredientC;
     public TextMeshProUGUI ingNameC;
+    public Item ingredientA;
+    public Item ingredientB;
+    public Item ingredientC;
+
+    public Item activeItem;
 
     public GameObject btnCreate;
     public GameObject btnPause;
     public GameObject btnCollect;
 
-    public Item activeItem;
+    public TextMeshProUGUI pauseButtonText;
+
+    public Image resultImageComponent;
+    Sprite resultImageEmptySprite;
 
     private void Awake()
     {
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+        resultImageEmptySprite = resultImageComponent.sprite;
     }
     private void Update()
     {
@@ -117,6 +121,11 @@ public class SynthMenu : MonoBehaviour
                 btnPause.SetActive(false);
                 btnCollect.SetActive(false);
             }
+
+            if (synthActive && synthProgress >= i.recipe.maxSynth)
+            {
+                resultImageComponent.sprite = i.sprite;
+            }
         }
         else
         {
@@ -129,6 +138,27 @@ public class SynthMenu : MonoBehaviour
     //INGREDIENT SELECTION
     public void IngSlotClick(GameObject obj)
     {
+        if (thisSynthesiser == Synthesiser.SynthesiserA)
+        {
+            if (!dataManager.isSynthActiveA)
+                ChooseIngredient();
+        }
+
+        else if (thisSynthesiser == Synthesiser.SynthesiserB)
+        {
+            if (!dataManager.isSynthActiveB)
+                ChooseIngredient();
+        }
+
+        else if (thisSynthesiser == Synthesiser.SynthesiserC)
+        {
+            if (!dataManager.isSynthActiveC)
+                ChooseIngredient();
+        }
+
+
+        void ChooseIngredient()
+        {
         if (activeItem != null && dInvenCanvas.gameObject.activeInHierarchy == true)
         {
             obj.GetComponent<Image>().sprite = activeItem.sprite;
@@ -151,19 +181,21 @@ public class SynthMenu : MonoBehaviour
             else
                 Debug.Log("Ingredient box matched no names. No ingredient set.");
         }
-        else
-        {
-            dInven.displayCatalysts = true;
-            dInven.displayMaterials = true;
-            dInven.displayMisc = false;
-            dInven.displayPlants = true;
-            dInven.displaySeeds = false;
-            dInven.displayTrade = false;
-            dInven.displayTreasures = true;
+            else //Open dynamic inventory window
+            {
+                dInven.displayCatalysts = true;
+                dInven.displayMaterials = true;
+                dInven.displayMisc = false;
+                dInven.displayPlants = true;
+                dInven.displaySeeds = false;
+                dInven.displayTrade = false;
+                dInven.displayTreasures = true;
 
-            dInvenCanvas.gameObject.SetActive(true);
-            dInven.PopulateItemContainer(DynamicInventoryPage.Catalysts);
+                dInvenCanvas.gameObject.SetActive(true);
+                dInven.PopulateItemContainer(DynamicInventoryPage.Catalysts);
+            }
         }
+
     }
 
     //RECIPE SELECTION
@@ -244,6 +276,26 @@ public class SynthMenu : MonoBehaviour
         dInvenCanvas.gameObject.SetActive(false);
     }
 
+    public void PauseSynthToggle()
+    {
+        if (thisSynthesiser == Synthesiser.SynthesiserA)
+            ToggleThisPause(ref dataManager.isSynthPausedA);
+        else if (thisSynthesiser == Synthesiser.SynthesiserB)
+            ToggleThisPause(ref dataManager.isSynthPausedB);
+        else if (thisSynthesiser == Synthesiser.SynthesiserC)
+            ToggleThisPause(ref dataManager.isSynthPausedC);
+
+        void ToggleThisPause(ref bool isPaused)
+        {
+            isPaused = !isPaused;
+
+            if (isPaused)
+                pauseButtonText.text = "Resume";
+            else
+                pauseButtonText.text = "Pause";
+        }
+    }
+
     //COLLECT FINISHED PRODUCT
     public void CollectSynthItem()
     {
@@ -253,6 +305,8 @@ public class SynthMenu : MonoBehaviour
             UpdateDataManager(ref dataManager.isSynthActiveB, ref dataManager.synthItemB);
         else if (thisSynthesiser == Synthesiser.SynthesiserC)
             UpdateDataManager(ref dataManager.isSynthActiveC, ref dataManager.synthItemC);
+
+        resultImageComponent.sprite = resultImageEmptySprite;
     }
     void UpdateDataManager(ref bool active, ref Item item)
     {
