@@ -6,9 +6,10 @@ public class WeedsPrefab : MonoBehaviour
 {
     public Plant weedsObject;
     public planterScript planterParent;
+    public TransientDataScript transientData;
     void Start()
     {
-        
+        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
     }
 
     // Update is called once per frame
@@ -19,10 +20,13 @@ public class WeedsPrefab : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (weedsObject.dataValue < weedsObject.maxValue)
-            weedsObject.dataValue++;
+        if (transientData.cameraView == CameraView.Garden)
+        {
+            if (weedsObject.dataValue < weedsObject.maxValue)
+                weedsObject.dataValue++;
 
-        planterParent.currentWeeds--;
-        Destroy(gameObject);
+            planterParent.currentWeeds--;
+            Destroy(gameObject);
+        }
     }
 }

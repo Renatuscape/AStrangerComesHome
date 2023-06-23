@@ -47,6 +47,16 @@ public class DynamicInventory : MonoBehaviour
         infoCardDescription.text = "???";
     }
 
+    private void OnEnable()
+    {
+        PopulateInventoryButtons();
+    }
+
+    private void OnDisable()
+    {
+        UpdateWindowPosition(0, 0);
+    }
+
     public void UpdateWindowSize(int x, int y)
     {
         windowSize.sizeDelta = new Vector2(x, y);
@@ -57,10 +67,6 @@ public class DynamicInventory : MonoBehaviour
         transform.localPosition = new Vector3(x, y, 0);
     }
 
-    private void OnEnable()
-    {
-        PopulateInventoryButtons();
-    }
     public void PopulateInventoryButtons()
     {
         SetButton(displayCatalysts, btnCatalysts);

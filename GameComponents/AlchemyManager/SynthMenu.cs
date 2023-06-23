@@ -97,6 +97,7 @@ public class SynthMenu : MonoBehaviour
     private void OnDisable()
     {
         recipeList.Clear();
+        dInvenCanvas.gameObject.SetActive(false);
     }
 
     private void ButtonChange(ref bool synthActive, ref float synthProgress, Item i)
