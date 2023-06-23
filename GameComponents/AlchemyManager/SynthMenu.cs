@@ -159,28 +159,28 @@ public class SynthMenu : MonoBehaviour
 
         void ChooseIngredient()
         {
-        if (activeItem != null && dInvenCanvas.gameObject.activeInHierarchy == true)
-        {
-            obj.GetComponent<Image>().sprite = activeItem.sprite;
+            if (activeItem != null && dInvenCanvas.gameObject.activeInHierarchy == true)
+            {
+                obj.GetComponent<Image>().sprite = activeItem.sprite;
 
-            if (obj.name == "IngBoxA")
-            {
-                ingredientA = activeItem;
-                ingNameA.text = activeItem.printName;
+                if (obj.name == "IngBoxA")
+                {
+                    ingredientA = activeItem;
+                    ingNameA.text = activeItem.printName;
+                }
+                else if (obj.name == "IngBoxB")
+                {
+                    ingredientB = activeItem;
+                    ingNameB.text = activeItem.printName;
+                }
+                else if (obj.name == "IngBoxC")
+                {
+                    ingredientC = activeItem;
+                    ingNameC.text = activeItem.printName;
+                }
+                else
+                    Debug.Log("Ingredient box matched no names. No ingredient set.");
             }
-            else if (obj.name == "IngBoxB")
-            {
-                ingredientB = activeItem;
-                ingNameB.text = activeItem.printName;
-            }
-            else if (obj.name == "IngBoxC")
-            {
-                ingredientC = activeItem;
-                ingNameC.text = activeItem.printName;
-            }
-            else
-                Debug.Log("Ingredient box matched no names. No ingredient set.");
-        }
             else //Open dynamic inventory window
             {
                 dInven.displayCatalysts = true;
@@ -193,6 +193,7 @@ public class SynthMenu : MonoBehaviour
 
                 dInvenCanvas.gameObject.SetActive(true);
                 dInven.PopulateItemContainer(DynamicInventoryPage.Catalysts);
+                dInven.UpdateWindowPosition(185.5f, -10);
             }
         }
 

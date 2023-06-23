@@ -52,6 +52,11 @@ public class DynamicInventory : MonoBehaviour
         windowSize.sizeDelta = new Vector2(x, y);
     }
 
+    public void UpdateWindowPosition(float x, float y)
+    {
+        transform.localPosition = new Vector3(x, y, 0);
+    }
+
     private void OnEnable()
     {
         PopulateInventoryButtons();
