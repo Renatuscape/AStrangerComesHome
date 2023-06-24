@@ -37,20 +37,6 @@ public class ProfileScript : MonoBehaviour
                 prefab.transform.SetParent(skillPrefabContainer.transform, false);
                 prefab.GetComponent<ProfileSkillPrefab>().EnableObject(x, this);
             }
-
-            /*
-            else if (x.prefab != null && x.objectType == ObjectType.EngineUpgrade)// && x.dataValue > 0) //add this to filter out objects that the player does not own
-            {
-                var objPrefab = Instantiate(x.prefab);
-                objPrefab.name = x.name;
-                objPrefab.transform.SetParent(upgradePrefabContainer.transform, false);
-            }
-            else if (x.prefab != null && x.objectType == ObjectType.ManaUpgrade)// && x.dataValue > 0) //add this to filter out objects that the player does not own
-            {
-                var objPrefab = Instantiate(x.prefab);
-                objPrefab.name = x.name;
-                objPrefab.transform.SetParent(upgradePrefabContainer.transform, false);
-            }*/
         }
     }
 

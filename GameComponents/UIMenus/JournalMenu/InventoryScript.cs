@@ -8,7 +8,6 @@ public class InventoryScript : MonoBehaviour
 {
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
-    public MenuFloatTextScript floatText;
     public GameObject inventoryItemPrefab;
     public GameObject prefabContainer;
     public GameObject descriptionContainer;
@@ -57,7 +56,7 @@ public class InventoryScript : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        floatText.DisableFloatText();
+        transientData.DisableFloatText();
     }
 
     public void DisplayItemInfo(string name, string description)
@@ -82,11 +81,11 @@ public class InventoryScript : MonoBehaviour
 
     public void PrintFloatText(string text)
     {
-        floatText.PrintFloatText(text);
+        transientData.PrintFloatText(text);
     }
 
     public void DisableFloatText()
     {
-        floatText.DisableFloatText();
+        transientData.DisableFloatText();
     }
 }

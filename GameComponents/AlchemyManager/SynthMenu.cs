@@ -203,23 +203,28 @@ public class SynthMenu : MonoBehaviour
     //RECIPE SELECTION
     public void CheckRecipe()
     {
-        bool noMatchFound = true;
-
-        foreach (Recipe r in recipeList)
+        if (ingredientA != null && ingredientB != null && ingredientC != null)
         {
-            HashSet<Item> recipeIngredients = new HashSet<Item>() { r.ingredientA, r.ingredientB, r.ingredientC };
-            HashSet<Item> playerIngredients = new HashSet<Item>() { ingredientA, ingredientB, ingredientC };
+            bool noMatchFound = true;
 
-            if (recipeIngredients.SetEquals(playerIngredients))
+            foreach (Recipe r in recipeList)
             {
-                noMatchFound = false;
-                CheckIngredientAmount(r);
-                break; // Exit the loop if a match is found
-            }
-        }
+                HashSet<Item> recipeIngredients = new HashSet<Item>() { r.ingredientA, r.ingredientB, r.ingredientC };
+                HashSet<Item> playerIngredients = new HashSet<Item>() { ingredientA, ingredientB, ingredientC };
 
-        if (noMatchFound == true)
-            FailedExperiment(ingredientA, ingredientB, ingredientC);
+                if (recipeIngredients.SetEquals(playerIngredients))
+                {
+                    noMatchFound = false;
+                    CheckIngredientAmount(r);
+                    break; // Exit the loop if a match is found
+                }
+            }
+
+            if (noMatchFound == true)
+                FailedExperiment(ingredientA, ingredientB, ingredientC);
+        }
+        else
+            Debug.Log("A successful synthesis will require a type of ingredient on each of the three points of power.");
     }
     void FailedExperiment(Item a, Item b, Item c) //Start synthesis with failed experiment
     {
@@ -251,6 +256,8 @@ public class SynthMenu : MonoBehaviour
     }
     void StartSynth(Item i)
     {
+        string recipeName = "Unknown\nRecipe";
+
         if (thisSynthesiser == Synthesiser.SynthesiserA)
         {
             dataManager.synthItemA = i;
@@ -275,6 +282,11 @@ public class SynthMenu : MonoBehaviour
 
         if (i.recipe.dataValue < 1 && i.recipe.isDiscoverable)
             i.recipe.dataValue = 1;
+
+        else if (i.recipe.dataValue > 0)
+            recipeName = i.printName;
+
+        //set the recipeName text object here
         dInvenCanvas.gameObject.SetActive(false);
     }
 
