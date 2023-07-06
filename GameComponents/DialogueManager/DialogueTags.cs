@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DialogueTags : MonoBehaviour
@@ -86,9 +87,14 @@ public class DialogueTags : MonoBehaviour
 
     public string UpperCaseFormatter(string input)
     {
-        string firstLetter = input.Substring(0, 1);
-        string remainingLetters = input.Substring(1);
-        string result = firstLetter.ToUpper() + remainingLetters;
-        return result;
+        if (input.Length > 0)
+        {
+            string firstLetter = input.Substring(0, 1);
+            string remainingLetters = input.Substring(1);
+            string result = firstLetter.ToUpper() + remainingLetters;
+            return result;
+        }
+        else
+            return input;
     }
 }
