@@ -16,12 +16,11 @@ public class Shop : ScriptableObject
     public ItemRarity itemRarityB;
     public ItemRarity itemRarityC;
     public DayOfWeek saleDay;
-    public DayOfWeek rareItemDayA; //Up to three rare items and three rare item days
-    public MotherObject rareItemA;
-    public DayOfWeek rareItemDayB;
-    public MotherObject rareItemB;
-    public DayOfWeek rareItemDayC;
-    public MotherObject rareItemC;
+    public MotherObject specialItemA;
+    public MotherObject specialItemB;
+    public MotherObject specialItemC;
+    public MotherObject specialItemD;
+    public int cellWidth = 32;
 
     public bool sellsUpgrades;
     public bool sellsSeeds;

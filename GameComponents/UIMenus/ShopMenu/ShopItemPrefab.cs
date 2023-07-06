@@ -12,13 +12,13 @@ public class ShopItemPrefab : MonoBehaviour
     public MotherObject itemSource;
     public bool isReady = false;
     public TextMeshProUGUI valueText;
-    //public GameObject valueTextContainer;
     public GameObject frameOval;
     public GameObject frameRound;
     public GameObject itemFrame;
     public GameObject buyButton;
     public Image displayImage;
     public Image displayShadow;
+    public float priceMultiplier;
 
     int priceAdjusted;
 
@@ -53,10 +53,10 @@ public class ShopItemPrefab : MonoBehaviour
 
     public void CalculatePrice()
     {
-        float price = itemSource.basePrice * shopMenu.priceMultiplier;
+        float price = itemSource.basePrice * priceMultiplier;
 
         if (itemSource is Upgrade)
-            price = itemSource.basePrice * (1 + (itemSource.dataValue * itemSource.dataValue)) * shopMenu.priceMultiplier;//price = itemSource.basePrice * shopMenu.priceMultiplier * (1 + (itemSource.dataValue * 3));
+            price = itemSource.basePrice * (1 + (itemSource.dataValue * itemSource.dataValue)) * priceMultiplier;//price = itemSource.basePrice * shopMenu.priceMultiplier * (1 + (itemSource.dataValue * 3));
 
         priceAdjusted = (int)Mathf.Floor(price);
         valueText.text = $"{priceAdjusted}g";
