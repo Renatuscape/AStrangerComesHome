@@ -103,6 +103,7 @@ public class ShopMenu : MonoBehaviour
 
     private void OnEnable()
     {
+        transientData.DisableFloatText();
         pageIndex = 0;
 
         shelf.GetComponent<GridLayoutGroup>().enabled = false;
