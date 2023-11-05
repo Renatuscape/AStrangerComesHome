@@ -98,12 +98,13 @@ public enum ObjectType
 
 public enum ItemRarity
 {
-    Common,
-    Uncommon,
-    Rare,
-    Extraordinary,
-    Mythical,
-    Unique
+    Junk = -1,
+    Common = 0,
+    Uncommon = 1,
+    Rare = 2,
+    Extraordinary = 3,
+    Mythical = 4,
+    Unique = 5
 }
 
 
