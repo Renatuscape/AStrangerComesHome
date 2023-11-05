@@ -26,14 +26,14 @@ public struct ItemStruct
     public Sprite stage1; //seed growth1, set by ID
     public Sprite stage2; //seed growth2, set by ID
     public Sprite stage3; //seed growth3, set by ID
-    public int health;
-    public int yield;
-    public float growth; //0.1f - 3.0f growth multiplier
+    public int health; //Adds to price and growth time
+    public int yield; //Adds to price and growth time
 }
 
 public class ItemManager : MonoBehaviour
 {
     public List<ItemStruct> itemCodex;
+    public SerializableDictionary<string, int> playerItems;
 
     void Start()
     {
@@ -42,6 +42,7 @@ public class ItemManager : MonoBehaviour
         LoadFromJson("Materials.json");
         LoadFromJson("Treasures.json");
         LoadFromJson("Catalysts.json");
+        LoadFromJson("Books.json");
     }
 
     //The player's amount of an item will no longer be stored on the item itself
@@ -73,6 +74,7 @@ public class ItemManager : MonoBehaviour
                     {
                         InitialiseItem(item, itemCodex);
                     }
+                    PlayerInventory.UpdateDataManager();
                 }
                 else
                 {
@@ -104,26 +106,42 @@ public class ItemManager : MonoBehaviour
 
     public static void InitialiseItem(ItemStruct item, List<ItemStruct> itemList)
     {
-        ItemIDParser(ref item);
-        item.basePrice = CalculatePrice(ref item);
+        ItemIDReader(ref item);
+        CalculatePrice(ref item);
         itemList.Add(item);
-        //DisplayItemSprite(item, itemDisplayer, canvasTransform);
+        PlayerInventory.playerItems.Add(item.itemID, 0);
     }
 
-    public static void ItemIDParser(ref ItemStruct item)
+    public static void ItemIDReader(ref ItemStruct item)
     {
         item.type = TypeFinder(ref item.itemID);
         item.rarity = RarityFinder(ref item.itemID);
         item.image = ImageFinder(ref item.itemID);
-        item.sprite = SpriteCreator(ref item.image);
 
-        if (item.itemID[item.itemID.Length - 2] == 'N')
+        if (item.image != null)
+        {
+            item.sprite = SpriteCreator(ref item.image);
+        }
+        else
+        {
+            Debug.LogError($"{item.itemID}.image was null. Could not create sprite.");
+        }
+
+        if (item.itemID[11] == 'N')
         {
             item.notBuyable = true;
         }
-        if (item.itemID[item.itemID.Length - 1] == 'N')
+        else if (item.itemID[11] != 'B')
+        {
+            Debug.LogError($"{item.itemID} ID was not formatted correctly. Could not find N/B at index[11]");
+        }
+        if (item.itemID[12] == 'N')
         {
             item.notSellable = true;
+        }
+        else if (item.itemID[12] != 'S')
+        {
+            Debug.LogError($"{item.itemID} ID was not formatted correctly. Could not find N/S at index[12]");
         }
     }
     public static ItemType TypeFinder(ref string itemID)
@@ -202,8 +220,14 @@ public class ItemManager : MonoBehaviour
 
         if (!File.Exists(filePath))
         {
-            Debug.LogWarning($"Sprite not found for {itemID}. Using default.");
+            Debug.LogWarning($"Image not found for {itemID}. Using default.");
             filePath = fileDirectory + itemID.Substring(0, 3) + "000.png";
+
+            if (!File.Exists(filePath))
+            {
+                Debug.LogError($"Default image not found for type " + itemID.Substring(0, 3) + "! No image set for {itemID}");
+                return null;
+            }
         }
 
         byte[] imageBytes = File.ReadAllBytes(filePath);
@@ -219,7 +243,7 @@ public class ItemManager : MonoBehaviour
         return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
 
-    public static int CalculatePrice(ref ItemStruct item)
+    public static void CalculatePrice(ref ItemStruct item)
     {
         float price = 10;
 
@@ -265,17 +289,17 @@ public class ItemManager : MonoBehaviour
                 break;
         }
 
-        // Extract the item number from the ID (assuming it's at index 3-5)
+        // Create pricing variety
         int itemNumber = ExtractItemNumberFromID(item.itemID);
         float numberModifier = itemNumber * 10 * (2 + (int)item.rarity);
         float uniquePrice = price + numberModifier;
 
-        return (int)uniquePrice;
+        item.basePrice =  (int)uniquePrice;
 
         static int ExtractItemNumberFromID(string itemID)
         {
             // Extract the three numbers from index 2 to 5
-            string numberPart = itemID.Substring(3, 3);
+            string numberPart = itemID.Substring(5);
             int itemNumber;
             int.TryParse(numberPart, out itemNumber);
             return itemNumber;

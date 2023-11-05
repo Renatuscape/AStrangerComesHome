@@ -21,6 +21,7 @@ public class GameManagerScript : MonoBehaviour
     public GameObject infoUIManagerComponent;
     public GameObject shopUIComponent;
     public GameObject timeManagerComponent;
+    public GameObject itemManager;
 
     public List<GameObject> listOfGameComponents;
 
@@ -135,6 +136,7 @@ public class GameManagerScript : MonoBehaviour
         //transientData.gameState = GameState.NewGameMenu;
         characterCreatorComponent.SetActive(true);
         //Debug.Log(name + " changed GameState to " + GameState.NewGameMenu);
+        transientData.itemCodex = itemManager.GetComponent<ItemManager>().itemCodex;
     }
 
     public void LoadGameComponents()

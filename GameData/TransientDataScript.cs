@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,7 +9,9 @@ public class TransientDataScript : MonoBehaviour
     public GameState gameState;
     public Language language;
     public List<MotherObject> objectIndex;
+    public List<ItemStruct> itemCodex;
     public List<GameObject> activePrefabs;
+
     [TextArea(20, 100)]
     public string gameStateLog = "Game State Changes";
 
@@ -42,24 +45,16 @@ public class TransientDataScript : MonoBehaviour
     public string infoBox;
     public Shop currentShop;
 
-    void Awake()
-    {
-        //assign in inspector: pushAlertManager = GameObject.Find("PushAlertManager").GetComponent<PushAlertManager>();
-        //assign in inspector: mousePopManager = GameObject.Find("MousePopManager").GetComponent<MousePopManager>();
-    }
 
-    void Update()
-    {
-        
-    }
-
+    //*** PUBLIC METHODS ***
+    //UI TEXT
+    //Eventually these methods should take text IDs that refer to a .json file
     public void PushAlert(string alert)
     {
         pushAlertManager.QueueAlert(alert);
     }
     public void PrintFloatText(string content)
     {
-        //mousePopManager.MousePopText(content);
         if (gameState != GameState.MainMenu && gameState != GameState.Loading && gameState != GameState.Dialogue)
         {
             floatText.PrintFloatText(content);
@@ -67,12 +62,12 @@ public class TransientDataScript : MonoBehaviour
         else
             DisableFloatText();
     }
-
     public void DisableFloatText()
     {
         floatText.DisableFloatText();
     }
 
+    //SYSTEM METHODS
     public void PurgePrefabs()
     {
         foreach (GameObject prefab in activePrefabs)
@@ -83,7 +78,6 @@ public class TransientDataScript : MonoBehaviour
             }
         }
     }
-
     public void ReturnToOverWorld()
     {
         ChangeGameState(name, gameObject, GameState.Overworld);
@@ -95,5 +89,20 @@ public class TransientDataScript : MonoBehaviour
     {
         gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + gameState + " to " + newState + ".";
         gameState = newState;
+    }
+
+    //ITEM METHODS
+    public ItemStruct GetItemByID(string searchID)
+    {
+        foreach (ItemStruct item in itemCodex)
+        {
+            if (item.itemID.Contains(searchID))
+            {
+                return item;
+            }
+        }
+
+        Debug.Log("No item ID found containing " + searchID);
+        return new ItemStruct();
     }
 }
