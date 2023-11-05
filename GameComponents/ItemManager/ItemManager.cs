@@ -71,7 +71,7 @@ public class ItemManager : MonoBehaviour
                 {
                     foreach (ItemStruct item in dataWrapper.items)
                     {
-                        InitialiseItem(item);
+                        InitialiseItem(item, itemCodex);
                     }
                 }
                 else
@@ -102,11 +102,12 @@ public class ItemManager : MonoBehaviour
                 imageComponent.sprite = item.sprite;
             }
 
-    public void InitialiseItem(ItemStruct item)
+    public static void InitialiseItem(ItemStruct item, List<ItemStruct> itemList)
     {
         ItemIDParser(ref item);
-        itemCodex.Add(item);
-        DisplayItemSprite(item, itemDisplayer, canvasTransform);
+        item.basePrice = CalculatePrice(ref item);
+        itemList.Add(item);
+        //DisplayItemSprite(item, itemDisplayer, canvasTransform);
     }
 
     public static void ItemIDParser(ref ItemStruct item)
@@ -183,6 +184,10 @@ public class ItemManager : MonoBehaviour
         {
             return ItemRarity.Unique;
         }
+        else if (itemID.Contains("JUN"))
+        {
+            return ItemRarity.Junk;
+        }
         else
         {
             return ItemRarity.Common;
@@ -212,5 +217,68 @@ public class ItemManager : MonoBehaviour
     public static Sprite SpriteCreator(ref Texture2D texture)
     {
         return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+    }
+
+    public static int CalculatePrice(ref ItemStruct item)
+    {
+        float price = 10;
+
+        int seedPrice = 15;
+        int plantPrice = 35;
+        int materialPrice = 50;
+        int catalystPrice = 80;
+        int tradePrice = 100;
+        int bookPrice = 180;
+        int treasurePrice = 350;
+
+        float rarityMultiplier = 0.3f;
+
+        if ((int)item.rarity >= 0)
+        {
+            rarityMultiplier = (int)Mathf.Pow((int)item.rarity + 1, 4);
+        }
+
+        switch (item.type)
+        {
+            case ItemType.Seed:
+                price = seedPrice * rarityMultiplier * item.health * item.yield;
+                break;
+            case ItemType.Plant:
+                price = plantPrice * rarityMultiplier;
+                break;
+            case ItemType.Material:
+                price = materialPrice * rarityMultiplier;
+                break;
+            case ItemType.Catalyst:
+                price = catalystPrice * rarityMultiplier;
+                break;
+            case ItemType.Trade:
+                price = tradePrice * rarityMultiplier;
+                break;
+            case ItemType.Book:
+                price = bookPrice * rarityMultiplier;
+                break;
+            case ItemType.Treasure:
+                price = treasurePrice * rarityMultiplier;
+                break;
+            default:
+                break;
+        }
+
+        // Extract the item number from the ID (assuming it's at index 3-5)
+        int itemNumber = ExtractItemNumberFromID(item.itemID);
+        float numberModifier = itemNumber * 10 * (2 + (int)item.rarity);
+        float uniquePrice = price + numberModifier;
+
+        return (int)uniquePrice;
+
+        static int ExtractItemNumberFromID(string itemID)
+        {
+            // Extract the three numbers from index 2 to 5
+            string numberPart = itemID.Substring(3, 3);
+            int itemNumber;
+            int.TryParse(numberPart, out itemNumber);
+            return itemNumber;
+        }
     }
 }
