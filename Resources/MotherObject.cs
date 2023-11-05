@@ -1,27 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public enum ObjectType
-{
-    Item,
-    EngineUpgrade,
-    ManaUpgrade,
-    Skill,
-    Quest
-}
-
-public enum ItemRarity
-{
-    Common,
-    Uncommon,
-    Rare,
-    Extraordinary,
-    Mythical,
-    Unique
-}
-
-
 public class MotherObject : ScriptableObject    //A shared type for all scriptable objects that have to be saved
 {
     public string printName; //REMOVE
