@@ -14,4 +14,5 @@ URPipeline
 *.anim
 *.asset
 *.controller
+*.json
 Q_*
