@@ -7,7 +7,7 @@ using static UnityEditor.Progress;
 using UnityEditor;
 
 [System.Serializable]
-public struct ItemStruct
+public class ItemObject
 {
     public string itemID;
     public string name;
@@ -30,9 +30,24 @@ public struct ItemStruct
     public int yield; //Adds to price and growth time
 }
 
+public static class Items
+{
+    public static List<ItemObject> itemCodex = new();
+
+    public static void DebugList()
+    {
+        Debug.LogWarning("Items.DebugList() called");
+
+        foreach (ItemObject item in itemCodex)
+        {
+            Debug.Log($"Item ID: {item.itemID}\tItem Name: {item.name}");
+        }
+    }
+}
+
 public class ItemManager : MonoBehaviour
 {
-    public List<ItemStruct> itemCodex;
+    public List<ItemObject> itemCodex = Items.itemCodex;
     public SerializableDictionary<string, int> playerItems;
 
     void Start()
@@ -43,6 +58,8 @@ public class ItemManager : MonoBehaviour
         LoadFromJson("Treasures.json");
         LoadFromJson("Catalysts.json");
         LoadFromJson("Books.json");
+
+        Items.DebugList();
     }
 
     //The player's amount of an item will no longer be stored on the item itself
@@ -54,7 +71,7 @@ public class ItemManager : MonoBehaviour
     [System.Serializable]
     public class ItemsWrapper //Necessary for Unity to read the .json contents as an object
     {
-        public ItemStruct[] items;
+        public ItemObject[] items;
     }
 
     public void LoadFromJson(string fileName)
@@ -70,7 +87,7 @@ public class ItemManager : MonoBehaviour
             {
                 if (dataWrapper.items != null)
                 {
-                    foreach (ItemStruct item in dataWrapper.items)
+                    foreach (ItemObject item in dataWrapper.items)
                     {
                         InitialiseItem(item, itemCodex);
                     }
@@ -96,7 +113,7 @@ public class ItemManager : MonoBehaviour
             //ITEM DISPLAY TEST
             public GameObject itemDisplayer;
             public Transform canvasTransform;
-            public void DisplayItemSprite(ItemStruct item, GameObject prefab, Transform parentTransform)
+            public void DisplayItemSprite(ItemObject item, GameObject prefab, Transform parentTransform)
             {
                 GameObject newItem = Instantiate(prefab, parentTransform);
                 newItem.name = item.name;
@@ -104,7 +121,7 @@ public class ItemManager : MonoBehaviour
                 imageComponent.sprite = item.sprite;
             }
 
-    public static void InitialiseItem(ItemStruct item, List<ItemStruct> itemList)
+    public static void InitialiseItem(ItemObject item, List<ItemObject> itemList)
     {
         ItemIDReader(ref item);
         CalculatePrice(ref item);
@@ -112,7 +129,7 @@ public class ItemManager : MonoBehaviour
         PlayerInventory.playerItems.Add(item.itemID, 0);
     }
 
-    public static void ItemIDReader(ref ItemStruct item)
+    public static void ItemIDReader(ref ItemObject item)
     {
         item.type = TypeFinder(ref item.itemID);
         item.rarity = RarityFinder(ref item.itemID);
@@ -243,7 +260,7 @@ public class ItemManager : MonoBehaviour
         return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
 
-    public static void CalculatePrice(ref ItemStruct item)
+    public static void CalculatePrice(ref ItemObject item)
     {
         float price = 10;
 
