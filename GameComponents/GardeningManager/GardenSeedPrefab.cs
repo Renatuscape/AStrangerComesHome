@@ -6,14 +6,15 @@ using UnityEngine.UI;
 
 public class GardenSeedPrefab : MonoBehaviour
 {
-    public MotherObject itemSource;
+    public Item itemSource;
+    public int itemAmount;
     public PlantingManager plantManager;
     public bool isReady = false;
     public TextMeshProUGUI valueText;
 
     public Image displayImage;
     public Image displayShadow;
-    public void EnableObject(Seed seed, PlantingManager script)
+    public void EnableObject(Item seed, PlantingManager script)
     {
         itemSource = seed;
         plantManager = script;
@@ -21,28 +22,37 @@ public class GardenSeedPrefab : MonoBehaviour
         displayImage.sprite = itemSource.sprite;
         displayShadow.sprite = itemSource.sprite;
 
-        valueText.text = $"{itemSource.dataValue}";
+        valueText.text = $"{Player.GetItemCount(itemSource.objectID)}";
 
         isReady = true;
+
+        SyncItemCount();
     }
 
     private void Update()
     {
-        if (valueText.text != $"{itemSource.dataValue}")
+        if (valueText.text != $"{itemAmount}")
         {
-            valueText.text = $"{itemSource.dataValue}";
+            valueText.text = $"{itemAmount}";
         }
     }
 
+    int SyncItemCount()
+    {
+        return Player.GetItemCount(itemSource.objectID);
+    }
     public void MouseDownItem()
     {
         if (isReady)
         {
             plantManager.SelectSeed(gameObject);
         }
+        SyncItemCount();
     }
     public void MouseOverItem()
     {
+        SyncItemCount();
+
         if (isReady)
         {
             //some kind of text that displays the object's name ($"{itemSource.printName}");

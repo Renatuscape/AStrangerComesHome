@@ -55,7 +55,7 @@ public class DialogueTags : MonoBehaviour
     }
     public void UpdateDialogueTags()
     {
-        tagDictionary["PlayerName"] = player.namePlate;
+        tagDictionary["PlayerName"] = Player.namePlate; //player.namePlate;
         tagDictionary["he"] = dataManager.pronounSub;
         tagDictionary["him"] = dataManager.pronounObj;
         tagDictionary["his"] = dataManager.pronounGen;

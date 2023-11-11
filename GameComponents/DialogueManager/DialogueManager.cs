@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using Color = UnityEngine.Color;
 
 public class DialogueManager : MonoBehaviour
-{
+{/*
     //narrator object? Or disable name text if Character field is blank or something
     //log: store dialogue into a basic string along with all system messages to easily check back
     public DataManagerScript dataManager;
@@ -441,5 +441,5 @@ public class DialogueManager : MonoBehaviour
         });
 
         return result;
-    }
+    }*/
 }

@@ -96,7 +96,7 @@ public class OldWorldRuinManager : MonoBehaviour
     [System.Serializable]
     public struct MoDataSet
     {
-        public MotherObject rewardType;
+        public IRewardable rewardType;
         public int amount;
     }
 

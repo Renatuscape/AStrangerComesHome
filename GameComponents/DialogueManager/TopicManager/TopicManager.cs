@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class TopicManager : MonoBehaviour
-{
+{/*
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
     public Character topicMaster;
@@ -235,5 +235,5 @@ public class TopicManager : MonoBehaviour
         leavePrefab.transform.SetParent(dialogueContainer.transform, false);
         leavePrefab.GetComponent<LeaveButton>().dialogueManager = gameObject;
         printedTopics.Add(leavePrefab);
-    }
+    }*/
 }

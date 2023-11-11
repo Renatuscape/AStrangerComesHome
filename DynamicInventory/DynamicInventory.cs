@@ -16,7 +16,6 @@ public enum DynamicInventoryPage
 }
 public class DynamicInventory : MonoBehaviour
 {
-    public TransientDataScript transientData;
     public RectTransform windowSize;
     public GameObject dynamicItemPrefab;
     public GameObject itemContainer;
@@ -42,7 +41,6 @@ public class DynamicInventory : MonoBehaviour
     public Item activeItem;
     private void Awake()
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         infoCardName.text = "???";
         infoCardDescription.text = "???";
     }
@@ -89,45 +87,45 @@ public class DynamicInventory : MonoBehaviour
     {
         ClearItemContainer();
 
-        foreach (MotherObject x in transientData.objectIndex)
+        foreach (Item x in Items.allItems)
         {
-            if (x.dataValue > 0)
+            if (Player.GetItemCount(x.objectID) > 0)
             {
                 if (inventoryPage == DynamicInventoryPage.Catalysts)
                 {
-                    if (x is Catalyst)
-                        InstantiateObject((Item)x);
+                    if (x.type == ItemType.Catalyst)
+                        InstantiateObject(x);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Materials)
                 {
 
-                    if (x is Material)
-                        InstantiateObject((Item)x);
+                    if (x.type == ItemType.Material)
+                        InstantiateObject(x);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Misc)
                 {
-                    if (x is Misc)
-                        InstantiateObject((Item)x);
+                    if (x.type == ItemType.Misc)
+                        InstantiateObject(x);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Plants)
                 {
-                    if (x is Plant)
-                        InstantiateObject((Item)x);
+                    if (x.type == ItemType.Plant)
+                        InstantiateObject(x);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Seeds)
                 {
-                    if (x is Seed)
-                        InstantiateObject((Item)x);
+                    if (x.type == ItemType.Seed)
+                        InstantiateObject(x);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Trade)
                 {
-                    if (x is Trade)
-                        InstantiateObject((Item)x);
+                    if (x.type == ItemType.Trade)
+                        InstantiateObject(x);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Treasures)
                 {
-                    if (x is Treasure)
-                        InstantiateObject((Item)x);
+                    if (x.type == ItemType.Treasure)
+                        InstantiateObject(x);
                 }
             }
         }
@@ -144,7 +142,7 @@ public class DynamicInventory : MonoBehaviour
     void InstantiateObject(Item x)
     {
         var prefab = Instantiate(dynamicItemPrefab);
-        prefab.name = x.printName;
+        prefab.name = x.name;
         prefab.transform.SetParent(itemContainer.transform, false);
         prefab.GetComponent<DynamicItemPrefab>().EnableObject(x, this);
     }
@@ -152,8 +150,8 @@ public class DynamicInventory : MonoBehaviour
     public void SetActiveItem(Item x)
     {
         activeItem = x;
-        infoCardName.text = x.printName;
-        infoCardDescription.text = x.longDescription;
+        infoCardName.text = x.name;
+        infoCardDescription.text = x.description;
         Canvas.ForceUpdateCanvases();  // *
         infoCardDescription.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = false; // **
         infoCardDescription.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = true;

@@ -8,10 +8,10 @@ public class Engine : MonoBehaviour
 {
     public TransientDataScript transientData;
 
-    public MotherObject engineBoostEfficiency;
-    public MotherObject engineFuelEfficiency;
-    public MotherObject engineBoostMax;
-    public MotherObject engineClickPotency;
+    public int engineCapacitor;
+    public int engineSparkTubes;
+    public int engineBoostMax;
+    public int engineClickPotency;
 
     float baseSpeed = 2f;
     float baseFuelConsumption = 0.01f;
@@ -43,16 +43,24 @@ public class Engine : MonoBehaviour
 
     private void Start()
     {
-        boostMax = 50 + (5 * engineBoostMax.dataValue); //Calculated here first, then whenever OnMouseDown is called
+        SyncSkills();
+        boostMax = 50 + (5 * engineBoostMax); //Calculated here first, then whenever OnMouseDown is called
     }
 
+    void SyncSkills()
+    {
+        engineCapacitor = Player.GetSkillLevel("MEC000");
+        engineSparkTubes = Player.GetSkillLevel("MEC003");
+        engineBoostMax = Player.GetSkillLevel("MEC001");
+        engineClickPotency = Player.GetSkillLevel("MEC002");
+    }
     void BoostDecrease()
     {
         if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu || transientData.gameState == GameState.Dialogue || transientData.gameState == GameState.PlayerHome || transientData.gameState == GameState.MapMenu)
         {
             if (currentBoost > 0)
             {
-                boostDecrease = 0.3f - (0.02f * engineBoostEfficiency.dataValue);
+                boostDecrease = 0.3f - (0.02f * engineCapacitor);
                 currentBoost = currentBoost - boostDecrease;
             }
             else if (currentBoost < 0)
@@ -109,7 +117,7 @@ public class Engine : MonoBehaviour
     {
         if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu || transientData.gameState == GameState.Dialogue || transientData.gameState == GameState.PlayerHome || transientData.gameState == GameState.MapMenu)
         {
-            manaConsumptionDebuff = 1f + (10 - engineFuelEfficiency.dataValue) / 30;
+            manaConsumptionDebuff = 1f + (10 - engineSparkTubes) / 30;
 
             //SWITCH TO FIRST GEAR BEFORE MANA RUNS OUT
             if (transientData.currentMana < 10 && transientData.engineState != EngineState.Off && transientData.engineState != EngineState.Reverse)
@@ -176,6 +184,8 @@ public class Engine : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.E))
             {
+                SyncSkills();
+
                 if (transientData.engineState != EngineState.Off)
                     transientData.engineState = EngineState.Off;
                 else
@@ -188,10 +198,10 @@ public class Engine : MonoBehaviour
     {
         if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu)
         {
-            boostMax = 100 + (20 * engineBoostMax.dataValue);
+            boostMax = 100 + (20 * engineBoostMax);
 
             if (transientData.gameState == GameState.Overworld && currentBoost < boostMax)
-                currentBoost = currentBoost + (5 + (0.5f * engineClickPotency.dataValue));
+                currentBoost = currentBoost + (5 + (0.5f * engineClickPotency));
         }
     }
 }

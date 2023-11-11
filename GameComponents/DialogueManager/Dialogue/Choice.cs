@@ -25,13 +25,13 @@ public class Choice : ScriptableObject
 
     //LEVEL CHECK (only checks if dataValue is equal or more)
 
-    public List<MotherObject> moreThanObject;
+    public List<Item> moreThanObject;
     public List<int> moreThanValue;
-    public List<MotherObject> lessThanObject;
+    public List<Item> lessThanObject;
     public List<int> lessThanValue;
 
     //REWARD
-    public List<MotherObject> rewards; //can be skill, item, upgrade, quest, recipe, whatever is a motherobject (so not gold, earn your own)
+    public List<Item> rewards; //can be skill, item, upgrade, quest, recipe, whatever is a motherobject (so not gold, earn your own)
     public List<int> rewardsAmount;
 
     public string failedRequirementText;

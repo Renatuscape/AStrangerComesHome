@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Character", menuName = "Scriptable Object/Character")]
-public class Character : MotherObject
+public class Character
 {
+    public string name;
+    public string printName;
     public bool isGeneric;
     public Color nameColour;
     public string namePlate;

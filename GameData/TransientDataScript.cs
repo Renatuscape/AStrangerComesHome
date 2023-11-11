@@ -8,8 +8,6 @@ public class TransientDataScript : MonoBehaviour
 {
     public GameState gameState;
     public Language language;
-    public List<MotherObject> objectIndex;
-    public List<ItemObject> itemCodex;
     public List<GameObject> activePrefabs;
 
     [TextArea(20, 100)]
@@ -89,20 +87,5 @@ public class TransientDataScript : MonoBehaviour
     {
         gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + gameState + " to " + newState + ".";
         gameState = newState;
-    }
-
-    //ITEM METHODS
-    public ItemObject GetItemByID(string searchID)
-    {
-        foreach (ItemObject item in itemCodex)
-        {
-            if (item.itemID.Contains(searchID))
-            {
-                return item;
-            }
-        }
-
-        Debug.Log("No item ID found containing " + searchID);
-        return new ItemObject();
     }
 }

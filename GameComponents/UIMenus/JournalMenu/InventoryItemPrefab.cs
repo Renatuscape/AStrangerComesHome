@@ -9,7 +9,7 @@ public class InventoryItemPrefab : MonoBehaviour
     public TransientDataScript transientData;
     public InventoryScript inventoryScript;
 
-    public MotherObject itemSource;
+    public Item itemSource;
     public bool isReady = false;
     public TextMeshProUGUI valueText;
     public GameObject itemFrame;
@@ -22,13 +22,14 @@ public class InventoryItemPrefab : MonoBehaviour
         itemFrame.SetActive(false);
     }
 
-    public void EnableObject(MotherObject motherObject, InventoryScript script)
+    public void EnableObject(Item item, InventoryScript script)
     {
         inventoryScript = script;
-        itemSource = motherObject;
+        itemSource = item;
+        var itemCount = Player.GetItemCount(itemSource.objectID);
 
-        if (itemSource.dataValue > 1)
-            valueText.text = $"{itemSource.dataValue}";
+        if (itemCount > 1)
+            valueText.text = $"{itemCount}";
         else
             valueText.text = $"";
 
@@ -41,20 +42,16 @@ public class InventoryItemPrefab : MonoBehaviour
         if (isReady)
         {
             itemFrame.SetActive(true);
-            inventoryScript.PrintFloatText(itemSource.printName);
+            inventoryScript.PrintFloatText(itemSource.name);
 
-            if (itemSource is Item)
-            {
-                inventoryScript.DisplayItemInfo(itemSource.printName, " ");
-                Item item = (Item)itemSource;
-                inventoryScript.DisplayItemStats($"Type: {item.type}\nRarity: {itemSource.rarity}\nBase price: {itemSource.basePrice}");
-            }
+            inventoryScript.DisplayItemInfo(itemSource.name, " ");
+            inventoryScript.DisplayItemStats($"Type: {itemSource.type}\nRarity: {itemSource.rarity}\nBase price: {itemSource.basePrice}");
         }
     }
 
     public void MouseClickItem()
     {
-        inventoryScript.DisplayItemInfo(itemSource.printName, itemSource.longDescription);
+        inventoryScript.DisplayItemInfo(itemSource.name, itemSource.description);
 
     }
 

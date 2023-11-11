@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AlchemySetA : MonoBehaviour
-{
+{/*
     public DataManagerScript dataManager;
     public TransientDataScript transientData;
     public AlchemyManager alchemyManager;
@@ -41,5 +41,5 @@ public class AlchemySetA : MonoBehaviour
             else if (dataManager.progressSynthA >= dataManager.synthItemA.recipe.maxSynth)
                 synthState = SynthState.Complete;
         }
-    }
+    }*/
 }

@@ -40,7 +40,6 @@ public class GameManagerScript : MonoBehaviour
 
     void StartUpRoutine()
     {
-        LoadScriptableObjects();
 
         gameComponentParent.SetActive(true); //if the game starts with this disabled, you can assure loading objects first
 
@@ -56,37 +55,6 @@ public class GameManagerScript : MonoBehaviour
         else //If there is no main menu, run new game routine directly
         {
             SetUpNewGame();
-        }
-    }
-
-    void LoadScriptableObjects()
-    {
-
-        string[] subfolders = new string[] { "Items/", "Upgrades/", "Skills/", "Quests/", "Characters/" };
-
-        List<MotherObject> allObjects = new List<MotherObject>();
-
-        foreach (string subfolder in subfolders)
-        {
-            MotherObject[] objects = Resources.LoadAll<MotherObject>(subfolder);
-            allObjects.AddRange(objects);
-        }
-
-        transientData.objectIndex.Clear();
-        transientData.objectIndex.AddRange(allObjects);
-
-        foreach (MotherObject obj in allObjects)
-        {
-            if (obj is Character)
-            {
-                Character character = (Character)obj;
-                character.NameSetup();
-            }
-
-            if (!dataManager.playerInventory.ContainsKey(obj.name))
-            {
-                dataManager.playerInventory.Add(obj.name, obj.dataValue);
-            }
         }
     }
 
@@ -127,21 +95,21 @@ public class GameManagerScript : MonoBehaviour
         dataManager.isSynthActiveB = false;
         dataManager.isSynthActiveC = false;
 
-        foreach (MotherObject x in transientData.objectIndex)
-        {
-            x.dataValue = 0;
-        }
+        Player.items = new();
+        Player.skills = new();
+        Player.upgrades = new();
+        dataManager.playerUpgrades = Player.upgrades;
+        dataManager.playerSkills = Player.skills;
+        dataManager.playerItems = Player.items;
 
         transientData.ChangeGameState(name, gameObject, GameState.CharacterCreation);
         //transientData.gameState = GameState.NewGameMenu;
         characterCreatorComponent.SetActive(true);
         //Debug.Log(name + " changed GameState to " + GameState.NewGameMenu);
-        transientData.itemCodex = itemManager.GetComponent<ItemManager>().itemCodex;
     }
 
     public void LoadGameComponents()
     {
-        LoadScriptableObjects();
 
         foreach (GameObject component in listOfGameComponents)
         {

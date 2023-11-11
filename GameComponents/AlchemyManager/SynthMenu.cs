@@ -30,7 +30,7 @@ public enum SynthState
  */
 
 public class SynthMenu : MonoBehaviour
-{
+{/*
     public DataManagerScript dataManager;
     public TransientDataScript transientData;
     public Synthesiser thisSynthesiser;
@@ -332,5 +332,5 @@ public class SynthMenu : MonoBehaviour
         }
         else
             Debug.Log("Seems like I have too many of these right now.");
-    }
+    }*/
 }

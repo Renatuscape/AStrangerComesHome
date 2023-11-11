@@ -19,11 +19,11 @@ public class TopicButton : MonoBehaviour
     }
 
     public void ButtonDown()
-    {
+    {/*
         dialogueManager.quest = quest;
         dialogueManager.dialogueIndex = 0;
         dialogueManager.PrintChoiceText(quest.dialogues[quest.dataValue].topicName);
         dialogueManager.PrintDialogue();
-        topicManager.DestroyTopics();
+        topicManager.DestroyTopics();*/
     }
 }

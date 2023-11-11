@@ -5,13 +5,15 @@ using System.IO;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
 using UnityEditor;
+using UnityEngine.Rendering;
 
 [System.Serializable]
-public class ItemObject
+public class Item : IRewardable
 {
-    public string itemID;
+    public string objectID;
     public string name;
     public int basePrice; //automatically calculated from type, rarity and ID
+    public int maxStack = 99;
     public ItemType type; //retrieve from ID
     public ItemRarity rarity; //retrieve from ID
     public Texture2D image; //retrieve from ID + folder
@@ -28,26 +30,45 @@ public class ItemObject
     public Sprite stage3; //seed growth3, set by ID
     public int health; //Adds to price and growth time
     public int yield; //Adds to price and growth time
+
+    public void AddToPlayer(int amount = 1)
+    {
+        if (amount > 0)
+        {
+            Player.AddItem(objectID, amount);
+        }
+    }
 }
 
 public static class Items
 {
-    public static List<ItemObject> itemCodex = new();
+    public static List<Item> allItems = new();
 
+    public static Item FindByID(string searchWord)
+    {
+        foreach (Item item in allItems)
+        {
+            if (item.objectID.Contains(searchWord))
+            {
+                return item;
+            }
+        }
+        return null;
+    }
     public static void DebugList()
     {
         Debug.LogWarning("Items.DebugList() called");
 
-        foreach (ItemObject item in itemCodex)
+        foreach (Item item in allItems)
         {
-            Debug.Log($"Item ID: {item.itemID}\tItem Name: {item.name}");
+            Debug.Log($"Item ID: {item.objectID}\tItem Name: {item.name}");
         }
     }
 }
 
 public class ItemManager : MonoBehaviour
 {
-    public List<ItemObject> itemCodex = Items.itemCodex;
+    public List<Item> itemCodex = Items.allItems;
     public SerializableDictionary<string, int> playerItems;
 
     void Start()
@@ -67,11 +88,11 @@ public class ItemManager : MonoBehaviour
     //Item ID: first three letters of type + three numbers + first three letters of rarity + buyable/sellable
     //The six first characters in an ID are unique and can be used for saving and matching. The rest is extra information used to set up objects.
     //Item sprites are saved as "itemID.png" and matched on load. If no image is found, use placeholder automatically.
-    
+
     [System.Serializable]
     public class ItemsWrapper //Necessary for Unity to read the .json contents as an object
     {
-        public ItemObject[] items;
+        public Item[] items;
     }
 
     public void LoadFromJson(string fileName)
@@ -87,11 +108,10 @@ public class ItemManager : MonoBehaviour
             {
                 if (dataWrapper.items != null)
                 {
-                    foreach (ItemObject item in dataWrapper.items)
+                    foreach (Item item in dataWrapper.items)
                     {
                         InitialiseItem(item, itemCodex);
                     }
-                    PlayerInventory.UpdateDataManager();
                 }
                 else
                 {
@@ -110,30 +130,30 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-            //ITEM DISPLAY TEST
-            public GameObject itemDisplayer;
-            public Transform canvasTransform;
-            public void DisplayItemSprite(ItemObject item, GameObject prefab, Transform parentTransform)
-            {
-                GameObject newItem = Instantiate(prefab, parentTransform);
-                newItem.name = item.name;
-                Image imageComponent = newItem.GetComponent<Image>();
-                imageComponent.sprite = item.sprite;
-            }
+    //ITEM DISPLAY TEST
+    public GameObject itemDisplayer;
+    public Transform canvasTransform;
+    public void DisplayItemSprite(Item item, GameObject prefab, Transform parentTransform)
+    {
+        GameObject newItem = Instantiate(prefab, parentTransform);
+        newItem.name = item.name;
+        Image imageComponent = newItem.GetComponent<Image>();
+        imageComponent.sprite = item.sprite;
+    }
 
-    public static void InitialiseItem(ItemObject item, List<ItemObject> itemList)
+    public static void InitialiseItem(Item item, List<Item> itemList)
     {
         ItemIDReader(ref item);
         CalculatePrice(ref item);
         itemList.Add(item);
-        PlayerInventory.playerItems.Add(item.itemID, 0);
+        Player.AddItem(item.objectID, 0);
     }
 
-    public static void ItemIDReader(ref ItemObject item)
+    public static void ItemIDReader(ref Item item)
     {
-        item.type = TypeFinder(ref item.itemID);
-        item.rarity = RarityFinder(ref item.itemID);
-        item.image = ImageFinder(ref item.itemID);
+        item.type = TypeFinder(ref item.objectID, ref item);
+        item.rarity = RarityFinder(ref item.objectID, ref item);
+        item.image = ImageFinder(ref item.objectID);
 
         if (item.image != null)
         {
@@ -141,27 +161,27 @@ public class ItemManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"{item.itemID}.image was null. Could not create sprite.");
+            Debug.LogError($"{item.objectID}.image was null. Could not create sprite.");
         }
 
-        if (item.itemID[11] == 'N')
+        if (item.objectID[11] == 'N')
         {
             item.notBuyable = true;
         }
-        else if (item.itemID[11] != 'B')
+        else if (item.objectID[11] != 'B')
         {
-            Debug.LogError($"{item.itemID} ID was not formatted correctly. Could not find N/B at index[11]");
+            Debug.LogError($"{item.objectID} ID was not formatted correctly. Could not find N/B at index[11]");
         }
-        if (item.itemID[12] == 'N')
+        if (item.objectID[12] == 'N')
         {
             item.notSellable = true;
         }
-        else if (item.itemID[12] != 'S')
+        else if (item.objectID[12] != 'S')
         {
-            Debug.LogError($"{item.itemID} ID was not formatted correctly. Could not find N/S at index[12]");
+            Debug.LogError($"{item.objectID} ID was not formatted correctly. Could not find N/S at index[12]");
         }
     }
-    public static ItemType TypeFinder(ref string itemID)
+    public static ItemType TypeFinder(ref string itemID, ref Item item)
     {
         if (itemID.Contains("PLA"))
         {
@@ -177,6 +197,7 @@ public class ItemManager : MonoBehaviour
         }
         else if (itemID.Contains("BOO"))
         {
+            item.maxStack = 9;
             return ItemType.Book;
         }
         else if (itemID.Contains("MAT"))
@@ -197,9 +218,21 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    public static ItemRarity RarityFinder(ref string itemID)
+    public static ItemRarity RarityFinder(ref string itemID, ref Item item)
     {
-        if (itemID.Contains("EXT"))
+        if (itemID.Contains("COM"))
+        {
+            return ItemRarity.Common;
+        }
+        else if (itemID.Contains("UNC"))
+        {
+            return ItemRarity.Uncommon;
+        }
+        else if (itemID.Contains("RAR"))
+        {
+            return ItemRarity.Rare;
+        }
+        else if (itemID.Contains("EXT"))
         {
             return ItemRarity.Extraordinary;
         }
@@ -207,42 +240,31 @@ public class ItemManager : MonoBehaviour
         {
             return ItemRarity.Mythical;
         }
-        else if (itemID.Contains("RAR"))
-        {
-            return ItemRarity.Rare;
-        }
-        else if (itemID.Contains("UNC"))
-        {
-            return ItemRarity.Uncommon;
-        }
         else if (itemID.Contains("UNI"))
         {
+            item.maxStack = 1;
             return ItemRarity.Unique;
-        }
-        else if (itemID.Contains("JUN"))
-        {
-            return ItemRarity.Junk;
         }
         else
         {
-            return ItemRarity.Common;
+            return ItemRarity.Junk;
         }
     }
 
-    public static Texture2D ImageFinder (ref string itemID)
+    public static Texture2D ImageFinder(ref string itemID)
     {
-        string fileDirectory = Application.dataPath + "/JsonData/Items/ItemSprites/";
+        string fileDirectory = Application.dataPath + "/Sprites/Items/";
         string filePath = fileDirectory + itemID.Substring(0, 6) + ".png";
         Texture2D imageTexture;
 
         if (!File.Exists(filePath))
         {
-            Debug.LogWarning($"Image not found for {itemID}. Using default.");
+            Debug.LogWarning($"Image not found for {itemID} at {fileDirectory + itemID.Substring(0, 6)}\".png\". Using default.");
             filePath = fileDirectory + itemID.Substring(0, 3) + "000.png";
 
             if (!File.Exists(filePath))
             {
-                Debug.LogError($"Default image not found for type " + itemID.Substring(0, 3) + "! No image set for {itemID}");
+                Debug.LogError($"Default image not found for type {itemID.Substring(0, 3)} at {fileDirectory + itemID.Substring(0, 6)}\".png\"! No image set for {itemID}");
                 return null;
             }
         }
@@ -260,7 +282,7 @@ public class ItemManager : MonoBehaviour
         return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
 
-    public static void CalculatePrice(ref ItemObject item)
+    public static void CalculatePrice(ref Item item)
     {
         float price = 10;
 
@@ -307,11 +329,11 @@ public class ItemManager : MonoBehaviour
         }
 
         // Create pricing variety
-        int itemNumber = ExtractItemNumberFromID(item.itemID);
+        int itemNumber = ExtractItemNumberFromID(item.objectID);
         float numberModifier = itemNumber * 10 * (2 + (int)item.rarity);
         float uniquePrice = price + numberModifier;
 
-        item.basePrice =  (int)uniquePrice;
+        item.basePrice = (int)uniquePrice;
 
         static int ExtractItemNumberFromID(string itemID)
         {

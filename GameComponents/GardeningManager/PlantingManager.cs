@@ -20,7 +20,7 @@ public class PlantingManager : MonoBehaviour
 
     public Image plantPreview;
     public WhichPlanter activePlanter;
-    public Seed activeSeed;
+    public Item activeSeed;
     public bool readyToPlant;
 
     private void Awake()
@@ -39,18 +39,16 @@ public class PlantingManager : MonoBehaviour
         readyToPlant = false;
 
         //spawn prefabs here
-        foreach (MotherObject mo in transientData.objectIndex)
+        foreach (Item item in Items.allItems)
         {
-            if (mo is Seed)
+            if (item.type == ItemType.Seed)
             {
-                var x = (Seed)mo;
-
-                if (x.dataValue > 0)
+                if (Player.GetItemCount(item.objectID) > 0)
                 {
                     var prefab = Instantiate(gardenSeedPrefab);
-                    prefab.name = x.printName;
+                    prefab.name = item.name;
                     prefab.transform.SetParent(seedContainter.transform, false);
-                    prefab.GetComponent<GardenSeedPrefab>().EnableObject(x, this);
+                    prefab.GetComponent<GardenSeedPrefab>().EnableObject(item, this);
                 }
             }
         }
@@ -95,12 +93,13 @@ public class PlantingManager : MonoBehaviour
 
     public void SelectSeed(GameObject seedObject) //must pass the spawned prefab. Might have to be done in a script triggered by event
     {
-        activeSeed = (Seed)seedObject.GetComponent<GardenSeedPrefab>().itemSource;
+        activeSeed = seedObject.GetComponent<GardenSeedPrefab>().itemSource;
 
         seedFrame.transform.SetParent(seedObject.transform);
         seedFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
 
-        plantPreview.sprite = activeSeed.growsPlant.sprite;
+        Item outPutObject = Items.allItems.Find(x => x.objectID == activeSeed.outputID);
+        plantPreview.sprite = outPutObject.sprite;
         seedFrame.SetActive(true);
     }
 
@@ -131,7 +130,7 @@ public class PlantingManager : MonoBehaviour
     {
         if (readyToPlant && activeSeed != null) //both seed and planter has been selected
         {
-            if (activeSeed.dataValue > 0)
+            if (Player.GetItemCount(activeSeed.objectID) > 0)
             {
                 //PLANTER A
                 if (activePlanter == WhichPlanter.PlanterA)
@@ -171,9 +170,9 @@ public class PlantingManager : MonoBehaviour
             Debug.Log("I must choose a seed and an empty planter.");
     }
 
-    public void StorePlanterData(ref Seed storedSeed, ref int storedHealth, ref bool planterIsActive)
+    public void StorePlanterData(ref Item storedSeed, ref int storedHealth, ref bool planterIsActive)
     {
-        activeSeed.dataValue--;
+        activeSeed.AddToPlayer(-1);
         storedSeed = activeSeed;
         storedHealth = activeSeed.health;
         planterIsActive = true;

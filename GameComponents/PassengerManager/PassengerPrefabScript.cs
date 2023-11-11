@@ -9,7 +9,7 @@ public class PassengerPrefabScript : MonoBehaviour
     public TransientDataScript transientData;
     public GameObject passengerTarget;
     public SpriteRenderer spriteRenderer;
-    public Catalyst spiritEssence;
+    public Item spiritEssence;
     public bool isPassengerA;
     public int fare;
 
@@ -109,7 +109,7 @@ public class PassengerPrefabScript : MonoBehaviour
         {
             if (destination == transientData.currentLocation)
             {
-                spiritEssence.dataValue++;
+                Player.AddItem("CAT000", 1);
                 transientData.PushAlert("You brought " + passengerName + " to their destination.\nThey paid " + fare + "g  and dropped some Spirit Essence.");
                 dataManager.playerGold += fare;
 

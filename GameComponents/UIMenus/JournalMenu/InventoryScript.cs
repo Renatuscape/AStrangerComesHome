@@ -32,13 +32,13 @@ public class InventoryScript : MonoBehaviour
         playerGoldDisplay.text = "Gold: " + dataManager.playerGold;
 
 
-        foreach (MotherObject x in transientData.objectIndex)
+        foreach (Item x in Items.allItems)
         {
 
-            if (x is Item && x.dataValue > 0) //add this to filter out objects that the player does not own
+            if (x is Item && Player.GetItemCount(x.objectID) > 0) //add this to filter out objects that the player does not own
             {
                 var prefab = Instantiate(inventoryItemPrefab);
-                prefab.name = x.printName;
+                prefab.name = x.name;
                 prefab.transform.SetParent(prefabContainer.transform, false);
                 prefab.GetComponent<InventoryItemPrefab>().EnableObject(x, this);
             }

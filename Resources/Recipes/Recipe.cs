@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Recipe", menuName = "Scriptable Object/Recipe")]
-public class Recipe : MotherObject
+public class Recipe
 {
     public Item createsItem;
     public bool isDiscoverable;
@@ -19,13 +18,10 @@ public class Recipe : MotherObject
 
     private void Awake()
     {
-        maxValue = 1;
+        //maxValue = 1;
     }
     public void UpdatePrintName()
     {
-        if (createsItem != null)
-            name = createsItem.printName;
-        else
-            Debug.Log(name + " recipe has a null reference in createsItem variable.");
+        Debug.Log(" recipe has a null reference in createsItem variable.");
     }
 }

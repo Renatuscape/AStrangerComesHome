@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Quest", menuName = "Scriptable Object/Quest")]
-
-public class Quest : MotherObject
+public class Quest
 {
     public bool excludeFromJournal;
     public bool firstMeeting;
     public int daysPassedCheck;
-    public List<MotherObject> checkMoreThan;
+    public List<IRewardable> checkMoreThan;
     public int checkMoreThanValue;
-    public List<MotherObject> checkLessThan;
+    public List<IRewardable> checkLessThan;
     public int checkLessThanValue;
 
     //Repeatable quests increase in dataLevel to 100 on completion, and are reset to 10 (skipping discovery stages) by the world clock
@@ -34,6 +32,5 @@ public class Quest : MotherObject
     // Check quest stage's dialogue list of characters and see if there is a match. Otherwise public SerializableDictionary<int, Character> perStageNPC;
     void Awake()
     {
-        objectType = ObjectType.Quest;
     }
 }
