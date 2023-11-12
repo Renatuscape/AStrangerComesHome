@@ -115,29 +115,40 @@ public class GardenManager : MonoBehaviour
     void UpdatePlanterData(ref SpriteRenderer plantSprite, ref string seedID, ref float progressSeed)
     {
         var seed = Items.FindByID(seedID);
-        var maxGrowth = seed.health * seed.yield;
 
-        if (progressSeed <= maxGrowth)
+        if (seed == null)
         {
-            progressSeed += 1 + (gardening * 0.2f); // GARDENING SKILL INCREASES GROWTH PER TICK
-
-            if (progressSeed < maxGrowth * 0.3f)
-            {
-                plantSprite.sprite = seed.stage1;
-            }
-            else if (progressSeed > maxGrowth * 0.3f && progressSeed < maxGrowth * 0.6f)
-            {
-                plantSprite.sprite = seed.stage2;
-            }
-            else if (progressSeed > maxGrowth * 0.6f)
-            {
-                plantSprite.sprite = seed.stage3;
-            }
+            Debug.Log("Seed not found: "+seedID);
         }
+
         else
         {
-            plantSprite.sprite = seed.GetOutput().sprite;
+            Debug.Log("Seed found: " + seedID);
+            var maxGrowth = seed.health * seed.yield;
+
+            if (progressSeed <= maxGrowth)
+            {
+                progressSeed += 1 + (gardening * 0.2f); // GARDENING SKILL INCREASES GROWTH PER TICK
+
+                if (progressSeed < maxGrowth * 0.3f)
+                {
+                    plantSprite.sprite = seed.stage1;
+                }
+                else if (progressSeed > maxGrowth * 0.3f && progressSeed < maxGrowth * 0.6f)
+                {
+                    plantSprite.sprite = seed.stage2;
+                }
+                else if (progressSeed > maxGrowth * 0.6f)
+                {
+                    plantSprite.sprite = seed.stage3;
+                }
+            }
+            else
+            {
+                plantSprite.sprite = seed.GetOutput().sprite;
+            }
         }
+
     }
 
     public void ClickPlanter(WhichPlanter planter)
