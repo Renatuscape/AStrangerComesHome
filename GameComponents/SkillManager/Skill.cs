@@ -32,3 +32,48 @@ public class Skill
     }
 
 }
+
+public static class Skills
+{
+    public static List<Skill> all = new();
+
+    public static void DebugList()
+    {
+        Debug.LogWarning("Items.DebugList() called");
+
+        foreach (Skill skill in all)
+        {
+            Debug.Log($"Skill ID: {skill.objectID}\tSkill Name: {skill.name}");
+        }
+    }
+
+    public static Skill FindByID(string searchWord)
+    {
+        if (string.IsNullOrWhiteSpace(searchWord))
+        {
+            Debug.LogWarning("Search term was empty, returned null. Ensure correct ID in calling script.");
+            return null;
+        }
+        foreach (Skill skill in all)
+        {
+            if (skill.objectID.Contains(searchWord))
+            {
+                return skill;
+            }
+        }
+        Debug.LogWarning("No skill found with ID contianing this search term: " + searchWord);
+        return null;
+    }
+
+    public static int GetMax(string searchWord)
+    {
+        foreach (Skill skill in all)
+        {
+            if (skill.objectID.Contains(searchWord))
+            {
+                return skill.maxLevel;
+            }
+        }
+        return 10;
+    }
+}
