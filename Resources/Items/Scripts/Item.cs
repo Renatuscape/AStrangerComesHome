@@ -32,6 +32,10 @@ public class Item
     {
         Player.Add(this, amount, maxStack);
     }
+    public int GetInventoryAmount()
+    {
+        return Player.GetCount(objectID);
+    }
 }
 
 public static class Items
