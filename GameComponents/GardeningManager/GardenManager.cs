@@ -118,12 +118,11 @@ public class GardenManager : MonoBehaviour
 
         if (seed == null)
         {
-            Debug.Log("Seed not found: "+seedID);
+            Debug.LogWarning("Seed not found: " + seedID);
         }
 
         else
         {
-            Debug.Log("Seed found: " + seedID);
             var maxGrowth = seed.health * seed.yield;
 
             if (progressSeed <= maxGrowth)

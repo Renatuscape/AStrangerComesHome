@@ -9,6 +9,9 @@ using UnityEditor;
 public class ItemManager : MonoBehaviour
 {
     public SerializableDictionary<string, int> playerItems;
+    public bool allObjecctsLoaded = false;
+    public int filesLoaded = 0;
+    public int numberOfFilesToLoad = 6;
 
     void Start()
     {
@@ -18,16 +21,10 @@ public class ItemManager : MonoBehaviour
         LoadFromJson("Treasures.json");
         LoadFromJson("Catalysts.json");
         LoadFromJson("Books.json");
-
-        Items.DebugList();
+        //Remember to update numberOfFilesToLoad if more files are added
+        //Items.DebugList();
     }
 
-    //The player's amount of an item will no longer be stored on the item itself
-    //Item saving will be done by item ID and ints
-    //Item ID: first three letters of type + three numbers + first three letters of rarity + buyable/sellable
-    //The six first characters in an ID are unique and can be used for saving and matching. The rest is extra information used to set up objects.
-    //Item sprites are saved as "itemID.png" and matched on load. If no image is found, use placeholder automatically.
-    
     [System.Serializable]
     public class ItemsWrapper //Necessary for Unity to read the .json contents as an object
     {
@@ -50,6 +47,12 @@ public class ItemManager : MonoBehaviour
                     foreach (Item item in dataWrapper.items)
                     {
                         InitialiseItem(item, Items.all);
+                    }
+                    filesLoaded++;
+                    if (filesLoaded == numberOfFilesToLoad)
+                    {
+                        allObjecctsLoaded = true;
+                        Debug.Log("All items successfully loaded from Json.");
                     }
                 }
                 else

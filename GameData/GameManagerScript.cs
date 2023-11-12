@@ -10,6 +10,10 @@ public class GameManagerScript : MonoBehaviour
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
 
+    public ItemManager itemManager;
+    public SkillManager skillManager;
+    public UpgradeManager upgradeManager;
+
     public GameObject gameComponentMaster;
     public GameObject mainMenuComponent;
     public GameObject characterCreatorComponent;
@@ -21,7 +25,6 @@ public class GameManagerScript : MonoBehaviour
     public GameObject infoUIManagerComponent;
     public GameObject shopUIComponent;
     public GameObject timeManagerComponent;
-    public GameObject itemManager;
 
     public List<GameObject> listOfGameComponents;
 
@@ -40,6 +43,7 @@ public class GameManagerScript : MonoBehaviour
 
     void StartUpRoutine()
     {
+        ValidateJsonLoads();
         LoadScriptableObjects();
 
         gameComponentParent.SetActive(true); //if the game starts with this disabled, you can assure loading objects first
@@ -59,10 +63,14 @@ public class GameManagerScript : MonoBehaviour
         }
     }
 
+    void ValidateJsonLoads()
+    {
+
+    }
     void LoadScriptableObjects()
     {
 
-        string[] subfolders = new string[] { "Items/", "Upgrades/", "Skills/", "Quests/", "Characters/" };
+        string[] subfolders = new string[] { "Quests/", "Characters/" };
 
         List<MotherObject> allObjects = new List<MotherObject>();
 
