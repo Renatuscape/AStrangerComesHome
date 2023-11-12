@@ -9,7 +9,7 @@ public class TransientDataScript : MonoBehaviour
     public GameState gameState;
     public Language language;
     public List<MotherObject> objectIndex;
-    public List<ItemObject> itemCodex;
+    public List<Item> itemCodex;
     public List<GameObject> activePrefabs;
 
     [TextArea(20, 100)]
@@ -92,17 +92,17 @@ public class TransientDataScript : MonoBehaviour
     }
 
     //ITEM METHODS
-    public ItemObject GetItemByID(string searchID)
+    public Item GetItemByID(string searchID)
     {
-        foreach (ItemObject item in itemCodex)
+        foreach (Item item in itemCodex)
         {
-            if (item.itemID.Contains(searchID))
+            if (item.objectID.Contains(searchID))
             {
                 return item;
             }
         }
 
         Debug.Log("No item ID found containing " + searchID);
-        return new ItemObject();
+        return new Item();
     }
 }

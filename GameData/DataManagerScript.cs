@@ -14,7 +14,7 @@ public class DataManagerScript : MonoBehaviour
 
     public string playerNameColour;
     public int playerGold;
-    public SerializableDictionary<string, int> playerInventory = Player.items;
+    public SerializableDictionary<string, int> playerItems = Player.items;
     public SerializableDictionary<string, int> playerSkills = Player.skills;
     public SerializableDictionary<string, int> playerUpgrades = Player.upgrades;
 
@@ -54,21 +54,21 @@ public class DataManagerScript : MonoBehaviour
     //PLANTER - A
     public bool planterIsActiveA;
     public int planterSpriteA;
-    public Seed seedA;
+    public string seedA;
     public float progressSeedA;
     public int seedHealthA;
 
     //PLANTER - B
     public bool planterIsActiveB;
     public int planterSpriteB;
-    public Seed seedB;
+    public string seedB;
     public float progressSeedB;
     public int seedHealthB;
 
     //PLANTER - C
     public bool planterIsActiveC;
     public int planterSpriteC;
-    public Seed seedC;
+    public string seedC;
     public float progressSeedC;
     public int seedHealthC;
 

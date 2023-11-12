@@ -280,7 +280,7 @@ public class DialogueManager : MonoBehaviour
 
             for (int index = 0; index < choice.deliveries.Count; index++)
             {
-                if (choice.deliveries[index].GetInventoryAmount() < choice.deliveriesAmount[index])
+                if (choice.deliveries[index].GetCountPlayer() < choice.deliveriesAmount[index])
                 {
                     checkPassed = false;
                     break;

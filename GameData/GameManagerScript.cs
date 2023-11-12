@@ -83,9 +83,9 @@ public class GameManagerScript : MonoBehaviour
                 character.NameSetup();
             }
 
-            if (!dataManager.playerInventory.ContainsKey(obj.name))
+            if (!dataManager.playerItems.ContainsKey(obj.name))
             {
-                dataManager.playerInventory.Add(obj.name, obj.dataValue);
+                dataManager.playerItems.Add(obj.name, obj.dataValue);
             }
         }
     }
@@ -127,16 +127,19 @@ public class GameManagerScript : MonoBehaviour
         dataManager.isSynthActiveB = false;
         dataManager.isSynthActiveC = false;
 
-        foreach (MotherObject x in transientData.objectIndex)
-        {
-            x.dataValue = 0;
-        }
+        //Empty Player items, skills and upgrades
+        Player.items = new();
+        dataManager.playerItems = Player.items;
+        Player.skills = new();
+        dataManager.playerSkills = Player.skills;
+        Player.upgrades = new();
+        dataManager.playerUpgrades = Player.upgrades;
+
 
         transientData.ChangeGameState(name, gameObject, GameState.CharacterCreation);
         //transientData.gameState = GameState.NewGameMenu;
         characterCreatorComponent.SetActive(true);
         //Debug.Log(name + " changed GameState to " + GameState.NewGameMenu);
-        transientData.itemCodex = itemManager.GetComponent<ItemManager>().itemCodex;
     }
 
     public void LoadGameComponents()
