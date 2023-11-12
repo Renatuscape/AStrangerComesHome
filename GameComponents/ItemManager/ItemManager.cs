@@ -8,7 +8,6 @@ using UnityEditor;
 
 public class ItemManager : MonoBehaviour
 {
-    public List<Item> itemCodex = Items.all;
     public SerializableDictionary<string, int> playerItems;
 
     void Start()
@@ -50,7 +49,7 @@ public class ItemManager : MonoBehaviour
                 {
                     foreach (Item item in dataWrapper.items)
                     {
-                        InitialiseItem(item, itemCodex);
+                        InitialiseItem(item, Items.all);
                     }
                 }
                 else

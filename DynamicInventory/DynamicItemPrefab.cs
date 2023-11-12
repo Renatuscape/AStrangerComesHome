@@ -9,7 +9,7 @@ public class DynamicItemPrefab : MonoBehaviour
     public Item itemSource;
     public DynamicInventory dynamicInventory;
     public bool isReady = false;
-    public TextMeshProUGUI valueText;
+    public TextMeshProUGUI itemCount;
     public GameObject itemFrame;
 
     public Image displayImage;
@@ -22,7 +22,7 @@ public class DynamicItemPrefab : MonoBehaviour
         displayImage.sprite = itemSource.sprite;
         displayShadow.sprite = itemSource.sprite;
 
-        valueText.text = $"{itemSource.dataValue}";
+        itemCount.text = $"{itemSource.GetCountPlayer()}";
 
         isReady = true;
     }
