@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class WeedsPrefab : MonoBehaviour
 {
-    public Plant weedsObject;
+    public Item weedsObject;
     public planterScript planterParent;
     public TransientDataScript transientData;
     void Start()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+        weedsObject = Items.all.Find(x => x.objectID == weedsObject.objectID);
     }
 
     // Update is called once per frame
@@ -22,8 +23,7 @@ public class WeedsPrefab : MonoBehaviour
     {
         if (transientData.cameraView == CameraView.Garden)
         {
-            if (weedsObject.dataValue < weedsObject.maxValue)
-                weedsObject.dataValue++;
+            weedsObject.AddToPlayer();
 
             planterParent.currentWeeds--;
             Destroy(gameObject);
