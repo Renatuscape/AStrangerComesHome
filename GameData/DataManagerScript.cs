@@ -14,8 +14,9 @@ public class DataManagerScript : MonoBehaviour
 
     public string playerNameColour;
     public int playerGold;
-    public SerializableDictionary<string, int> playerInventory;//public SerializableDictionary<MotherObject, int> playerInventory;//ALL RESOURCE SCRIPTABLE OBJECTS HERE
-    public SerializableDictionary<string, int> playerItems;
+    public SerializableDictionary<string, int> playerInventory = Player.items;
+    public SerializableDictionary<string, int> playerSkills = Player.skills;
+    public SerializableDictionary<string, int> playerUpgrades = Player.upgrades;
 
     //GAME SETTINGS
     public float autoPlaySpeed;
@@ -89,24 +90,4 @@ public class DataManagerScript : MonoBehaviour
     public float progressSynthC;
     public bool isSynthPausedC;
 
-}
-
-public static class PlayerInventory
-{
-    public static SerializableDictionary<string, int> playerItems = new();
-
-    public static void UpdateDataManager()
-    {
-        GameObject.Find("DataManager").GetComponent<DataManagerScript>().playerItems = playerItems;
-    }
-
-    public static void UpdateItem(string searchID, int amount)
-    {
-        var itemCodex = playerItems;
-
-        if (itemCodex.ContainsKey(searchID))
-        {
-            itemCodex[searchID] += amount;
-        }
-    }
 }
