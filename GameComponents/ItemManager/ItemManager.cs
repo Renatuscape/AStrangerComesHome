@@ -8,7 +8,7 @@ using UnityEditor;
 
 public class ItemManager : MonoBehaviour
 {
-    public SerializableDictionary<string, int> playerItems;
+    //public SerializableDictionary<string, int> playerItems;
     public bool allObjecctsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 6;
@@ -52,7 +52,7 @@ public class ItemManager : MonoBehaviour
                     if (filesLoaded == numberOfFilesToLoad)
                     {
                         allObjecctsLoaded = true;
-                        Debug.Log("All items successfully loaded from Json.");
+                        Debug.Log("All ITEMS successfully loaded from Json.");
                     }
                 }
                 else
@@ -122,33 +122,33 @@ public class ItemManager : MonoBehaviour
             Debug.LogError($"{item.objectID} ID was not formatted correctly. Could not find N/S at index[12]");
         }
     }
-    public static ItemType TypeFinder(ref string itemID)
+    public static ItemType TypeFinder(ref string objectID)
     {
-        if (itemID.Contains("PLA"))
+        if (objectID.Contains("PLA"))
         {
             return ItemType.Plant;
         }
-        else if (itemID.Contains("SEE"))
+        else if (objectID.Contains("SEE"))
         {
             return ItemType.Seed;
         }
-        else if (itemID.Contains("CAT"))
+        else if (objectID.Contains("CAT"))
         {
             return ItemType.Catalyst;
         }
-        else if (itemID.Contains("BOO"))
+        else if (objectID.Contains("BOO"))
         {
             return ItemType.Book;
         }
-        else if (itemID.Contains("MAT"))
+        else if (objectID.Contains("MAT"))
         {
             return ItemType.Material;
         }
-        else if (itemID.Contains("TRA"))
+        else if (objectID.Contains("TRA"))
         {
             return ItemType.Trade;
         }
-        else if (itemID.Contains("TRE"))
+        else if (objectID.Contains("TRE"))
         {
             return ItemType.Treasure;
         }
@@ -191,20 +191,20 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    public static Texture2D ImageFinder (ref string itemID)
+    public static Texture2D ImageFinder (ref string objectID)
     {
         string fileDirectory = Application.dataPath + "/Sprites/Items/";
-        string filePath = fileDirectory + itemID.Substring(0, 6) + ".png";
+        string filePath = fileDirectory + objectID.Substring(0, 6) + ".png";
         Texture2D imageTexture;
 
         if (!File.Exists(filePath))
         {
-            Debug.LogWarning($"Image not found for {itemID}. Using default.");
-            filePath = fileDirectory + itemID.Substring(0, 3) + "000.png";
+            Debug.LogWarning($"Image not found for {objectID}. Using default.");
+            filePath = fileDirectory + objectID.Substring(0, 3) + "000.png";
 
             if (!File.Exists(filePath))
             {
-                Debug.LogError($"Default image not found for type " + itemID.Substring(0, 3) + "! No image set for {itemID}");
+                Debug.LogError($"Default image not found for type {objectID.Substring(0, 3)}! No image set for {objectID}");
                 return null;
             }
         }
