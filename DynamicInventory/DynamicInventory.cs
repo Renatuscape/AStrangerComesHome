@@ -16,7 +16,6 @@ public enum DynamicInventoryPage
 }
 public class DynamicInventory : MonoBehaviour
 {
-    public TransientDataScript transientData;
     public RectTransform windowSize;
     public GameObject dynamicItemPrefab;
     public GameObject itemContainer;
@@ -42,7 +41,6 @@ public class DynamicInventory : MonoBehaviour
     public Item activeItem;
     private void Awake()
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         infoCardName.text = "???";
         infoCardDescription.text = "???";
     }
@@ -89,45 +87,45 @@ public class DynamicInventory : MonoBehaviour
     {
         ClearItemContainer();
 
-        foreach (MotherObject x in transientData.objectIndex)
+        foreach (Item item in Items.all)
         {
-            if (x.dataValue > 0)
+            if (item.GetInventoryAmount() > 0)
             {
                 if (inventoryPage == DynamicInventoryPage.Catalysts)
                 {
-                    if (x is Catalyst)
-                        InstantiateObject((Item)x);
+                    if (item.type == ItemType.Catalyst)
+                        InstantiateObject(item);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Materials)
                 {
 
-                    if (x is Material)
-                        InstantiateObject((Item)x);
+                    if (item.type == ItemType.Material)
+                        InstantiateObject(item);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Misc)
                 {
-                    if (x is Misc)
-                        InstantiateObject((Item)x);
+                    if (item.type == ItemType.Misc)
+                        InstantiateObject(item);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Plants)
                 {
-                    if (x is Plant)
-                        InstantiateObject((Item)x);
+                    if (item.type == ItemType.Plant)
+                        InstantiateObject(item);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Seeds)
                 {
-                    if (x is Seed)
-                        InstantiateObject((Item)x);
+                    if (item.type == ItemType.Seed)
+                        InstantiateObject(item);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Trade)
                 {
-                    if (x is Trade)
-                        InstantiateObject((Item)x);
+                    if (item.type == ItemType.Trade)
+                        InstantiateObject(item);
                 }
                 else if (inventoryPage == DynamicInventoryPage.Treasures)
                 {
-                    if (x is Treasure)
-                        InstantiateObject((Item)x);
+                    if (item.type == ItemType.Treasure)
+                        InstantiateObject(item);
                 }
             }
         }
@@ -141,21 +139,21 @@ public class DynamicInventory : MonoBehaviour
         }
     }
 
-    void InstantiateObject(Item x)
+    void InstantiateObject(Item item)
     {
         var prefab = Instantiate(dynamicItemPrefab);
-        prefab.name = x.printName;
+        prefab.name = item.name;
         prefab.transform.SetParent(itemContainer.transform, false);
-        prefab.GetComponent<DynamicItemPrefab>().EnableObject(x, this);
+        prefab.GetComponent<DynamicItemPrefab>().EnableObject(item, this);
     }
 
-    public void SetActiveItem(Item x)
+    public void SetActiveItem(Item item)
     {
-        activeItem = x;
-        infoCardName.text = x.printName;
-        infoCardDescription.text = x.longDescription;
-        Canvas.ForceUpdateCanvases();  // *
-        infoCardDescription.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = false; // **
+        activeItem = item;
+        infoCardName.text = item.name;
+        infoCardDescription.text = item.description;
+        Canvas.ForceUpdateCanvases();
+        infoCardDescription.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = false;
         infoCardDescription.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = true;
     }
 }

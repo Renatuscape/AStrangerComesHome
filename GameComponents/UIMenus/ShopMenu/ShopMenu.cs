@@ -35,7 +35,7 @@ public class ShopMenu : MonoBehaviour
     public struct ShopPage
     {
         public string typeName;
-        public List<MotherObject> pageContent;
+        public List<Item> pageContent;
     }
 
     void Awake()
@@ -82,12 +82,12 @@ public class ShopMenu : MonoBehaviour
             Canvas.ForceUpdateCanvases();
             shelf.GetComponent<GridLayoutGroup>().enabled = false;
 
-            foreach (MotherObject x in shopPages[pageIndex].pageContent)
+            foreach (Item x in shopPages[pageIndex].pageContent)
             {
                 var shelf = this.shelf;
 
                 var prefab = Instantiate(shopItemPrefab);
-                prefab.name = x.printName;
+                prefab.name = x.name;
                 prefab.transform.SetParent(shelf.transform, false);
                 prefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
                 prefab.GetComponent<ShopItemPrefab>().EnableObject(x, this);
@@ -147,15 +147,15 @@ public class ShopMenu : MonoBehaviour
 
                 void SortShopObjects()
                 {
-                    var foundCatalysts = new List<MotherObject>();
-                    var foundMaterials = new List<MotherObject>();
-                    var foundSeeds = new List<MotherObject>();
-                    var foundPlants = new List<MotherObject>();
-                    var foundTrade = new List<MotherObject>();
-                    var foundTreasures = new List<MotherObject>();
-                    var foundUpgrades = new List<MotherObject>();
+                    var foundCatalysts = new List<Item>();
+                    var foundMaterials = new List<Item>();
+                    var foundSeeds = new List<Item>();
+                    var foundPlants = new List<Item>();
+                    var foundTrade = new List<Item>();
+                    var foundTreasures = new List<Item>();
+                    var foundUpgrades = new List<Item>();
 
-                    foreach (MotherObject x in objectList)
+                    foreach (Item x in objectList)
                     {
                         if (x is Catalyst)
                         {
@@ -197,19 +197,19 @@ public class ShopMenu : MonoBehaviour
 
                 }
 
-                void GeneratePages(List<MotherObject> foundList, string pageName)
+                void GeneratePages(List<Item> foundList, string pageName)
                 {
                     if (foundList.Count == 0)
                         return; // Skip generating empty pages
 
                     var newPage = new ShopPage();
-                    newPage.pageContent = new List<MotherObject>();
+                    newPage.pageContent = new List<Item>();
                     newPage.typeName = pageName;
                     shopPages.Add(newPage);
 
                     var pageNumber = 1;
 
-                    foreach (MotherObject x in foundList)
+                    foreach (Item x in foundList)
                     {
                         var currentPage = shopPages[shopPages.Count - 1];
 
@@ -218,7 +218,7 @@ public class ShopMenu : MonoBehaviour
                             pageNumber++;
 
                             var nextPage = new ShopPage();
-                            nextPage.pageContent = new List<MotherObject>();
+                            nextPage.pageContent = new List<Item>();
                             nextPage.typeName = pageName + " " + pageNumber;
                             shopPages.Add(nextPage);
 
@@ -240,7 +240,7 @@ public class ShopMenu : MonoBehaviour
             {
                 priceMultiplier = 3f - (merchantile.dataValue * 0.2f);
                 var objPrefab = Instantiate(shopItemPrefab);
-                objPrefab.name = shopObject.specialItemA.printName;
+                objPrefab.name = shopObject.specialItemA.name;
                 objPrefab.transform.SetParent(specialShelfA.transform, false);
                 objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
                 objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemA, this);
@@ -249,7 +249,7 @@ public class ShopMenu : MonoBehaviour
             {
                 priceMultiplier = 3f - (merchantile.dataValue * 0.2f);
                 var objPrefab = Instantiate(shopItemPrefab);
-                objPrefab.name = shopObject.specialItemB.printName;
+                objPrefab.name = shopObject.specialItemB.name;
                 objPrefab.transform.SetParent(specialShelfB.transform, false);
                 objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
                 objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemB, this);
@@ -258,7 +258,7 @@ public class ShopMenu : MonoBehaviour
             {
                 priceMultiplier = 3f - (merchantile.dataValue * 0.2f);
                 var objPrefab = Instantiate(shopItemPrefab);
-                objPrefab.name = shopObject.specialItemC.printName;
+                objPrefab.name = shopObject.specialItemC.name;
                 objPrefab.transform.SetParent(specialShelfC.transform, false);
                 objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
                 objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemC, this);
@@ -267,7 +267,7 @@ public class ShopMenu : MonoBehaviour
             {
                 priceMultiplier = 3f - (merchantile.dataValue * 0.2f);
                 var objPrefab = Instantiate(shopItemPrefab);
-                objPrefab.name = shopObject.specialItemD.printName;
+                objPrefab.name = shopObject.specialItemD.name;
                 objPrefab.transform.SetParent(specialShelfD.transform, false);
                 objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
                 objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemD, this);
@@ -303,22 +303,17 @@ public class ShopMenu : MonoBehaviour
         //Debug.Log($"{shopObject.farewellText}");
     }
 
-    public void AttemptPurchase(MotherObject buyItem, int itemCost)
+    public void AttemptPurchase(Item item, int itemCost)
     {
-        if (buyItem.dataValue < buyItem.maxValue)
+        if (dataManager.playerGold >= itemCost)
         {
-            if (dataManager.playerGold >= itemCost)
-            {
-                //Add confirm menu
-                dataManager.playerGold -= itemCost;
-                buyItem.dataValue++;
-                Debug.Log($"{shopObject.sucessfulPurchaseText} You purchased {buyItem.printName} for {itemCost}. You now have {buyItem.dataValue} and your remaining gold is {dataManager.playerGold}");
-            }
-            else
-                Debug.Log(shopObject.notEnoguhMoneyText);
+            //Add confirm menu
+            dataManager.playerGold -= itemCost;
+            item.AddToPlayer();
+            Debug.Log($"{shopObject.sucessfulPurchaseText} You purchased {item.name} for {itemCost}. You now have {item.GetInventoryAmount()} and your remaining gold is {dataManager.playerGold}");
         }
         else
-            Debug.Log(shopObject.maxedValueText);
+            Debug.Log(shopObject.notEnoguhMoneyText);
     }
 
     public void PrintFloatText(string text)

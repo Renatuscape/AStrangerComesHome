@@ -9,7 +9,7 @@ public class ShopItemPrefab : MonoBehaviour
     public TransientDataScript transientData;
     public ShopMenu shopMenu;
 
-    public MotherObject itemSource;
+    public Item itemSource;
     public bool isReady = false;
     public TextMeshProUGUI valueText;
     public GameObject frameOval;
@@ -31,23 +31,23 @@ public class ShopItemPrefab : MonoBehaviour
         buyButton.SetActive(false);
     }
 
-    public void EnableObject(MotherObject motherObject, ShopMenu script)
+    public void EnableObject(Item item, ShopMenu script)
     {
         shopMenu = script;
-        itemSource = motherObject;
+        itemSource = item;
         CalculatePrice();
 
         displayImage.sprite = itemSource.sprite;
         displayShadow.sprite = itemSource.sprite;
         itemFrame = frameRound;
 
-        if (itemSource is Upgrade)
+        /*if (itemSource is Upgrade)
         {
             displayImage.rectTransform.sizeDelta = new Vector2(64, 32);
             displayShadow.rectTransform.sizeDelta = new Vector2(64, 32);
             displayShadow.transform.localPosition = new Vector3(1, 1, 0);
             itemFrame = frameOval;
-        }
+        }*/
         isReady = true;
     }
 
@@ -55,8 +55,8 @@ public class ShopItemPrefab : MonoBehaviour
     {
         float price = itemSource.basePrice * priceMultiplier;
 
-        if (itemSource is Upgrade)
-            price = itemSource.basePrice * (1 + (itemSource.dataValue * itemSource.dataValue)) * priceMultiplier;//price = itemSource.basePrice * shopMenu.priceMultiplier * (1 + (itemSource.dataValue * 3));
+        //if (itemSource.type == ItemType.Upgrade)
+          //  price = itemSource.basePrice * (1 + (itemSource.GetInventoryAmount() * itemSource.GetInventoryAmount())) * priceMultiplier;//price = itemSource.basePrice * shopMenu.priceMultiplier * (1 + (itemSource.dataValue * 3));
 
         priceAdjusted = (int)Mathf.Floor(price);
         valueText.text = $"{priceAdjusted}g";
@@ -66,7 +66,7 @@ public class ShopItemPrefab : MonoBehaviour
         if (isReady)
         {
             itemFrame.SetActive(true);
-            shopMenu.PrintFloatText($"{itemSource.printName}");
+            shopMenu.PrintFloatText($"{itemSource.name}");
         }
     }
 

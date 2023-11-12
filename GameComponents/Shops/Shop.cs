@@ -16,10 +16,10 @@ public class Shop : ScriptableObject
     public ItemRarity itemRarityB;
     public ItemRarity itemRarityC;
     public DayOfWeek saleDay;
-    public MotherObject specialItemA;
-    public MotherObject specialItemB;
-    public MotherObject specialItemC;
-    public MotherObject specialItemD;
+    public Item specialItemA;
+    public Item specialItemB;
+    public Item specialItemC;
+    public Item specialItemD;
     public int cellWidth = 32;
 
     public bool sellsUpgrades;
@@ -41,7 +41,7 @@ public class Shop : ScriptableObject
     [TextArea(5, 20)]
     public string shopDescription;
 
-    public List<MotherObject> shopInventory;
+    public List<Item> shopInventory;
 
     public void SetupShop()
     {
@@ -49,60 +49,55 @@ public class Shop : ScriptableObject
         shopKeeper.NameSetup();
         shopInventory.Clear();
         
-        foreach (MotherObject x in transientData.objectIndex)
+        foreach (Item item in Items.all)
         {
-            if (x.rarity == itemRarityA || x.rarity == itemRarityB || x.rarity == itemRarityC)
+            if (item.rarity == itemRarityA || item.rarity == itemRarityB || item.rarity == itemRarityC)
             {
-                if (sellsUpgrades == true)
+                /*if (sellsUpgrades == true)
                     if (x is Upgrade)
                     {
                         if (shopInventory.Contains(x) != true)
                             shopInventory.Add(x);
-                    }
+                    }*/
 
-                if (x is Item)
+                if (!item.notBuyable)
                 {
-                    var itemCheck = (Item)x;
-
-                    if (!itemCheck.hideFromShops)
-                    {
-                        if (sellsSeeds == true)
-                            if (x is Seed)
-                            {
-                                if (shopInventory.Contains(x) != true)
-                                    shopInventory.Add(x);
-                            }
-                        if (sellsPlants == true)
-                            if (x is Plant)
-                            {
-                                if (shopInventory.Contains(x) != true)
-                                    shopInventory.Add(x);
-                            }
-                        if (sellsCatalysts == true)
-                            if (x is Catalyst)
-                            {
-                                if (shopInventory.Contains(x) != true)
-                                    shopInventory.Add(x);
-                            }
-                        if (sellsTreasures == true)
-                            if (x is Treasure)
-                            {
-                                if (shopInventory.Contains(x) != true)
-                                    shopInventory.Add(x);
-                            }
-                        if (sellsMaterials == true)
-                            if (x is Material)
-                            {
-                                if (shopInventory.Contains(x) != true)
-                                    shopInventory.Add(x);
-                            }
-                        if (sellsTrade == true)
-                            if (x is Trade)
-                            {
-                                if (shopInventory.Contains(x) != true)
-                                    shopInventory.Add(x);
-                            }
-                    }
+                    if (sellsSeeds == true)
+                        if (item.type == ItemType.Seed)
+                        {
+                            if (shopInventory.Contains(item) != true)
+                                shopInventory.Add(item);
+                        }
+                    if (sellsPlants == true)
+                        if (item.type == ItemType.Plant)
+                        {
+                            if (shopInventory.Contains(item) != true)
+                                shopInventory.Add(item);
+                        }
+                    if (sellsCatalysts == true)
+                        if (item.type == ItemType.Catalyst)
+                        {
+                            if (shopInventory.Contains(item) != true)
+                                shopInventory.Add(item);
+                        }
+                    if (sellsTreasures == true)
+                        if (item.type == ItemType.Treasure)
+                        {
+                            if (shopInventory.Contains(item) != true)
+                                shopInventory.Add(item);
+                        }
+                    if (sellsMaterials == true)
+                        if (item.type == ItemType.Material)
+                        {
+                            if (shopInventory.Contains(item) != true)
+                                shopInventory.Add(item);
+                        }
+                    if (sellsTrade == true)
+                        if (item.type == ItemType.Trade)
+                        {
+                            if (shopInventory.Contains(item) != true)
+                                shopInventory.Add(item);
+                        }
                 }
             }
         }
