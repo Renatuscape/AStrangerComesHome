@@ -20,7 +20,7 @@ public class PlantingManager : MonoBehaviour
 
     public Image plantPreview;
     public WhichPlanter activePlanter;
-    public Seed activeSeed;
+    public Item activeSeed;
     public bool readyToPlant;
 
     private void Awake()
@@ -44,7 +44,7 @@ public class PlantingManager : MonoBehaviour
             if (item.type == ItemType.Seed)
             {
 
-                if (item.GetInventoryAmount() > 0)
+                if (item.GetCountPlayer() > 0)
                 {
                     var prefab = Instantiate(gardenSeedPrefab);
                     prefab.name = item.name;
@@ -94,12 +94,12 @@ public class PlantingManager : MonoBehaviour
 
     public void SelectSeed(GameObject seedObject) //must pass the spawned prefab. Might have to be done in a script triggered by event
     {
-        activeSeed = (Seed)seedObject.GetComponent<GardenSeedPrefab>().itemSource;
+        activeSeed = seedObject.GetComponent<GardenSeedPrefab>().itemSource;
 
         seedFrame.transform.SetParent(seedObject.transform);
         seedFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
 
-        plantPreview.sprite = activeSeed.growsPlant.sprite;
+        plantPreview.sprite = activeSeed.GetOutput().sprite;
         seedFrame.SetActive(true);
     }
 
@@ -130,7 +130,7 @@ public class PlantingManager : MonoBehaviour
     {
         if (readyToPlant && activeSeed != null) //both seed and planter has been selected
         {
-            if (activeSeed.GetInventoryAmount() > 0)
+            if (activeSeed.GetCountPlayer() > 0)
             {
                 //PLANTER A
                 if (activePlanter == WhichPlanter.PlanterA)
@@ -170,10 +170,10 @@ public class PlantingManager : MonoBehaviour
             Debug.Log("I must choose a seed and an empty planter.");
     }
 
-    public void StorePlanterData(ref Seed storedSeed, ref int storedHealth, ref bool planterIsActive)
+    public void StorePlanterData(ref string storedSeed, ref int storedHealth, ref bool planterIsActive)
     {
         activeSeed.AddToPlayer(-1);
-        storedSeed = activeSeed;
+        storedSeed = activeSeed.objectID;
         storedHealth = activeSeed.health;
         planterIsActive = true;
 

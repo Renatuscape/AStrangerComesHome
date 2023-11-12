@@ -21,16 +21,16 @@ public class GardenSeedPrefab : MonoBehaviour
         displayImage.sprite = itemSource.sprite;
         displayShadow.sprite = itemSource.sprite;
 
-        valueText.text = $"{itemSource.GetInventoryAmount()}";
+        valueText.text = $"{itemSource.GetCountPlayer()}";
 
         isReady = true;
     }
 
     private void Update()
     {
-        if (valueText.text != $"{itemSource.GetInventoryAmount()}")
+        if (valueText.text != $"{itemSource.GetCountPlayer()}")
         {
-            valueText.text = $"{itemSource.GetInventoryAmount()}";
+            valueText.text = $"{itemSource.GetCountPlayer()}";
         }
     }
 

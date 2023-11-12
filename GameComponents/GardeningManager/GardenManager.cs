@@ -26,10 +26,10 @@ public class GardenManager : MonoBehaviour
     public SpriteRenderer planterC;
     public SpriteRenderer plantSpriteC;
 
-    public Skill gardening; //improves growth for all plants
-    public Skill cultivation; //improves yield rate for multi-yield plants
-    public Skill nurturing; //creates a small chance that plant health does not decrease
-    public Skill earthsoul; //at level 5, this mysterious skill grants all plants an extra life. At level 10, two extra lives.
+    public int gardening; //improves growth for all plants
+    public int cultivation; //improves yield rate for multi-yield plants
+    public int nurturing; //creates a small chance that plant health does not decrease
+    public int earthsoul; //at level 5, this mysterious skill grants all plants an extra life. At level 10, two extra lives.
 
     public float growthTimer;
     public float growthTick = 1;
@@ -45,6 +45,7 @@ public class GardenManager : MonoBehaviour
 
     private void OnEnable()
     {
+        SyncSkills();
         UpdatePlanterSprite();
         plantSpriteA.sprite = null;
         plantSpriteB.sprite = null;
@@ -52,6 +53,13 @@ public class GardenManager : MonoBehaviour
         GrowthTick();
     }
 
+    void SyncSkills()
+    {
+        gardening = Player.GetCount("GAR000");
+        cultivation = Player.GetCount("GAR001");
+        nurturing = Player.GetCount("GAR002");
+        earthsoul = Player.GetCount("GAR003");
+    }
     public void UpdatePlanterSprite()
     {
         if (planterSprites.Count >= 1)
@@ -104,33 +112,38 @@ public class GardenManager : MonoBehaviour
 
     }
 
-    void UpdatePlanterData(ref SpriteRenderer plantSprite, ref Seed seed, ref float progressSeed)
+    void UpdatePlanterData(ref SpriteRenderer plantSprite, ref string seedID, ref float progressSeed)
     {
-        if (progressSeed <= seed.maxGrowth)
-        {
-            progressSeed += 1 + (gardening.dataValue * 0.2f); // GARDENING SKILL INCREASES GROWTH PER TICK
+        var seed = Items.FindByID(seedID);
+        var maxGrowth = seed.health * seed.yield;
 
-            if (progressSeed < seed.maxGrowth * 0.3f)
+        if (progressSeed <= maxGrowth)
+        {
+            progressSeed += 1 + (gardening * 0.2f); // GARDENING SKILL INCREASES GROWTH PER TICK
+
+            if (progressSeed < maxGrowth * 0.3f)
             {
                 plantSprite.sprite = seed.stage1;
             }
-            else if (progressSeed > seed.maxGrowth * 0.3f && progressSeed < seed.maxGrowth * 0.6f)
+            else if (progressSeed > maxGrowth * 0.3f && progressSeed < maxGrowth * 0.6f)
             {
                 plantSprite.sprite = seed.stage2;
             }
-            else if (progressSeed > seed.maxGrowth * 0.6f)
+            else if (progressSeed > maxGrowth * 0.6f)
             {
                 plantSprite.sprite = seed.stage3;
             }
         }
         else
         {
-            plantSprite.sprite = seed.growsPlant.sprite;
+            plantSprite.sprite = seed.GetOutput().sprite;
         }
     }
 
     public void ClickPlanter(WhichPlanter planter)
     {
+        SyncSkills();
+
         if (transientData.cameraView == CameraView.Garden)
         {
             if (dataManager.planterIsActiveA && dataManager.seedA == null)
@@ -166,8 +179,11 @@ public class GardenManager : MonoBehaviour
         }
     }
 
-    private void ProcessPlanterClick(ref bool planterIsActive, ref float growthProgress, ref Seed seed, ref int seedHealth, SpriteRenderer plantRenderer)
+    private void ProcessPlanterClick(ref bool planterIsActive, ref float growthProgress, ref string seedID, ref int seedHealth, SpriteRenderer plantRenderer)
     {
+        var seed = Items.FindByID(seedID);
+        var maxGrowth = seed.health * seed.yield;
+        var outputPlant = seed.GetOutput();
 
         //IF THE PLANTER IS EMPTY
         if (!planterIsActive)
@@ -179,20 +195,20 @@ public class GardenManager : MonoBehaviour
         else if (planterIsActive && seed != null)
         {
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
-            if (growthProgress < seed.maxGrowth && planterIsActive)
+            if (growthProgress < maxGrowth && planterIsActive)
             {
                 string growthRate = "decent";
-                if (gardening.dataValue < 3)
+                if (gardening < 3)
                     growthRate = "normal";
-                else if (gardening.dataValue > 6)
+                else if (gardening > 6)
                     growthRate = "great";
 
                 // Display info for the plant currently growing in this planter
-                Debug.Log($"This {seed.growsPlant.printName} is growing at a {growthRate} pace.");
+                Debug.Log($"This {outputPlant.name} is growing at a {growthRate} pace.");
             }
 
             //IF THE PLANTER IS READY TO BE HARVESTED
-            if (growthProgress >= seed.maxGrowth)
+            if (growthProgress >= maxGrowth)
             {
                 //PLANT YIELD
                 var yield = seed.yield;
@@ -203,31 +219,31 @@ public class GardenManager : MonoBehaviour
 
                     if (yield < seed.yield)
                     {
-                        yield += (int)Mathf.Floor(cultivation.dataValue * 0.5f); //Cultivation used here. Every two levels guarantees one drop
+                        yield += (int)Mathf.Floor(cultivation * 0.5f); //Cultivation used here. Every two levels guarantees one drop
 
                         if (yield > seed.yield)
                             yield = seed.yield + 1; //with high enough cultivation, you can get an additional drop!
                     }
                 }
-                seed.growsPlant.dataValue += yield + (int)Mathf.Floor(earthsoul.dataValue * 0.2f); //Bonus 1 or 2 yield from Earthsoul mythical skill
+                outputPlant.AddToPlayer(yield + (int)Mathf.Floor(earthsoul * 0.2f)); //Bonus 1 or 2 yield from Earthsoul mythical skill
 
                 //PLANT HEALTH
                 var rollForHealth = Random.Range(0, 100);
 
-                if (rollForHealth > nurturing.dataValue * 3)
+                if (rollForHealth > nurturing * 3)
                 {
                     seedHealth--;
-                    Debug.Log("The plant has lost health at a roll of " + rollForHealth + " against " + nurturing.dataValue * 3 + ".");
+                    Debug.Log("The plant has lost health at a roll of " + rollForHealth + " against " + nurturing * 3 + ".");
                 }
                 else
                 {
-                    Debug.Log("Plant miraculously retains its health at a roll of " + rollForHealth + " against " + nurturing.dataValue * 5 + ". Add some effect or notice to the game.");
+                    Debug.Log("Plant miraculously retains its health at a roll of " + rollForHealth + " against " + nurturing * 5 + ". Add some effect or notice to the game.");
                 }
 
                 //CHECK IF PLANT IS DEAD
                 if (seedHealth > 0)
                 {
-                    growthProgress = seed.maxGrowth / 3; //skill could help here?
+                    growthProgress = maxGrowth / 3; //skill could help here?
                 }
 
                 else if (seedHealth <= 0)
