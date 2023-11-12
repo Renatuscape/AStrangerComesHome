@@ -155,36 +155,36 @@ public class ShopMenu : MonoBehaviour
                     var foundTreasures = new List<Item>();
                     var foundUpgrades = new List<Item>();
 
-                    foreach (Item x in objectList)
+                    foreach (Item item in objectList)
                     {
-                        if (x is Catalyst)
+                        if (item.type == ItemType.Catalyst)
                         {
-                            foundCatalysts.Add(x);
+                            foundCatalysts.Add(item);
                         }
-                        else if (x is Material)
+                        else if (item.type == ItemType.Material)
                         {
-                            foundMaterials.Add(x);
+                            foundMaterials.Add(item);
                         }
-                        else if (x is Seed)
+                        else if (item.type == ItemType.Seed)
                         {
-                            foundSeeds.Add(x);
+                            foundSeeds.Add(item);
                         }
-                        else if (x is Plant)
+                        else if (item.type == ItemType.Plant)
                         {
-                            foundPlants.Add(x);
+                            foundPlants.Add(item);
                         }
-                        else if (x is Trade)
+                        else if (item.type == ItemType.Trade)
                         {
-                            foundTrade.Add(x);
+                            foundTrade.Add(item);
                         }
-                        else if (x is Treasure)
+                        else if (item.type == ItemType.Treasure)
                         {
-                            foundTreasures.Add(x);
+                            foundTreasures.Add(item);
                         }
-                        else if (x is Upgrade)
+                        /*else if (x is Upgrade)
                         {
                             foundUpgrades.Add(x);
-                        }
+                        }*/
                     }
 
                         GeneratePages(foundMaterials, "Materials");
