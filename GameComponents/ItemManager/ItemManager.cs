@@ -85,7 +85,6 @@ public class ItemManager : MonoBehaviour
         ItemIDReader(ref item);
         CalculatePrice(ref item);
         itemList.Add(item);
-        Player.items.Add(item.objectID, 0);
     }
 
     public static void ItemIDReader(ref Item item)
