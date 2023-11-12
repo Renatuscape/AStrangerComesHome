@@ -88,7 +88,7 @@ public class ItemManager : MonoBehaviour
     public static void InitialiseItem(Item item, List<Item> itemList)
     {
         ItemIDReader(ref item);
-        CalculatePrice(ref item);
+        item.basePrice = CalculatePrice(ref item);
         itemList.Add(item);
     }
 
@@ -210,7 +210,7 @@ public class ItemManager : MonoBehaviour
 
             if (!File.Exists(filePath))
             {
-                Debug.LogWarning($"Sprout not found for {objectID} stage {frame}. Using default.");
+                //Debug.LogWarning($"Sprout not found for {objectID} stage {frame}. Using default.");
                 filePath = fileDirectory + objectID.Substring(0, 3) + $"000-{frame}.png";
 
                 if (!File.Exists(filePath))
@@ -237,7 +237,7 @@ public class ItemManager : MonoBehaviour
 
         if (!File.Exists(filePath))
         {
-            Debug.LogWarning($"Image not found for {objectID}. Using default.");
+            //Debug.LogWarning($"Image not found for {objectID}. Using default.");
             filePath = fileDirectory + objectID.Substring(0, 3) + "000.png";
 
             if (!File.Exists(filePath))
@@ -260,7 +260,7 @@ public class ItemManager : MonoBehaviour
         return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
 
-    public static void CalculatePrice(ref Item item)
+    public static int CalculatePrice(ref Item item)
     {
         float price = 10;
 
@@ -311,12 +311,12 @@ public class ItemManager : MonoBehaviour
         float numberModifier = itemNumber * 10 * (2 + (int)item.rarity);
         float uniquePrice = price + numberModifier;
 
-        item.basePrice =  (int)uniquePrice;
+        return  (int)uniquePrice;
 
         static int ExtractItemNumberFromID(string itemID)
         {
-            // Extract the three numbers from index 2 to 5
-            string numberPart = itemID.Substring(5);
+            // Extract the three numbers from index 5
+            string numberPart = itemID[5].ToString();
             int itemNumber;
             int.TryParse(numberPart, out itemNumber);
             return itemNumber;
