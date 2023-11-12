@@ -47,7 +47,7 @@ public class PassengerPrefabScript : MonoBehaviour
     }
     private void OnEnable()
         {
-
+        spiritEssence = Items.FindByID("CAT000");
         if (isPassengerA)
         {
             passengerName = dataManager.passengerNameA;
