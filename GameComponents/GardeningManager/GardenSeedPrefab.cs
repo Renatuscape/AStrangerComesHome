@@ -6,14 +6,14 @@ using UnityEngine.UI;
 
 public class GardenSeedPrefab : MonoBehaviour
 {
-    public MotherObject itemSource;
+    public Item itemSource;
     public PlantingManager plantManager;
     public bool isReady = false;
     public TextMeshProUGUI valueText;
 
     public Image displayImage;
     public Image displayShadow;
-    public void EnableObject(Seed seed, PlantingManager script)
+    public void EnableObject(Item seed, PlantingManager script)
     {
         itemSource = seed;
         plantManager = script;
@@ -21,16 +21,16 @@ public class GardenSeedPrefab : MonoBehaviour
         displayImage.sprite = itemSource.sprite;
         displayShadow.sprite = itemSource.sprite;
 
-        valueText.text = $"{itemSource.dataValue}";
+        valueText.text = $"{itemSource.GetInventoryAmount()}";
 
         isReady = true;
     }
 
     private void Update()
     {
-        if (valueText.text != $"{itemSource.dataValue}")
+        if (valueText.text != $"{itemSource.GetInventoryAmount()}")
         {
-            valueText.text = $"{itemSource.dataValue}";
+            valueText.text = $"{itemSource.GetInventoryAmount()}";
         }
     }
 

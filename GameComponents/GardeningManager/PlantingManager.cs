@@ -39,18 +39,17 @@ public class PlantingManager : MonoBehaviour
         readyToPlant = false;
 
         //spawn prefabs here
-        foreach (MotherObject mo in transientData.objectIndex)
+        foreach (Item item in Items.all)
         {
-            if (mo is Seed)
+            if (item.type == ItemType.Seed)
             {
-                var x = (Seed)mo;
 
-                if (x.dataValue > 0)
+                if (item.GetInventoryAmount() > 0)
                 {
                     var prefab = Instantiate(gardenSeedPrefab);
-                    prefab.name = x.printName;
+                    prefab.name = item.name;
                     prefab.transform.SetParent(seedContainter.transform, false);
-                    prefab.GetComponent<GardenSeedPrefab>().EnableObject(x, this);
+                    prefab.GetComponent<GardenSeedPrefab>().EnableObject(item, this);
                 }
             }
         }
@@ -131,7 +130,7 @@ public class PlantingManager : MonoBehaviour
     {
         if (readyToPlant && activeSeed != null) //both seed and planter has been selected
         {
-            if (activeSeed.dataValue > 0)
+            if (activeSeed.GetInventoryAmount() > 0)
             {
                 //PLANTER A
                 if (activePlanter == WhichPlanter.PlanterA)
@@ -173,7 +172,7 @@ public class PlantingManager : MonoBehaviour
 
     public void StorePlanterData(ref Seed storedSeed, ref int storedHealth, ref bool planterIsActive)
     {
-        activeSeed.dataValue--;
+        activeSeed.AddToPlayer(-1);
         storedSeed = activeSeed;
         storedHealth = activeSeed.health;
         planterIsActive = true;
