@@ -9,7 +9,7 @@ public static class Player
     public static SerializableDictionary<string, int> skills = new();
     public static SerializableDictionary<string, int> upgrades = new();
 
-    public static void Add(string searchID, int amount)
+    /*public static void Add(string searchID, int amount)
     {
 
         if (items.ContainsKey(searchID))
@@ -24,16 +24,24 @@ public static class Player
                 items.Add(item.objectID, amount);
             }
         }
-    }
+    }*/
 
     public static void Add(Item item, int amount, int maxStack)
     {
         if (items.ContainsKey(item.objectID))
         {
-            if (items[item.objectID] + amount <= maxStack)
+            if (items[item.objectID] + amount <= maxStack && items[item.objectID] + amount >= 0)
             {
                 items[item.objectID] += amount;
             }
+        }
+        else
+        {
+            if (amount >= 0 && amount <= item.maxStack)
+            {
+            items.Add(item.objectID, amount);
+            }
+
         }
     }
 
