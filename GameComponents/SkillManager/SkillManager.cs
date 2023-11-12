@@ -122,7 +122,7 @@ public class SkillManager : MonoBehaviour
 
         if (!File.Exists(filePath))
         {
-            Debug.LogWarning($"Image not found for {objectID}. Using default.");
+            //Debug.LogWarning($"Image not found for {objectID}. Using default.");
             filePath = fileDirectory + objectID.Substring(0, 3) + "000.png";
 
             if (!File.Exists(filePath))
