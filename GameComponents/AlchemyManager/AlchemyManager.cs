@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AlchemyManager : MonoBehaviour
-{
+{/*
     public DataManagerScript dataManager;
     public TransientDataScript transientData;
     public GameObject synthMenuA;
@@ -58,5 +58,5 @@ public class AlchemyManager : MonoBehaviour
     void Update()
     {
         
-    }
+    }*/
 }
