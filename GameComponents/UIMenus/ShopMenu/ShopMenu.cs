@@ -12,7 +12,7 @@ using TMPro;
 public class ShopMenu : MonoBehaviour
 {
     public Shop shopObject;
-    public Skill merchantile;
+    public int merchantile;
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
     public float priceMultiplier;
@@ -45,7 +45,10 @@ public class ShopMenu : MonoBehaviour
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
     }
 
-
+    void SyncSkills()
+    {
+        merchantile = Player.GetCount("ATT002");
+    }
     public void ChangePage(bool pageBack)
     {
         var oldIndex = pageIndex;
@@ -71,6 +74,8 @@ public class ShopMenu : MonoBehaviour
 
     void SpawnShopItems(int pageIndex)
     {
+        SyncSkills();
+
         if (pageIndex >= 0 && pageIndex < shopPages.Count)
         {
             shelf.GetComponent<GridLayoutGroup>().enabled = false;
@@ -120,12 +125,12 @@ public class ShopMenu : MonoBehaviour
             if (shopObject.saleDay == transientData.weekDay)
             {
                 clearanceNotice.SetActive(true);
-                priceMultiplier = 1.5f - (merchantile.dataValue * 0.1f);
+                priceMultiplier = 1.5f - (merchantile * 0.1f);
             }
             else
             {
                 clearanceNotice.SetActive(false);
-                priceMultiplier = 2f - (merchantile.dataValue * 0.1f);
+                priceMultiplier = 2f - (merchantile * 0.1f);
             }
 
             //SET UP SHOP WITH PAGES
@@ -238,7 +243,7 @@ public class ShopMenu : MonoBehaviour
             //SPAWN A SPECIAL ITEMS
             if (shopObject.specialItemA != null)
             {
-                priceMultiplier = 3f - (merchantile.dataValue * 0.2f);
+                priceMultiplier = 3f - (merchantile * 0.2f);
                 var objPrefab = Instantiate(shopItemPrefab);
                 objPrefab.name = shopObject.specialItemA.name;
                 objPrefab.transform.SetParent(specialShelfA.transform, false);
@@ -247,7 +252,7 @@ public class ShopMenu : MonoBehaviour
             }
             if (shopObject.specialItemB != null)
             {
-                priceMultiplier = 3f - (merchantile.dataValue * 0.2f);
+                priceMultiplier = 3f - (merchantile * 0.2f);
                 var objPrefab = Instantiate(shopItemPrefab);
                 objPrefab.name = shopObject.specialItemB.name;
                 objPrefab.transform.SetParent(specialShelfB.transform, false);
@@ -256,7 +261,7 @@ public class ShopMenu : MonoBehaviour
             }
             if (shopObject.specialItemC != null)
             {
-                priceMultiplier = 3f - (merchantile.dataValue * 0.2f);
+                priceMultiplier = 3f - (merchantile * 0.2f);
                 var objPrefab = Instantiate(shopItemPrefab);
                 objPrefab.name = shopObject.specialItemC.name;
                 objPrefab.transform.SetParent(specialShelfC.transform, false);
@@ -265,7 +270,7 @@ public class ShopMenu : MonoBehaviour
             }
             if (shopObject.specialItemD != null)
             {
-                priceMultiplier = 3f - (merchantile.dataValue * 0.2f);
+                priceMultiplier = 3f - (merchantile * 0.2f);
                 var objPrefab = Instantiate(shopItemPrefab);
                 objPrefab.name = shopObject.specialItemD.name;
                 objPrefab.transform.SetParent(specialShelfD.transform, false);
@@ -310,7 +315,7 @@ public class ShopMenu : MonoBehaviour
             //Add confirm menu
             dataManager.playerGold -= itemCost;
             item.AddToPlayer();
-            Debug.Log($"{shopObject.sucessfulPurchaseText} You purchased {item.name} for {itemCost}. You now have {item.GetInventoryAmount()} and your remaining gold is {dataManager.playerGold}");
+            Debug.Log($"{shopObject.sucessfulPurchaseText} You purchased {item.name} for {itemCost}. You now have {item.GetCountPlayer()} and your remaining gold is {dataManager.playerGold}");
         }
         else
             Debug.Log(shopObject.notEnoguhMoneyText);
