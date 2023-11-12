@@ -20,9 +20,6 @@ public class SaveLoadManager : MonoBehaviour
 
     public void SaveGame()
     {
-        PlayerInventory.UpdateDataManager();
-        GetScriptableObjectValues(dataManager.playerInventory, transientData.objectIndex);
-
         string json = JsonUtility.ToJson(dataManager, prettyPrint: true);
         SaveJsonToFile(json);
     }
@@ -34,9 +31,6 @@ public class SaveLoadManager : MonoBehaviour
         {
             JsonUtility.FromJsonOverwrite(json, dataManager);
         }
-
-        SetScriptableObjectValues(dataManager.playerInventory, transientData.objectIndex);
-        PlayerInventory.UpdateDataManager();
     }
 
     private void SaveJsonToFile(string json)
@@ -68,41 +62,6 @@ public class SaveLoadManager : MonoBehaviour
             Directory.CreateDirectory(dir);
 
         return Path.Combine(dir, fileName);
-    }
-
-    public void SetScriptableObjectValues(Dictionary<string, int> loadedInventory, List<MotherObject> allScriptableObjects)
-    {
-        for (int index = 0; index < allScriptableObjects.Count; index++)
-        {
-            var scriptableObject = allScriptableObjects[index];
-
-            if (scriptableObject != null)
-            {
-                if (loadedInventory.ContainsKey(scriptableObject.name) == true)
-                {
-                    scriptableObject.dataValue = loadedInventory[scriptableObject.name];
-                }
-                else if (loadedInventory.ContainsKey(scriptableObject.name) == false)
-                {
-                    loadedInventory.Add(scriptableObject.name, 0);
-                    scriptableObject.dataValue = 0;
-                }
-            }
-        }
-    }
-
-    public void GetScriptableObjectValues(Dictionary<string, int> dic, List<MotherObject> list)
-    {
-        for (int index = 0; index < list.Count; index++)
-        {
-            var x = list[index];
-
-            if (dic.ContainsKey(x.name) == false)
-                dic.Add(x.name, x.dataValue);
-
-            else
-                dic[x.name] = x.dataValue;
-        }
     }
 
 }
