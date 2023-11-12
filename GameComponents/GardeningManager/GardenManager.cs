@@ -123,7 +123,7 @@ public class GardenManager : MonoBehaviour
 
         else
         {
-            var maxGrowth = seed.health * seed.yield;
+            var maxGrowth = 100 * seed.health * seed.yield;
 
             if (progressSeed <= maxGrowth)
             {
@@ -192,7 +192,7 @@ public class GardenManager : MonoBehaviour
     private void ProcessPlanterClick(ref bool planterIsActive, ref float growthProgress, ref string seedID, ref int seedHealth, SpriteRenderer plantRenderer)
     {
         var seed = Items.FindByID(seedID);
-        var maxGrowth = seed.health * seed.yield;
+        var maxGrowth = 100 * seed.health * seed.yield;
         var outputPlant = seed.GetOutput();
 
         //IF THE PLANTER IS EMPTY

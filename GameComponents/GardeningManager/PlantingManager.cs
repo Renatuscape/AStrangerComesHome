@@ -96,11 +96,23 @@ public class PlantingManager : MonoBehaviour
     {
         activeSeed = seedObject.GetComponent<GardenSeedPrefab>().itemSource;
 
+        if (activeSeed.GetOutput() != null)
+        {
         seedFrame.transform.SetParent(seedObject.transform);
         seedFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
 
         plantPreview.sprite = activeSeed.GetOutput().sprite;
         seedFrame.SetActive(true);
+        }
+        else
+        {
+            seedFrame.transform.SetParent(seedObject.transform);
+            seedFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
+
+            plantPreview.sprite = null;
+            seedFrame.SetActive(true);
+        }
+
     }
 
     //FOR SELECTING PLANTER IN THE MENU. CONSOLIDATE INTO ONE METHOD LATER, BUT IT WORKS FOR NOW
@@ -130,41 +142,46 @@ public class PlantingManager : MonoBehaviour
     {
         if (readyToPlant && activeSeed != null) //both seed and planter has been selected
         {
-            if (activeSeed.GetCountPlayer() > 0)
+            if (activeSeed.GetOutput() != null)
             {
-                //PLANTER A
-                if (activePlanter == WhichPlanter.PlanterA)
+                if (activeSeed.GetCountPlayer() > 0)
                 {
-                    if (!dataManager.planterIsActiveA)
+                    //PLANTER A
+                    if (activePlanter == WhichPlanter.PlanterA)
                     {
-                        StorePlanterData(ref dataManager.seedA, ref dataManager.seedHealthA, ref dataManager.planterIsActiveA);
+                        if (!dataManager.planterIsActiveA)
+                        {
+                            StorePlanterData(ref dataManager.seedA, ref dataManager.seedHealthA, ref dataManager.planterIsActiveA);
+                        }
+                        else
+                            Debug.Log("This planter is occupied."); //add option to remove plant?
                     }
-                    else
-                        Debug.Log("This planter is occupied."); //add option to remove plant?
-                }
-                //PLANTER B
-                if (activePlanter == WhichPlanter.PlanterB)
-                {
-                    if (!dataManager.planterIsActiveB)
+                    //PLANTER B
+                    if (activePlanter == WhichPlanter.PlanterB)
                     {
-                        StorePlanterData(ref dataManager.seedB, ref dataManager.seedHealthB, ref dataManager.planterIsActiveB);
+                        if (!dataManager.planterIsActiveB)
+                        {
+                            StorePlanterData(ref dataManager.seedB, ref dataManager.seedHealthB, ref dataManager.planterIsActiveB);
+                        }
+                        else
+                            Debug.Log("This planter is occupied."); //add option to remove plant?
                     }
-                    else
-                        Debug.Log("This planter is occupied."); //add option to remove plant?
-                }
-                //PLANTER C
-                if (activePlanter == WhichPlanter.PlanterC)
-                {
-                    if (!dataManager.planterIsActiveC)
+                    //PLANTER C
+                    if (activePlanter == WhichPlanter.PlanterC)
                     {
-                        StorePlanterData(ref dataManager.seedC, ref dataManager.seedHealthC, ref dataManager.planterIsActiveC);
+                        if (!dataManager.planterIsActiveC)
+                        {
+                            StorePlanterData(ref dataManager.seedC, ref dataManager.seedHealthC, ref dataManager.planterIsActiveC);
+                        }
+                        else
+                            Debug.Log("This planter is occupied."); //add option to remove plant?
                     }
-                    else
-                        Debug.Log("This planter is occupied."); //add option to remove plant?
                 }
+                else
+                    Debug.Log("I am all out of this type of seeds.");
             }
             else
-                Debug.Log("I am all out of this type of seeds.");
+                Debug.Log("This seed will not grow into anything.");
         }
         else
             Debug.Log("I must choose a seed and an empty planter.");
