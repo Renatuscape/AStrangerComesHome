@@ -57,6 +57,17 @@ public static class Items
         }
     }
 
+    public static void DebugAllItems()
+    {
+        foreach (Item item in all)
+        {
+            item.AddToPlayer(5);
+            item.AddToPlayer(10);
+            item.AddToPlayer(25);
+            item.AddToPlayer(100);
+        }
+    }
+
     public static Item FindByID(string searchWord)
     {
         if (string.IsNullOrWhiteSpace(searchWord))

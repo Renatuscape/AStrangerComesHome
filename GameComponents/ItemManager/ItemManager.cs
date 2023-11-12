@@ -5,10 +5,12 @@ using System.IO;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
 using UnityEditor;
+using System;
+using UnityEngine.Rendering;
 
 public class ItemManager : MonoBehaviour
 {
-    //public SerializableDictionary<string, int> playerItems;
+    public List<Item> debugItemList = Items.all;
     public bool allObjecctsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 6;
@@ -92,7 +94,7 @@ public class ItemManager : MonoBehaviour
 
     public static void ItemIDReader(ref Item item)
     {
-        item.type = TypeFinder(ref item.objectID);
+        item.type = TypeFinder(ref item);
         item.rarity = RarityFinder(ref item);
         item.image = ImageFinder(ref item.objectID);
 
@@ -122,14 +124,16 @@ public class ItemManager : MonoBehaviour
             Debug.LogError($"{item.objectID} ID was not formatted correctly. Could not find N/S at index[12]");
         }
     }
-    public static ItemType TypeFinder(ref string objectID)
+    public static ItemType TypeFinder(ref Item item)
     {
+        var objectID = item.objectID;
         if (objectID.Contains("PLA"))
         {
             return ItemType.Plant;
         }
         else if (objectID.Contains("SEE"))
         {
+            SproutFinder(ref item);
             return ItemType.Seed;
         }
         else if (objectID.Contains("CAT"))
@@ -138,6 +142,7 @@ public class ItemManager : MonoBehaviour
         }
         else if (objectID.Contains("BOO"))
         {
+            item.maxStack = 9;
             return ItemType.Book;
         }
         else if (objectID.Contains("MAT"))
@@ -178,7 +183,7 @@ public class ItemManager : MonoBehaviour
         }
         else if (item.objectID.Contains("UNI"))
         {
-            item.maxStack = 9;
+            item.maxStack = 1;
             return ItemRarity.Unique;
         }
         else if (item.objectID.Contains("JUN"))
@@ -188,6 +193,39 @@ public class ItemManager : MonoBehaviour
         else
         {
             return ItemRarity.Common;
+        }
+    }
+
+    public static void SproutFinder(ref Item seed)
+    {
+        seed.stage1 = FindSprite(1, seed.objectID);
+        seed.stage2 = FindSprite(2, seed.objectID);
+        seed.stage3 = FindSprite(3, seed.objectID);
+
+        Sprite FindSprite(int frame, string objectID)
+        {
+            string fileDirectory = Application.dataPath + "/Sprites/Items/Sprouts/";
+            string filePath = fileDirectory + objectID.Substring(0, 6) + $"-{frame}.png";
+            Texture2D texture;
+
+            if (!File.Exists(filePath))
+            {
+                Debug.LogWarning($"Sprout not found for {objectID} stage {frame}. Using default.");
+                filePath = fileDirectory + objectID.Substring(0, 3) + $"000-{frame}.png";
+
+                if (!File.Exists(filePath))
+                {
+                    Debug.LogError($"Default image not found for type {objectID.Substring(0, 3)}! No image set for {objectID}");
+                    return null;
+                }
+            }
+
+            byte[] imageBytes = File.ReadAllBytes(filePath);
+            texture = new Texture2D(2, 2); // Create an empty texture
+            texture.filterMode = FilterMode.Point; // Set filter mode to Point for pixel-perfect clarity. PREVENTS BLURRINESS
+            texture.LoadImage(imageBytes); // Load the image bytes
+
+            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         }
     }
 

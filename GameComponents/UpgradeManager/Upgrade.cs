@@ -29,3 +29,58 @@ public class Upgrade
         return Player.GetCount(objectID);
     }
 }
+
+public static class Upgrades
+{
+    public static List<Upgrade> all = new();
+
+    public static void DebugList()
+    {
+        Debug.LogWarning("Upgrades.DebugList() called");
+
+        foreach (Upgrade upgrade in all)
+        {
+            Debug.Log($"Skill ID: {upgrade.objectID}\tUpgrade Name: {upgrade.name}");
+        }
+    }
+
+    public static void DebugAllUpgrades()
+    {
+        foreach (Upgrade skill in all)
+        {
+            skill.AddToPlayer(10);
+            skill.AddToPlayer(25);
+            skill.AddToPlayer(100);
+        }
+    }
+
+    public static Upgrade FindByID(string searchWord)
+    {
+        if (string.IsNullOrWhiteSpace(searchWord))
+        {
+            Debug.LogWarning("Search term was empty, returned null. Ensure correct ID in calling script.");
+            return null;
+        }
+        foreach (Upgrade upgrade in all)
+        {
+            if (upgrade.objectID.Contains(searchWord))
+            {
+                return upgrade;
+            }
+        }
+        Debug.LogWarning("No upgrade found with ID contianing this search term: " + searchWord);
+        return null;
+    }
+
+    public static int GetMax(string searchWord)
+    {
+        foreach (Upgrade upgrade in all)
+        {
+            if (upgrade.objectID.Contains(searchWord))
+            {
+                return upgrade.maxLevel;
+            }
+        }
+        return 10;
+    }
+}

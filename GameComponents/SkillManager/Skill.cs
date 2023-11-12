@@ -39,11 +39,21 @@ public static class Skills
 
     public static void DebugList()
     {
-        Debug.LogWarning("Items.DebugList() called");
+        Debug.LogWarning("Skills.DebugList() called");
 
         foreach (Skill skill in all)
         {
             Debug.Log($"Skill ID: {skill.objectID}\tSkill Name: {skill.name}");
+        }
+    }
+
+    public static void DebugAllSkills()
+    {
+        foreach (Skill skill in all)
+        {
+            skill.AddToPlayer(10);
+            skill.AddToPlayer(25);
+            skill.AddToPlayer(100);
         }
     }
 
