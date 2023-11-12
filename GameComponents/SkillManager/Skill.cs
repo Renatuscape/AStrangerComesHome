@@ -9,6 +9,8 @@ public enum SkillType
     Alchemy,
     Magic
 }
+
+[System.Serializable]
 public class Skill
 {
     public string objectID;

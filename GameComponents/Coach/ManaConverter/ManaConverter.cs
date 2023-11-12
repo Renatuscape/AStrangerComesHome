@@ -7,9 +7,9 @@ public class ManaConverter : MonoBehaviour
 {
     public TransientDataScript transientData;
 
-    public MotherObject manapool;
-    public MotherObject manaPassiveGeneration;
-    public MotherObject manaClickPotency;
+    public int manapool;
+    public int manaPassiveGeneration;
+    public int manaClickPotency;
 
     private void Awake()
     {
@@ -19,34 +19,31 @@ public class ManaConverter : MonoBehaviour
     }
     void Start()
     {
-        for (int i=0; i < transientData.objectIndex.Count; i++) //FIND THOSE SCRIPTABLE BOYS
-        {
-            if (transientData.objectIndex[i].name == "Manapool")
-            {
-                manapool = transientData.objectIndex[i];
-            }
-            if (transientData.objectIndex[i].name == "ManaPassiveGeneration")
-            {
-                manaPassiveGeneration = transientData.objectIndex[i];
-            }
-            if (transientData.objectIndex[i].name == "ManaClickPotency")
-            {
-                manaClickPotency = transientData.objectIndex[i];
-            }
-        }
-
         Invoke("PassiveManaRegeneration", 0);
     }
 
+    private void OnEnable()
+    {
+        SyncUpgrades();
+    }
+
+    void SyncUpgrades()
+    {
+        manaClickPotency = Player.GetCount("MAG000");
+        manaPassiveGeneration = Player.GetCount("MAG001");
+        manapool = Player.GetCount("MAG002");
+    }
     void UpdateManaPool()
     {
-        transientData.manapool = 100 + (manapool.dataValue * 30);
+        transientData.manapool = 100 + (manapool * 30);
     }
     
     void PassiveManaRegeneration()
     {
+        SyncUpgrades();
+
         //REGENERATION AMOUNT
-        var manaRecovery = 0.3f + (0.1f * manaPassiveGeneration.dataValue);
+        var manaRecovery = 0.3f + (0.1f * manaPassiveGeneration);
         UpdateManaPool();
 
 
@@ -63,7 +60,7 @@ public class ManaConverter : MonoBehaviour
         }
 
         //FREQUENCY
-        var regenFrequency = 0.2f - (0.01f * manaPassiveGeneration.dataValue);
+        var regenFrequency = 0.2f - (0.01f * manaPassiveGeneration);
         if (regenFrequency < 0.01f)
             regenFrequency = 0.01f;
 
@@ -74,7 +71,7 @@ public class ManaConverter : MonoBehaviour
     {
         if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu)
         {
-            var clickRecovery = 1 + (2 * manaClickPotency.dataValue) / 10;  //can be expressed as 0.2 * level, but wrong variable type. Allows for +3 at level 10
+            var clickRecovery = 1 + (2 * manaClickPotency) / 10;  //can be expressed as 0.2 * level, but wrong variable type. Allows for +3 at level 10
 
             if (transientData.currentMana < transientData.manapool)
             {

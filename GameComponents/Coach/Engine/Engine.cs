@@ -48,15 +48,15 @@ public class Engine : MonoBehaviour
 
     private void OnEnable()
     {
-        SyncSkills();
+        SyncUpgrades();
     }
 
-    void SyncSkills()
+    void SyncUpgrades()
     {
-        engineBoostEfficiency = Player.GetCount("");
-        engineFuelEfficiency = Player.GetCount("");
-        engineBoostMax = Player.GetCount("");
-        engineClickPotency = Player.GetCount("");
+        engineBoostEfficiency = Player.GetCount("MEC000"); //Capacitor - boost depletes slower
+        engineBoostMax = Player.GetCount("MEC001"); //Brass Chamber - more boost can be stored
+        engineClickPotency = Player.GetCount("MEC002"); //Crankshaft - click is more potent
+        engineFuelEfficiency = Player.GetCount("MEC003"); //Spark Tubes - engine uses less mana
     }
     void BoostDecrease()
     {
@@ -160,7 +160,7 @@ public class Engine : MonoBehaviour
             //KEY INPUT LISTENERS
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                SyncSkills();
+                SyncUpgrades();
 
                 if (transientData.engineState != EngineState.FirstGear)
                     transientData.engineState = EngineState.FirstGear;
@@ -176,7 +176,7 @@ public class Engine : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                SyncSkills();
+                SyncUpgrades();
 
                 if (transientData.engineState != EngineState.ThirdGear)
                     transientData.engineState = EngineState.ThirdGear;

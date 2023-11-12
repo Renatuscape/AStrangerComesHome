@@ -7,7 +7,7 @@ public class SalvageSpawner : MonoBehaviour
 {
     TransientDataScript transientData;
     public GameObject salvageBox;
-    public MotherObject fortune;
+    public int fortune;
 
     public int salvageRNG;
     public float waitingTime;
@@ -17,26 +17,20 @@ public class SalvageSpawner : MonoBehaviour
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
     }
 
-    void Start()
-    {
-        for (int i = 0; i < transientData.objectIndex.Count; i++) //FIND THOSE SCRIPTABLE BOYS
-        {
-            if (transientData.objectIndex[i].name == "Fortune")
-            {
-                fortune = transientData.objectIndex[i];
-                break;
-            }
-        }
-    }
-
     private void OnEnable()
     {
         Invoke("SpawnRoller", 2f);
     }
+
+    void SyncSkills()
+    {
+        fortune = Player.GetCount("ATT000");
+    }
     void SpawnRoller()
     {
-        var spawnDelay = 10f - (1.0f * fortune.dataValue);
-        var salvageChance = 60f + (fortune.dataValue * 2);
+        SyncSkills();
+        var spawnDelay = 10f - (1.0f * fortune);
+        var salvageChance = 60f + (fortune * 2);
 
         if (GameObject.Find("spawnedSalvage") == false)
         {
