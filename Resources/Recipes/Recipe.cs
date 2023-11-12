@@ -24,7 +24,7 @@ public class Recipe : MotherObject
     public void UpdatePrintName()
     {
         if (createsItem != null)
-            name = createsItem.printName;
+            name = createsItem.name;
         else
             Debug.Log(name + " recipe has a null reference in createsItem variable.");
     }
