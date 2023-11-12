@@ -280,7 +280,7 @@ public class DialogueManager : MonoBehaviour
 
             for (int index = 0; index < choice.deliveries.Count; index++)
             {
-                if (choice.deliveries[index].dataValue < choice.deliveriesAmount[index])
+                if (choice.deliveries[index].GetInventoryAmount() < choice.deliveriesAmount[index])
                 {
                     checkPassed = false;
                     break;
@@ -292,8 +292,8 @@ public class DialogueManager : MonoBehaviour
         {
             for (int index = 0; index < choice.deliveries.Count; index++)
             {
-                choice.deliveries[index].dataValue -= choice.deliveriesAmount[index];
-                PrintChoiceText($"{choice.deliveries[index].printName} ({choice.deliveriesAmount[index]}) removed from my inventory.");
+                choice.deliveries[index].AddToPlayer(choice.deliveriesAmount[index]);
+                PrintChoiceText($"{choice.deliveries[index].name} ({choice.deliveriesAmount[index]}) removed from my inventory.");
             }
         }
 
