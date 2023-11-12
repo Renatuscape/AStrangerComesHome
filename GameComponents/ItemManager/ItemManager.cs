@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
-using UnityEditor;
-using System;
-using UnityEngine.Rendering;
 
 public class ItemManager : MonoBehaviour
 {

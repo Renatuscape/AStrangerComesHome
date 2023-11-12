@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
-using UnityEditor;
 
 public class UpgradeManager : MonoBehaviour
 {

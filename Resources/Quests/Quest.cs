@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Quest", menuName = "Scriptable Object/Quest")]
-
 public class Quest : MotherObject
 {
     public bool excludeFromJournal;
@@ -26,7 +24,7 @@ public class Quest : MotherObject
     public bool monthlyValue; //quest value is set to reflect month (0 - 11)
     public bool yearlyValue; //quest value equals years played, unlocking new things 
 
-    public MonoScript questBehaviour; //Additional quest behaviour
+    //public MonoScript questBehaviour; //Additional quest behaviour
 
     public List<Dialogue> dialogues = new List<Dialogue>();
     // Add any other quest-related properties here

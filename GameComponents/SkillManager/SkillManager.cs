@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
-using UnityEditor;
-
 public class SkillManager : MonoBehaviour
 {
     public bool allObjecctsLoaded = false;

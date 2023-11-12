@@ -1,10 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Policy;
-using Unity.VisualScripting;
-using UnityEditor.Sprites;
-using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class Q_BotMe : QuestManager
 {
