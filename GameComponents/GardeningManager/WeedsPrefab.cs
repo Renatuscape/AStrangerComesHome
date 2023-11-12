@@ -10,7 +10,7 @@ public class WeedsPrefab : MonoBehaviour
     void Start()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-        weedsObject = Items.all.Find(x => x.objectID == weedsObject.objectID);
+        weedsObject = Items.FindByID("PLA000");
     }
 
     // Update is called once per frame
