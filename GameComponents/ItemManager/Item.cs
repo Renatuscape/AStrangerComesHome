@@ -59,6 +59,11 @@ public static class Items
 
     public static Item FindByID(string searchWord)
     {
+        if (string.IsNullOrWhiteSpace(searchWord))
+        {
+            Debug.LogWarning("Search term was empty, returned null. Ensure correct ID in calling script.");
+            return null;
+        }
         foreach (Item item in all)
         {
             if (item.objectID.Contains(searchWord))
@@ -66,6 +71,7 @@ public static class Items
                 return item;
             }
         }
+        Debug.LogWarning("No item found with ID contianing this search term: " + searchWord);
         return null;
     }
 
