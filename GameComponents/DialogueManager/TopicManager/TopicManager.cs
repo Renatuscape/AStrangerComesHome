@@ -100,9 +100,9 @@ public class TopicManager : MonoBehaviour
         {
             dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
 
-            if (topicMaster.dataValue > 0)
-                GetRegularTopics();
-            else
+            //if (topicMaster.bond > 0)
+            //    GetRegularTopics();
+            //else
                 GetGreetingTopic();
         }
 
@@ -127,7 +127,7 @@ public class TopicManager : MonoBehaviour
         if (characterTopics.Count == 0)
         {
             Debug.LogWarning("No greetning found for " + topicMaster);
-            topicMaster.dataValue++;
+            //topicMaster.bond++;
             FetchTopics();
         }
         else
@@ -152,14 +152,14 @@ public class TopicManager : MonoBehaviour
             var checkPassed = true;
             //ADD CHECKS FOR DAYS PASSED AND MOTHER OBJECT DATALEVELS HERE
 
-            if (topicMaster.dataValue < 1)
+            /*if (topicMaster.bond < 1)
             {
                 checkPassed = false;
             }
             if (dataManager.totalGameDays < q.daysPassedCheck)
             {
                 checkPassed = false;
-            }
+            }*/
 
             if (q.checkLessThan.Count > 0)
             {

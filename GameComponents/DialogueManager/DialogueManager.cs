@@ -35,8 +35,8 @@ public class DialogueManager : MonoBehaviour
 
     private void OnEnable()
     {
-        playerObject.printName = dataManager.playerName;
-        playerObject.nameColour = ColorUtility.TryParseHtmlString("#" + dataManager.playerNameColour, out Color color) ? color : new Color(0.6549f, 0.2196f, 0.498f);
+        playerObject.name = dataManager.playerName;
+        //playerObject.nameColour = ColorUtility.TryParseHtmlString("#" + dataManager.playerNameColour, out Color color) ? color : new Color(0.6549f, 0.2196f, 0.498f);
         playerObject.NameSetup();
     }
     private void OnDisable()
@@ -305,15 +305,15 @@ public class DialogueManager : MonoBehaviour
                 {
                     choice.rewards[index].dataValue += choice.rewardsAmount[index];
 
-                    if (choice.rewards[index] is Character)
+                    /*if (choice.rewards[index] is Character)
                     {
                         PrintChoiceText($"Increased {choice.rewards[index].printName}'s disposition +{choice.rewardsAmount[index]}.");
                     }
-                    /*else if (choice.rewards[index] is Skill)
+                    else if (choice.rewards[index] is Skill)
                     {
                         PrintChoiceText($"{choice.rewards[index].printName} skill +{choice.rewardsAmount[index]}!");
                     }*/
-                    else if (choice.rewards[index] is Recipe)
+                    if (choice.rewards[index] is Recipe)
                     {
                         PrintChoiceText($"Learned recipe for {choice.rewards[index].printName}.");
                     }
@@ -327,15 +327,15 @@ public class DialogueManager : MonoBehaviour
 
                     if (newReward > 0)
                     {
-                        if (choice.rewards[index] is Character)
+                        /*if (choice.rewards[index] is Character)
                         {
                             PrintChoiceText($"{choice.rewards[index].printName}'s disposition +{newReward}.\nMy bond with {choice.rewards[index].printName} feels deep.");
                         }
-                        /*else if (choice.rewards[index] is Skill)
+                        else if (choice.rewards[index] is Skill)
                         {
                             PrintChoiceText($"{choice.rewards[index].printName} skill increase +{newReward}.\nI have mastered {choice.rewards[index].printName}!");
                         }*/
-                        else if (choice.rewards[index] is Recipe)
+                         if (choice.rewards[index] is Recipe)
                         {
                             PrintChoiceText($"My understanding of the {choice.rewards[index].printName} recipe is complete.");
                         }
@@ -344,15 +344,15 @@ public class DialogueManager : MonoBehaviour
                     }
                     else
                     {
-                        if (choice.rewards[index] is Character)
+                        /*if (choice.rewards[index] is Character)
                         {
                             PrintChoiceText($"My bond with {choice.rewards[index].printName} feels deep.");
                         }
-                        /*else if (choice.rewards[index] is Skill)
+                        else if (choice.rewards[index] is Skill)
                         {
                             PrintChoiceText($"I was unable to learn anything new about {choice.rewards[index].printName}. I have mastered this skill!");
                         }*/
-                        else if (choice.rewards[index] is Recipe)
+                         if (choice.rewards[index] is Recipe)
                         {
                             PrintChoiceText($"My understanding of the {choice.rewards[index].printName} recipe is complete.");
                         }
