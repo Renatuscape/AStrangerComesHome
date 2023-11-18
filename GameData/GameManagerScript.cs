@@ -83,18 +83,10 @@ public class GameManagerScript : MonoBehaviour
         transientData.objectIndex.Clear();
         transientData.objectIndex.AddRange(allObjects);
 
-        foreach (MotherObject obj in allObjects)
+        foreach (Character character in Characters.all)
         {
-            if (obj is Character)
-            {
-                Character character = (Character)obj;
-                character.NameSetup();
-            }
-
-            if (!dataManager.playerItems.ContainsKey(obj.name))
-            {
-                dataManager.playerItems.Add(obj.name, obj.dataValue);
-            }
+            character.NameSetup();
+            Debug.Log("Move character name setup away from game manager.");
         }
     }
 
