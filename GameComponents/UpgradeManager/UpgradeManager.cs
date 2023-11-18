@@ -22,7 +22,7 @@ public class UpgradeManager : MonoBehaviour
 
     public void LoadFromJson(string fileName)
     {
-        string jsonPath = Application.dataPath + "/JsonData/Upgrades/" + fileName;
+        string jsonPath = Application.streamingAssetsPath + "/JsonData/Upgrades/" + fileName;
 
         if (File.Exists(jsonPath))
         {
@@ -106,7 +106,7 @@ public class UpgradeManager : MonoBehaviour
 
     public static Texture2D ImageFinder(ref string objectID)
     {
-        string fileDirectory = Application.dataPath + "/Sprites/Upgrades/";
+        string fileDirectory = Application.streamingAssetsPath + "/Sprites/Upgrades/";
         string filePath = fileDirectory + objectID.Substring(0, 6) + ".png";
         Texture2D imageTexture;
 

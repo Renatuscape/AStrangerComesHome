@@ -21,7 +21,7 @@ public class SkillManager : MonoBehaviour
 
     public void LoadFromJson(string fileName)
     {
-        string jsonPath = Application.dataPath + "/JsonData/Skills/" + fileName;
+        string jsonPath = Application.streamingAssetsPath + "/JsonData/Skills/" + fileName;
 
         if (File.Exists(jsonPath))
         {
@@ -113,7 +113,7 @@ public class SkillManager : MonoBehaviour
 
     public static Texture2D ImageFinder(ref string objectID)
     {
-        string fileDirectory = Application.dataPath + "/Sprites/Skills/";
+        string fileDirectory = Application.streamingAssetsPath + "/Sprites/Skills/";
         string filePath = fileDirectory + objectID.Substring(0, 6) + ".png";
         Texture2D imageTexture;
 
