@@ -17,21 +17,30 @@ public class CameraController : MonoBehaviour
     public GameObject camTargetGarden; //Garden
     public List<GameObject> camTargetsList;
     public int camIndex;
-    public float cameraMovementSpeed = 0.5f;
+    public float cameraMovementSpeed = 0.2f;
+
     void Start()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         camTransform = vCam.gameObject.transform;
-        
+
         camTargetsList.Add(camTarget1);
         camTargetsList.Add(camTarget2);
         camTargetsList.Add(camTarget3);
 
         targetTransform = camTarget2.transform;
+
+    }
+    private void Update()
+    {
+        HandleCameraView();
+    }
+    void FixedUpdate()
+    {
+        HandleCameraMovement();
     }
 
-    // Update is called once per frame
-    void Update()
+    void HandleCameraView()
     {
         if (transientData.cameraView == CameraView.Normal && (vCam.m_Lens.OrthographicSize != 7 || camTransform.position.x != 0))
             CameraNormal();
@@ -66,7 +75,7 @@ public class CameraController : MonoBehaviour
                     transientData.cameraView = CameraView.Pet;
 
 
-                if (Input.GetKeyDown(KeyCode.RightArrow)|| Input.GetKeyDown(KeyCode.D))
+                if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
                 {
                     if (targetTransform == camTargetX.transform)
                         camIndex = 0;
@@ -86,7 +95,7 @@ public class CameraController : MonoBehaviour
                     targetTransform = camTargetsList[camIndex].transform;
                 }
 
-                else if (Input.GetKeyDown(KeyCode.LeftArrow)|| Input.GetKeyDown(KeyCode.A))
+                else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
                 {
                     if (targetTransform == camTargetGarden.transform)
                     {
@@ -111,29 +120,39 @@ public class CameraController : MonoBehaviour
                     targetTransform = camTargetX.transform;
                 }
 
-                if (vCam.gameObject.transform.position != camTargetsList[camIndex].transform.position)
+                /*if (vCam.gameObject.transform.position != camTargetsList[camIndex].transform.position)
                 {
                     var camPosition = camTransform.position;
                     var targetPosition = targetTransform.transform.position;
                     var step = cameraMovementSpeed * Vector3.Distance(camPosition, targetPosition); //cushions movement
                     camTransform.position = Vector3.MoveTowards(camPosition, new Vector3(targetPosition.x, targetPosition.y, camPosition.z), step);
-                }
+                }*/
             }
         }
-
-        void CameraClose()
+    }
+    void HandleCameraMovement()
+    {
+        if (vCam.gameObject.transform.position != camTargetsList[camIndex].transform.position)
         {
-            transientData.cameraView = CameraView.Cockpit;
-            camIndex = 1;
-            vCam.m_Lens.OrthographicSize = 2;
-            camTransform.position = new Vector3(camTargetsList[camIndex].transform.position.x, camTargetsList[camIndex].transform.position.y, vCam.gameObject.transform.position.z);
+            var camPosition = camTransform.position;
+            var targetPosition = targetTransform.transform.position;
+            var step = cameraMovementSpeed * Vector3.Distance(camPosition, targetPosition); //cushions movement
+            camTransform.position = Vector3.MoveTowards(camPosition, new Vector3(targetPosition.x, targetPosition.y, camPosition.z), step);
         }
+    }
 
-        void CameraNormal()
-        {
-            transientData.cameraView = CameraView.Normal;
-            vCam.m_Lens.OrthographicSize = 7;
-            camTransform.position = new Vector3(0, 0, vCam.gameObject.transform.position.z);
-        }
+    void CameraClose()
+    {
+        transientData.cameraView = CameraView.Cockpit;
+        camIndex = 1;
+        vCam.m_Lens.OrthographicSize = 2;
+        camTransform.position = new Vector3(camTargetsList[camIndex].transform.position.x, camTargetsList[camIndex].transform.position.y, vCam.gameObject.transform.position.z);
+    }
+
+    void CameraNormal()
+    {
+        transientData.cameraView = CameraView.Normal;
+        vCam.m_Lens.OrthographicSize = 7;
+        camTransform.position = new Vector3(0, 0, vCam.gameObject.transform.position.z);
     }
 }
