@@ -14,36 +14,41 @@ public class CreatureAnimator : MonoBehaviour
     float timeLeft = 0.2f;
     int frame = 0;
 
-    void Update()
+    void LateUpdate()
     {
         timeLeft -= Time.deltaTime;
         if (timeLeft < 0)
         {
             //RUN
-            if (transientData.currentSpeed > 6)
+            if (transientData.currentSpeed > 3)
             {
                 timePerFrame = 0.05f;
                 Animator(runSprites);
             }
-            else if (transientData.currentSpeed > 4.5f)
+            else if (transientData.currentSpeed > 2.5f)
             {
                 timePerFrame = 0.07f;
                 Animator(runSprites);
             }
-            else if (transientData.currentSpeed > 3)
+            else if (transientData.currentSpeed > 1.5f)
             {
                 timePerFrame = 0.1f;
                 Animator(runSprites);
             }
             //WALK
-            else if (transientData.currentSpeed > 2)
+            else if (transientData.currentSpeed > 1f)
             {
                 timePerFrame = 0.07f;
                 Animator(walkSprites);
             }
-            else if (transientData.currentSpeed > 0)
+            else if (transientData.currentSpeed > 0.5)
             {
                 timePerFrame = 0.1f;
+                Animator(walkSprites);
+            }
+            else if (transientData.currentSpeed > 0)
+            {
+                timePerFrame = 0.15f;
                 Animator(walkSprites);
             }
             //REVERSE
