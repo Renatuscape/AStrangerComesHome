@@ -240,6 +240,7 @@ public class ShopMenu : MonoBehaviour
                 SpawnShopItems(pageIndex);
             }
 
+            /*
             //SPAWN A SPECIAL ITEMS
             if (shopObject.specialItemA != null)
             {
@@ -276,7 +277,7 @@ public class ShopMenu : MonoBehaviour
                 objPrefab.transform.SetParent(specialShelfD.transform, false);
                 objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
                 objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemD, this);
-            }
+            }*/
         }
     }
 

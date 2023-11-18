@@ -7,7 +7,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Shop", menuName = "Scriptable Object/Shop")]
 public class Shop : ScriptableObject
 {
-    private TransientDataScript transientData; 
     public string shopName;
     public GameObject externalPrefab; //WORLD OBJECT
     public GameObject internalPrefab; //CANVAS OBJECT
@@ -45,8 +44,7 @@ public class Shop : ScriptableObject
 
     public void SetupShop()
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-        shopKeeper.NameSetup();
+        //shopKeeper.NameSetup();
         shopInventory.Clear();
         
         foreach (Item item in Items.all)

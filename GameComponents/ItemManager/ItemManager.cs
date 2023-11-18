@@ -31,7 +31,7 @@ public class ItemManager : MonoBehaviour
 
     public void LoadFromJson(string fileName)
     {
-        string jsonPath = Application.dataPath + "/JsonData/Items/" + fileName;
+        string jsonPath = Application.streamingAssetsPath + "/JsonData/Items/" + fileName;
 
         if (File.Exists(jsonPath))
         {
@@ -200,7 +200,7 @@ public class ItemManager : MonoBehaviour
 
         Sprite FindSprite(int frame, string objectID)
         {
-            string fileDirectory = Application.dataPath + "/Sprites/Items/Sprouts/";
+            string fileDirectory = Application.streamingAssetsPath + "/Sprites/Items/Sprouts/";
             string filePath = fileDirectory + objectID.Substring(0, 6) + $"-{frame}.png";
             Texture2D texture;
 
@@ -227,7 +227,7 @@ public class ItemManager : MonoBehaviour
 
     public static Texture2D ImageFinder (ref string objectID)
     {
-        string fileDirectory = Application.dataPath + "/Sprites/Items/";
+        string fileDirectory = Application.streamingAssetsPath + "/Sprites/Items/";
         string filePath = fileDirectory + objectID.Substring(0, 6) + ".png";
         Texture2D imageTexture;
 
