@@ -13,7 +13,7 @@ public class Engine : MonoBehaviour
     public int engineBoostMax;
     public int engineClickPotency;
 
-    float baseSpeed = 2f;
+    float baseSpeed = 0.5f;
     float baseFuelConsumption = 0.01f;
 
     float secondGearMultiplier = 2f;
