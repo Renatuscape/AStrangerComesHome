@@ -55,7 +55,7 @@ public class ItemManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("Items array is null in JSON data. Check that the list has a wrapper with the \'items\' tag.");
+                    Debug.LogError("Items array is null in JSON data. Check that the list has a wrapper with the \'items\' tag and that the object class is serializable.");
                 }
             }
             else

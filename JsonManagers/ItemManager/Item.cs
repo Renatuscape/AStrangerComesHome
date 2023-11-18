@@ -72,7 +72,7 @@ public static class Items
     {
         if (string.IsNullOrWhiteSpace(searchWord))
         {
-            Debug.LogWarning("Search term was empty, returned null. Ensure correct ID in calling script.");
+            Debug.LogWarning($"Search term was null or white-space. Returned null. Ensure correct ID in calling script.");
             return null;
         }
         foreach (Item item in all)
@@ -82,7 +82,7 @@ public static class Items
                 return item;
             }
         }
-        Debug.LogWarning("No item found with ID contianing this search term: " + searchWord);
+        Debug.LogWarning("No item found with ID containing this search term: " + searchWord);
         return null;
     }
 
