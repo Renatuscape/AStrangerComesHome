@@ -33,7 +33,7 @@ public class GameManagerScript : MonoBehaviour
 
     void Awake()
     {
-        Application.targetFrameRate = 60;
+        //Application.targetFrameRate = 60;
 
         transientData.ChangeGameState(name, gameObject, GameState.Loading);
         //transientData.gameState = GameState.Loading;
