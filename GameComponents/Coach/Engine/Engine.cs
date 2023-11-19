@@ -16,9 +16,9 @@ public class Engine : MonoBehaviour
     float baseSpeed = 0.5f;
     float baseFuelConsumption = 0.01f;
 
-    float secondGearMultiplier = 2f;
-    float thirdGearMultiplier = 3f;
-    float reverseMultiplier = 0.4f;
+    float secondGearMultiplier = 2.5f;
+    float thirdGearMultiplier = 3.5f;
+    float reverseMultiplier = 0.8f;
 
     float speedDecreaseRate = 0.03f; //Cushion speed decrease
     float speedIncreaseRate = 0.015f; //Rate at which speed is increased when changing gear
