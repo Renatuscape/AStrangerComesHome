@@ -9,6 +9,7 @@ public class CoachLights : MonoBehaviour
     public DataManagerScript dataManager;
     public GameObject lanternA;
     public GameObject lanternB;
+    public GameObject lanternC;
     public bool isOff = false;
 
     void Start()
@@ -25,6 +26,7 @@ public class CoachLights : MonoBehaviour
             {
                 StartCoroutine(FlickerOff(lanternA.GetComponent<Light2D>()));
                 StartCoroutine(FlickerOff(lanternB.GetComponent<Light2D>()));
+                StartCoroutine(FlickerOff(lanternC.GetComponent<Light2D>()));
                 isOff = true;
             }
         }
@@ -34,6 +36,7 @@ public class CoachLights : MonoBehaviour
             {
                 StartCoroutine(FlickerOn(lanternA.GetComponent<Light2D>()));
                 StartCoroutine(FlickerOn(lanternB.GetComponent<Light2D>()));
+                StartCoroutine(FlickerOn(lanternC.GetComponent<Light2D>()));
                 isOff = false;
             }
         }
