@@ -7,6 +7,8 @@ using UnityEngine;
 public class TransientDataScript : MonoBehaviour
 {
     public GameState gameState;
+    public static GameState GameState { get; private set; }
+
     public Language language;
     public List<MotherObject> objectIndex;
     public List<Item> itemCodex;
@@ -16,7 +18,8 @@ public class TransientDataScript : MonoBehaviour
     public string gameStateLog = "Game State Changes";
 
     //CAMERA
-    public CameraView cameraView;
+    //public CameraView cameraView;
+    public static CameraView CameraView { get; private set; }
 
     //UI FUNCTIONS
     public PushAlertManager pushAlertManager;
@@ -89,6 +92,7 @@ public class TransientDataScript : MonoBehaviour
     {
         gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + gameState + " to " + newState + ".";
         gameState = newState;
+        GameState = newState;
     }
 
     //ITEM METHODS
@@ -104,5 +108,20 @@ public class TransientDataScript : MonoBehaviour
 
         Debug.Log("No item ID found containing " + searchID);
         return new Item();
+    }
+
+    //NEW STATIC METHODS
+    public static GameState GetGameState()
+    {
+        return GameState;
+    }
+
+    public static CameraView GetCameraView()
+    {
+        return CameraView;
+    }
+    public static void SetCameraView(CameraView view)
+    {
+        CameraView = view;
     }
 }
