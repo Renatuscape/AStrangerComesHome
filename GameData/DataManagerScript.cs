@@ -1,4 +1,5 @@
 using SaveLoadSystem;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -14,12 +15,17 @@ public class DataManagerScript : MonoBehaviour
 
     public string playerNameColour;
     public int playerGold;
-    public SerializableDictionary<string, int> playerItems = Player.items;
-    public SerializableDictionary<string, int> playerSkills = Player.skills;
-    public SerializableDictionary<string, int> playerUpgrades = Player.upgrades;
+    //public SerializableDictionary<string, int> playerItems = Player.items;
+    //public SerializableDictionary<string, int> playerSkills = Player.skills;
+    //public SerializableDictionary<string, int> playerUpgrades = Player.upgrades;
+    //public SerializableDictionary<string, int> playerQuests = Player.quests;
+    //public SerializableDictionary<string, int> playerFriendships = Player.friendships;
+
+    public List<IdIntPair> inventoryList = Player.inventoryList;
 
     //GAME SETTINGS
     public float autoPlaySpeed;
+    public bool alwaysHideCoachExterior;
 
     //PLAYER SPRITE
     public int hairIndex;
