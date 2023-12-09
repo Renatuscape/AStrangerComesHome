@@ -10,8 +10,8 @@ public class TransientDataScript : MonoBehaviour
     public static GameState GameState { get; private set; }
 
     public Language language;
-    public List<MotherObject> objectIndex;
-    public List<Item> itemCodex;
+    //public List<MotherObject> objectIndex;
+    //public List<Item> itemCodex;
     public List<GameObject> activePrefabs;
 
     [TextArea(20, 100)]
