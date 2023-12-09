@@ -91,19 +91,18 @@ public class TransientDataScript : MonoBehaviour
         CameraView = view;
     }
 
-    public static void SetGameState(GameState newState, string callerScript = "None", GameObject callerObject = null)
+    public static void SetGameState(GameState newState, string callerScript, GameObject callerObject)
     {
         LogStateChange(callerScript, callerObject, newState);
         GameState = newState;
     }
-    static void LogStateChange(string callerScript, GameObject callerObject, GameState newState)
-    {
-        Debug.Log("\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + GameState + " to " + newState + ".");
-    }
-
-    public static void ReturnToOverWorld(string name = "None", GameObject gameObject = null)
+    public static void ReturnToOverWorld(string name, GameObject gameObject)
     {
         SetGameState(GameState.Overworld, name, gameObject);
+    }
+    static void LogStateChange(string callerScript, GameObject callerObject, GameState newState)
+    {
+        GameObject.Find("TransientData").GetComponent<TransientDataScript>().gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + GameState + " to " + newState + ".";
     }
 
 }

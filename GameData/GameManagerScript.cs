@@ -96,8 +96,6 @@ public class GameManagerScript : MonoBehaviour
         }
 
         TransientDataScript.SetGameState(GameState.MainMenu, name, gameObject);
-        //transientData.gameState = GameState.MainMenu;
-        //Debug.Log(name + " changed GameState to " + GameState.MainMenu);
         menuUIManagerComponent.SetActive(true);
         mainMenuComponent.SetActive(true);
     }
@@ -135,9 +133,7 @@ public class GameManagerScript : MonoBehaviour
 
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
-        //transientData.gameState = GameState.NewGameMenu;
         characterCreatorComponent.SetActive(true);
-        //Debug.Log(name + " changed GameState to " + GameState.NewGameMenu);
     }
 
     public void LoadGameComponents()

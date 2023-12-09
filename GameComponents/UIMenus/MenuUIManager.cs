@@ -46,7 +46,7 @@ public class MenuUIManager : MonoBehaviour
             {
                 if (TransientDataScript.GameState == GameState.JournalMenu)
                 {
-                    TransientDataScript.SetGameState(GameState.Overworld);
+                    TransientDataScript.SetGameState(GameState.Overworld, "Menu UI Manager", gameObject);
                     Debug.Log(name + " changed GameState to " + GameState.Overworld);
                 }
                 else if (TransientDataScript.GameState == GameState.Overworld)
