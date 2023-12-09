@@ -35,6 +35,7 @@ public class DialogueManager : MonoBehaviour
 
     private void OnEnable()
     {
+        playerObject = Characters.FindByID("ARC000-NNN");
         playerObject.name = dataManager.playerName;
         //playerObject.nameColour = ColorUtility.TryParseHtmlString("#" + dataManager.playerNameColour, out Color color) ? color : new Color(0.6549f, 0.2196f, 0.498f);
         playerObject.NameSetup();
@@ -54,16 +55,16 @@ public class DialogueManager : MonoBehaviour
 
     public void SkipToChoice()
     {
-        if (quest.dataValue < quest.dialogues.Count) //only skip when there is dialogue
-        {
-            for (int i = dialogueIndex; i < quest.dialogues[quest.dataValue].content.Count; i++)
-            {
-                DestroyChoices();
-                PrintDialogue();
-            }
-        }
-        else
-            Debug.LogWarning("There is no dialogue to be skipped.");
+        //if (quest.dataValue < quest.dialogues.Count) //only skip when there is dialogue
+        //{
+        //    for (int i = dialogueIndex; i < quest.dialogues[quest.dataValue].content.Count; i++)
+        //    {
+        //        DestroyChoices();
+        //        PrintDialogue();
+        //    }
+        //}
+        //else
+        //    Debug.LogWarning("There is no dialogue to be skipped.");
     }
 
     public void AutoPlay()
@@ -72,39 +73,40 @@ public class DialogueManager : MonoBehaviour
     }
     IEnumerator AutoPlayDelayer()
     {
-        if (quest.dataValue < quest.dialogues.Count) //only skip when there is dialogue
-        {
-            if (isAutoPlaying == true)
-            {
-                if (autoPlaySpeed > 0.2f)
-                    autoPlaySpeed -= 0.3f; //if autoplay is already running, increase autoplay speed
-            }
-            else
-            {
-                isAutoPlaying = true;
-                autoPlaySpeed = dataManager.autoPlaySpeed; //replace with a setting variable from dataManager
+        yield return new WaitForSeconds(1);
+        //if (quest.dataValue < quest.dialogues.Count) //only skip when there is dialogue
+        //{
+        //    if (isAutoPlaying == true)
+        //    {
+        //        if (autoPlaySpeed > 0.2f)
+        //            autoPlaySpeed -= 0.3f; //if autoplay is already running, increase autoplay speed
+        //    }
+        //    else
+        //    {
+        //        isAutoPlaying = true;
+        //        autoPlaySpeed = dataManager.autoPlaySpeed; //replace with a setting variable from dataManager
 
-                if (dialogueIndex < quest.dialogues[quest.dataValue].content.Count-1)
-                {
-                    for (int i = dialogueIndex; i < quest.dialogues[quest.dataValue].content.Count; i++)
-                    {
-                        DestroyChoices();
-                        PrintDialogue();
-                        yield return new WaitForSeconds(autoPlaySpeed);
+        //        if (dialogueIndex < quest.dialogues[quest.dataValue].content.Count-1)
+        //        {
+        //            for (int i = dialogueIndex; i < quest.dialogues[quest.dataValue].content.Count; i++)
+        //            {
+        //                DestroyChoices();
+        //                PrintDialogue();
+        //                yield return new WaitForSeconds(autoPlaySpeed);
 
-                        // Check if the dialogueIndex is still within the valid range
-                        if (dialogueIndex >= quest.dialogues[quest.dataValue].content.Count - 1)
-                        {
-                            break; // Exit the loop if the index is out of range
-                        }
-                    }
-                }
+        //                // Check if the dialogueIndex is still within the valid range
+        //                if (dialogueIndex >= quest.dialogues[quest.dataValue].content.Count - 1)
+        //                {
+        //                    break; // Exit the loop if the index is out of range
+        //                }
+        //            }
+        //        }
 
-                isAutoPlaying = false;
-            }
-        }
-        else
-            Debug.LogWarning("There is no dialogue to autoplay.");
+        //        isAutoPlaying = false;
+        //    }
+        //}
+        //else
+        //    Debug.LogWarning("There is no dialogue to autoplay.");
     }
     public void DestroyChoices() //Button function, must be public
     {
@@ -172,70 +174,70 @@ public class DialogueManager : MonoBehaviour
     }
     public void PrintDialogue()
     {
-        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+    //    dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
 
-        var dialogue = quest.dialogues[quest.dataValue]; //if out of range errors point here, make sure choice isn't set to a type of 'continue' when the next stage has no dialogue
+    //    var dialogue = quest.dialogues[quest.dataValue]; //if out of range errors point here, make sure choice isn't set to a type of 'continue' when the next stage has no dialogue
 
-        if (dialogueIndex >= 0 && dialogueIndex < dialogue.content.Count)
-        {
-            var speaker = dialogue.topicMaster;
-            var content = dialogue.content[dialogueIndex];
+    //    if (dialogueIndex >= 0 && dialogueIndex < dialogue.content.Count)
+    //    {
+    //        var speaker = dialogue.topicMaster;
+    //        var content = dialogue.content[dialogueIndex];
 
-            if (dialogue.speakers.Count > 0 && dialogueIndex < dialogue.speakers.Count) //if the list of speakers is not populated, default to topic master
-            {
-                speaker = dialogue.speakers[dialogueIndex];
-            }
+    //        if (dialogue.speakers.Count > 0 && dialogueIndex < dialogue.speakers.Count) //if the list of speakers is not populated, default to topic master
+    //        {
+    //            speaker = dialogue.speakers[dialogueIndex];
+    //        }
 
-            //Debug.Log(content);
+    //        //Debug.Log(content);
 
-            //PRINT NAME
-            if (speaker != previousSpeaker)
-            {
-                PrintSpeakerName(speaker);
-            }
-            previousSpeaker = speaker;
+    //        //PRINT NAME
+    //        if (speaker != previousSpeaker)
+    //        {
+    //            PrintSpeakerName(speaker);
+    //        }
+    //        previousSpeaker = speaker;
 
-            PrintContent(content);
+    //        PrintContent(content);
 
-            dialogueIndex++;
-        }
+    //        dialogueIndex++;
+    //    }
 
-        if (dialogueIndex < dialogue.content.Count)
-        {
-            PrintContinueButton();
-        }
+    //    if (dialogueIndex < dialogue.content.Count)
+    //    {
+    //        PrintContinueButton();
+    //    }
 
-        if (dialogueIndex == dialogue.content.Count) //index is higher than the amount of strings. Print choices
-        {
-            //PRINT CHOICES
-            if (dialogue.choices.Count > 0)
-            {
-                //Debug.Log("Choices detected.");
-                foreach (Choice c in dialogue.choices)
-                {
-                    if (c != null)
-                    {
-                        var choice = Instantiate(choicePrefab);
-                        choice.transform.SetParent(dialogueContainer.transform, false);
-                        choice.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = c.choiceText;
-                        printedDialogue.Add(choice);
+    //    if (dialogueIndex == dialogue.content.Count) //index is higher than the amount of strings. Print choices
+    //    {
+    //        //PRINT CHOICES
+    //        if (dialogue.choices.Count > 0)
+    //        {
+    //            //Debug.Log("Choices detected.");
+    //            foreach (Choice c in dialogue.choices)
+    //            {
+    //                if (c != null)
+    //                {
+    //                    var choice = Instantiate(choicePrefab);
+    //                    choice.transform.SetParent(dialogueContainer.transform, false);
+    //                    choice.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = c.choiceText;
+    //                    printedDialogue.Add(choice);
 
-                        var btnChoice = choice.GetComponent<Button>();
-                        btnChoice.interactable = false; //add a slight delay to the button availability
-                        btnChoice.onClick.AddListener(DestroyChoices);
-                        btnChoice.onClick.AddListener(() => PrintChoiceText(c.choiceText));
-                        btnChoice.onClick.AddListener(() => ChoiceChecker(c));
-                        StartCoroutine(ButtonActivator(btnChoice));
-                    }
-                    else
-                        Debug.Log("Choice " + c + " in " + dialogue + " is null. Check list of choices.");
-                }
-            }
-            if (!dialogue.noLeaveButton)
-                PrintLeaveButton();
-        }
-        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-        Canvas.ForceUpdateCanvases();
+    //                    var btnChoice = choice.GetComponent<Button>();
+    //                    btnChoice.interactable = false; //add a slight delay to the button availability
+    //                    btnChoice.onClick.AddListener(DestroyChoices);
+    //                    btnChoice.onClick.AddListener(() => PrintChoiceText(c.choiceText));
+    //                    btnChoice.onClick.AddListener(() => ChoiceChecker(c));
+    //                    StartCoroutine(ButtonActivator(btnChoice));
+    //                }
+    //                else
+    //                    Debug.Log("Choice " + c + " in " + dialogue + " is null. Check list of choices.");
+    //            }
+    //        }
+    //        if (!dialogue.noLeaveButton)
+    //            PrintLeaveButton();
+    //    }
+    //    dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+    //    Canvas.ForceUpdateCanvases();
     }
 
     public IEnumerator ButtonActivator (Button btn)
@@ -245,182 +247,183 @@ public class DialogueManager : MonoBehaviour
     }
     public void ChoiceChecker(Choice choice)
     {
-        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+        
+        //dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
 
-        var hasDelivery = false;
-        var checkPassed = true;
+        //var hasDelivery = false;
+        //var checkPassed = true;
 
-        if (choice.moreThanObject.Count > 0)
-        {
-            for (int index = 0; index < choice.moreThanObject.Count; index++)
-            {
-                if (choice.moreThanObject[index].dataValue < choice.moreThanValue[index])
-                {
-                    checkPassed = false;
-                    break;
-                }
-            }
-        }
+        //if (choice.moreThanObject.Count > 0)
+        //{
+        //    for (int index = 0; index < choice.moreThanObject.Count; index++)
+        //    {
+        //        if (choice.moreThanObject[index].dataValue < choice.moreThanValue[index])
+        //        {
+        //            checkPassed = false;
+        //            break;
+        //        }
+        //    }
+        //}
 
-        if (choice.lessThanObject.Count > 0)
-        {
-            for (int index = 0; index < choice.lessThanObject.Count; index++)
-            {
-                if (choice.lessThanObject[index].dataValue > choice.lessThanValue[index])
-                {
-                    checkPassed = false;
-                    break;
-                }
-            }
-        }
+        //if (choice.lessThanObject.Count > 0)
+        //{
+        //    for (int index = 0; index < choice.lessThanObject.Count; index++)
+        //    {
+        //        if (choice.lessThanObject[index].dataValue > choice.lessThanValue[index])
+        //        {
+        //            checkPassed = false;
+        //            break;
+        //        }
+        //    }
+        //}
 
-        if (choice.deliveries.Count > 0)
-        {
-            hasDelivery = true;
+        //if (choice.deliveries.Count > 0)
+        //{
+        //    hasDelivery = true;
 
-            for (int index = 0; index < choice.deliveries.Count; index++)
-            {
-                if (choice.deliveries[index].GetCountPlayer() < choice.deliveriesAmount[index])
-                {
-                    checkPassed = false;
-                    break;
-                } 
-            }
-        }
+        //    for (int index = 0; index < choice.deliveries.Count; index++)
+        //    {
+        //        if (choice.deliveries[index].GetCountPlayer() < choice.deliveriesAmount[index])
+        //        {
+        //            checkPassed = false;
+        //            break;
+        //        } 
+        //    }
+        //}
 
-        if (hasDelivery && checkPassed)
-        {
-            for (int index = 0; index < choice.deliveries.Count; index++)
-            {
-                choice.deliveries[index].AddToPlayer(choice.deliveriesAmount[index]);
-                PrintChoiceText($"{choice.deliveries[index].name} ({choice.deliveriesAmount[index]}) removed from my inventory.");
-            }
-        }
+        //if (hasDelivery && checkPassed)
+        //{
+        //    for (int index = 0; index < choice.deliveries.Count; index++)
+        //    {
+        //        choice.deliveries[index].AddToPlayer(choice.deliveriesAmount[index]);
+        //        PrintChoiceText($"{choice.deliveries[index].name} ({choice.deliveriesAmount[index]}) removed from my inventory.");
+        //    }
+        //}
 
-        if (choice.rewards.Count > 0 && checkPassed)
-        {
-            for (int index = 0; index < choice.rewards.Count; index++)
-            {
-                if (choice.rewards[index].dataValue + choice.rewardsAmount[index] < choice.rewards[index].maxValue)
-                {
-                    choice.rewards[index].dataValue += choice.rewardsAmount[index];
+        //if (choice.rewards.Count > 0 && checkPassed)
+        //{
+        //    for (int index = 0; index < choice.rewards.Count; index++)
+        //    {
+        //        if (choice.rewards[index].dataValue + choice.rewardsAmount[index] < choice.rewards[index].maxValue)
+        //        {
+        //            choice.rewards[index].dataValue += choice.rewardsAmount[index];
 
-                    /*if (choice.rewards[index] is Character)
-                    {
-                        PrintChoiceText($"Increased {choice.rewards[index].printName}'s disposition +{choice.rewardsAmount[index]}.");
-                    }
-                    else if (choice.rewards[index] is Skill)
-                    {
-                        PrintChoiceText($"{choice.rewards[index].printName} skill +{choice.rewardsAmount[index]}!");
-                    }*/
-                    if (choice.rewards[index] is Recipe)
-                    {
-                        PrintChoiceText($"Learned recipe for {choice.rewards[index].printName}.");
-                    }
-                    else
-                        PrintChoiceText($"Gained {choice.rewards[index].printName} +{choice.rewardsAmount[index]}.");
-                }
-                else
-                {
-                    var rewardDecrease = choice.rewards[index].dataValue + choice.rewardsAmount[index] - choice.rewards[index].maxValue;
-                    var newReward = choice.rewards[index].dataValue - rewardDecrease;
+        //            /*if (choice.rewards[index] is Character)
+        //            {
+        //                PrintChoiceText($"Increased {choice.rewards[index].printName}'s disposition +{choice.rewardsAmount[index]}.");
+        //            }
+        //            else if (choice.rewards[index] is Skill)
+        //            {
+        //                PrintChoiceText($"{choice.rewards[index].printName} skill +{choice.rewardsAmount[index]}!");
+        //            }*/
+        //            if (choice.rewards[index] is Recipe)
+        //            {
+        //                PrintChoiceText($"Learned recipe for {choice.rewards[index].printName}.");
+        //            }
+        //            else
+        //                PrintChoiceText($"Gained {choice.rewards[index].printName} +{choice.rewardsAmount[index]}.");
+        //        }
+        //        else
+        //        {
+        //            var rewardDecrease = choice.rewards[index].dataValue + choice.rewardsAmount[index] - choice.rewards[index].maxValue;
+        //            var newReward = choice.rewards[index].dataValue - rewardDecrease;
 
-                    if (newReward > 0)
-                    {
-                        /*if (choice.rewards[index] is Character)
-                        {
-                            PrintChoiceText($"{choice.rewards[index].printName}'s disposition +{newReward}.\nMy bond with {choice.rewards[index].printName} feels deep.");
-                        }
-                        else if (choice.rewards[index] is Skill)
-                        {
-                            PrintChoiceText($"{choice.rewards[index].printName} skill increase +{newReward}.\nI have mastered {choice.rewards[index].printName}!");
-                        }*/
-                         if (choice.rewards[index] is Recipe)
-                        {
-                            PrintChoiceText($"My understanding of the {choice.rewards[index].printName} recipe is complete.");
-                        }
-                        else
-                            PrintChoiceText($"Gained {choice.rewards[index].printName} +{choice.rewardsAmount[index]}.\nMy inventory is full up, and I was unable to collect all {choice.rewardsAmount[index]}.");
-                    }
-                    else
-                    {
-                        /*if (choice.rewards[index] is Character)
-                        {
-                            PrintChoiceText($"My bond with {choice.rewards[index].printName} feels deep.");
-                        }
-                        else if (choice.rewards[index] is Skill)
-                        {
-                            PrintChoiceText($"I was unable to learn anything new about {choice.rewards[index].printName}. I have mastered this skill!");
-                        }*/
-                         if (choice.rewards[index] is Recipe)
-                        {
-                            PrintChoiceText($"My understanding of the {choice.rewards[index].printName} recipe is complete.");
-                        }
-                        else
-                            PrintChoiceText($"My inventory is full up, and I was unable to collect any {choice.rewards[index].printName}.");
-                    }
-                }
-            }
-        }
+        //            if (newReward > 0)
+        //            {
+        //                /*if (choice.rewards[index] is Character)
+        //                {
+        //                    PrintChoiceText($"{choice.rewards[index].printName}'s disposition +{newReward}.\nMy bond with {choice.rewards[index].printName} feels deep.");
+        //                }
+        //                else if (choice.rewards[index] is Skill)
+        //                {
+        //                    PrintChoiceText($"{choice.rewards[index].printName} skill increase +{newReward}.\nI have mastered {choice.rewards[index].printName}!");
+        //                }*/
+        //                 if (choice.rewards[index] is Recipe)
+        //                {
+        //                    PrintChoiceText($"My understanding of the {choice.rewards[index].printName} recipe is complete.");
+        //                }
+        //                else
+        //                    PrintChoiceText($"Gained {choice.rewards[index].printName} +{choice.rewardsAmount[index]}.\nMy inventory is full up, and I was unable to collect all {choice.rewardsAmount[index]}.");
+        //            }
+        //            else
+        //            {
+        //                /*if (choice.rewards[index] is Character)
+        //                {
+        //                    PrintChoiceText($"My bond with {choice.rewards[index].printName} feels deep.");
+        //                }
+        //                else if (choice.rewards[index] is Skill)
+        //                {
+        //                    PrintChoiceText($"I was unable to learn anything new about {choice.rewards[index].printName}. I have mastered this skill!");
+        //                }*/
+        //                 if (choice.rewards[index] is Recipe)
+        //                {
+        //                    PrintChoiceText($"My understanding of the {choice.rewards[index].printName} recipe is complete.");
+        //                }
+        //                else
+        //                    PrintChoiceText($"My inventory is full up, and I was unable to collect any {choice.rewards[index].printName}.");
+        //            }
+        //        }
+        //    }
+        //}
 
-        if (checkPassed)
-        {
-            if (choice.succeededRequirementText == null || choice.succeededRequirementText == "")
-            {
-                Debug.Log("Check passed! SucceededRequirementText for " + choice.name + " equals null.");
-            }
-            else
-            {
-                PrintSpeakerName(quest.dialogues[quest.dataValue].topicMaster);
-                PrintContent(choice.succeededRequirementText);
-            }
+        //if (checkPassed)
+        //{
+        //    if (choice.succeededRequirementText == null || choice.succeededRequirementText == "")
+        //    {
+        //        Debug.Log("Check passed! SucceededRequirementText for " + choice.name + " equals null.");
+        //    }
+        //    else
+        //    {
+        //        PrintSpeakerName(quest.dialogues[quest.dataValue].topicMaster);
+        //        PrintContent(choice.succeededRequirementText);
+        //    }
 
-            //FILTER CHOICE TYPE
-            if (choice.choiceType == ChoiceType.LeaveOnly)
-            {
-                dialogueIndex = 0;
-                PrintLeaveButton();
-            }
-            else if (choice.choiceType == ChoiceType.LoopDialogue)
-            {
-                dialogueIndex = 0;
-                PrintContinueButton();
-                PrintLeaveButton();
-            }
-            else if (choice.choiceType == ChoiceType.SetDialogueAndContinue)
-            {
-                dialogueIndex = choice.setDialogueStage;
-                PrintContinueButton();
-            }
-            else if (choice.choiceType == ChoiceType.SetQuestAndContinue)
-            {
-                dialogueIndex = 0;
-                quest.dataValue = choice.setQuestStage;
-                PrintContinueButton();
-            }
-            else if (choice.choiceType == ChoiceType.SetQuestAndLeave)
-            {
-                dialogueIndex = 0;
-                quest.dataValue = choice.setQuestStage;
-                PrintLeaveButton();
-            }
-        }
-        else
-        {
-            if (choice.failedRequirementText != null || choice.failedRequirementText != "")
-            {
-                PrintSpeakerName(quest.dialogues[quest.dataValue].topicMaster);
-                PrintContent(choice.failedRequirementText);
-            }
-            else
-            {
-                Debug.Log("Check failed! FailedRequirementText for " + choice.name + " equals null.");
-            }
-            PrintLeaveButton();
-        }
+        //    //FILTER CHOICE TYPE
+        //    if (choice.choiceType == ChoiceType.LeaveOnly)
+        //    {
+        //        dialogueIndex = 0;
+        //        PrintLeaveButton();
+        //    }
+        //    else if (choice.choiceType == ChoiceType.LoopDialogue)
+        //    {
+        //        dialogueIndex = 0;
+        //        PrintContinueButton();
+        //        PrintLeaveButton();
+        //    }
+        //    else if (choice.choiceType == ChoiceType.SetDialogueAndContinue)
+        //    {
+        //        dialogueIndex = choice.setDialogueStage;
+        //        PrintContinueButton();
+        //    }
+        //    else if (choice.choiceType == ChoiceType.SetQuestAndContinue)
+        //    {
+        //        dialogueIndex = 0;
+        //        quest.dataValue = choice.setQuestStage;
+        //        PrintContinueButton();
+        //    }
+        //    else if (choice.choiceType == ChoiceType.SetQuestAndLeave)
+        //    {
+        //        dialogueIndex = 0;
+        //        quest.dataValue = choice.setQuestStage;
+        //        PrintLeaveButton();
+        //    }
+        //}
+        //else
+        //{
+        //    if (choice.failedRequirementText != null || choice.failedRequirementText != "")
+        //    {
+        //        PrintSpeakerName(quest.dialogues[quest.dataValue].topicMaster);
+        //        PrintContent(choice.failedRequirementText);
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("Check failed! FailedRequirementText for " + choice.name + " equals null.");
+        //    }
+        //    PrintLeaveButton();
+        //}
 
-        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-        Canvas.ForceUpdateCanvases();
+        //dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        //Canvas.ForceUpdateCanvases();
     }
 
     public string StringFormatter(string input)
