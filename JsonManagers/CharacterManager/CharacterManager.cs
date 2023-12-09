@@ -15,7 +15,6 @@ public class CharacterManager : MonoBehaviour
     {
         LoadFromJson("Characters.json");
         //Remember to update numberOfFilesToLoad if more files are added
-        //Items.DebugList();
     }
 
     [System.Serializable]
@@ -67,6 +66,7 @@ public class CharacterManager : MonoBehaviour
 
     public static void InitialiseCharacter(Character character, List<Character> characterList)
     {
+        character.NameSetup();
         objectIDReader(ref character);
         characterList.Add(character);
     }
@@ -111,7 +111,6 @@ public class CharacterManager : MonoBehaviour
 
         if (!File.Exists(filePath))
         {
-            //Debug.LogWarning($"Image not found for {objectID}. Using default.");
             filePath = fileDirectory + objectID.Substring(0, 3) + "000.png";
 
             if (!File.Exists(filePath))
