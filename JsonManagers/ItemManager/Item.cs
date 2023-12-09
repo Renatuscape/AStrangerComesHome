@@ -30,7 +30,7 @@ public class Item
 
     public void AddToPlayer(int amount = 1)
     {
-        Player.Add(this, amount, maxStack);
+        Player.Add(this, amount);
     }
     public int GetCountPlayer()
     {

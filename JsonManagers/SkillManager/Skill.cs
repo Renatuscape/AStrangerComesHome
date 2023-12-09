@@ -24,7 +24,7 @@ public class Skill
 
     public void AddToPlayer(int amount = 1)
     {
-        Player.Add(this, amount, maxLevel);
+        Player.Add(this, amount);
     }
     public int GetCountPlayer()
     {
