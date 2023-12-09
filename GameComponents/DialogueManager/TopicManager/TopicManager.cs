@@ -74,15 +74,12 @@ public class TopicManager : MonoBehaviour
 
     void FindQuestObjects()
     {
-        foreach (MotherObject mo in transientData.objectIndex)
+        var placeHolderList = new List<MotherObject>();
+        foreach (Quest q in Quests.all)
         {
-            if (mo is Quest)
+            if (!questList.Contains(q))
             {
-                var q = (Quest)mo;
-                if (!questList.Contains(mo))
-                {
-                    questList.Add(q); //collect all game quests in a list
-                }
+                questList.Add(q); //collect all game quests in a list
             }
         }
         if (questList.Count < 1)
@@ -112,128 +109,128 @@ public class TopicManager : MonoBehaviour
 
     void GetGreetingTopic()
     {
-        foreach (Quest q in questList)
-        {
-            if (q.firstMeeting == true)
-            {
-                Debug.Log(q + " is a first meeting quest. The topic master is " + q.dialogues[0].topicMaster);
-                if (q.dialogues[0].topicMaster == topicMaster)
-                {
-                    characterTopics.Add(q);
-                    break; //EACH CHARACTER SHOULD ONLY HAVE ONE WELCOME TOPIC
-                }
-            }
-        }
-        if (characterTopics.Count == 0)
-        {
-            Debug.LogWarning("No greetning found for " + topicMaster);
-            //topicMaster.bond++;
-            FetchTopics();
-        }
-        else
-        {
-            var quest = characterTopics[0];
-            var dialogueManager = gameObject.GetComponent<DialogueManager>();
+        //foreach (Quest q in questList)
+        //{
+        //    if (q.firstMeeting == true)
+        //    {
+        //        Debug.Log(q + " is a first meeting quest. The topic master is " + q.dialogues[0].topicMaster);
+        //        if (q.dialogues[0].topicMaster == topicMaster)
+        //        {
+        //            characterTopics.Add(q);
+        //            break; //EACH CHARACTER SHOULD ONLY HAVE ONE WELCOME TOPIC
+        //        }
+        //    }
+        //}
+        //if (characterTopics.Count == 0)
+        //{
+        //    Debug.LogWarning("No greetning found for " + topicMaster);
+        //    //topicMaster.bond++;
+        //    FetchTopics();
+        //}
+        //else
+        //{
+        //    var quest = characterTopics[0];
+        //    var dialogueManager = gameObject.GetComponent<DialogueManager>();
 
-            dialogueManager.quest = quest;
-            dialogueManager.dialogueIndex = 0;
-            dialogueManager.PrintChoiceText(quest.dialogues[quest.dataValue].topicName);
-            dialogueManager.PrintDialogue();
-            DestroyTopics();
-        }
+        //    dialogueManager.quest = quest;
+        //    dialogueManager.dialogueIndex = 0;
+        //    //dialogueManager.PrintChoiceText(quest.dialogues[quest.dataValue].topicName);
+        //    dialogueManager.PrintDialogue();
+        //    DestroyTopics();
+        //}
     }
 
     void GetRegularTopics()
     {
 
-        //Filter topics. If quest does not appear properly, check if Dialogue object has correct topicMaster
-        foreach (Quest q in questList)
-        {
-            var checkPassed = true;
-            //ADD CHECKS FOR DAYS PASSED AND MOTHER OBJECT DATALEVELS HERE
+        ////Filter topics. If quest does not appear properly, check if Dialogue object has correct topicMaster
+        //foreach (Quest q in questList)
+        //{
+        //    var checkPassed = true;
+        //    //ADD CHECKS FOR DAYS PASSED AND MOTHER OBJECT DATALEVELS HERE
 
-            /*if (topicMaster.bond < 1)
-            {
-                checkPassed = false;
-            }
-            if (dataManager.totalGameDays < q.daysPassedCheck)
-            {
-                checkPassed = false;
-            }*/
+        //    /*if (topicMaster.bond < 1)
+        //    {
+        //        checkPassed = false;
+        //    }
+        //    if (dataManager.totalGameDays < q.daysPassedCheck)
+        //    {
+        //        checkPassed = false;
+        //    }*/
 
-            if (q.checkLessThan.Count > 0)
-            {
-                for (int index = 0; index < q.checkLessThan.Count; index++)
-                {
-                    if (q.checkLessThan[index].dataValue > q.checkLessThanValue)
-                    {
-                        checkPassed = false;
-                        break;
-                    }
-                }
-            }
+        //    if (q.checkLessThan.Count > 0)
+        //    {
+        //        for (int index = 0; index < q.checkLessThan.Count; index++)
+        //        {
+        //            if (q.checkLessThan[index].dataValue > q.checkLessThanValue)
+        //            {
+        //                checkPassed = false;
+        //                break;
+        //            }
+        //        }
+        //    }
 
-            if (q.checkMoreThan.Count > 0)
-            {
-                for (int index = 0; index < q.checkMoreThan.Count; index++)
-                {
-                    if (q.checkMoreThan[index].dataValue < q.checkMoreThanValue)
-                    {
-                        checkPassed = false;
-                        break;
-                    }
-                }
-            }
+        //    if (q.checkMoreThan.Count > 0)
+        //    {
+        //        for (int index = 0; index < q.checkMoreThan.Count; index++)
+        //        {
+        //            if (q.checkMoreThan[index].dataValue < q.checkMoreThanValue)
+        //            {
+        //                checkPassed = false;
+        //                break;
+        //            }
+        //        }
+        //    }
 
-            if (checkPassed == true && q.dialogues.Count > q.dataValue)
-            {
-                if (q.dialogues.Count >= q.dataValue + 1)
-                {
-                    if (q.dialogues[q.dataValue] != null)
-                    {
-                        if (q.dialogues[q.dataValue].topicMaster == topicMaster)
-                        {
-                            characterTopics.Add(q);
-                            //Debug.Log("Topic added: " + q.name);
-                        }
-                    }
-                    else
-                        Debug.LogWarning("Dialogue missing in " + q.name + " quest at dialogue index + "[q.dataValue]);
-                }
-            }
-        }
-        PrintTopics();
+        //    if (checkPassed == true && q.dialogues.Count > q.dataValue)
+        //    {
+        //        if (q.dialogues.Count >= q.dataValue + 1)
+        //        {
+        //            if (q.dialogues[q.dataValue] != null)
+        //            {
+        //                if (q.dialogues[q.dataValue].topicMaster == topicMaster)
+        //                {
+        //                    characterTopics.Add(q);
+        //                    //Debug.Log("Topic added: " + q.name);
+        //                }
+        //            }
+        //            else
+        //                Debug.LogWarning("Dialogue missing in " + q.name + " quest at dialogue index + "[q.dataValue]);
+        //        }
+        //    }
+        //}
+        //PrintTopics();
     }
 
     void PrintTopics()
     {
-        //Print "What should I talk about?" (always on top)
-        var whatPrefab = Instantiate(whatTopicPrefab);
-        whatPrefab.transform.SetParent(dialogueContainer.transform, false);
-        printedTopics.Add(whatPrefab);
+        ////Print "What should I talk about?" (always on top)
+        //var whatPrefab = Instantiate(whatTopicPrefab);
+        //whatPrefab.transform.SetParent(dialogueContainer.transform, false);
+        //printedTopics.Add(whatPrefab);
 
-        //Print topics
-        foreach (Quest q in characterTopics)
-        {
-            var topicPrefab = Instantiate(topicButton);
-            var text = topicPrefab.gameObject.transform.GetChild(0);
-            var topicName = q.dialogues[q.dataValue].topicName;
+        ////Print topics
+        //foreach (Quest q in characterTopics)
+        //{
+        //    var topicPrefab = Instantiate(topicButton);
+        //    var text = topicPrefab.gameObject.transform.GetChild(0);
+        //    var topicName = q.dialogues[q.dataValue].topicName;
 
-            var topicScript = topicPrefab.GetComponent<TopicButton>();
-            topicScript.topicManager = this;
-            topicScript.dialogueManager = gameObject.GetComponent<DialogueManager>();
-            topicScript.quest = q;
+        //    var topicScript = topicPrefab.GetComponent<TopicButton>();
+        //    topicScript.topicManager = this;
+        //    topicScript.dialogueManager = gameObject.GetComponent<DialogueManager>();
+        //    topicScript.quest = q;
 
-            topicPrefab.name = topicName;
-            text.GetComponent<TextMeshProUGUI>().text = topicName;
-            topicPrefab.transform.SetParent(dialogueContainer.transform, false);
-            printedTopics.Add(topicPrefab);
-        }
+        //    topicPrefab.name = topicName;
+        //    text.GetComponent<TextMeshProUGUI>().text = topicName;
+        //    topicPrefab.transform.SetParent(dialogueContainer.transform, false);
+        //    printedTopics.Add(topicPrefab);
+        //}
 
-        //Print leave button (always on bottom)
-        var leavePrefab = Instantiate(leaveButton); //must be last
-        leavePrefab.transform.SetParent(dialogueContainer.transform, false);
-        leavePrefab.GetComponent<LeaveButton>().dialogueManager = gameObject;
-        printedTopics.Add(leavePrefab);
+        ////Print leave button (always on bottom)
+        //var leavePrefab = Instantiate(leaveButton); //must be last
+        //leavePrefab.transform.SetParent(dialogueContainer.transform, false);
+        //leavePrefab.GetComponent<LeaveButton>().dialogueManager = gameObject;
+        //printedTopics.Add(leavePrefab);
     }
 }
