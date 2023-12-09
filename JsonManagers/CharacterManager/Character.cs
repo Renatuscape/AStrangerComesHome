@@ -18,6 +18,7 @@ public class Character
     public string trueName;
     public string hexColour;
     public string description;
+    public int maxValue = 1;
 
     public bool isSeller;
     public bool isBuyer;
@@ -42,4 +43,22 @@ public class Character
 public static class Characters
 {
     public static List<Character> all = new();
+
+    public static Character FindByID(string searchWord)
+    {
+        if (string.IsNullOrWhiteSpace(searchWord))
+        {
+            Debug.LogWarning($"Search term was null or white-space. Returned null. Ensure correct ID in calling script.");
+            return null;
+        }
+        foreach (Character character in all)
+        {
+            if (character.objectID.Contains(searchWord))
+            {
+                return character;
+            }
+        }
+        Debug.LogWarning("No character found with ID containing this search term: " + searchWord);
+        return null;
+    }
 }
