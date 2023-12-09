@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TransientDataScript : MonoBehaviour
 {
-    public GameState gameState;
+    //public GameState gameState;
     public static GameState GameState { get; private set; }
 
     public Language language;
@@ -58,7 +58,7 @@ public class TransientDataScript : MonoBehaviour
     }
     public void PrintFloatText(string content)
     {
-        if (gameState != GameState.MainMenu && gameState != GameState.Loading && gameState != GameState.Dialogue)
+        if (GameState != GameState.MainMenu && GameState != GameState.Loading && GameState != GameState.Dialogue)
         {
             floatText.PrintFloatText(content);
         }
@@ -81,47 +81,29 @@ public class TransientDataScript : MonoBehaviour
             }
         }
     }
-    public void ReturnToOverWorld()
-    {
-        ChangeGameState(name, gameObject, GameState.Overworld);
-        //gameState = GameState.Overworld;
-        //Debug.Log(name + " changed GameState to " + GameState.Overworld);
-    }
-
-    public void ChangeGameState(string callerScript, GameObject callerObject, GameState newState)
-    {
-        gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + gameState + " to " + newState + ".";
-        gameState = newState;
-        GameState = newState;
-    }
-
-    //ITEM METHODS
-    public Item GetItemByID(string searchID)
-    {
-        foreach (Item item in itemCodex)
-        {
-            if (item.objectID.Contains(searchID))
-            {
-                return item;
-            }
-        }
-
-        Debug.Log("No item ID found containing " + searchID);
-        return new Item();
-    }
-
     //NEW STATIC METHODS
     public static GameState GetGameState()
     {
         return GameState;
     }
-
-    public static CameraView GetCameraView()
-    {
-        return CameraView;
-    }
     public static void SetCameraView(CameraView view)
     {
         CameraView = view;
     }
+
+    public static void SetGameState(GameState newState, string callerScript = "None", GameObject callerObject = null)
+    {
+        LogStateChange(callerScript, callerObject, newState);
+        GameState = newState;
+    }
+    static void LogStateChange(string callerScript, GameObject callerObject, GameState newState)
+    {
+        Debug.Log("\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + GameState + " to " + newState + ".");
+    }
+
+    public static void ReturnToOverWorld(string name = "None", GameObject gameObject = null)
+    {
+        SetGameState(GameState.Overworld, name, gameObject);
+    }
+
 }

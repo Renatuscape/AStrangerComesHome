@@ -45,12 +45,12 @@ public class CameraController : MonoBehaviour
         if (TransientDataScript.CameraView == CameraView.Normal && (vCam.m_Lens.OrthographicSize != 7 || camTransform.position.x != 0))
             CameraNormal();
 
-        if (transientData.gameState != GameState.Overworld && transientData.gameState != GameState.JournalMenu) //CAMERA ALWAYS SNAPS BACK TO NORMAL WHEN LEAVING OVERWORLD
+        if (TransientDataScript.GameState != GameState.Overworld && TransientDataScript.GameState != GameState.JournalMenu) //CAMERA ALWAYS SNAPS BACK TO NORMAL WHEN LEAVING OVERWORLD
         {
             TransientDataScript.SetCameraView(CameraView.Normal);
         }
 
-        else if (transientData.gameState == GameState.Overworld)
+        else if (TransientDataScript.GameState == GameState.Overworld)
         {
             if (Input.GetKeyDown(KeyCode.Space) && TransientDataScript.CameraView == CameraView.Normal)
             {

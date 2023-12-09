@@ -45,8 +45,8 @@ public class TopicManager : MonoBehaviour
             FetchTopics();
         }
 
-        previousGameState = transientData.gameState;
-        transientData.ChangeGameState("TopicManager", gameObject, GameState.Dialogue);
+        previousGameState = TransientDataScript.GameState;
+        TransientDataScript.SetGameState(GameState.Dialogue, "TopicManager", gameObject);
         //transientData.gameState = GameState.Dialogue;
         //Debug.Log(name + " changed GameState to " + GameState.Dialogue);
     }
@@ -56,11 +56,11 @@ public class TopicManager : MonoBehaviour
         characterTopics.Clear();
 
         if (previousGameState == GameState.ShopMenu || previousGameState == GameState.Overworld)
-            transientData.ChangeGameState("TopicManager", gameObject, previousGameState);
+            TransientDataScript.SetGameState(previousGameState, "TopicManager", gameObject);
     }
     private void Update()
     {
-        if (transientData.gameState != GameState.Dialogue)
+        if (TransientDataScript.GameState != GameState.Dialogue)
             gameObject.SetActive(false);
     }
     public void DestroyTopics()

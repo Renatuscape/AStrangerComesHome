@@ -48,7 +48,11 @@ public class ManaConverter : MonoBehaviour
 
 
         //PASSIVE MANA ONLY REGENERATES DURING THESE STATES
-        if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu || transientData.gameState == GameState.Dialogue || transientData.gameState == GameState.PlayerHome || transientData.gameState == GameState.MapMenu)
+        if (TransientDataScript.GameState == GameState.Overworld
+            || TransientDataScript.GameState == GameState.ShopMenu
+            || TransientDataScript.GameState == GameState.Dialogue
+            || TransientDataScript.GameState == GameState.PlayerHome
+            || TransientDataScript.GameState == GameState.MapMenu)
         {
             if (transientData.currentMana < transientData.manapool)
             {
@@ -69,7 +73,7 @@ public class ManaConverter : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu)
+        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
         {
             var clickRecovery = 1 + (2 * manaClickPotency) / 10;  //can be expressed as 0.2 * level, but wrong variable type. Allows for +3 at level 10
 

@@ -19,7 +19,7 @@ public class SpawnOnClick : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (transientData.gameState == ifGameStateA || transientData.gameState == ifGameStateB)
+        if (TransientDataScript.GameState == ifGameStateA || TransientDataScript.GameState == ifGameStateB)
         {
             randomNum = Random.Range(minParticles, maxParticles);
 

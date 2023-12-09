@@ -18,12 +18,19 @@ public class MenuUIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transientData.gameState != GameState.Loading && transientData.gameState != GameState.MainMenu && transientData.gameState != GameState.CharacterCreation && transientData.gameState != GameState.Dialogue)
+        if (TransientDataScript.GameState != GameState.Loading
+            && TransientDataScript.GameState != GameState.MainMenu
+            && TransientDataScript.GameState != GameState.CharacterCreation
+            && TransientDataScript.GameState != GameState.Dialogue)
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Debug.Log("Escape key registered in MenuUIManager.");
-                if (TransientDataScript.CameraView == CameraView.Normal && (transientData.gameState == GameState.StartMenu || transientData.gameState == GameState.JournalMenu || transientData.gameState == GameState.MapMenu || transientData.gameState == GameState.ShopMenu))
+                if (TransientDataScript.CameraView == CameraView.Normal
+                    && (TransientDataScript.GameState == GameState.StartMenu
+                    || TransientDataScript.GameState == GameState.JournalMenu
+                    || TransientDataScript.GameState == GameState.MapMenu
+                    || TransientDataScript.GameState == GameState.ShopMenu))
                 {
                     EnableOverworld();
                 }
@@ -31,22 +38,22 @@ public class MenuUIManager : MonoBehaviour
                 {
                     TransientDataScript.SetCameraView(CameraView.Normal);
                 }
-                else if (transientData.gameState == GameState.Overworld)
+                else if (TransientDataScript.GameState == GameState.Overworld)
                     startMenu.SetActive(true);
             }
 
             else if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.I))
             {
-                if (transientData.gameState == GameState.JournalMenu)
+                if (TransientDataScript.GameState == GameState.JournalMenu)
                 {
-                    transientData.gameState = GameState.Overworld;
+                    TransientDataScript.SetGameState(GameState.Overworld);
                     Debug.Log(name + " changed GameState to " + GameState.Overworld);
                 }
-                else if (transientData.gameState == GameState.Overworld)
+                else if (TransientDataScript.GameState == GameState.Overworld)
                     journalMenu.SetActive(true);
             }
 
-            if (transientData.gameState == GameState.ShopMenu && !shopMenu.activeInHierarchy)
+            if (TransientDataScript.GameState == GameState.ShopMenu && !shopMenu.activeInHierarchy)
             {
                 shopMenu.SetActive(true);
                 transientData.engineState = EngineState.Off;
@@ -56,9 +63,9 @@ public class MenuUIManager : MonoBehaviour
 
     public void EnableOverworld()
     {
-        if (transientData.gameState != GameState.CharacterCreation)
+        if (TransientDataScript.GameState != GameState.CharacterCreation)
         {
-            transientData.ChangeGameState(name, gameObject, GameState.Overworld);
+            TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
         }
 
     }

@@ -61,7 +61,7 @@ public class SalvageBoxMechanics : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (transientData.gameState == GameState.Overworld)
+        if (TransientDataScript.GameState == GameState.Overworld)
         {
             Destroy(objectCollider);
             anim.SetTrigger("Active");

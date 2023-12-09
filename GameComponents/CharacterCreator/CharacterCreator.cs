@@ -40,7 +40,7 @@ public class CharacterCreator : MonoBehaviour
 
     void Update()
     {
-        if (transientData.gameState != GameState.CharacterCreation)
+        if (TransientDataScript.GameState != GameState.CharacterCreation)
             gameObject.SetActive(false);
 
         if (dataManager.playerName != characterName.text)

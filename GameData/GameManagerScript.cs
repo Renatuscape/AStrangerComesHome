@@ -35,9 +35,7 @@ public class GameManagerScript : MonoBehaviour
     {
         //Application.targetFrameRate = 60;
 
-        transientData.ChangeGameState(name, gameObject, GameState.Loading);
-        //transientData.gameState = GameState.Loading;
-        //Debug.Log(name + " changed GameState to " + GameState.Loading);
+        TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
         StartUpRoutine();
     }
 
@@ -97,7 +95,7 @@ public class GameManagerScript : MonoBehaviour
             component.SetActive(false);
         }
 
-        transientData.ChangeGameState(name, gameObject, GameState.MainMenu);
+        TransientDataScript.SetGameState(GameState.MainMenu, name, gameObject);
         //transientData.gameState = GameState.MainMenu;
         //Debug.Log(name + " changed GameState to " + GameState.MainMenu);
         menuUIManagerComponent.SetActive(true);
@@ -136,7 +134,7 @@ public class GameManagerScript : MonoBehaviour
         dataManager.playerUpgrades = Player.upgrades;
 
 
-        transientData.ChangeGameState(name, gameObject, GameState.CharacterCreation);
+        TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         //transientData.gameState = GameState.NewGameMenu;
         characterCreatorComponent.SetActive(true);
         //Debug.Log(name + " changed GameState to " + GameState.NewGameMenu);

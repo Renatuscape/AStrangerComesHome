@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class InventoryItemPrefab : MonoBehaviour
 {
-    public TransientDataScript transientData;
     public InventoryScript inventoryScript;
 
     public Item itemSource;
@@ -18,7 +17,6 @@ public class InventoryItemPrefab : MonoBehaviour
 
     void Awake()
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         itemFrame.SetActive(false);
     }
 
@@ -63,7 +61,7 @@ public class InventoryItemPrefab : MonoBehaviour
             itemFrame.SetActive(false);
                 inventoryScript.DisableFloatText();
 
-            if (transientData.gameState == GameState.JournalMenu && inventoryScript != null)
+            if (TransientDataScript.GameState == GameState.JournalMenu && inventoryScript != null)
             {
                 inventoryScript.DisplayItemInfo(" ", " ");
                 inventoryScript.DisplayItemStats(" ");

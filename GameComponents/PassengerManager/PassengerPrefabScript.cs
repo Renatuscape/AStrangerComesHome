@@ -105,7 +105,7 @@ public class PassengerPrefabScript : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (transientData.gameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             if (destination == transientData.currentLocation)
             {
@@ -125,7 +125,7 @@ public class PassengerPrefabScript : MonoBehaviour
 
     public void OnMouseOver()
     {
-        if (transientData.gameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             var locationToString = destination.ToString();
             var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");

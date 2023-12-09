@@ -60,7 +60,7 @@ public class Engine : MonoBehaviour
     }
     void BoostDecrease()
     {
-        if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu || transientData.gameState == GameState.Dialogue || transientData.gameState == GameState.PlayerHome || transientData.gameState == GameState.MapMenu)
+        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu || TransientDataScript.GameState == GameState.Dialogue || TransientDataScript.GameState == GameState.PlayerHome || TransientDataScript.GameState == GameState.MapMenu)
         {
             if (currentBoost > 0)
             {
@@ -76,7 +76,7 @@ public class Engine : MonoBehaviour
     }
     void SpeedManager()
     {
-        if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu || transientData.gameState == GameState.Dialogue || transientData.gameState == GameState.PlayerHome || transientData.gameState == GameState.MapMenu)
+        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu || TransientDataScript.GameState == GameState.Dialogue || TransientDataScript.GameState == GameState.PlayerHome || TransientDataScript.GameState == GameState.MapMenu)
         {
             //SET TARGET SPEED
             switch (transientData.engineState)
@@ -119,7 +119,7 @@ public class Engine : MonoBehaviour
 
     void ManaConsumption()
     {
-        if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu || transientData.gameState == GameState.Dialogue || transientData.gameState == GameState.PlayerHome || transientData.gameState == GameState.MapMenu)
+        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu || TransientDataScript.GameState == GameState.Dialogue || TransientDataScript.GameState == GameState.PlayerHome || TransientDataScript.GameState == GameState.MapMenu)
         {
             manaConsumptionDebuff = 1f + (10 - engineFuelEfficiency) / 30;
 
@@ -155,7 +155,7 @@ public class Engine : MonoBehaviour
 
     void Update()
     {
-        if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.MapMenu) //Keys only work during these states
+        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.MapMenu) //Keys only work during these states
         {
             //KEY INPUT LISTENERS
             if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -202,11 +202,11 @@ public class Engine : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu)
+        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
         {
             boostMax = 100 + (20 * engineBoostMax);
 
-            if (transientData.gameState == GameState.Overworld && currentBoost < boostMax)
+            if (TransientDataScript.GameState == GameState.Overworld && currentBoost < boostMax)
                 currentBoost = currentBoost + (5 + (0.5f * engineClickPotency));
         }
     }

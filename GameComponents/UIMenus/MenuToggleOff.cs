@@ -4,21 +4,15 @@ using UnityEngine;
 
 public class MenuToggleOff : MonoBehaviour
 {
-    public TransientDataScript transientData;
     public GameState menuType;
-
-    void Awake()
-    {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-    }
 
     private void OnEnable()
     {
-        transientData.ChangeGameState(name, gameObject, menuType);
+        TransientDataScript.SetGameState(menuType,name, gameObject);
     }
     void Update()
     {
-        if (transientData.gameState != menuType)
+        if (TransientDataScript.GameState != menuType)
         {
             gameObject.SetActive(false);
         }

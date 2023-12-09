@@ -24,10 +24,10 @@ public class StationShop : MonoBehaviour
     }
     public void OnMouseDown()
     {
-        if (transientData.gameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             transientData.currentShop = shopType;
-            transientData.ChangeGameState(name, gameObject, GameState.ShopMenu);
+            TransientDataScript.SetGameState(GameState.ShopMenu, name, gameObject);
             //transientData.gameState = GameState.ShopMenu;
             //Debug.Log(name + " changed GameState to " + GameState.ShopMenu);
         }
@@ -35,7 +35,7 @@ public class StationShop : MonoBehaviour
 
     public void OnMouseOver()
     {
-        if (transientData.gameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             transientData.PrintFloatText($"{shopType.shopName}");
         }

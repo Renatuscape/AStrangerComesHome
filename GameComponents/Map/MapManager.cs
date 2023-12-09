@@ -51,22 +51,22 @@ public class MapManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            if (transientData.gameState == GameState.Overworld)
+            if (TransientDataScript.GameState == GameState.Overworld)
             {
-                transientData.gameState = GameState.MapMenu;
+                TransientDataScript.SetGameState(GameState.MapMenu);
                 Debug.Log(name + " changed GameState to " + GameState.MapMenu);
 
                 transform.position = new Vector3(transform.position.x, 0, transform.position.z);
                 gridContainer.transform.localPosition = new Vector3(0, 0, gridContainer.transform.localPosition.z);
             }
-            else if (transientData.gameState == GameState.MapMenu)
+            else if (TransientDataScript.GameState == GameState.MapMenu)
             {
-                transientData.gameState = GameState.Overworld;
+                TransientDataScript.SetGameState(GameState.Overworld);
                 Debug.Log(name + " changed GameState to " + GameState.Overworld);
             }
         }
 
-        if (transientData.gameState != GameState.MapMenu && transform.position.y != -50) //SHOULD NOT BE NECESSARY TO DO ON UPDATE. FIGURE OUT HOW TO DO IT BETTER
+        if (TransientDataScript.GameState != GameState.MapMenu && transform.position.y != -50) //SHOULD NOT BE NECESSARY TO DO ON UPDATE. FIGURE OUT HOW TO DO IT BETTER
         {
             transform.position = new Vector3(transform.position.x, -50, transform.position.z);
         }
@@ -75,7 +75,10 @@ public class MapManager : MonoBehaviour
     private void FixedUpdate()
     {
         //PLAYER TOKEN CONTROLLERS
-        if (transientData.gameState == GameState.Overworld || transientData.gameState == GameState.ShopMenu || transientData.gameState == GameState.MapMenu || transientData.gameState == GameState.Dialogue)
+        if (TransientDataScript.GameState == GameState.Overworld
+            || TransientDataScript.GameState == GameState.ShopMenu
+            || TransientDataScript.GameState == GameState.MapMenu
+            || TransientDataScript.GameState == GameState.Dialogue)
         {
             //ADJUST PLAYER SPEED ON MAP
             var playerTokenSpeed = transientData.currentSpeed * 0.0006f;
