@@ -17,14 +17,14 @@ public class StationShop : MonoBehaviour
 
     private void Update()
     {
-        if (transientData.cameraView == CameraView.Normal)
+        if (TransientDataScript.CameraView == CameraView.Normal)
             col.enabled = true;
         else
             col.enabled = false;
     }
     public void OnMouseDown()
     {
-        if (transientData.gameState == GameState.Overworld && transientData.cameraView == CameraView.Normal)
+        if (transientData.gameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             transientData.currentShop = shopType;
             transientData.ChangeGameState(name, gameObject, GameState.ShopMenu);
@@ -35,7 +35,7 @@ public class StationShop : MonoBehaviour
 
     public void OnMouseOver()
     {
-        if (transientData.gameState == GameState.Overworld && transientData.cameraView == CameraView.Normal)
+        if (transientData.gameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             transientData.PrintFloatText($"{shopType.shopName}");
         }

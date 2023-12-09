@@ -23,13 +23,13 @@ public class MenuUIManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Debug.Log("Escape key registered in MenuUIManager.");
-                if (transientData.cameraView == CameraView.Normal && (transientData.gameState == GameState.StartMenu || transientData.gameState == GameState.JournalMenu || transientData.gameState == GameState.MapMenu || transientData.gameState == GameState.ShopMenu))
+                if (TransientDataScript.CameraView == CameraView.Normal && (transientData.gameState == GameState.StartMenu || transientData.gameState == GameState.JournalMenu || transientData.gameState == GameState.MapMenu || transientData.gameState == GameState.ShopMenu))
                 {
                     EnableOverworld();
                 }
-                else if (transientData.cameraView != CameraView.Normal)
+                else if (TransientDataScript.CameraView != CameraView.Normal)
                 {
-                    transientData.cameraView = CameraView.Normal;
+                    TransientDataScript.SetCameraView(CameraView.Normal);
                 }
                 else if (transientData.gameState == GameState.Overworld)
                     startMenu.SetActive(true);

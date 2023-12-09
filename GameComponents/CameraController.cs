@@ -42,37 +42,37 @@ public class CameraController : MonoBehaviour
 
     void HandleCameraView()
     {
-        if (transientData.cameraView == CameraView.Normal && (vCam.m_Lens.OrthographicSize != 7 || camTransform.position.x != 0))
+        if (TransientDataScript.CameraView == CameraView.Normal && (vCam.m_Lens.OrthographicSize != 7 || camTransform.position.x != 0))
             CameraNormal();
 
         if (transientData.gameState != GameState.Overworld && transientData.gameState != GameState.JournalMenu) //CAMERA ALWAYS SNAPS BACK TO NORMAL WHEN LEAVING OVERWORLD
         {
-            transientData.cameraView = CameraView.Normal;
+            TransientDataScript.SetCameraView(CameraView.Normal);
         }
 
         else if (transientData.gameState == GameState.Overworld)
         {
-            if (Input.GetKeyDown(KeyCode.Space) && transientData.cameraView == CameraView.Normal)
+            if (Input.GetKeyDown(KeyCode.Space) && TransientDataScript.CameraView == CameraView.Normal)
             {
                 CameraClose();
             }
-            else if (Input.GetKeyDown(KeyCode.Space) && transientData.cameraView != CameraView.Normal)
+            else if (Input.GetKeyDown(KeyCode.Space) && TransientDataScript.CameraView != CameraView.Normal)
             {
                 CameraNormal();
             }
 
-            if (transientData.cameraView != CameraView.Normal)
+            if (TransientDataScript.CameraView != CameraView.Normal)
             {
                 if (targetTransform == camTargetGarden.transform)
-                    transientData.cameraView = CameraView.Garden;
+                    TransientDataScript.SetCameraView(CameraView.Garden);
                 else if (targetTransform == camTargetX.transform)
-                    transientData.cameraView = CameraView.Cockpit;
+                    TransientDataScript.SetCameraView(CameraView.Cockpit);
                 else if (targetTransform == camTarget1.transform)
-                    transientData.cameraView = CameraView.Lounge;
+                    TransientDataScript.SetCameraView(CameraView.Lounge);
                 else if (targetTransform == camTarget2.transform)
-                    transientData.cameraView = CameraView.Cockpit;
+                    TransientDataScript.SetCameraView(CameraView.Cockpit);
                 else if (targetTransform == camTarget3.transform)
-                    transientData.cameraView = CameraView.Pet;
+                    TransientDataScript.SetCameraView(CameraView.Pet);
 
 
                 if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
@@ -143,7 +143,7 @@ public class CameraController : MonoBehaviour
 
     void CameraClose()
     {
-        transientData.cameraView = CameraView.Cockpit;
+        TransientDataScript.SetCameraView(CameraView.Cockpit);
         camIndex = 1;
         vCam.m_Lens.OrthographicSize = 2;
         camTransform.position = new Vector3(camTargetsList[camIndex].transform.position.x, camTargetsList[camIndex].transform.position.y, vCam.gameObject.transform.position.z);
@@ -151,7 +151,7 @@ public class CameraController : MonoBehaviour
 
     void CameraNormal()
     {
-        transientData.cameraView = CameraView.Normal;
+        TransientDataScript.SetCameraView(CameraView.Normal);
         vCam.m_Lens.OrthographicSize = 7;
         camTransform.position = new Vector3(0, 0, vCam.gameObject.transform.position.z);
     }

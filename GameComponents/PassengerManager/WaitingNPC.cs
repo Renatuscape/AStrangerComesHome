@@ -90,7 +90,7 @@ public class WaitingNPC : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (transientData.gameState == GameState.Overworld && transientData.cameraView == CameraView.Normal)
+        if (transientData.gameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             passengerManager.ActivateWaitingPassenger(gameObject);
         }
@@ -98,7 +98,7 @@ public class WaitingNPC : MonoBehaviour
 
     public void OnMouseOver()
     {
-        if (transientData.gameState == GameState.Overworld && transientData.cameraView == CameraView.Normal)
+        if (transientData.gameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             var locationToString = destination.ToString();
             var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");

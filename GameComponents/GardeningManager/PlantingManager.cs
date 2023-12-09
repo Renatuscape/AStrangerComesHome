@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class PlantingManager : MonoBehaviour
 {
     public DataManagerScript dataManager;
-    public TransientDataScript transientData;
 
     public GameObject seedContainter;
     public GameObject gardenSeedPrefab;
@@ -26,7 +25,6 @@ public class PlantingManager : MonoBehaviour
     private void Awake()
     {
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         seedFrame.SetActive(false);
         planterFrame.SetActive(false);
         plantPreview.sprite = null;
@@ -82,7 +80,7 @@ public class PlantingManager : MonoBehaviour
     }
     void Update()
     {
-        if (transientData.cameraView != CameraView.Garden)
+        if (TransientDataScript.CameraView != CameraView.Garden)
             gameObject.SetActive(false);
 
         if (activeSeed != null && planterFrame.activeInHierarchy == true)

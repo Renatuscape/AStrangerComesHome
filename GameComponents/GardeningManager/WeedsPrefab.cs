@@ -6,10 +6,8 @@ public class WeedsPrefab : MonoBehaviour
 {
     public Item weedsObject;
     public planterScript planterParent;
-    public TransientDataScript transientData;
     void Start()
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         weedsObject = Items.FindByID("PLA000");
     }
 
@@ -21,7 +19,7 @@ public class WeedsPrefab : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (transientData.cameraView == CameraView.Garden)
+        if (TransientDataScript.CameraView == CameraView.Garden)
         {
             weedsObject.AddToPlayer();
 

@@ -154,7 +154,7 @@ public class GardenManager : MonoBehaviour
     {
         SyncSkills();
 
-        if (transientData.cameraView == CameraView.Garden)
+        if (TransientDataScript.CameraView == CameraView.Garden)
         {
             if (dataManager.planterIsActiveA && dataManager.seedA == null)
             {

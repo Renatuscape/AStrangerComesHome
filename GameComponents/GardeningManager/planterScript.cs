@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class planterScript : MonoBehaviour
 {
-
-    public TransientDataScript transientData;
     public DataManagerScript dataManager;
     public GardenManager gardenManager;
     public WhichPlanter thisPlanter;
@@ -20,13 +18,12 @@ public class planterScript : MonoBehaviour
     void Awake()
     {
         gardenManager = transform.parent.GetComponent<GardenManager>();
-        transientData = gardenManager.transientData;
         weedTick = Random.Range(30, 120);
     }
 
     private void OnMouseDown()
     {
-        if (transientData.cameraView == CameraView.Garden)
+        if (TransientDataScript.CameraView == CameraView.Garden)
         {
         if (currentWeeds == 0)
             gardenManager.ClickPlanter(thisPlanter);
