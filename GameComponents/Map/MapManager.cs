@@ -53,16 +53,14 @@ public class MapManager : MonoBehaviour
         {
             if (TransientDataScript.GameState == GameState.Overworld)
             {
-                TransientDataScript.SetGameState(GameState.MapMenu);
-                Debug.Log(name + " changed GameState to " + GameState.MapMenu);
+                TransientDataScript.SetGameState(GameState.MapMenu, "Map Manager", gameObject);
 
                 transform.position = new Vector3(transform.position.x, 0, transform.position.z);
                 gridContainer.transform.localPosition = new Vector3(0, 0, gridContainer.transform.localPosition.z);
             }
             else if (TransientDataScript.GameState == GameState.MapMenu)
             {
-                TransientDataScript.SetGameState(GameState.Overworld);
-                Debug.Log(name + " changed GameState to " + GameState.Overworld);
+                TransientDataScript.SetGameState(GameState.Overworld, "Map Manager", gameObject);
             }
         }
 
