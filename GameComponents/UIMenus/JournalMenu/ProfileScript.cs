@@ -27,16 +27,12 @@ public class ProfileScript : MonoBehaviour
             $"Days in business: {dataManager.totalGameDays}\n" +
             $"Years in business: {Mathf.FloorToInt(dataManager.totalGameDays/365)}";
 
-        foreach (MotherObject x in transientData.objectIndex)
+        foreach (Skill skill in Skills.all)
         {
-            if (x.objectType == ObjectType.Skill)// && x.dataValue > 0) //add this to filter out objects that the player does not own
-            {
-
-                var prefab = Instantiate(profileSkillPrefab);
-                prefab.name = x.printName;
-                prefab.transform.SetParent(skillPrefabContainer.transform, false);
-                prefab.GetComponent<ProfileSkillPrefab>().EnableObject(x, this);
-            }
+            var prefab = Instantiate(profileSkillPrefab);
+            prefab.name = skill.name;
+            prefab.transform.SetParent(skillPrefabContainer.transform, false);
+            prefab.GetComponent<ProfileSkillPrefab>().EnableObject(skill, this);
         }
     }
 
@@ -65,7 +61,7 @@ public class ProfileScript : MonoBehaviour
         transientData.DisableFloatText();
     }
 
-    public void SkillClick(MotherObject skill)
+    public void SkillClick(Skill skill)
     {
         //sometext.text = skill.shortDescription
         //someothertext.text = skill.longDescription
