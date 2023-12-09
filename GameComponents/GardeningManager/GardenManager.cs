@@ -192,8 +192,6 @@ public class GardenManager : MonoBehaviour
     private void ProcessPlanterClick(ref bool planterIsActive, ref float growthProgress, ref string seedID, ref int seedHealth, SpriteRenderer plantRenderer)
     {
         var seed = Items.FindByID(seedID);
-        var maxGrowth = 100 * seed.health * seed.yield;
-        var outputPlant = seed.GetOutput();
 
         //IF THE PLANTER IS EMPTY
         if (!planterIsActive)
@@ -202,8 +200,11 @@ public class GardenManager : MonoBehaviour
         }
 
         //IF THERE IS A SEED AND THE PLANTER IS ACTIVE
-        else if (planterIsActive && seed != null)
+        else if (seed != null && planterIsActive)
         {
+            var maxGrowth = 100 * seed.health * seed.yield;
+            var outputPlant = seed.GetOutput();
+
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
             if (growthProgress < maxGrowth && planterIsActive)
             {
