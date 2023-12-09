@@ -41,9 +41,6 @@ public class GameManagerScript : MonoBehaviour
 
     void StartUpRoutine()
     {
-        ValidateJsonLoads();
-        LoadScriptableObjects();
-
         gameComponentParent.SetActive(true); //if the game starts with this disabled, you can assure loading objects first
 
         foreach (Transform child in gameComponentParent.transform)
@@ -58,33 +55,6 @@ public class GameManagerScript : MonoBehaviour
         else //If there is no main menu, run new game routine directly
         {
             SetUpNewGame();
-        }
-    }
-
-    void ValidateJsonLoads()
-    {
-
-    }
-    void LoadScriptableObjects()
-    {
-
-        string[] subfolders = new string[] { "Quests/", "Characters/" };
-
-        List<MotherObject> allObjects = new List<MotherObject>();
-
-        foreach (string subfolder in subfolders)
-        {
-            MotherObject[] objects = Resources.LoadAll<MotherObject>(subfolder);
-            allObjects.AddRange(objects);
-        }
-
-        transientData.objectIndex.Clear();
-        transientData.objectIndex.AddRange(allObjects);
-
-        foreach (Character character in Characters.all)
-        {
-            character.NameSetup();
-            Debug.Log("Move character name setup away from game manager.");
         }
     }
 
@@ -107,7 +77,7 @@ public class GameManagerScript : MonoBehaviour
         dataManager.eyesHexColour = "FFFFFF";
         dataManager.hairHexColour = "FFFFFF";
 
-        LoadGameComponents();
+        ResetGameComponents();
 
         dataManager.playerGold = 0;
         dataManager.totalGameDays = 0;
@@ -124,22 +94,22 @@ public class GameManagerScript : MonoBehaviour
         dataManager.isSynthActiveC = false;
 
         //Empty Player items, skills and upgrades
-        Player.items = new();
-        dataManager.playerItems = Player.items;
-        Player.skills = new();
-        dataManager.playerSkills = Player.skills;
-        Player.upgrades = new();
-        dataManager.playerUpgrades = Player.upgrades;
+        //Player.items = new();
+        //dataManager.playerItems = Player.items;
+        //Player.skills = new();
+        //dataManager.playerSkills = Player.skills;
+        //Player.upgrades = new();
+        //dataManager.playerUpgrades = Player.upgrades;
+        Player.inventoryList = new();
+        dataManager.inventoryList = Player.inventoryList;
 
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
     }
 
-    public void LoadGameComponents()
+    public void ResetGameComponents()
     {
-        LoadScriptableObjects();
-
         foreach (GameObject component in listOfGameComponents)
         {
             component.SetActive(false);
