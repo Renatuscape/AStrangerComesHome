@@ -167,4 +167,9 @@ public class CharacterCreator : MonoBehaviour
         colourPicker.SetActive(false);
         facialFeatures.SetActive(true);
     }
+
+    public void FinaliseButton()
+    {
+        TransientDataScript.ReturnToOverWorld("Character Creator", gameObject);
+    }
 }
