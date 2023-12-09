@@ -6,10 +6,9 @@ using UnityEngine.UI;
 
 public class ProfileSkillPrefab : MonoBehaviour
 {
-    public TransientDataScript transientData;
     public ProfileScript profileScript;
 
-    public MotherObject itemSource;
+    public Skill itemSource;
     public bool isReady = false;
     public TextMeshProUGUI valueText;
     public GameObject itemFrame;
@@ -18,14 +17,13 @@ public class ProfileSkillPrefab : MonoBehaviour
 
     void Awake()
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         itemFrame.SetActive(false);
     }
 
-    public void EnableObject(MotherObject motherObject, ProfileScript script)
+    public void EnableObject(Skill skill, ProfileScript script)
     {
         profileScript = script;
-        itemSource = motherObject;
+        itemSource = skill;
         valueText.text = $"";
 
         displayImage.sprite = itemSource.sprite;
@@ -36,10 +34,10 @@ public class ProfileSkillPrefab : MonoBehaviour
     {
         if (isReady)
         {
-            valueText.text = $"{itemSource.printName}";
+            valueText.text = $"{itemSource.name}";
 
             itemFrame.SetActive(true);
-            profileScript.PrintFloatText($"Level { itemSource.dataValue}");
+            profileScript.PrintFloatText($"Level { itemSource.name}");
         }
     }
 
