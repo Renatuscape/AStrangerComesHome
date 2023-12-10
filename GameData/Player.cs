@@ -1,24 +1,14 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Dynamic;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.Searcher;
 using UnityEngine;
-using static UnityEditor.Progress;
-
 public static class Player
 {
-    //public static SerializableDictionary<string, int> items = new();
-    //public static SerializableDictionary<string, int> skills = new();
-    //public static SerializableDictionary<string, int> upgrades = new();
-    //public static SerializableDictionary<string, int> quests = new();
-    //public static SerializableDictionary<string, int> friendships = new();
-
     public static List<IdIntPair> inventoryList = new();
 
-    public static bool GetEntry(string objectID, out IdIntPair entry)
+    public static bool GetEntry(string objectID, string caller, out IdIntPair entry)
     {
-        entry = inventoryList.Find(item => item.objectID.Contains(objectID));
+        entry = inventoryList?.Find(o => o?.objectID != null && o.objectID.Contains(objectID));
 
         if (entry != null)
         {
@@ -29,126 +19,91 @@ public static class Player
 
     public static void Add(string objectID, int amount = 1)
     {
-        if (ParseID(objectID) != null)
+        if (GameCodex.ParseID(objectID) != null)
         {
-            Add(ParseID(objectID), amount);
+            Add(GameCodex.ParseID(objectID), amount);
         }
     }
 
-    public static dynamic ParseID(string searchID)
-    {
-        Item foundItem = Items.FindByID(searchID);
-        if (foundItem != null)
-        {
-            return foundItem;
-        }
-
-        Skill foundSkill = Skills.FindByID(searchID);
-        if (foundItem != null)
-        {
-            return foundSkill;
-        }
-
-        Upgrade foundUpgrade = Upgrades.FindByID(searchID);
-        if (foundUpgrade != null)
-        {
-            return foundUpgrade;
-        }
-
-        Quest foundQuest = Quests.FindByID(searchID);
-        if (foundQuest != null)
-        {
-            return foundQuest;
-        }
-
-        Character foundCharacter = Characters.FindByID(searchID);
-        if (foundCharacter != null)
-        {
-            return foundCharacter;
-        }
-
-        return null;
-    }
-    public static int Add(dynamic addObject, int amount)
+    public static int Add(dynamic dynamicObject, int amount, string caller = "")
     {
         int max = 0;
         string id = string.Empty;
 
-        if (addObject is Item)
+        if (dynamicObject is Item)
         {
-            var item = (Item)addObject;
+            var item = (Item)dynamicObject;
             max = item.maxStack;
             id = item.objectID;
         }
-        else if (addObject is Skill)
+        else if (dynamicObject is Skill)
         {
-            var skill = (Skill)addObject;
+            var skill = (Skill)dynamicObject;
             max = skill.maxLevel;
             id = skill.objectID;
         }
-        else if (addObject is Upgrade)
+        else if (dynamicObject is Upgrade)
         {
-            var upgrade = (Upgrade)addObject;
+            var upgrade = (Upgrade)dynamicObject;
             max = upgrade.maxLevel;
             id = upgrade.objectID;
         }
-        else if (addObject is Quest)
+        else if (dynamicObject is Quest)
         {
-            var quest = (Quest)addObject;
+            var quest = (Quest)dynamicObject;
             max = quest.maxValue;
             id = quest.objectID;
         }
-        else if (addObject is Character)
+        else if (dynamicObject is Character)
         {
-            var quest = (Quest)addObject;
-            max = quest.maxValue;
-            id = quest.objectID;
+            var character = (Character)dynamicObject;
+            max = character.maxValue;
+            id = character.objectID;
         }
-
-        if (!string.IsNullOrWhiteSpace(id))
+        if (id != "")
         {
-            if (GetEntry(id, out var entry))
+            foreach (IdIntPair entry in Player.inventoryList)
             {
-                if (entry.amount + amount <= max && entry.amount + amount >= 0)
+                if (entry.objectID == id)
                 {
-                    entry.amount += amount;
-                    return amount;
+                    if (entry.amount + amount <= max && entry.amount + amount >= 0)
+                    {
+                        entry.amount += amount;
+                        return amount;
+                    }
+                    else
+                    {
+                        int reduced = max - entry.amount;
+                        entry.amount += reduced;
+                        return reduced;
+                    }
                 }
                 else
                 {
-                    int reduced = max - entry.amount;
-                    entry.amount += reduced;
-                    return reduced;
-                }
-            }
-            else
-            {
-                entry = new() { objectID = id, amount = 0 };
-                inventoryList.Add(entry);
+                    IdIntPair newEntry = new() { objectID = id, amount = 0 };
+                    inventoryList.Add(newEntry);
 
-                if (amount >= 0 && amount <= max)
-                {
-                    entry.amount += amount;
-                    return amount;
-                }
-                else
-                {
-                    int reduced = max - entry.amount;
-                    entry.amount += reduced;
-                    return reduced;
+                    if (amount >= 0 && amount <= max)
+                    {
+                        newEntry.amount += amount;
+                        return amount;
+                    }
+                    else
+                    {
+                        int reduced = max - newEntry.amount;
+                        newEntry.amount += reduced;
+                        return reduced;
+                    }
                 }
             }
         }
-        else
-        {
-            Debug.LogWarning($"{addObject.name} is not a valid type for Player.Add.");
-            return 0;
-        }
+        return 0;
     }
 
-    public static int GetCount(string searchID)
+    public static int GetCount(string searchID, string caller)
     {
-        if (GetEntry(searchID, out var entry))
+        Debug.Log(caller + " called Player.GetCount()");
+        if (GetEntry(searchID, "Player", out var entry))
         {
             return entry.amount;
         }
