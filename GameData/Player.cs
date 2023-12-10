@@ -62,10 +62,12 @@ public static class Player
         }
         if (id != "")
         {
-            foreach (IdIntPair entry in Player.inventoryList)
+            bool itemExists = false;
+            foreach (IdIntPair entry in inventoryList)
             {
                 if (entry.objectID == id)
                 {
+                    itemExists = true;
                     if (entry.amount + amount <= max && entry.amount + amount >= 0)
                     {
                         entry.amount += amount;
@@ -78,22 +80,23 @@ public static class Player
                         return reduced;
                     }
                 }
+            }
+            if (!itemExists)
+            {
+                IdIntPair newEntry = new() { objectID = id, amount = 0 };
+                inventoryList.Add(newEntry);
+                Debug.Log($"Caller {caller} created new entry for {id} in player inventory.");
+
+                if (amount >= 0 && amount <= max)
+                {
+                    newEntry.amount += amount;
+                    return amount;
+                }
                 else
                 {
-                    IdIntPair newEntry = new() { objectID = id, amount = 0 };
-                    inventoryList.Add(newEntry);
-
-                    if (amount >= 0 && amount <= max)
-                    {
-                        newEntry.amount += amount;
-                        return amount;
-                    }
-                    else
-                    {
-                        int reduced = max - newEntry.amount;
-                        newEntry.amount += reduced;
-                        return reduced;
-                    }
+                    int reduced = max - newEntry.amount;
+                    newEntry.amount += reduced;
+                    return reduced;
                 }
             }
         }
@@ -102,7 +105,7 @@ public static class Player
 
     public static int GetCount(string searchID, string caller)
     {
-        Debug.Log(caller + " called Player.GetCount()");
+        //Debug.Log(caller + " called Player.GetCount()");
         if (GetEntry(searchID, "Player", out var entry))
         {
             return entry.amount;
