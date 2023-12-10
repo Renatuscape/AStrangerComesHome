@@ -12,6 +12,7 @@ using TMPro;
 public class ShopMenu : MonoBehaviour
 {
     public Shop shopObject;
+    public string shopkeeperID;
     public int merchantile;
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
@@ -19,7 +20,7 @@ public class ShopMenu : MonoBehaviour
 
     public GameObject clearanceNotice;
     public GameObject shopItemPrefab;
-    public TopicManager topicManager;
+    public DialogueSystem dialogueSystem;
 
     public GameObject shelf;
     public GameObject specialShelfA; //special item
@@ -186,19 +187,15 @@ public class ShopMenu : MonoBehaviour
                         {
                             foundTreasures.Add(item);
                         }
-                        /*else if (x is Upgrade)
-                        {
-                            foundUpgrades.Add(x);
-                        }*/
                     }
 
-                        GeneratePages(foundMaterials, "Materials");
-                        GeneratePages(foundCatalysts, "Catalysts");
-                        GeneratePages(foundSeeds, "Seeds");
-                        GeneratePages(foundPlants, "Plants");
-                        GeneratePages(foundTreasures, "Treasures");
-                        GeneratePages(foundUpgrades, "Upgrades");
-                        GeneratePages(foundTrade, "Trade");
+                    GeneratePages(foundMaterials, "Materials");
+                    GeneratePages(foundCatalysts, "Catalysts");
+                    GeneratePages(foundSeeds, "Seeds");
+                    GeneratePages(foundPlants, "Plants");
+                    GeneratePages(foundTreasures, "Treasures");
+                    GeneratePages(foundUpgrades, "Upgrades");
+                    GeneratePages(foundTrade, "Trade");
 
                 }
 
@@ -236,48 +233,9 @@ public class ShopMenu : MonoBehaviour
                         }
                     }
                 }
-                
+
                 SpawnShopItems(pageIndex);
             }
-
-            /*
-            //SPAWN A SPECIAL ITEMS
-            if (shopObject.specialItemA != null)
-            {
-                priceMultiplier = 3f - (merchantile * 0.2f);
-                var objPrefab = Instantiate(shopItemPrefab);
-                objPrefab.name = shopObject.specialItemA.name;
-                objPrefab.transform.SetParent(specialShelfA.transform, false);
-                objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
-                objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemA, this);
-            }
-            if (shopObject.specialItemB != null)
-            {
-                priceMultiplier = 3f - (merchantile * 0.2f);
-                var objPrefab = Instantiate(shopItemPrefab);
-                objPrefab.name = shopObject.specialItemB.name;
-                objPrefab.transform.SetParent(specialShelfB.transform, false);
-                objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
-                objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemB, this);
-            }
-            if (shopObject.specialItemC != null)
-            {
-                priceMultiplier = 3f - (merchantile * 0.2f);
-                var objPrefab = Instantiate(shopItemPrefab);
-                objPrefab.name = shopObject.specialItemC.name;
-                objPrefab.transform.SetParent(specialShelfC.transform, false);
-                objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
-                objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemC, this);
-            }
-            if (shopObject.specialItemD != null)
-            {
-                priceMultiplier = 3f - (merchantile * 0.2f);
-                var objPrefab = Instantiate(shopItemPrefab);
-                objPrefab.name = shopObject.specialItemD.name;
-                objPrefab.transform.SetParent(specialShelfD.transform, false);
-                objPrefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
-                objPrefab.GetComponent<ShopItemPrefab>().EnableObject(shopObject.specialItemD, this);
-            }*/
         }
     }
 
@@ -306,7 +264,6 @@ public class ShopMenu : MonoBehaviour
         }
 
         transientData.DisableFloatText();
-        //Debug.Log($"{shopObject.farewellText}");
     }
 
     public void AttemptPurchase(Item item, int itemCost)
@@ -334,6 +291,6 @@ public class ShopMenu : MonoBehaviour
 
     public void ChatButton()
     {
-        topicManager.OpenTopicManager(shopObject.shopKeeper);
+        dialogueSystem.OpenTopicMenu(shopkeeperID);
     }
 }
