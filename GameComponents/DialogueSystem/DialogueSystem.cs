@@ -7,11 +7,13 @@ public class DialogueSystem : MonoBehaviour
     public GameObject button;
     public GameObject TopicMenu;
     public GameObject DialogueEvent;
+    public GameState previousGameState = GameState.Overworld;
 
-    public void OpenTopicMenu()
+    public void OpenTopicMenu(string speakerID)
     {
+        previousGameState = TransientDataScript.GetGameState();
         TopicMenu.SetActive(true);
-        TopicMenu.GetComponent<TopicMenu>().OpenTopicsMenu("DEBUG");
+        TopicMenu.GetComponent<TopicMenu>().OpenTopicsMenu(speakerID);
         DialogueEvent.SetActive(false);
     }
 
@@ -20,10 +22,10 @@ public class DialogueSystem : MonoBehaviour
         TopicMenu.SetActive(false);
         DialogueEvent.SetActive(true);
     }
-}
-[System.Serializable]
-public class Topic
-{
-    public DialogueSystem dialogueSystem;
-    public Quest quest;
+
+    public void CloseTopicMenuAndLeave()
+    {
+        TopicMenu.SetActive(false);
+        TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
+    }
 }
