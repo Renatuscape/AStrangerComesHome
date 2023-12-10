@@ -30,11 +30,11 @@ public class Item
 
     public void AddToPlayer(int amount = 1)
     {
-        Player.Add(this, amount);
+        Player.Add(this, amount, "Item");
     }
     public int GetCountPlayer()
     {
-        return Player.GetCount(objectID);
+        return Player.GetCount(objectID, "Item");
     }
 
     public Item GetOutput()

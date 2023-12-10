@@ -53,10 +53,10 @@ public class Engine : MonoBehaviour
 
     void SyncUpgrades()
     {
-        engineBoostEfficiency = Player.GetCount("MEC000"); //Capacitor - boost depletes slower
-        engineBoostMax = Player.GetCount("MEC001"); //Brass Chamber - more boost can be stored
-        engineClickPotency = Player.GetCount("MEC002"); //Crankshaft - click is more potent
-        engineFuelEfficiency = Player.GetCount("MEC003"); //Spark Tubes - engine uses less mana
+        engineBoostEfficiency = Player.GetCount("MEC000", "Engine"); //Capacitor - boost depletes slower
+        engineBoostMax = Player.GetCount("MEC001", "Engine"); //Brass Chamber - more boost can be stored
+        engineClickPotency = Player.GetCount("MEC002", "Engine"); //Crankshaft - click is more potent
+        engineFuelEfficiency = Player.GetCount("MEC003", "Engine"); //Spark Tubes - engine uses less mana
     }
     void BoostDecrease()
     {

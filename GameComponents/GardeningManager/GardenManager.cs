@@ -55,10 +55,10 @@ public class GardenManager : MonoBehaviour
 
     void SyncSkills()
     {
-        gardening = Player.GetCount("GAR000");
-        cultivation = Player.GetCount("GAR001");
-        nurturing = Player.GetCount("GAR002");
-        earthsoul = Player.GetCount("GAR003");
+        gardening = Player.GetCount("GAR000", "GardenManager");
+        cultivation = Player.GetCount("GAR001", "GardenManager");
+        nurturing = Player.GetCount("GAR002", "GardenManager");
+        earthsoul = Player.GetCount("GAR003", "GardenManager");
     }
     public void UpdatePlanterSprite()
     {

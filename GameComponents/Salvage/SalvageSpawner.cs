@@ -19,12 +19,13 @@ public class SalvageSpawner : MonoBehaviour
 
     private void OnEnable()
     {
+        SyncSkills();
         Invoke("SpawnRoller", 2f);
     }
 
     void SyncSkills()
     {
-        fortune = Player.GetCount("ATT000");
+        fortune = Player.GetCount("ATT000", "SalvageSpawner");
     }
     void SpawnRoller()
     {
@@ -46,6 +47,7 @@ public class SalvageSpawner : MonoBehaviour
 
     void SalvageSpawn()
     {
+        SyncSkills();
         var newSalvage = Instantiate(salvageBox);
         newSalvage.transform.localPosition = new Vector3(-20f, -6f, 0);
         newSalvage.name = "spawnedSalvage";

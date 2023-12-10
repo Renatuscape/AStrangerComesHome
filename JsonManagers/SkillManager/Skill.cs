@@ -24,11 +24,11 @@ public class Skill
 
     public void AddToPlayer(int amount = 1)
     {
-        Player.Add(this, amount);
+        Player.Add(this, amount, "Skill");
     }
     public int GetCountPlayer()
     {
-        return Player.GetCount(objectID);
+        return Player.GetCount(objectID, "Skill");
     }
 
 }

@@ -47,7 +47,7 @@ public class ShopMenu : MonoBehaviour
 
     void SyncSkills()
     {
-        merchantile = Player.GetCount("ATT002");
+        merchantile = Player.GetCount("ATT002", "ShopMenu");
     }
     public void ChangePage(bool pageBack)
     {

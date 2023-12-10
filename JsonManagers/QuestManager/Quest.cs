@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
@@ -10,7 +7,8 @@ public class Quest
     public string objectID;
     public string name;
     public bool excludeFromJournal;
-    public int maxValue = 1;
+    public int maxValue = 100;
+    public Character questGiver;
     public List<AdvancementCheck> unlockRequirements;
     public List<IdIntPair> rewards;
 
@@ -19,17 +17,23 @@ public class Quest
     public int autoAdvanceAfterDays;
 
     public List<Dialogue> dialogues = new();
-    // Add any other quest-related properties here
 
-    // Check quest stage's dialogue list of characters and see if there is a match. Otherwise public SerializableDictionary<int, Character> perStageNPC;
-
-    public void AddToPlayer(int amount = 1)
+    public int GetQuestStage()
     {
-        Player.Add(this, amount);
+        return Player.GetCount(objectID, "Quest");
     }
-    public int GetCountPlayer()
+    public void SetQuestStage(int stage)
     {
-        return Player.GetCount(objectID);
+        Player.GetEntry(objectID, "Quest", out var entry);
+        if (entry != null)
+        {
+            entry.amount = stage;
+        }
+        else
+        {
+            entry = new() { objectID = objectID, amount = stage };
+            Player.inventoryList.Add(entry);
+        }
     }
 }
 
@@ -49,9 +53,9 @@ public static class Quests
 
     public static void DebugAllItems()
     {
-        foreach (Quest item in all)
+        foreach (Quest quest in all)
         {
-            item.AddToPlayer(1);
+            quest.SetQuestStage(0);
         }
     }
 
@@ -72,24 +76,4 @@ public static class Quests
         Debug.LogWarning("No item found with ID containing this search term: " + searchWord);
         return null;
     }
-}
-
-[System.Serializable]
-public class AdvancementCheck
-{
-    public int minimumCharacterLevel;
-    public int minimumDaysPassed;
-
-    //The player must have at least this much
-    public List<IdIntPair> requirements;
-
-    //The player must have less than this amount
-    public List<IdIntPair> restrictions;
-}
-
-[System.Serializable]
-public class IdIntPair
-{
-    public string objectID;
-    public int amount;
 }
