@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
@@ -105,6 +106,12 @@ public class GameManagerScript : MonoBehaviour
 
         Player.inventoryList = new();
         dataManager.inventoryList = Player.inventoryList;
+
+        //Add all the skills to the player inventory from the start
+        foreach (Skill skill in Skills.all.Where(s => s.type == SkillType.Attribute))
+        {
+            Player.inventoryList.Add(new IdIntPair { objectID = skill.objectID, amount = 1 });
+        }
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
