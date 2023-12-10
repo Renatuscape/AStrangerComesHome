@@ -10,14 +10,10 @@ public class TopicMenu : MonoBehaviour
     public DialogueSystem dialogueSystem;
     public GameObject topicContainer;
     public List<GameObject> buttonList;
-
-    private void OnEnable()
-    {
-        Quests.DebugAllItems();
-        OpenTopicsMenu("DEBUG");
-    }
     public void OpenTopicsMenu(string speakerID)
     {
+        TransientDataScript.SetGameState(GameState.Dialogue, "TopicMenu", gameObject);
+
         questList = new();
 
         if (speakerID != "DEBUG")
@@ -55,6 +51,9 @@ public class TopicMenu : MonoBehaviour
                 text.GetComponent<TextMeshProUGUI>().text = GetTopicName(quest);
                 buttonList.Add(button);
             }
+            topicContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+            Canvas.ForceUpdateCanvases();
+            topicContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
             topicContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
             Canvas.ForceUpdateCanvases();
         }
