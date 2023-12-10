@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,10 @@ public class MenuFloatTextScript : MonoBehaviour
     void Update()
     {
         transform.position = Input.mousePosition; //Only works for ScreenSpaceOverlay type of Canvas RenderMode
+        if (Input.GetMouseButtonDown(0))
+        {
+            DisableFloatText();
+        }
     }
 
     public void PrintFloatText(string content)
