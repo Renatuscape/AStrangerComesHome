@@ -1,18 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManagerScript : MonoBehaviour
 {
     //ALL GAME COMPONENTS
-    public TransientDataScript transientData;
     public DataManagerScript dataManager;
 
-    public ItemManager itemManager;
-    public SkillManager skillManager;
-    public UpgradeManager upgradeManager;
+    public GameObject itemManager;
+    public GameObject skillManager;
+    public GameObject upgradeManager;
+    public GameObject characterManager;
+    public GameObject dialogueManager;
+    public GameObject questManager;
 
     public GameObject gameComponentMaster;
     public GameObject mainMenuComponent;
@@ -41,6 +40,7 @@ public class GameManagerScript : MonoBehaviour
 
     void StartUpRoutine()
     {
+        InitiateJsonManagers();
         gameComponentParent.SetActive(true); //if the game starts with this disabled, you can assure loading objects first
 
         foreach (Transform child in gameComponentParent.transform)
@@ -56,6 +56,16 @@ public class GameManagerScript : MonoBehaviour
         {
             SetUpNewGame();
         }
+    }
+
+    void InitiateJsonManagers()
+    {
+        itemManager.SetActive(true);
+        skillManager.SetActive(true);
+        upgradeManager.SetActive(true);
+        characterManager.SetActive(true);
+        dialogueManager.SetActive(true);
+        questManager.SetActive(true);
     }
 
     public void ActivateMainMenu()
@@ -93,16 +103,8 @@ public class GameManagerScript : MonoBehaviour
         dataManager.isSynthActiveB = false;
         dataManager.isSynthActiveC = false;
 
-        //Empty Player items, skills and upgrades
-        //Player.items = new();
-        //dataManager.playerItems = Player.items;
-        //Player.skills = new();
-        //dataManager.playerSkills = Player.skills;
-        //Player.upgrades = new();
-        //dataManager.playerUpgrades = Player.upgrades;
         Player.inventoryList = new();
         dataManager.inventoryList = Player.inventoryList;
-
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
