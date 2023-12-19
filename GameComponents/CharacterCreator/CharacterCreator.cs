@@ -8,33 +8,29 @@ public class CharacterCreator : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public TransientDataScript transientData;
+    public GameObject PortraitRenderer;
+    public GameObject PortraitCanvas;
+    public PlayerSprite playerSprite;
     public Character playerObject;
-    public Texture2D combinedTexture;
-    public int width = 877;
-    public int height = 1240;
 
-    public List<Sprite> playerHairList;
-    public List<Sprite> playerHairOutlineList;
-    public List<Sprite> playerBodyList;
-    public List<Sprite> playerHeadList;
-
-    public Image playerHair;
-    public Image playerHairOutline;
-    public Image playerEyes;
-    public Image playerBody;
-    public Image playerHead;
     public TextMeshProUGUI hairStyleNumber;
     public TextMeshProUGUI bodyTypeNumber;
     public TextMeshProUGUI bodyToneNumber;
+    public TextMeshProUGUI mouthNumber;
+    public TextMeshProUGUI eyesNumber;
     public TextMeshProUGUI characterName;
 
     public GameObject colourPicker;
-    public GameObject facialFeatures;
 
     private void OnEnable()
     {
-        facialFeatures.SetActive(false);
         colourPicker.SetActive(false);
+        PortraitRenderer.SetActive(true);
+        foreach (Transform child in PortraitCanvas.transform)
+        {
+            child.gameObject.SetActive(false);
+        }
+        PortraitCanvas.transform.Find("PlayerPortrait").gameObject.SetActive(true);
         UpdateSpriteFromData();
     }
 
@@ -48,38 +44,17 @@ public class CharacterCreator : MonoBehaviour
             dataManager.playerName = characterName.text;
         }
     }
+
     public void UpdateSpriteFromData()
     {
-        playerHair.sprite = playerHairList[dataManager.hairIndex];
-        playerHairOutline.sprite = playerHairOutlineList[dataManager.hairIndex];
-        playerBody.sprite = playerBodyList[dataManager.bodyIndex];
-        playerHead.sprite = playerHeadList[dataManager.headIndex];
+        hairStyleNumber.text = dataManager.hairIndex.ToString();
+        bodyTypeNumber.text = dataManager.bodyIndex.ToString();
+        bodyToneNumber.text = dataManager.headIndex.ToString();
+        mouthNumber.text = dataManager.headIndex.ToString();
+        eyesNumber.text = dataManager.eyesIndex.ToString();
 
-        hairStyleNumber.text = $"{dataManager.hairIndex}";
-        bodyTypeNumber.text = $"{dataManager.bodyIndex}";
-        bodyToneNumber.text = $"{dataManager.headIndex}";
+        playerSprite.UpdateAllFromGameData();
 
-        // Apply hair color
-        Color hairColor;
-        if (ColorUtility.TryParseHtmlString("#" + dataManager.hairHexColour, out hairColor))
-        {
-            playerHair.color = hairColor;
-        }
-        else
-        {
-            playerHair.color = Color.white; // Default to white if parsing fails
-        }
-
-        // Apply eye color
-        Color eyeColor;
-        if (ColorUtility.TryParseHtmlString("#" + dataManager.eyesHexColour, out eyeColor))
-        {
-            playerEyes.color = eyeColor;
-        }
-        else
-        {
-            playerEyes.color = Color.white;
-        }
     }
 
     public void ChangeHair(bool isPrevious)
@@ -91,18 +66,17 @@ public class CharacterCreator : MonoBehaviour
                 dataManager.hairIndex--;
             }
             else
-                dataManager.hairIndex = playerHairList.Count - 1;
+                dataManager.hairIndex = playerSprite.playerHairColours.Count - 1;
         }
         else
         {
-            if (dataManager.hairIndex < playerHairList.Count - 1)
+            if (dataManager.hairIndex < playerSprite.playerHairColours.Count - 1)
             {
                 dataManager.hairIndex++;
             }
             else
                 dataManager.hairIndex = 0;
         }
-
         UpdateSpriteFromData();
     }
 
@@ -115,11 +89,11 @@ public class CharacterCreator : MonoBehaviour
                 dataManager.bodyIndex--;
             }
             else
-                dataManager.bodyIndex = playerBodyList.Count - 1;
+                dataManager.bodyIndex = playerSprite.playerBodyTypes.Count - 1;
         }
         else
         {
-            if (dataManager.bodyIndex < playerBodyList.Count - 1)
+            if (dataManager.bodyIndex < playerSprite.playerBodyTypes.Count - 1)
             {
                 dataManager.bodyIndex++;
             }
@@ -139,11 +113,11 @@ public class CharacterCreator : MonoBehaviour
                 dataManager.headIndex--;
             }
             else
-                dataManager.headIndex = playerHeadList.Count - 1;
+                dataManager.headIndex = playerSprite.playerHeads.Count - 1;
         }
         else
         {
-            if (dataManager.headIndex < playerHeadList.Count - 1)
+            if (dataManager.headIndex < playerSprite.playerHeads.Count - 1)
             {
                 dataManager.headIndex++;
             }
@@ -154,22 +128,64 @@ public class CharacterCreator : MonoBehaviour
         UpdateSpriteFromData();
     }
 
+    public void ChangeMouth(bool isPrevious)
+    {
+        if (isPrevious)
+        {
+            if (dataManager.mouthIndex > 0)
+            {
+                dataManager.mouthIndex--;
+            }
+            else
+                dataManager.mouthIndex = playerSprite.playerMouths.Count - 1;
+        }
+        else
+        {
+            if (dataManager.mouthIndex < playerSprite.playerMouths.Count - 1)
+            {
+                dataManager.mouthIndex++;
+            }
+            else
+                dataManager.mouthIndex = 0;
+        }
+
+        UpdateSpriteFromData();
+    }
+
+    public void ChangeEyes(bool isPrevious)
+    {
+        if (isPrevious)
+        {
+            if (dataManager.eyesIndex > 0)
+            {
+                dataManager.eyesIndex--;
+            }
+            else
+                dataManager.eyesIndex = playerSprite.playerEyes.Count - 1;
+        }
+        else
+        {
+            if (dataManager.eyesIndex < playerSprite.playerEyes.Count - 1)
+            {
+                dataManager.eyesIndex++;
+            }
+            else
+                dataManager.eyesIndex = 0;
+        }
+
+        UpdateSpriteFromData();
+    }
+
     public void EnableColourPicker(int targetIndex)
     {
-        facialFeatures.SetActive(false);
         colourPicker.SetActive(false);
         colourPicker.GetComponent<ColourPicker>().targetIndex = targetIndex;
         colourPicker.SetActive(true);
     }
 
-    public void EnableFeaturePicker()
-    {
-        colourPicker.SetActive(false);
-        facialFeatures.SetActive(true);
-    }
-
     public void FinaliseButton()
     {
+        PortraitRenderer.SetActive(false);
         TransientDataScript.ReturnToOverWorld("Character Creator", gameObject);
     }
 }
