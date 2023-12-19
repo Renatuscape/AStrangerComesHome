@@ -31,9 +31,12 @@ public class DataManagerScript : MonoBehaviour
     public int hairIndex;
     public int bodyIndex;
     public int headIndex;
+    public int eyesIndex;
+    public int mouthIndex;
+
     public string hairHexColour;
     public string eyesHexColour;
-    public SerializableDictionary<string, bool> faceMods;
+    //public SerializableDictionary<string, bool> faceMods;
 
     //JOURNEY DATA - SAVE READY
     public float mapPositionX;
