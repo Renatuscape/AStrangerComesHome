@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class ColourPicker : MonoBehaviour
 {
     public DataManagerScript dataManager;
+    public PlayerSprite playerSprite;
 
     public Image colourPreview;
     public TextMeshProUGUI hexText;
@@ -15,8 +16,8 @@ public class ColourPicker : MonoBehaviour
     public Slider sliderG;
     public Slider sliderB;
 
-    public Image hairImage;
-    public Image eyeImage;
+    //public Image hairImage;
+    //public Image eyeImage;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI targetText;
 
@@ -24,6 +25,7 @@ public class ColourPicker : MonoBehaviour
 
     private void OnEnable()
     {
+        hexText.text = "Hex #" + dataManager.hairHexColour;
         AddListeners();
 
         if (targetIndex == 2)
@@ -79,12 +81,12 @@ public class ColourPicker : MonoBehaviour
     {
         if (targetIndex == 2)
         {
-            AdjustImageColour(eyeImage, ref dataManager.eyesHexColour, "Eye Colour");
+            AdjustImageColour(playerSprite.irises, ref dataManager.eyesHexColour, "Eye Colour");
         }
 
         else if (targetIndex == 1)
         {
-            AdjustImageColour(hairImage, ref dataManager.hairHexColour, "Hair Colour");
+            AdjustImageColour(playerSprite.hairColour, ref dataManager.hairHexColour, "Hair Colour");
         }
         else if (targetIndex == 0)
         {
