@@ -21,9 +21,14 @@ public class CharacterPronouns : MonoBehaviour
         dataManager.pronounObj = pronounObj.text;
         dataManager.pronounGen = pronounGen.text;
     }
+
     public void ChoosePronouns()
     {
-        customFields.SetActive(false);
+        if (dropdown.value != 4)
+        {
+            customFields.SetActive(false);
+        }
+
         if (dropdown.value > 5 || dropdown.value < 0)
             dropdown.value = 0;
 
@@ -62,6 +67,9 @@ public class CharacterPronouns : MonoBehaviour
 
     public void UpdatePronouns()
     {
+        dataManager.pronounSub = pronounSub.text;
+        dataManager.pronounObj = pronounObj.text;
+        dataManager.pronounGen = pronounGen.text;
         StartCoroutine(LatePronounUpdate());
     }
 
