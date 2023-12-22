@@ -50,7 +50,7 @@ public class CharacterCreator : MonoBehaviour
         hairStyleNumber.text = dataManager.hairIndex.ToString();
         bodyTypeNumber.text = dataManager.bodyIndex.ToString();
         bodyToneNumber.text = dataManager.headIndex.ToString();
-        mouthNumber.text = dataManager.headIndex.ToString();
+        mouthNumber.text = dataManager.mouthIndex.ToString();
         eyesNumber.text = dataManager.eyesIndex.ToString();
 
         playerSprite.UpdateAllFromGameData();
