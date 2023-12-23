@@ -85,8 +85,8 @@ public class GameManagerScript : MonoBehaviour
     {
         dataManager.playerName = "Morgan";
         dataManager.playerNameColour = "597266";
-        dataManager.eyesHexColour = "87C945";
-        dataManager.hairHexColour = "896C45";
+        dataManager.eyesHexColour = "87DF5C";
+        dataManager.hairHexColour = "896C5C";
 
         ResetGameComponents();
 
