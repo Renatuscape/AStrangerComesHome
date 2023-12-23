@@ -16,8 +16,6 @@ public class ColourPicker : MonoBehaviour
     public Slider sliderG;
     public Slider sliderB;
 
-    //public Image hairImage;
-    //public Image eyeImage;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI targetText;
 
@@ -37,7 +35,10 @@ public class ColourPicker : MonoBehaviour
             SetSlidersFromHex(dataManager.hairHexColour);
         }
         else if (targetIndex == 0)
+        {
             SetSlidersFromHex(dataManager.playerNameColour);
+        }
+
     }
     private void OnDisable()
     {
@@ -60,9 +61,15 @@ public class ColourPicker : MonoBehaviour
             float gNormalized = g / 255f;
             float bNormalized = b / 255f;
 
+            if (r > sliderR.minValue || g > sliderG.minValue ||  b > sliderB.minValue)
+            {
+                Debug.Log("An RGB value exceeded slider minimum value. Colour approximated.");
+            }
             sliderR.value = rNormalized;
             sliderG.value = gNormalized;
             sliderB.value = bNormalized;
+
+            Debug.Log($"Sliders should be set to hex colour {hexColor}");
         }
         else
         {
