@@ -70,6 +70,6 @@ public class QuestManager : MonoBehaviour
 
     public static void objectIDReader(ref Quest quest)
     {
-        quest.questGiver = Characters.FindByID(quest.objectID.Substring(2, 6));
+        quest.questGiver = Characters.FindByID(quest.objectID.Substring(0, 6));
     }
 }
