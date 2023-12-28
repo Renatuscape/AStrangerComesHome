@@ -16,6 +16,7 @@ public class ShopMenu : MonoBehaviour
     public int merchantile;
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
+    public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
     public float priceMultiplier;
 
     public GameObject clearanceNotice;
@@ -44,6 +45,7 @@ public class ShopMenu : MonoBehaviour
         priceMultiplier = 2f;
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
+        portraitRenderer = GameObject.Find("PortraitRenderer").GetComponent<PortraitRenderer>();
     }
 
     void SyncSkills()
@@ -107,8 +109,18 @@ public class ShopMenu : MonoBehaviour
 
     }
 
+    void EnablePortraits()
+    {
+        Character shopkeeper = Characters.FindByID(shopkeeperID);
+        if (shopkeeper is not null)
+        {
+            portraitRenderer.gameObject.SetActive(true);
+            portraitRenderer.EnableForShop(shopkeeper);
+        }
+    }
     private void OnEnable()
     {
+        EnablePortraits();
         transientData.DisableFloatText();
         pageIndex = 0;
 
@@ -263,6 +275,7 @@ public class ShopMenu : MonoBehaviour
             Destroy(child.gameObject);
         }
 
+        portraitRenderer.gameObject.SetActive(false);
         transientData.DisableFloatText();
     }
 
