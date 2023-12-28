@@ -5,27 +5,32 @@ using UnityEngine;
 public class DialogueSystem : MonoBehaviour
 {
     public GameObject button;
-    public GameObject TopicMenu;
-    public GameObject DialogueEvent;
+    public GameObject topicMenu;
+    public GameObject dialogueMenu;
     public GameState previousGameState = GameState.Overworld;
 
+    private void Start()
+    {
+        topicMenu.SetActive(false);
+        dialogueMenu.SetActive(false);
+    }
     public void OpenTopicMenu(string speakerID)
     {
         previousGameState = TransientDataScript.GetGameState();
-        TopicMenu.SetActive(true);
-        TopicMenu.GetComponent<TopicMenu>().OpenTopicsMenu(speakerID);
-        DialogueEvent.SetActive(false);
+        topicMenu.SetActive(true);
+        topicMenu.GetComponent<TopicMenu>().OpenTopicsMenu(speakerID);
+        dialogueMenu.SetActive(false);
     }
 
     public void StartDialogueEvent()
     {
-        TopicMenu.SetActive(false);
-        DialogueEvent.SetActive(true);
+        topicMenu.SetActive(false);
+        dialogueMenu.SetActive(true);
     }
 
     public void CloseTopicMenuAndLeave()
     {
-        TopicMenu.SetActive(false);
+        topicMenu.SetActive(false);
         TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
     }
 }
