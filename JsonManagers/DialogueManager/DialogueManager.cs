@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngineInternal;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -50,8 +51,8 @@ public class DialogueManager : MonoBehaviour
                 {
                     foreach (Dialogue dialogue in dataWrapper.dialogues)
                     {
-                        dialogue.objectID = dialogue.questID + "-s" + dialogue.stage;
-                        InitialiseDialogue(dialogue, Dialogues.all);
+                        dialogue.objectID = dialogue.questID + "-s" + dialogue.questStage;
+                        InitialiseDialogue(dialogue);
                         filesLoaded++;
                     }
 
@@ -78,19 +79,26 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public static void InitialiseDialogue(Dialogue dialogue, List<Dialogue> questList)
+    public static void InitialiseDialogue(Dialogue dialogue)
     {
-        objectIDReader(ref dialogue);
-        questList.Add(dialogue);
+        ParseDialogueSteps(dialogue); //set up dialogue steps with proper speaker objects
+        Dialogues.all.Add(dialogue);
     }
 
-    public static void objectIDReader(ref Dialogue dialogue)
+    public static void ParseDialogueSteps(Dialogue dialogue)
     {
+        Debug.Log($"parsing ${dialogue.objectID}" +
+            $"\n Content count: {dialogue.content.Count}");
 
-    }
-
-    public static void ContentCreator(ref Dialogue dialogue)
-    {
-
+        for (int i = 0; i < dialogue.content.Count; i = i + 2)
+        {
+            string speakerTag = dialogue.content[i];
+            Character foundSpeaker = Characters.all.Find((s) => s.dialogueTag.ToLower() == speakerTag.ToLower());
+            DialogueStep step = new() { name = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i/2+1)}" };
+            step.speaker = foundSpeaker;
+            step.text = dialogue.content[i + 1];
+            Debug.Log($"New step {i} - {i + 1}| {step.speaker}: {step.text}");
+            dialogue.dialogueSteps.Add(step);
+        }
     }
 }
