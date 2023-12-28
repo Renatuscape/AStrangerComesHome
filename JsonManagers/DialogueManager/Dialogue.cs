@@ -14,7 +14,7 @@ public class Dialogue
     public List<DialogueStep> dialogueSteps = new(); //a step is one line of dialogue from one speaker
     public List<Choice> choices = new (); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
     public bool progressOnContinue = false; //automatically go to next stage when step is completed
-    public bool noLeaveButton;
+    public bool noLeaveButton = true; //if this is enabled, it is impossible to leave dialogue until you reach a choice
 }
 
 public static class Dialogues
