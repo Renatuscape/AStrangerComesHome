@@ -7,9 +7,14 @@ public class Dialogue
 {
     public string objectID;
     public string questID;
-    public int stage;
+    public int questStage;
     public string topicName;
-    public List<DialogueContent> dialogueContent;
+
+    public List<string> content;
+    public List<DialogueStep> dialogueSteps = new(); //a step is one line of dialogue from one speaker
+    public List<Choice> choices = new (); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
+    public bool progressOnContinue = false; //automatically go to next stage when step is completed
+    public bool noLeaveButton;
 }
 
 public static class Dialogues
@@ -22,7 +27,7 @@ public static class Dialogues
 
         foreach (Dialogue dialogue in all)
         {
-            Debug.Log($"Dialogue for quest {dialogue.questID}: stage {dialogue.stage}");
+            Debug.Log($"Dialogue for quest {dialogue.questID}: stage {dialogue.questStage}");
         }
     }
 
@@ -31,7 +36,7 @@ public static class Dialogues
         foreach (Dialogue dialogue in all)
         {
             Debug.Log($"{dialogue}" +
-                $"\n{dialogue.dialogueContent.Count}");
+                $"\n{dialogue.dialogueSteps.Count}");
         }
     }
 
@@ -39,7 +44,7 @@ public static class Dialogues
     {
         return all
             .Where(d => d.questID == questID)
-            .OrderBy(d => d.stage)
+            .OrderBy(d => d.questStage)
             .ToList();
     }
 }
