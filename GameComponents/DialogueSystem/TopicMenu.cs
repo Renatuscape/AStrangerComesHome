@@ -8,6 +8,7 @@ public class TopicMenu : MonoBehaviour
 {
     public List<Quest> questList;
     public DialogueSystem dialogueSystem;
+    public PortraitRenderer portraitRenderer;
     public GameObject topicContainer;
     public List<GameObject> buttonList;
     public void OpenTopicsMenu(string speakerID)
@@ -15,6 +16,9 @@ public class TopicMenu : MonoBehaviour
         TransientDataScript.SetGameState(GameState.Dialogue, "TopicMenu", gameObject);
 
         questList = new();
+        Debug.Log("OpenTopicsMenu called. Attempting to enable portraits.");
+        portraitRenderer.gameObject.SetActive(true);
+        portraitRenderer.EnableForTopicMenu(speakerID);
 
         if (speakerID != "DEBUG")
         {
@@ -74,6 +78,7 @@ public class TopicMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        //portraitRenderer.gameObject.SetActive(false);
         CloseTopics();
     }
 

@@ -45,7 +45,6 @@ public class ShopMenu : MonoBehaviour
         priceMultiplier = 2f;
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
-        portraitRenderer = GameObject.Find("PortraitRenderer").GetComponent<PortraitRenderer>();
     }
 
     void SyncSkills()
@@ -111,12 +110,8 @@ public class ShopMenu : MonoBehaviour
 
     void EnablePortraits()
     {
-        Character shopkeeper = Characters.FindByID(shopkeeperID);
-        if (shopkeeper is not null)
-        {
-            portraitRenderer.gameObject.SetActive(true);
-            portraitRenderer.EnableForShop(shopkeeper);
-        }
+        portraitRenderer.gameObject.SetActive(true);
+        portraitRenderer.EnableForShop(shopkeeperID);
     }
     private void OnEnable()
     {
@@ -253,6 +248,8 @@ public class ShopMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        //portraitRenderer.gameObject.SetActive(false);
+
         foreach (Transform child in shelf.transform)
         {
             Destroy(child.gameObject);
@@ -275,7 +272,6 @@ public class ShopMenu : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        portraitRenderer.gameObject.SetActive(false);
         transientData.DisableFloatText();
     }
 
