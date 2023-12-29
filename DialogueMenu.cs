@@ -77,27 +77,47 @@ public class DialogueMenu : MonoBehaviour
     //PRINT NEXT STEP
     void PrintStep(Dialogue dialogue)
     {
-        if (dialogue is not null)
+        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+
+        if (dialogue is not null && stepIndex < dialogue.dialogueSteps.Count)
         {
             DialogueStep step = dialogue.dialogueSteps[stepIndex];
 
             if (step.speaker.dialogueTag != "Narration")
             {
+                portraitRenderer.SetRightSprite(step.speaker, true);
                 PrintNamePlate(step.speaker);
             }
 
             PrintText(step.text);
 
-            if (stepIndex <= dialogue.dialogueSteps.Count)
+            if (stepIndex < dialogue.dialogueSteps.Count)
             {
-                Debug.Log("Attempting to print continue button");
-                PrintContinue(dialogue);
+                GameObject button = PrintContinue(dialogue);
+
+                //Handle choice/leave options
+                if (stepIndex + 1 == dialogue.dialogueSteps.Count)
+                {
+                    var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+                    textMesh.text = "Leave";
+                }
             }
+        }
+        else if (stepIndex == dialogue.dialogueSteps.Count)
+        {
+            //print choices or end conversation
+            dialogueSystem.CloseDialogueMenu();
         }
         else
         {
             Debug.Log("dialogue passed to PrintStep was null");
         }
+
+        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
+        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
     }
 
     //BASIC BUTTON - CREATE ALL OBJECTS FROM THIS
@@ -109,6 +129,7 @@ public class DialogueMenu : MonoBehaviour
         float newSize = dialogueContainer.GetComponent<RectTransform>().sizeDelta.x - 20;
         RectTransform transform = button.GetComponent<RectTransform>();
         transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
+        button.transform.SetParent(dialogueContainer.transform, false);
 
         buttonList.Add(button);
 
@@ -128,9 +149,8 @@ public class DialogueMenu : MonoBehaviour
 
         //Hide background
         button.GetComponent<Image>().color = new Color(1, 1, 1, 0);
-        button.transform.SetParent(dialogueContainer.transform, false);
 
-        button.name = "Content";
+        button.name = "content";
         return button;
     }
 
@@ -159,23 +179,29 @@ public class DialogueMenu : MonoBehaviour
 
 
     //CONTINUE STEP BUTTON
-    void PrintContinue(Dialogue dialogue)
+    GameObject PrintContinue(Dialogue dialogue)
     {
-        Debug.Log("Print continue was called");
         GameObject button = InstantiateBasicButton();
         button.name = "ContinueButton";
-        button.GetComponent<Button>().onClick.AddListener(() => ContinueToNextStep(dialogue));
+        button.GetComponent<Button>().onClick.AddListener(() => ContinueToNextStep(dialogue, button));
+
+        //SET BUTTON SIZE
+        float newSize = 75;
+        RectTransform transform = button.GetComponent<RectTransform>();
+        transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
 
         var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        textMesh.alignment = TextAlignmentOptions.Left;
+        //textMesh.alignment = TextAlignmentOptions.Left;
         textMesh.text = "Continue";
+
+        return button;
     }
 
-    public void ContinueToNextStep(Dialogue dialogue)
+    public void ContinueToNextStep(Dialogue dialogue, GameObject button)
     {
         stepIndex++;
         PrintStep(dialogue);
-        Destroy(gameObject);
+        Destroy(button);
     }
 
     void SetValuesToDefault()
