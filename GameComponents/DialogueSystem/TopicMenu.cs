@@ -16,7 +16,6 @@ public class TopicMenu : MonoBehaviour
         TransientDataScript.SetGameState(GameState.Dialogue, "TopicMenu", gameObject);
 
         questList = new();
-        Debug.Log("OpenTopicsMenu called. Attempting to enable portraits.");
         portraitRenderer.gameObject.SetActive(true);
         portraitRenderer.EnableForTopicMenu(speakerID);
 
@@ -43,17 +42,7 @@ public class TopicMenu : MonoBehaviour
             topicContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
             foreach (Quest quest in questList)
             {
-                GameObject button = Instantiate(dialogueSystem.button);
-
-                //Choose width by parent container width
-                float newSize = topicContainer.GetComponent<RectTransform>().sizeDelta.x - 20;
-                RectTransform transform = button.GetComponent<RectTransform>();
-                transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
-
-                button.transform.SetParent(topicContainer.transform, false);
-                var text = button.gameObject.transform.GetChild(0);
-                text.GetComponent<TextMeshProUGUI>().text = GetTopicName(quest);
-                buttonList.Add(button);
+                PrintTopicButton(quest);
             }
             topicContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
             Canvas.ForceUpdateCanvases();
@@ -63,22 +52,50 @@ public class TopicMenu : MonoBehaviour
         }
     }
 
-    public string GetTopicName(Quest quest)
+    void PrintTopicButton(Quest quest)
     {
-        if (Player.GetEntry(quest.objectID, "TopicMenu", out var entry))
+        Dialogue dialogue = GetRelevantDialogue(quest, out var topicName);
         {
-            return quest.dialogues[entry.amount].topicName;
-        }
-        else
-        {
-            return quest.name;
+            if (dialogue.stageType == StageType.Dialogue)
+            {
+                GameObject button = Instantiate(dialogueSystem.button);
+
+                //Choose width by parent container width
+                float newSize = topicContainer.GetComponent<RectTransform>().sizeDelta.x - 20;
+                RectTransform transform = button.GetComponent<RectTransform>();
+                transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
+
+                button.transform.SetParent(topicContainer.transform, false);
+                var text = button.gameObject.transform.GetChild(0);
+                text.GetComponent<TextMeshProUGUI>().text = topicName;
+                buttonList.Add(button);
+
+                button.GetComponent<Button>().onClick.AddListener(() => StartDialogue(quest));
+            }
         }
     }
 
+    public Dialogue GetRelevantDialogue(Quest quest, out string topicName)
+    {
+        if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
+        {
+            topicName = quest.dialogues[entry.amount].topicName;
+            return quest.dialogues[entry.amount];
+        }
+        else //if quest is not already active and found in player journal
+        {
+            topicName = quest.name;
+            return quest.dialogues[0];
+        }
+    }
+
+    public void StartDialogue(Quest quest)
+    {
+        dialogueSystem.StartDialogueEvent(quest);
+    }
 
     private void OnDisable()
     {
-        //portraitRenderer.gameObject.SetActive(false);
         CloseTopics();
     }
 
