@@ -22,10 +22,11 @@ public class DialogueSystem : MonoBehaviour
         dialogueMenu.SetActive(false);
     }
 
-    public void StartDialogueEvent()
+    public void StartDialogueEvent(Quest quest) //called primarily from topic manager
     {
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(true);
+        dialogueMenu.GetComponent<DialogueMenu>().StartDialogueStage(quest);
     }
 
     public void CloseTopicMenuAndLeave()
