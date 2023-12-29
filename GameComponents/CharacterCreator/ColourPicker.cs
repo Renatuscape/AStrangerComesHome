@@ -8,6 +8,7 @@ public class ColourPicker : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public PlayerSprite playerSprite;
+    public PlayerIconPrefab playerIcon;
 
     public Image colourPreview;
     public TextMeshProUGUI hexText;
@@ -106,6 +107,11 @@ public class ColourPicker : MonoBehaviour
         }
         else
             hexText.color = Color.black;
+
+        if (playerIcon is not null)
+        {
+            playerIcon.UpdateImages();
+        }
     }
     public void AdjustImageColour(Image targetImage, ref string storedHexString, string targetName)
     {
