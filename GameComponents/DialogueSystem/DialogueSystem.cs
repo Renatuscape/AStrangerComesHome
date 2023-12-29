@@ -7,6 +7,7 @@ public class DialogueSystem : MonoBehaviour
     public GameObject button;
     public GameObject topicMenu;
     public GameObject dialogueMenu;
+    public GameObject popUpMenu;
     public GameState previousGameState = GameState.Overworld;
 
     private void Start()
@@ -32,6 +33,17 @@ public class DialogueSystem : MonoBehaviour
     public void CloseTopicMenuAndLeave()
     {
         topicMenu.SetActive(false);
+        TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
+    }
+
+    public void CloseDialogueMenu()
+    {
+        dialogueMenu.SetActive(false);
+        TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
+    }
+    public void ColosePopUpMenu()
+    {
+        popUpMenu.SetActive(false);
         TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
     }
 }
