@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,8 +9,9 @@ public class CharacterCreator : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public TransientDataScript transientData;
-    public GameObject PortraitRenderer;
-    public GameObject PortraitCanvas;
+    public GameObject portraitRenderer;
+    public GameObject portraitCanvas;
+
     public PlayerSprite playerSprite;
     public Character playerObject;
 
@@ -21,16 +23,23 @@ public class CharacterCreator : MonoBehaviour
     public TextMeshProUGUI characterName;
 
     public GameObject colourPicker;
+    public GameObject iconContainer;
+    public GameObject playerIconPrefab;
+    PlayerIconPrefab playerIcon;
 
+    private void Awake()
+    {
+        CreateIconPrefab();
+    }
     private void OnEnable()
     {
         colourPicker.SetActive(false);
-        PortraitRenderer.SetActive(true);
-        foreach (Transform child in PortraitCanvas.transform)
+        portraitRenderer.SetActive(true);
+        foreach (Transform child in portraitCanvas.transform)
         {
             child.gameObject.SetActive(false);
         }
-        PortraitCanvas.transform.Find("PlayerPortrait").gameObject.SetActive(true);
+        portraitCanvas.transform.Find("PlayerPortrait").gameObject.SetActive(true);
         UpdateSpriteFromData();
     }
 
@@ -45,6 +54,13 @@ public class CharacterCreator : MonoBehaviour
         }
     }
 
+    void CreateIconPrefab()
+    {
+        playerIconPrefab.transform.SetParent(iconContainer.transform, false);
+        playerIcon = playerIconPrefab.GetComponent<PlayerIconPrefab>();
+        playerIcon.playerSprite = playerSprite;
+        playerIcon.UpdateImages();
+    }
     public void UpdateSpriteFromData()
     {
         hairStyleNumber.text = dataManager.hairIndex.ToString();
@@ -54,7 +70,7 @@ public class CharacterCreator : MonoBehaviour
         eyesNumber.text = dataManager.eyesIndex.ToString();
 
         playerSprite.UpdateAllFromGameData();
-
+        playerIcon.UpdateImages();
     }
 
     public void ChangeHair(bool isPrevious)
@@ -185,7 +201,7 @@ public class CharacterCreator : MonoBehaviour
 
     public void FinaliseButton()
     {
-        PortraitRenderer.SetActive(false);
+        portraitRenderer.SetActive(false);
         TransientDataScript.ReturnToOverWorld("Character Creator", gameObject);
     }
 }
