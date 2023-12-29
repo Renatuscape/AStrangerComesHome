@@ -67,9 +67,25 @@ public class PortraitRenderer : MonoBehaviour
         MoveSprite(rightPortraitContainer, 325);
     }
 
+    //For other scripts to set the NPC portrait
+    public void SetRightSprite(Character character, bool animate)
+    {
+        //Player sprite cannot be displayed here, so make sure to filter that away
+        if (character.dialogueTag != "Traveller")
+        {
+            if (rightCharacterImage.sprite != character.sprite && animate)
+            {
+                AnimatePing(rightCharacterImage.gameObject);
+            }
+            rightPortraitContainer.SetActive(true);
+            rightCharacterImage.sprite = character.sprite;
+        }
+    }
+
     void SetSprite(Image image, string characterId)
     {
         Character c = Characters.FindByID(characterId);
+
         if (c is not null)
         {
             image.sprite = c.sprite;
@@ -119,7 +135,48 @@ public class PortraitRenderer : MonoBehaviour
 
             StartCoroutine(MoveTransition(portrait, targetX, timer + 0.00015f));
         }
-    } 
+    }
+
+    void AnimatePing(GameObject container)
+    {
+
+        var imageTransform = container.GetComponent<RectTransform>();
+        Vector3 originalMeasurements = imageTransform.localScale;
+        float targetScale = imageTransform.localScale.x * 1.03f;
+        float timer = 0.01f;
+        float adjustment = 0.002f;
+
+        StartCoroutine(Grow(imageTransform, targetScale, timer, adjustment, originalMeasurements));
+    }
+
+    IEnumerator Grow(RectTransform imageTransform, float targetScale, float timer, float adjustment, Vector3 originalMeasurements)
+    {
+        yield return new WaitForSeconds(timer);
+
+        if (imageTransform.localScale.x < targetScale)
+        {
+            imageTransform.localScale = new Vector3(imageTransform.localScale.x + adjustment, imageTransform.localScale.y + adjustment, imageTransform.localScale.z);
+            StartCoroutine(Grow(imageTransform, targetScale, timer, adjustment, originalMeasurements));
+        }
+        else if (imageTransform.localScale.x >= targetScale)
+        {
+            StartCoroutine(Shrink(imageTransform, timer, adjustment, originalMeasurements));
+        }
+    }
+
+    IEnumerator Shrink(RectTransform imageTransform, float timer, float adjustment, Vector3 originalMeasurements)
+    {
+        yield return new WaitForSeconds(timer);
+        if (imageTransform.localScale.x > originalMeasurements.x)
+        {
+            imageTransform.localScale = new Vector3(imageTransform.localScale.x - adjustment, imageTransform.localScale.y - adjustment, imageTransform.localScale.z);
+            StartCoroutine(Shrink(imageTransform, timer, adjustment, originalMeasurements));
+        }
+        else
+        {
+            imageTransform.localScale = new Vector3(originalMeasurements.x, originalMeasurements.y, imageTransform.localScale.z);
+        }
+    }
 
     private void OnDisable()
     {
