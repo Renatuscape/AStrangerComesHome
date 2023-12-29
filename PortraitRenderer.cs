@@ -31,7 +31,6 @@ public class PortraitRenderer : MonoBehaviour
     }
     public void EnableForShop(string shopkeeperId)
     {
-        Debug.Log($"Sprite renderer called from Shop with character ID: {shopkeeperId}");
         //SET SPRITE
         SetSprite(rightCharacterImage, shopkeeperId);
 
@@ -55,6 +54,18 @@ public class PortraitRenderer : MonoBehaviour
         rightPortraitContainer.SetActive(true);
         MoveSprite(rightPortraitContainer, 250);
     }
+    
+    public void EnableForDialogue()
+    {
+        ResetValues();
+
+        //ARRANGE
+        isAnyPortraitActive = true;
+        playerSprite.SetActive(true);
+        MoveSprite(playerSprite, -325);
+        //rightPortraitContainer.SetActive(true);
+        MoveSprite(rightPortraitContainer, 325);
+    }
 
     void SetSprite(Image image, string characterId)
     {
@@ -65,11 +76,11 @@ public class PortraitRenderer : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"Character ID {characterId} not found. Using default.");
+            Debug.Log($"Character ID {characterId} not found. Using default.");
             c = Characters.FindByID("UNI000-SBQ");
             if (c is null)
             {
-                Debug.LogWarning($"Default character not found. Possible load order issue?");
+                Debug.Log($"Default character not found. Possible load order issue?");
             }
             else
             {
