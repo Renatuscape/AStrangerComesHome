@@ -30,7 +30,7 @@ public class Item
 
     public void AddToPlayer(int amount = 1)
     {
-        Player.Add(this, amount, "Item");
+        Player.AddDynamicObject(this, amount, "Item");
     }
     public int GetCountPlayer()
     {
@@ -68,7 +68,7 @@ public static class Items
         }
     }
 
-    public static Item FindByID(string searchWord)
+    public static Item FindByID(string searchWord, bool debug = true, string caller = "unknown")
     {
         if (string.IsNullOrWhiteSpace(searchWord))
         {
@@ -82,7 +82,12 @@ public static class Items
                 return item;
             }
         }
-        Debug.LogWarning("No item found with ID containing this search term: " + searchWord);
+
+        if (debug)
+        {
+            Debug.LogWarning("Caller " + caller + " found no item with ID containing this search term: " + searchWord);
+        }
+
         return null;
     }
 
