@@ -22,7 +22,7 @@ public class Upgrade
 
     public void AddToPlayer(int amount = 1)
     {
-        Player.Add(this, amount, "Upgrade");
+        Player.AddDynamicObject(this, amount, "Upgrade");
     }
     public int GetCountPlayer()
     {
@@ -68,7 +68,7 @@ public static class Upgrades
                 return upgrade;
             }
         }
-        Debug.LogWarning("No upgrade found with ID contianing this search term: " + searchWord);
+        //Debug.LogWarning("No upgrade found with ID contianing this search term: " + searchWord);
         return null;
     }
 
