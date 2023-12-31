@@ -1,5 +1,12 @@
-﻿public static class GameCodex
+﻿using System.Collections.Generic;
+using Unity.VisualScripting;
+
+public static class GameCodex
 {
+    public static string GetNameFromID(string objectID)
+    {
+        return ParseID(objectID).name;
+    }
     public static bool ParseDynamicValues(dynamic dynamicObject, out int max, out string id)
     {
         if (dynamicObject is Item)
