@@ -8,7 +8,7 @@ public class Quest
     public string name;
     public bool excludeFromJournal;
     public int maxValue = 100;
-    public Character questGiver;
+    public Character questGiver; //Set from objectID by QuestManager
     public List<AdvancementCheck> unlockRequirements;
     public List<IdIntPair> rewards;
 
