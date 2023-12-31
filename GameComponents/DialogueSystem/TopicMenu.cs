@@ -77,26 +77,34 @@ public class TopicMenu : MonoBehaviour
 
     public Dialogue GetRelevantDialogue(Quest quest, out string topicName)
     {
-        if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
+        if (quest.dialogues is not null && quest.dialogues.Count > 0)
         {
-            if (entry.amount < quest.dialogues.Count) //CHECK IF QUEST IS COMPLETED
+            if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
             {
-                topicName = quest.dialogues[entry.amount].topicName;
-
-                if (string.IsNullOrEmpty(topicName))
+                if (entry.amount < quest.dialogues.Count) //CHECK IF QUEST IS COMPLETED
                 {
-                    topicName = quest.name; //EXCHANGE WITH LOGIC TO FIND PREVIOUS STAGE NAME
-                }
+                    topicName = quest.dialogues[entry.amount].topicName;
 
-                return quest.dialogues[entry.amount];
+                    if (string.IsNullOrEmpty(topicName))
+                    {
+                        topicName = quest.name; //EXCHANGE WITH LOGIC TO FIND PREVIOUS STAGE NAME
+                    }
+
+                    return quest.dialogues[entry.amount];
+                }
+                topicName = "";
+                return null;
             }
+            else //if quest is not already active and found in player journal
+            {
+                topicName = quest.name;
+                return quest.dialogues[0];
+            }
+        }
+        else
+        {
             topicName = "";
             return null;
-        }
-        else //if quest is not already active and found in player journal
-        {
-            topicName = quest.name;
-            return quest.dialogues[0];
         }
     }
 
