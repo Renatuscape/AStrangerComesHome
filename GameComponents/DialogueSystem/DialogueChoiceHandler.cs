@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,12 +19,23 @@ public class DialogueChoiceHandler
         {
             GameObject button = dialogueMenu.buttonFactory.InstantiateBasicButton();
             dialogueMenu.printedChoices.Add(button);
+            button.GetComponent<Button>().interactable = false;
             button.GetComponent<Button>().onClick.AddListener(() => ChoiceOnClick(choice, this));
 
             var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             textMesh.alignment = TextAlignmentOptions.Left;
             textMesh.text = choice.optionText;
+
+            dialogueMenu.StartCoroutine(DelayedEnable(button));
         }
+
+        IEnumerator DelayedEnable(GameObject button, float timer = 2f)
+        {
+            yield return new WaitForSeconds(timer);
+
+            button.GetComponent<Button>().interactable = true;
+        }
+
         return null;
     }
 
@@ -44,8 +56,7 @@ public class DialogueChoiceHandler
 
             if (!string.IsNullOrEmpty(choice.successSpeaker))
             {
-                dialogueMenu.buttonFactory.PrintNamePlate(Characters.FindByTag(choice.successSpeaker, "DialogueMenu HanleClick.PrintNamePlate success"));
-                dialogueMenu.buttonFactory.PrintText(choice.successText);
+                PrintResults(choice.successSpeaker, choice.successText);
             }
 
 
@@ -69,8 +80,7 @@ public class DialogueChoiceHandler
             DestroyChoices();
             if (!string.IsNullOrEmpty(choice.failureSpeaker))
             {
-                dialogueMenu.buttonFactory.PrintNamePlate(Characters.FindByTag(choice.failureSpeaker, "DialogueMenu HanleClick.PrintNamePlate failure"));
-                dialogueMenu.buttonFactory.PrintText(choice.failureText);
+                PrintResults(choice.failureSpeaker, choice.failureText);
             }
 
             PrintMissingItems(missingItems);
@@ -82,6 +92,19 @@ public class DialogueChoiceHandler
         dialogueMenu.dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
         dialogueMenu.dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
         Canvas.ForceUpdateCanvases();
+    }
+
+    void PrintResults(string speakerTag, string content)
+    {
+        if (speakerTag != "Narration")
+        {
+            dialogueMenu.buttonFactory.PrintNamePlate(Characters.FindByTag(speakerTag, "Choice Handler Print Results"));
+            dialogueMenu.buttonFactory.PrintText(content);
+        }
+        else
+        {
+            dialogueMenu.buttonFactory.PrintNarration(content);
+        }
     }
 
     void PrintMissingItems(List<IdIntPair> missingItems)
