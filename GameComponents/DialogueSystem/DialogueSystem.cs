@@ -23,7 +23,7 @@ public class DialogueSystem : MonoBehaviour
         dialogueMenu.SetActive(false);
     }
 
-    public void StartDialogueEvent(Quest quest) //called primarily from topic manager
+    public void StartDialogue(Quest quest) //called primarily from topic manager
     {
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(true);
