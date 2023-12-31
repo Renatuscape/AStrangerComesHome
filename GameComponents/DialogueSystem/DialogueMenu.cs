@@ -9,15 +9,22 @@ public class DialogueMenu : MonoBehaviour
     public RectMask2D containerMask;
     public GameObject bgReplacer;
     public GameObject dialogueContainer;
+    public Button autoPlay;
+    public Button skip;
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
     public Image dialogueContainerBG;
     public DialogueSystem dialogueSystem;
     public List<GameObject> buttonList;
+    public List<GameObject> continueButtons;
     public List<GameObject> printedChoices;
     public DialogueChoiceHandler choiceHandler = new();
     public DialogueButtonFactory buttonFactory = new();
 
     public int stepIndex = 0;
+
+    public float autoPlaySpeed = 2;
+    public bool isAutoPlaying;
+    public bool leavePrinted;
 
     private void Awake()
     {
@@ -28,6 +35,7 @@ public class DialogueMenu : MonoBehaviour
 
     private void OnEnable()
     {
+        leavePrinted = false;
         stepIndex = 0;
         foreach (GameObject step in buttonList)
         {
@@ -62,10 +70,14 @@ public class DialogueMenu : MonoBehaviour
 
     public void StartDialogueStage(Quest quest)
     {
+        leavePrinted = false;
         stepIndex = 0;
         portraitRenderer.EnableForDialogue();
         Dialogue dialogue = GetDialogueStage(quest);
         PrintStep(dialogue);
+
+        skip.onClick.AddListener(()=> Skip(dialogue));
+        autoPlay.onClick.AddListener(() => AutoPlay(dialogue));
     }
 
     Dialogue GetDialogueStage(Quest quest)
@@ -81,7 +93,7 @@ public class DialogueMenu : MonoBehaviour
     }
 
     //PRINT NEXT STEP
-    public void PrintStep(Dialogue dialogue)
+    public void PrintStep(Dialogue dialogue, bool hasContinueButton = true)
     {
         dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
 
@@ -103,9 +115,10 @@ public class DialogueMenu : MonoBehaviour
 
 
             //MANAGE CONTINUE BUTTON
-            if (stepIndex + 1 < dialogue.dialogueSteps.Count)
+            if (stepIndex + 1 < dialogue.dialogueSteps.Count && hasContinueButton)
             {
-                buttonFactory.PrintContinue(dialogue);
+                GameObject button = buttonFactory.PrintContinue(dialogue);
+                continueButtons.Add(button);
             }
 
             //MANAGE CHOICES AND LEAVE BUTTON
@@ -151,6 +164,8 @@ public class DialogueMenu : MonoBehaviour
         bgReplacer.SetActive(false);
         dialogueContainerBG.enabled = true;
         containerMask.enabled = false;
+        skip.onClick.RemoveAllListeners();
+        autoPlay.onClick.RemoveAllListeners();
     }
 
     void EnableReplacerBG()
@@ -158,5 +173,68 @@ public class DialogueMenu : MonoBehaviour
         bgReplacer.SetActive(true);
         dialogueContainerBG.enabled = false;
         containerMask.enabled = true;
+    }
+
+    //Speed controls
+    public void Skip(Dialogue dialogue)
+    {
+        isAutoPlaying = false;
+        while (stepIndex < dialogue.dialogueSteps.Count && !leavePrinted)
+        {
+            PrintStep(dialogue, false);
+            stepIndex++;
+        }
+    }
+
+    public void AutoPlay(Dialogue dialogue)
+    {
+        if (stepIndex < dialogue.dialogueSteps.Count && !leavePrinted)
+        {
+            if (isAutoPlaying)
+            {
+                switch (autoPlaySpeed)
+                {
+                    case 2f:
+                        autoPlaySpeed = 1f;
+                        break;
+                    case 1f:
+                        autoPlaySpeed = 0.5f;
+                        break;
+                    case 0.5f:
+                        autoPlaySpeed = 2f;
+                        break;
+                }
+            }
+            else
+            {
+                foreach(GameObject obj in continueButtons)
+                {
+                    Destroy(obj);
+                }
+                continueButtons = new();
+
+                isAutoPlaying = true;
+                StartCoroutine(AutoPlayTimer(dialogue));
+            }
+        }
+
+    }
+
+    IEnumerator AutoPlayTimer(Dialogue dialogue)
+    {
+        while (isAutoPlaying && stepIndex < dialogue.dialogueSteps.Count)
+        {
+            PrintStep(dialogue, false);
+            stepIndex++;
+            AutoPlayTimer(dialogue);
+
+            yield return new WaitForSeconds(autoPlaySpeed);
+        }
+
+        if (stepIndex >= dialogue.dialogueSteps.Count)
+        {
+            isAutoPlaying = false;
+            autoPlaySpeed = 2;
+        }
     }
 }
