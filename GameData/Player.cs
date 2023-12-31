@@ -17,16 +17,37 @@ public static class Player
         return false;
     }
 
+    public static void Remove(IdIntPair entry)
+    {
+        Remove(entry.objectID, entry.amount);
+    }
+    public static void Remove(string objectID, int amount = 1)
+    {
+        int removeAmount = amount;
+
+        if (removeAmount > 0)
+        {
+            removeAmount = removeAmount * -1;
+        }
+
+        Add(objectID, removeAmount);
+    }
     public static void Add(string objectID, int amount = 1)
     {
         if (GameCodex.ParseID(objectID) != null)
         {
-            Add(GameCodex.ParseID(objectID), amount);
+            AddDynamicObject(GameCodex.ParseID(objectID), amount);
         }
     }
 
-    public static int Add(dynamic dynamicObject, int amount, string caller = "")
+    public static void Add(IdIntPair entry)
     {
+        Add(entry.objectID, entry.amount);
+    }
+
+    public static int AddDynamicObject(dynamic dynamicObject, int amount, string caller = "")
+    {
+        Debug.Log($"Attempting to add dynamic object {dynamicObject.name} ({amount})");
         int max = 0;
         string id = string.Empty;
 
@@ -59,6 +80,7 @@ public static class Player
             var character = (Character)dynamicObject;
             max = character.maxValue;
             id = character.objectID;
+            Debug.Log($"Character found. MaxValue is {max}");
         }
         if (id != "")
         {
