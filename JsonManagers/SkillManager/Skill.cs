@@ -24,7 +24,7 @@ public class Skill
 
     public void AddToPlayer(int amount = 1)
     {
-        Player.Add(this, amount, "Skill");
+        Player.AddDynamicObject(this, amount, "Skill");
     }
     public int GetCountPlayer()
     {
@@ -71,7 +71,7 @@ public static class Skills
                 return skill;
             }
         }
-        Debug.LogWarning("No skill found with ID contianing this search term: " + searchWord);
+        //Debug.LogWarning("No skill found with ID contianing this search term: " + searchWord);
         return null;
     }
 
@@ -79,7 +79,7 @@ public static class Skills
     {
         foreach (Skill skill in all)
         {
-            if (skill.objectID.Contains(searchWord))
+            if (skill.objectID == searchWord)
             {
                 return skill.maxLevel;
             }
