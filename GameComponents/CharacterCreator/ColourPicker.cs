@@ -64,13 +64,11 @@ public class ColourPicker : MonoBehaviour
 
             if (r > sliderR.minValue || g > sliderG.minValue ||  b > sliderB.minValue)
             {
-                Debug.Log("An RGB value exceeded slider minimum value. Colour approximated.");
+                Debug.Log($"An RGB value exceeded slider minimum value. {hexColor} was not accepted. Colour approximated.");
             }
             sliderR.value = rNormalized;
             sliderG.value = gNormalized;
             sliderB.value = bNormalized;
-
-            Debug.Log($"Sliders should be set to hex colour {hexColor}");
         }
         else
         {
