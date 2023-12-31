@@ -23,13 +23,57 @@ public class Dialogue
     public List<string> content;
     public List<DialogueStep> dialogueSteps = new(); //a step is one line of dialogue from one speaker
     public List<IdIntPair> requirements = new();
-    public List<Choice> choices = new (); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
-    public bool progressOnContinue = false; //automatically go to next stage when step is completed
+    public List<IdIntPair> restrictions = new();
+    public List<Choice> choices = new(); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
+    public bool autoProgressStage = false; //automatically go to next stage when step is completed
     public bool noLeaveButton = true; //if this is enabled, it is impossible to leave dialogue until you reach a choice
 
     //MEMORY SPECIFIC
     public string location;
     public string hint;
+
+    public bool CheckRequirements(out bool hasTimer, out bool hasLocation)
+    {
+        bool hasPassed = true;
+        hasTimer = false;
+        hasLocation = false;
+
+        if (startTime != 0 && endTime != 0)
+        {
+            hasTimer = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(location))
+        {
+            hasLocation = true;
+        }
+
+        if (requirements is not null && requirements.Count > 0)
+        {
+            foreach (IdIntPair entry in requirements)
+            {
+                int amount = Player.GetCount(entry.objectID, "Choice Requirement Check");
+                if (amount < entry.amount)
+                {
+                    hasPassed = false;
+                    break;
+                }
+            }
+        }
+        if (hasPassed && restrictions is not null && restrictions.Count > 0) //don't run if checks already failed
+        {
+            foreach (IdIntPair entry in restrictions)
+            {
+                int amount = Player.GetCount(entry.objectID, "Choice Restriction Check");
+                if (amount >= entry.amount)
+                {
+                    hasPassed = false;
+                    break;
+                }
+            }
+        }
+        return hasPassed;
+    }
 }
 
 public static class Dialogues
