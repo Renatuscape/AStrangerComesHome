@@ -18,11 +18,7 @@ public class Character
     public string trueName;
     public string hexColour;
     public string description;
-    public int maxValue = 1;
-
-    public bool isSeller;
-    public bool isBuyer;
-    public bool isQuestGiver;
+    public int maxValue = 99;
 
     public CharacterType type;
     public Texture2D image;
@@ -44,6 +40,17 @@ public static class Characters
 {
     public static List<Character> all = new();
 
+    public static Character FindByTag(string searchWord, string caller)
+    {
+        Character found = all.Find((s) => s.dialogueTag.ToLower() == searchWord.ToLower());
+
+        if (found is null)
+        {
+            Debug.Log($"Find by tag returned no known character with name {searchWord}. Caller was {caller}. Check if you are passing an objectID or dialogueTag.");
+        }
+        return found;
+    }
+
     public static Character FindByID(string searchWord)
     {
         if (string.IsNullOrWhiteSpace(searchWord))
@@ -51,14 +58,22 @@ public static class Characters
             Debug.LogWarning($"Search term was null or white-space. Returned null. Ensure correct ID in calling script.");
             return null;
         }
-        foreach (Character character in all)
+        foreach (Character c in all)
         {
-            if (character.objectID.Contains(searchWord))
+            if (c.objectID == searchWord)
             {
-                return character;
+                return c;
             }
         }
-        Debug.LogWarning("No character found with ID containing this search term: " + searchWord);
+        Debug.LogWarning("No character found with ID containing this search term: " + searchWord + ". Attempting to search by tag.");
+
+        Character character = FindByTag(searchWord, "Characters.FindByID");
+
+        if (character is not null)
+        {
+            return character;
+        }
+
         return null;
     }
 }
