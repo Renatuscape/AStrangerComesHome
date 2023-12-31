@@ -32,7 +32,7 @@ public class QuestTracker : MonoBehaviour
                 {
                     if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
                     {
-                        if (entry.amount < quest.dialogues.Count) //make sure to exclude completed quests at stage 100
+                        if (entry.amount < quest.dialogues.Count) //make sure to exclude quests with no remaining steps
                         {
                             CheckQuestStage(quest, quest.dialogues[entry.amount]);
                         }
@@ -57,7 +57,14 @@ public class QuestTracker : MonoBehaviour
                 popUpMenu.StartPopUp(dialogue);
 
                 //Assuming pop-ups only have one choice for now:
-                quest.SetQuestStage(dialogue.choices[0].advanceTo);
+                if (dialogue.choices is not null && dialogue.choices.Count > 0)
+                {
+                    quest.SetQuestStage(dialogue.choices[0].advanceTo);
+                }
+                else
+                {
+                    Player.AddDynamicObject(quest, 1, "Quest Tracker: quest auto-progressed one step after pop-up because no choice was found");
+                }
 
                 foreach (string content in dialogue.content)
                 {
