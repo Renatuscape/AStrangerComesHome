@@ -44,6 +44,7 @@ public class DialogueButtonFactory
 
     public GameObject PrintNamePlate(Character character)
     {
+        character.NameSetup();
         GameObject button = PrintText(character.namePlate);
         var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         textMesh.fontSize += 2;
@@ -92,7 +93,9 @@ public class DialogueButtonFactory
     //LEAVE BUTTON
     public GameObject PrintLeaveButton()
     {
+        dialogueMenu.leavePrinted = true;
         GameObject button = InstantiateBasicButton();
+        button.GetComponent<Button>().interactable = false;
         var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         textMesh.text = "Leave";
 
@@ -102,6 +105,15 @@ public class DialogueButtonFactory
         transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
 
         button.GetComponent<Button>().onClick.AddListener(() => dialogueMenu.dialogueSystem.CloseDialogueMenu());
+        dialogueMenu.StartCoroutine(DelayedEnable(button));
+
         return button;
+
+        IEnumerator DelayedEnable(GameObject button, float timer = 0.5f)
+        {
+            yield return new WaitForSeconds(timer);
+
+            button.GetComponent<Button>().interactable = true;
+        }
     }
 }
