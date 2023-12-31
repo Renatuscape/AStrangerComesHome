@@ -34,6 +34,22 @@ public class Character
         namePlate = "<color=#" + hexColour + ">" + name + "</color>";
         trueNamePlate = "<color=#" + hexColour + ">" + trueName + "</color>";
     }
+
+    public string NamePlate()
+    {
+        if (Player.GetEntry(objectID, "Character", out var entry))
+        {
+            if (type == CharacterType.Arcana && entry.amount >= 40)
+            {
+                return trueNamePlate;
+            }
+            else if (type == CharacterType.Unique && entry.amount >= 10)
+            {
+                return trueNamePlate;
+            }
+        }
+        return namePlate;
+    }
 }
 
 public static class Characters
