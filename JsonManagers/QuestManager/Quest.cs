@@ -68,12 +68,12 @@ public static class Quests
         }
         foreach (Quest item in all)
         {
-            if (item.objectID.Contains(searchWord))
+            if (item.objectID == searchWord)
             {
                 return item;
             }
         }
-        Debug.LogWarning("No item found with ID containing this search term: " + searchWord);
+        //Debug.LogWarning("No item found with ID containing this search term: " + searchWord);
         return null;
     }
 }
