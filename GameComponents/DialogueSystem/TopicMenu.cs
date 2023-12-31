@@ -56,7 +56,7 @@ public class TopicMenu : MonoBehaviour
     {
         Dialogue dialogue = GetRelevantDialogue(quest, out var topicName);
         {
-            if (dialogue.stageType == StageType.Dialogue)
+            if (dialogue is not null && dialogue.stageType == StageType.Dialogue)
             {
                 GameObject button = Instantiate(dialogueSystem.button);
 
@@ -79,8 +79,19 @@ public class TopicMenu : MonoBehaviour
     {
         if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
         {
-            topicName = quest.dialogues[entry.amount].topicName;
-            return quest.dialogues[entry.amount];
+            if (entry.amount < quest.dialogues.Count) //CHECK IF QUEST IS COMPLETED
+            {
+                topicName = quest.dialogues[entry.amount].topicName;
+
+                if (string.IsNullOrEmpty(topicName))
+                {
+                    topicName = quest.name; //EXCHANGE WITH LOGIC TO FIND PREVIOUS STAGE NAME
+                }
+
+                return quest.dialogues[entry.amount];
+            }
+            topicName = "";
+            return null;
         }
         else //if quest is not already active and found in player journal
         {
@@ -91,7 +102,7 @@ public class TopicMenu : MonoBehaviour
 
     public void StartDialogue(Quest quest)
     {
-        dialogueSystem.StartDialogueEvent(quest);
+        dialogueSystem.StartDialogue(quest);
     }
 
     private void OnDisable()
