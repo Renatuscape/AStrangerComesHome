@@ -41,9 +41,16 @@ public class DialogueSystem : MonoBehaviour
         dialogueMenu.SetActive(false);
         TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
     }
+
     public void ColosePopUpMenu()
     {
-        popUpMenu.SetActive(false);
-        TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
+        popUpMenu.gameObject.SetActive(false);
+        StartCoroutine(GameStateDelay());
+
+        IEnumerator GameStateDelay()
+        {
+            yield return new WaitForSeconds(1);
+            TransientDataScript.SetGameState(GameState.Overworld, "DialogueSystem", gameObject);
+        }
     }
 }
