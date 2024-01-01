@@ -29,7 +29,7 @@ public class DialogueChoiceHandler
             dialogueMenu.StartCoroutine(DelayedEnable(button));
         }
 
-        IEnumerator DelayedEnable(GameObject button, float timer = 2f)
+        IEnumerator DelayedEnable(GameObject button, float timer = 1f)
         {
             yield return new WaitForSeconds(timer);
 
