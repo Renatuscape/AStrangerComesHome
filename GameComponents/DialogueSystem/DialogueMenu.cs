@@ -149,6 +149,13 @@ public class DialogueMenu : MonoBehaviour
         dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
         dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
         Canvas.ForceUpdateCanvases();
+
+
+        //Ensure buttons use latest dialogue stage
+        skip.onClick.RemoveAllListeners();
+        autoPlay.onClick.RemoveAllListeners();
+        skip.onClick.AddListener(() => Skip(dialogue));
+        autoPlay.onClick.AddListener(() => AutoPlay(dialogue));
     }
 
     public void ContinueToNextStep(Dialogue dialogue, GameObject button)
