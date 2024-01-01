@@ -5,15 +5,14 @@ using UnityEngine;
 public class QuestTracker : MonoBehaviour
 {
     public PopUpMenu popUpMenu;
-    public bool hasCoolDown = true;
-    public float timer = 0;
-    public float questTick = 2;
-    void Start()
-    {
-        
-    }
+    public float timer;
+    public float questTick;
 
-    // Update is called once per frame
+    private void Awake()
+    {
+        timer = 0;
+        questTick = 2;
+    }
     void Update()
     {
         if (TransientDataScript.GameState == GameState.Overworld)
@@ -22,39 +21,46 @@ public class QuestTracker : MonoBehaviour
 
             if (timer >= questTick)
             {
-                hasCoolDown = false;
-            }
-
-            if (!hasCoolDown && popUpMenu.isActiveAndEnabled == false)
-            {
-
-                foreach (Quest quest in Quests.all)
-                {
-                    if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
-                    {
-                        if (entry.amount < quest.dialogues.Count) //make sure to exclude quests with no remaining steps
-                        {
-                            CheckQuestStage(quest, quest.dialogues[entry.amount]);
-                        }
-                    }
-                    else //if quest is not already active and found in player journal
-                    {
-                        CheckQuestStage(quest, quest.dialogues[0]);
-                    }
-                }
+                CheckActiveQuests();
             }
         }
     }
-
-    void CheckQuestStage(Quest quest, Dialogue dialogue)
+    void CheckActiveQuests()
     {
-        hasCoolDown = true;
+        foreach (Quest quest in Quests.all)
+        {
+            if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
+            {
+                if (entry.amount < quest.dialogues.Count) //make sure to exclude quests with no remaining steps
+                {
+                    if (CheckQuestStage(quest, quest.dialogues[entry.amount]))
+                    {
+                        break;
+                    }
+                }
+            }
+            else //if quest is not already active and found in player journal
+            {
+                if (CheckQuestStage(quest, quest.dialogues[0]))
+                {
+                    break;
+                }
+            }
+        }
+        timer = 0;
+    }
 
+    bool CheckQuestStage(Quest quest, Dialogue dialogue)
+    {
+        bool foundQuest = false;
         if (dialogue.stageType == StageType.PopUp)
         {
-            if (dialogue.requirements.Count == 0)
+            if (CheckRequirements())
             {
+                TransientDataScript.SetGameState(GameState.Dialogue, "QuestTracker", gameObject);
+
                 popUpMenu.StartPopUp(dialogue);
+                foundQuest = true;
 
                 //Assuming pop-ups only have one choice for now:
                 if (dialogue.choices is not null && dialogue.choices.Count > 0)
@@ -72,5 +78,11 @@ public class QuestTracker : MonoBehaviour
                 }
             }
         }
+        return foundQuest;
+    }
+
+    bool CheckRequirements()
+    {
+        return true;
     }
 }
