@@ -29,21 +29,24 @@ public class QuestTracker : MonoBehaviour
     {
         foreach (Quest quest in Quests.all)
         {
-            if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
+            if (quest.dialogues is not null && quest.dialogues.Count > 0) //ensure that at least one dialogue entry exists
             {
-                if (entry.amount < quest.dialogues.Count) //make sure to exclude quests with no remaining steps
+                if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
                 {
-                    if (CheckQuestStage(quest, quest.dialogues[entry.amount]))
+                    if (entry.amount < quest.dialogues.Count) //make sure to exclude quests with no remaining steps
+                    {
+                        if (CheckQuestStage(quest, quest.dialogues[entry.amount]))
+                        {
+                            break;
+                        }
+                    }
+                }
+                else //if quest is not already active and found in player journal
+                {
+                    if (CheckQuestStage(quest, quest.dialogues[0]))
                     {
                         break;
                     }
-                }
-            }
-            else //if quest is not already active and found in player journal
-            {
-                if (CheckQuestStage(quest, quest.dialogues[0]))
-                {
-                    break;
                 }
             }
         }
