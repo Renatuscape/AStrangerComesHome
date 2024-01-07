@@ -16,6 +16,8 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
+        DialogueTagParser.UpdateTags(GameObject.Find("DataManager").GetComponent<DataManagerScript>());
+
         var info = new DirectoryInfo(Application.streamingAssetsPath + "/JsonData/Quests/Dialogues/");
         var fileInfo = info.GetFiles();
         numberOfFilesToLoad = fileInfo.Count();
