@@ -34,21 +34,32 @@ public class Character
         namePlate = "<color=#" + hexColour + ">" + name + "</color>";
         trueNamePlate = "<color=#" + hexColour + ">" + trueName + "</color>";
     }
-
     public string NamePlate()
     {
-        if (Player.GetEntry(objectID, "Character", out var entry))
+        if (Player.GetCount($"{objectID}-QTN", objectID + " NamePlate()") >= 50)
         {
-            if (type == CharacterType.Arcana && entry.amount >= 40)
-            {
-                return trueNamePlate;
-            }
-            else if (type == CharacterType.Unique && entry.amount >= 10)
-            {
-                return trueNamePlate;
-            }
+            return trueNamePlate;
         }
         return namePlate;
+    }
+
+    public string ForceTrueNamePlate()
+    {
+        return trueNamePlate;
+    }
+
+    public string PersonaliseText(string text)
+    {
+        return "<color=#" + hexColour + ">" + text + "</color>";
+    }
+
+    public string GetNameOnly()
+    {
+        if (Player.GetCount($"{objectID}-QTN", objectID + " NamePlate()") >= 50)
+        {
+            return trueName;
+        }
+        return name;
     }
 }
 
