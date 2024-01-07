@@ -9,8 +9,6 @@ public class CoachExterior : MonoBehaviour
     public Transform BottomTarget;
     public Transform LeftTarget;
     public Transform RightTarget;
-    public Vector3 mousePosition;
-    public Vector3 worldPosition;
     SpriteRenderer Renderer { get; set; }
     float FadeTick { get; set; } = 0.05f;
     float FadeIncrement { get; set; } = 0.2f;
@@ -27,8 +25,7 @@ public class CoachExterior : MonoBehaviour
     {
         if (!isWorking && TransientDataScript.GameState == GameState.Overworld)
         {
-            mousePosition = Input.mousePosition;
-            worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, 0));
+            var worldPosition = MouseTracker.GetMouseWorldPosition();
 
             if (worldPosition.x > LeftTarget.position.x
                 && worldPosition.x < RightTarget.position.x

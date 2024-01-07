@@ -106,3 +106,15 @@ public class TransientDataScript : MonoBehaviour
     }
 
 }
+
+
+public static class MouseTracker
+{
+    public static Vector3 GetMouseWorldPosition()
+    {
+        Vector3 mousePosition = Input.mousePosition;
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, 0));
+
+        return worldPosition;
+    }
+}
