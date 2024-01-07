@@ -14,11 +14,7 @@ public class PopUpMenu : MonoBehaviour
 
     public void StartPopUp(Dialogue dialogue)
     {
-        foreach (DialogueStep step in dialogue.dialogueSteps)
-        {
-            step.text = DialogueTagParser.ParseText(step.text);
-        }
-
+        DialogueTagParser.UpdateTags(GameObject.Find("DataManager").GetComponent<DataManagerScript>());
         gameObject.SetActive(true);
         stepIndex = 0;
         UpdateText(dialogue);
@@ -26,6 +22,11 @@ public class PopUpMenu : MonoBehaviour
 
     public void UpdateText(Dialogue dialogue)
     {
+        for (int i = 0; i < dialogue.content.Count;i++)
+        {
+            dialogue.content[i] = DialogueTagParser.ParseText(dialogue.content[i]);
+        }
+
         if (stepIndex < dialogue.content.Count)
         {
             textMesh.text = dialogue.content[stepIndex];
