@@ -14,6 +14,11 @@ public class PopUpMenu : MonoBehaviour
 
     public void StartPopUp(Dialogue dialogue)
     {
+        foreach (DialogueStep step in dialogue.dialogueSteps)
+        {
+            step.text = DialogueTagParser.ParseText(step.text);
+        }
+
         gameObject.SetActive(true);
         stepIndex = 0;
         UpdateText(dialogue);
