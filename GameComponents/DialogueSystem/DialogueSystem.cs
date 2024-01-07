@@ -1,9 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DialogueSystem : MonoBehaviour
 {
+    public DataManagerScript dataManager;
     public GameObject button;
     public GameObject topicMenu;
     public GameObject dialogueMenu;
@@ -25,6 +25,7 @@ public class DialogueSystem : MonoBehaviour
 
     public void StartDialogue(Quest quest) //called primarily from topic manager
     {
+        DialogueTagParser.UpdateTags(dataManager);
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(true);
         dialogueMenu.GetComponent<DialogueMenu>().StartDialogueStage(quest);
