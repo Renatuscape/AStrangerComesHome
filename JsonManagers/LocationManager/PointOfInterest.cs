@@ -8,6 +8,7 @@ public enum PointOfInterestType
     Character,
     Treasure
 }
+[System.Serializable]
 public class PointOfInterest
 {
     public string objectID;
@@ -25,4 +26,9 @@ public class PointOfInterest
     public Shop shop;
     public bool isUnique;
     public List<Location> locations;
+}
+
+public static class PointsOfInterest
+{
+    public static List<PointOfInterest> all = new();
 }
