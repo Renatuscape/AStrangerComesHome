@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,12 +17,22 @@ public class AutoMap : MonoBehaviour
     public float scrollSpeed;
     public float spacing;
 
+
+    public float xCutOff;
+    public float yCutOff;
+    Transform map;
+
     void Start()
     {
-        rows = 10;
-        columns = 20;
+        rows = 35;//10;
+        columns = 50;// 20;
+
+        yCutOff = rows / 3;
+        xCutOff = columns / 3;
         spacing = 1.0f;
-        scrollSpeed = 0.01f;
+        scrollSpeed = 0.03f;
+
+        map = mapContainer.transform;
         GenerateMap();
     }
 
@@ -53,19 +64,43 @@ public class AutoMap : MonoBehaviour
 
     void ScrollMapUp()
     {
-        mapContainer.transform.position = new Vector3(mapContainer.transform.position.x, mapContainer.transform.position.y + scrollSpeed, mapContainer.transform.position.z);
+        if (map.position.y < yCutOff)
+        {
+            mapContainer.transform.position = new Vector3(
+                mapContainer.transform.position.x,
+                mapContainer.transform.position.y + scrollSpeed,
+                mapContainer.transform.position.z);
+        }
     }
     void ScrollMapDown()
     {
-        mapContainer.transform.position = new Vector3(mapContainer.transform.position.x, mapContainer.transform.position.y - scrollSpeed, mapContainer.transform.position.z);
+        if (map.position.y > yCutOff * -1)
+        {
+            mapContainer.transform.position = new Vector3(
+                mapContainer.transform.position.x,
+                mapContainer.transform.position.y - scrollSpeed,
+                mapContainer.transform.position.z);
+        }
     }
     void ScrollMapLeft()
     {
-        mapContainer.transform.position = new Vector3(mapContainer.transform.position.x - scrollSpeed, mapContainer.transform.position.y, mapContainer.transform.position.z);
+        if (map.position.x > xCutOff * -1)
+        {
+            mapContainer.transform.position = new Vector3(
+                mapContainer.transform.position.x - scrollSpeed,
+                mapContainer.transform.position.y,
+                mapContainer.transform.position.z);
+        }
     }
     void ScrollMapRight()
     {
-        mapContainer.transform.position = new Vector3(mapContainer.transform.position.x + scrollSpeed, mapContainer.transform.position.y, mapContainer.transform.position.z);
+        if (map.position.x < xCutOff)
+        {
+            mapContainer.transform.position = new Vector3(
+                mapContainer.transform.position.x + scrollSpeed,
+                mapContainer.transform.position.y,
+                mapContainer.transform.position.z);
+        }
     }
 
     void GenerateMap()
