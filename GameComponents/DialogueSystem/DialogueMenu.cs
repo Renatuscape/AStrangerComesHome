@@ -74,6 +74,7 @@ public class DialogueMenu : MonoBehaviour
         stepIndex = 0;
         portraitRenderer.EnableForDialogue();
         Dialogue dialogue = GetDialogueStage(quest);
+
         PrintStep(dialogue);
 
         skip.onClick.AddListener(()=> Skip(dialogue));
@@ -95,6 +96,11 @@ public class DialogueMenu : MonoBehaviour
     //PRINT NEXT STEP
     public void PrintStep(Dialogue dialogue, bool hasContinueButton = true)
     {
+        foreach (DialogueStep step in dialogue.dialogueSteps)
+        {
+            step.text = DialogueTagParser.ParseText(step.text);
+        }
+
         dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
 
         if (stepIndex < dialogue.dialogueSteps.Count)
