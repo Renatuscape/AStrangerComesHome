@@ -12,18 +12,24 @@ public enum LocationType
     Crossing,
     Temporary
 }
+[System.Serializable]
 public class WorldLocation
 {
     public string objectID;
     public string name;
     public string otherName;
-    public LocationType type;
+    public LocationType type = LocationType.Stop;
     public bool isHidden = false;
     public string description;
-    public decimal[] mapLocation;
+    public int mapX;
+    public int mapY;
     public List<IdIntPair> requirements = new();
     public List<IdIntPair> restrictions = new();
-    public Texture2D backgroundTexture;
-    public Sprite backgroundSprite;
-    public List<PointOfInterest> pointsOfInterest;
+    public Texture2D backgroundTexture = null;
+    public Sprite backgroundSprite = null;
+    public List<PointOfInterest> pointsOfInterest = new();
+}
+public static class Locations
+{
+    public static List<WorldLocation> all = new();
 }
