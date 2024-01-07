@@ -42,6 +42,7 @@ public class GameManagerScript : MonoBehaviour
     void StartUpRoutine()
     {
         InitiateJsonManagers();
+
         gameComponentParent.SetActive(true); //if the game starts with this disabled, you can assure loading objects first
 
         foreach (Transform child in gameComponentParent.transform)
@@ -137,4 +138,12 @@ public static class ListExtenstions
     {
         list.AddRange(elements);
     }
+}
+
+public static class GlobalSettings
+{
+    public static bool AlwaysTrueNamePlate = false; //the traveller's nameplate always uses their True Name
+    public static bool AlwaysTrueNameEverywhere = false; //characters will use the traveller's True Name in dialogue
+    public static bool AlwaysHideCoachExterior = false; //The coach's exterior wall will never appear
+    public static int TextSize = 0; //increase or decrease text default size by this number
 }
