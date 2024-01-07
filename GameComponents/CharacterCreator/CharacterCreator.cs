@@ -201,6 +201,11 @@ public class CharacterCreator : MonoBehaviour
 
     public void FinaliseButton()
     {
+        Character player = Characters.FindByTag("Traveller", gameObject.name);
+        player.trueName = dataManager.playerName;
+        player.hexColour = dataManager.playerNameColour;
+        player.NameSetup();
+        DialogueTagParser.UpdateTags(dataManager);
         portraitRenderer.SetActive(false);
         TransientDataScript.ReturnToOverWorld("Character Creator", gameObject);
     }
