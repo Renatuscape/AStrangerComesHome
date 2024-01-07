@@ -4,15 +4,30 @@ using UnityEngine;
 
 public class MapTilePrefab : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public AutoMap autoMap;
+    public float doubleClickWindow;
+    public bool doubleCLickReady;
+    public List<Sprite> sprites;
+    private void OnMouseDown()
     {
-        
+        Debug.Log($"Tile: {(int)transform.localPosition.x}, {(int)transform.localPosition.y}");
+        autoMap.PlaceMarker(transform.localPosition);
+
+        if (doubleCLickReady)
+        {
+            autoMap.GoToCoordinates(transform.localPosition);
+            doubleCLickReady = false;
+        }
+        else
+        {
+            StartCoroutine(DoubleClickTimer());
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator DoubleClickTimer()
     {
-        
+        doubleCLickReady = true;
+        yield return new WaitForSeconds(1);
+        doubleCLickReady = false;
     }
 }
