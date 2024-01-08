@@ -6,19 +6,15 @@ using UnityEngine;
 
 public class TransientDataScript : MonoBehaviour
 {
-    //public GameState gameState;
     public static GameState GameState { get; private set; }
 
     public Language language;
-    //public List<MotherObject> objectIndex;
-    //public List<Item> itemCodex;
     public List<GameObject> activePrefabs;
 
     [TextArea(20, 100)]
     public string gameStateLog = "Game State Changes";
 
     //CAMERA
-    //public CameraView cameraView;
     public static CameraView CameraView { get; private set; }
 
     //UI FUNCTIONS
