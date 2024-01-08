@@ -78,7 +78,7 @@ public class LocationManager : MonoBehaviour
             var region = Regions.FindByID("REGION"+i);
             if (region is null)
             {
-                region = new() {rows = 15, columns = 20 };
+                region = new() {rows = 13, columns = 20 };
                 region.objectID = "REGION" + i;
                 Regions.all.Add(region);
             }
