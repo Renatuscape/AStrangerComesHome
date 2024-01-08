@@ -27,7 +27,7 @@ public class MapTilePrefab : MonoBehaviour
     IEnumerator DoubleClickTimer()
     {
         doubleCLickReady = true;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.5f);
         doubleCLickReady = false;
     }
 }
