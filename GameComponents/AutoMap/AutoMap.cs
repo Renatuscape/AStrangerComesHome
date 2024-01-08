@@ -18,7 +18,9 @@ public class AutoMap : MonoBehaviour
     public MapPlayerToken playerToken;
     public List<Sprite> tileSprites;
     public SerializableDictionary<Vector2Int, GameObject> mapTiles = new();
+    public List<GameObject> mapMarkers = new();
 
+    public TransientDataScript transientData;
     public MapEdgeCreator edgeCreator;
 
     int startingRows;
@@ -154,6 +156,8 @@ public class AutoMap : MonoBehaviour
             var newMarker = Instantiate(locationMarker, position, Quaternion.identity);
             newMarker.transform.SetParent(mapContainer.transform);
             newMarker.GetComponent<MapLocationPrefab>().location = location;
+            newMarker.GetComponent<MapLocationPrefab>().transientData = transientData;
+            mapMarkers.Add(newMarker);
         }
     }
     public void ChangeMap(WorldRegion region, Vector3? startingPosition = null)
@@ -162,7 +166,14 @@ public class AutoMap : MonoBehaviour
         {
             Destroy(t.Value);
         }
+
+        foreach (var t in mapMarkers)
+        {
+            Destroy(t);
+        }
+
         mapTiles = new();
+        mapMarkers = new();
 
         GenerateMap(region.rows, region.columns);
         GenerateLocationMarkers(region);
