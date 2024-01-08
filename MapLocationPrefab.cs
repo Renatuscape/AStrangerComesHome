@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapLocationPrefab : MonoBehaviour
 {
-    TransientDataScript transientData;
+    public TransientDataScript transientData;
     public WorldLocation location;
     private void OnMouseDown()
     {
