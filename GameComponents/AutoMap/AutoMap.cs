@@ -21,14 +21,12 @@ public class AutoMap : MonoBehaviour
     public List<GameObject> mapMarkers = new();
 
     public TransientDataScript transientData;
-    public MapEdgeCreator edgeCreator;
+    public AutoMapEdges edgeCreator;
+    public AutoMapBuilder mapBuilder;
 
-    int startingRows;
-    int startingColumns;
+    Vector3 enabledPosition;
+    Vector3 disabledPosition;
     float scrollSpeed;
-    float spacing;
-
-
     float xCutOff;
     float yCutOff;
     Transform map;
@@ -36,18 +34,13 @@ public class AutoMap : MonoBehaviour
     void Start()
     {
         edgeCreator = new();
-
-        startingRows = 35;//10;
-        startingColumns = 50;// 20;
-
-        yCutOff = startingRows / 3;
-        xCutOff = startingColumns / 3;
-        spacing = 1.0f;
+        mapBuilder = new(this, mapContainer);
+        enabledPosition = new Vector3(0,0,0);
+        disabledPosition = new Vector3(200, 0, 0);
         scrollSpeed = 0.05f;
 
         map = mapContainer.transform;
         playerToken.autoMap = this;
-        GenerateMap(startingRows, startingColumns);
         StartCoroutine(TestRegion());
     }
 
@@ -58,8 +51,12 @@ public class AutoMap : MonoBehaviour
     }
     private void Update()
     {
-        //if (TransientDataScript.GameState == GameState.MapMenu)
+        if (TransientDataScript.GameState == GameState.MapMenu)
         {
+            if (transform.position != enabledPosition)
+            {
+                transform.position = enabledPosition;
+            }
             var worldPosition = MouseTracker.GetMouseWorldPosition();
 
             if (worldPosition.x < LeftTarget.position.x)
@@ -79,6 +76,10 @@ public class AutoMap : MonoBehaviour
             {
                 ScrollMapUp();
             }
+        }
+        else if (TransientDataScript.GameState != GameState.MapMenu && transform.position != disabledPosition)
+        {
+            transform.position = disabledPosition;
         }
     }
 
@@ -123,62 +124,11 @@ public class AutoMap : MonoBehaviour
         }
     }
 
-    void GenerateMap(int rows, int columns)
-    {
-        yCutOff = rows / 2;
-        xCutOff = columns / 2;
-
-        int rowStartValue = (rows / 2 * -1);
-        int columnStartValue = (columns / 2 * -1);
-
-        for (int i = rowStartValue; i <= rows / 2; i++)
-        {
-            for (int j = columnStartValue; j <= columns / 2; j++)
-            {
-                Vector3 position = new Vector3(j * spacing, i * spacing, 0);
-                var newTile = Instantiate(tilePrefab, position, Quaternion.identity);
-                newTile.transform.parent = mapContainer.transform;
-                newTile.GetComponent<MapTilePrefab>().autoMap = this;
-                newTile.GetComponent<MapTilePrefab>().sprites = tileSprites;
-                mapTiles.Add(new Vector2Int(i, j), newTile);
-            }
-        }
-
-        edgeCreator.CreateEdge(mapTiles, rows, columns);
-    }
-
-
-    void GenerateLocationMarkers(WorldRegion region)
-    {
-        foreach (WorldLocation location in region.locations)
-        {
-            Vector3 position = new Vector3(location.mapX, location.mapY, 0);
-            var newMarker = Instantiate(locationMarker, position, Quaternion.identity);
-            newMarker.transform.SetParent(mapContainer.transform);
-            newMarker.GetComponent<MapLocationPrefab>().location = location;
-            newMarker.GetComponent<MapLocationPrefab>().transientData = transientData;
-            mapMarkers.Add(newMarker);
-        }
-    }
     public void ChangeMap(WorldRegion region, Vector3? startingPosition = null)
     {
-        foreach (var t in mapTiles)
-        {
-            Destroy(t.Value);
-        }
-
-        foreach (var t in mapMarkers)
-        {
-            Destroy(t);
-        }
-
-        mapTiles = new();
-        mapMarkers = new();
-
-        GenerateMap(region.rows, region.columns);
-        GenerateLocationMarkers(region);
-        playerToken.transform.localPosition = startingPosition ?? region.defaultStartingPosition;
-        GoToPlayerToken();
+        xCutOff = region.rows /2 - 2;
+        yCutOff = region.columns / 2 - 6;
+        mapBuilder.ChangeMap(region, startingPosition);
     }
 
     public void GoToCoordinates(Vector3 coordinates)
@@ -214,5 +164,77 @@ public class AutoMap : MonoBehaviour
 
         // Ensure the final position is set to the target coordinates
         mapContainer.transform.position = targetPosition;
+    }
+}
+
+public class AutoMapBuilder
+{
+    public AutoMap autoMap;
+
+    float spacing = 1;
+    GameObject mapContainer;
+    public AutoMapBuilder(AutoMap autoMap, GameObject mapContainer)
+    {
+        this.autoMap = autoMap;
+        this.mapContainer = mapContainer;
+    }
+
+    void GenerateMap(int rows, int columns)
+    {
+
+        int rowStartValue = rows / 2 * -1;
+        int columnStartValue = columns / 2 * -1;
+
+        for (int i = rowStartValue; i <= rows / 2; i++)
+        {
+            for (int j = columnStartValue; j <= columns / 2; j++)
+            {
+                Vector3 localPosition = new Vector3(j * spacing, i * spacing, 0);
+                var newTile = UnityEngine.Object.Instantiate(autoMap.tilePrefab);
+                newTile.transform.parent = mapContainer.transform;
+                newTile.transform.localPosition = localPosition;  // Set local position relative to mapContainer
+                newTile.GetComponent<MapTilePrefab>().autoMap = autoMap;
+                newTile.GetComponent<MapTilePrefab>().sprites = autoMap.tileSprites;
+                autoMap.mapTiles.Add(new Vector2Int(i, j), newTile);
+            }
+        }
+
+        autoMap.edgeCreator.CreateEdge(autoMap.mapTiles, rows, columns);
+    }
+
+
+    void GenerateLocationMarkers(WorldRegion region)
+    {
+        foreach (WorldLocation location in region.locations)
+        {
+            Vector3 localPosition = new Vector3(location.mapX, location.mapY, 0);
+            var newMarker = UnityEngine.Object.Instantiate(autoMap.locationMarker, localPosition, Quaternion.identity);
+            newMarker.transform.SetParent(mapContainer.transform);
+            newMarker.transform.localPosition = localPosition;  // Set local position relative to mapContainer
+            newMarker.GetComponent<MapLocationPrefab>().location = location;
+            newMarker.GetComponent<MapLocationPrefab>().transientData = autoMap.transientData;
+            newMarker.GetComponent<MapLocationPrefab>().autoMap = autoMap;
+            autoMap.mapMarkers.Add(newMarker);
+        }
+    }
+    public void ChangeMap(WorldRegion region, Vector3? startingPosition = null)
+    {
+        foreach (var t in autoMap.mapTiles)
+        {
+            UnityEngine.Object.Destroy(t.Value);
+        }
+
+        foreach (var t in autoMap.mapMarkers)
+        {
+            UnityEngine.Object.Destroy(t);
+        }
+
+        autoMap.mapTiles = new();
+        autoMap.mapMarkers = new();
+
+        GenerateMap(region.rows, region.columns);
+        GenerateLocationMarkers(region);
+        autoMap.playerToken.transform.localPosition = startingPosition ?? region.defaultStartingPosition;
+        autoMap.GoToPlayerToken();
     }
 }
