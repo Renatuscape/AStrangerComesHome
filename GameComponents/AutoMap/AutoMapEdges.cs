@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MapEdgeCreator
+public class AutoMapEdges
 {
 
     // Call this function to create the edge tiles
