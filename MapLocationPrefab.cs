@@ -4,11 +4,40 @@ using UnityEngine;
 
 public class MapLocationPrefab : MonoBehaviour
 {
+    public AutoMap autoMap;
     public TransientDataScript transientData;
     public WorldLocation location;
+
+    public bool doubleCLickReady;
     private void OnMouseDown()
     {
-        Debug.Log($"{location.name}");
+        Debug.Log($"Tile: {(int)transform.localPosition.x}, {(int)transform.localPosition.y}");
+        autoMap.PlaceMarker(transform.localPosition);
+
+        if (doubleCLickReady)
+        {
+            autoMap.GoToCoordinates(transform.localPosition);
+            doubleCLickReady = false;
+        }
+        else
+        {
+            StartCoroutine(DoubleClickTimer());
+        }
+    }
+    IEnumerator DoubleClickTimer()
+    {
+        doubleCLickReady = true;
+        yield return new WaitForSeconds(0.5f);
+        doubleCLickReady = false;
+    }
+
+    private void OnMouseOver()
+    {
         transientData.PrintFloatText($"{location.name}");
+    }
+
+    private void OnMouseExit()
+    {
+        transientData.DisableFloatText();
     }
 }
