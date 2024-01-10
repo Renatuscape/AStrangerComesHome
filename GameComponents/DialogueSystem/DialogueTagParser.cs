@@ -59,7 +59,7 @@ public static class DialogueTagParser
                 AddNewTag(Tag("The " + c.objectID), c.PersonaliseText(Capitalise(c.name)));
                 AddNewTag(Tag("the " + c.objectID), c.PersonaliseText(Uncapitalise(c.name)));
 
-                AddNewTag(Tag(c.objectID),             c.PersonaliseText(RemovePrefix(c.GetNameOnly())));
+                AddNewTag(Tag(c.dialogueTag),          c.PersonaliseText(RemovePrefix(c.GetNameOnly())));
                 AddNewTag(Tag("The " + c.dialogueTag), c.PersonaliseText(Capitalise(c.GetNameOnly())));
                 AddNewTag(Tag("the " + c.dialogueTag), c.PersonaliseText(Uncapitalise(c.GetNameOnly())));
             }
