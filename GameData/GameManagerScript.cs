@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
@@ -17,19 +18,19 @@ public class GameManagerScript : MonoBehaviour
     public GameObject gameComponentMaster;
     public GameObject mainMenuComponent;
     public GameObject characterCreatorComponent;
-    public GameObject mapManagerComponent;
     public GameObject parallaxManagerComponent;
     public GameObject coachComponent;
     public GameObject salvageSpawnerComponent;
     public GameObject menuUIManagerComponent;
     public GameObject infoUIManagerComponent;
-    public GameObject shopUIComponent;
     public GameObject timeManagerComponent;
 
     public List<GameObject> listOfGameComponents;
 
     public GameObject gameComponentParent;
 
+    public AutoMap mapComponent;
+    public CameraController cameraComponent;
 
     void Awake()
     {
@@ -58,6 +59,8 @@ public class GameManagerScript : MonoBehaviour
         {
             SetUpNewGame();
         }
+
+        Invoke("CreateGameController", 3);
     }
 
     void InitiateJsonManagers()
@@ -70,6 +73,13 @@ public class GameManagerScript : MonoBehaviour
         questManager.SetActive(true);
     }
 
+    public void CreateGameController()
+    {
+        GameObject Controller = new();
+        Controller.name = "Controller";
+        Controller.AddComponent<GameController>();
+        Controller.GetComponent<GameController>().gm = this;
+    }
     public void ActivateMainMenu()
     {
         foreach (GameObject component in listOfGameComponents)
