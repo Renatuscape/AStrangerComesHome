@@ -44,6 +44,9 @@ public class TransientDataScript : MonoBehaviour
     public string infoBox;
     public Shop currentShop;
 
+    //*** CONTROLLER LISTENER ***
+
+
 
     //*** PUBLIC METHODS ***
     //UI TEXT
@@ -64,6 +67,11 @@ public class TransientDataScript : MonoBehaviour
     public void DisableFloatText()
     {
         floatText.DisableFloatText();
+    }
+
+    public void SpawnLocation(Location location)
+    {
+        Debug.Log($"Ready to spawn {location.name} {location.objectID} when logic is implemented.");
     }
 
     //SYSTEM METHODS
@@ -91,6 +99,7 @@ public class TransientDataScript : MonoBehaviour
     {
         LogStateChange(callerScript, callerObject, newState);
         GameState = newState;
+        GameObject.Find("TransientData").GetComponent<TransientDataScript>().DisableFloatText();
     }
     public static void ReturnToOverWorld(string name, GameObject gameObject)
     {
