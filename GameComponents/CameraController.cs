@@ -52,14 +52,6 @@ public class CameraController : MonoBehaviour
 
         else if (TransientDataScript.GameState == GameState.Overworld)
         {
-            if (Input.GetKeyDown(KeyCode.Space) && TransientDataScript.CameraView == CameraView.Normal)
-            {
-                CameraClose();
-            }
-            else if (Input.GetKeyDown(KeyCode.Space) && TransientDataScript.CameraView != CameraView.Normal)
-            {
-                CameraNormal();
-            }
 
             if (TransientDataScript.CameraView != CameraView.Normal)
             {
@@ -141,7 +133,7 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    void CameraClose()
+    public void CameraClose()
     {
         TransientDataScript.SetCameraView(CameraView.Cockpit);
         camIndex = 1;
@@ -149,7 +141,7 @@ public class CameraController : MonoBehaviour
         camTransform.position = new Vector3(camTargetsList[camIndex].transform.position.x, camTargetsList[camIndex].transform.position.y, vCam.gameObject.transform.position.z);
     }
 
-    void CameraNormal()
+    public void CameraNormal()
     {
         TransientDataScript.SetCameraView(CameraView.Normal);
         vCam.m_Lens.OrthographicSize = 7;
