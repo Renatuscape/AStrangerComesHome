@@ -25,7 +25,7 @@ public class PointOfInterest
     public Sprite sprite;
     public Shop shop;
     public bool isUnique;
-    public List<Location> locations;
+    //public List<Location> locations;
 }
 
 public static class PointsOfInterest
