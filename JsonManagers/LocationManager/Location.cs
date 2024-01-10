@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum LocationType
@@ -13,7 +14,7 @@ public enum LocationType
     Temporary
 }
 [System.Serializable]
-public class WorldLocation
+public class Location
 {
     public string objectID;
     public string name;
@@ -31,5 +32,10 @@ public class WorldLocation
 }
 public static class Locations
 {
-    public static List<WorldLocation> all = new();
+    public static List<Location> all = new();
+
+    public static Location FindByCoordinates(int mapX, int mapY)
+    {
+        return all.Where(l => l.mapX == mapX && l.mapY == mapY).FirstOrDefault();
+    }
 }

@@ -34,24 +34,24 @@ public enum CameraView
 
 
 //TRAVEL ENUMS
-public enum Region
-{
-    Plains,
-    CapitalRegion
-}
-public enum Location
-{
-    None,
-    VerdantEstate,
-    CapitalCity,
-    StellaTown,
-    LittlemothVillage,
-    ShoalsideTown,
-    Moorbrook,
-    Penfrost,
-    StarlitBay,
-    MoragRock
-}
+//public enum Region
+//{
+//    Plains,
+//    CapitalRegion
+//}
+//public enum Location
+//{
+//    None,
+//    VerdantEstate,
+//    CapitalCity,
+//    StellaTown,
+//    LittlemothVillage,
+//    ShoalsideTown,
+//    Moorbrook,
+//    Penfrost,
+//    StarlitBay,
+//    MoragRock
+//}
 
 public enum EngineState
 {

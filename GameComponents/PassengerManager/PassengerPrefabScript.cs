@@ -84,9 +84,9 @@ public class PassengerPrefabScript : MonoBehaviour
         if (!isPassengerA && dataManager.passengerIsActiveB == false)
             gameObject.SetActive(false);
 
-        if (origin == Location.None)
+        if (origin is null)
         {
-            origin = Location.StellaTown; //Check for closest place
+            origin = transientData.currentRegion.locations[0]; //Check for closest place
             CalculateFare();
         }
     }

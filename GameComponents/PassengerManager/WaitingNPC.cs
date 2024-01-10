@@ -60,12 +60,12 @@ public class WaitingNPC : MonoBehaviour
 
     void RollDestination()
     {
-        destination = (Location)Random.Range(0, System.Enum.GetValues(typeof(Location)).Length - 1);
+        int random = Random.Range(0, transientData.currentRegion.locations.Count - 1);
+        destination = transientData.currentRegion.locations[random];// (transientData.currentRegion.locations)Random.Range(0, System.Enum.GetValues(typeof(Location)).Length - 1);
 
-        if (destination == Location.None || destination == Location.VerdantEstate || destination == transientData.currentLocation)
+        if (destination is null || destination.name == "Verdant Estate" || destination == transientData.currentLocation)
         {
             RollDestination();
-            //Debug.Log("Destination reroll");
         }
     }
 
@@ -75,7 +75,7 @@ public class WaitingNPC : MonoBehaviour
 
         transform.position = new Vector3(transform.position.x + parallaxEffect, transform.position.y, transform.position.z);
 
-        if ((transform.position.x <= -20 || transform.position.x >= 20) && transientData.currentLocation == Location.None)
+        if ((transform.position.x <= -20 || transform.position.x >= 20) && transientData.currentLocation is null)
         {
             passengerManager.waitingCurrent -= 1;
             transientData.activePrefabs.Remove(gameObject);

@@ -23,7 +23,7 @@ public class PlayerTokenScript : MonoBehaviour
     {
         if (x.gameObject.GetComponent<MapLocationScript>() != null)
         {
-            transientData.currentLocation = Location.None;
+            transientData.currentLocation = null;
             var locationScript = x.gameObject.GetComponent<MapLocationScript>();
         }
     }

@@ -17,12 +17,12 @@ public class StationManager : MonoBehaviour
 
     void Update()
     {
-        if (spawnedStation == null && transientData.currentLocation != Location.None)
+        if (spawnedStation == null && transientData.currentLocation is not null)
         {
             SetUpStation();
         }
 
-        if (spawnedStation != null && transientData.currentLocation == Location.None)
+        if (spawnedStation != null && transientData.currentLocation is null)
         {
             if (spawnedStation.transform.position.x < -25 || spawnedStation.transform.position.x > 25)
             {
@@ -30,7 +30,7 @@ public class StationManager : MonoBehaviour
                 Destroy(spawnedStation);
             }
         }
-        else if (spawnedStation != null && transientData.currentLocation != Location.None)
+        else if (spawnedStation != null && transientData.currentLocation is not null)
         {
             if (spawnedStation.transform.position.x < -30)
                 spawnedStation.transform.position = new Vector3(25, 0, 0);

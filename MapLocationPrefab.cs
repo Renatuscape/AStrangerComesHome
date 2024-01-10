@@ -6,7 +6,7 @@ public class MapLocationPrefab : MonoBehaviour
 {
     public AutoMap autoMap;
     public TransientDataScript transientData;
-    public WorldLocation location;
+    public Location location;
 
     public bool doubleCLickReady;
     private void OnMouseDown()

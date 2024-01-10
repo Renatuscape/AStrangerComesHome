@@ -105,7 +105,7 @@ public class PassengerManager : MonoBehaviour
     {
         spawnTimer = spawnTimer + Time.deltaTime;
 
-        if (transientData.currentLocation != Location.None && spawnTimer >= spawnDelay && waitingCurrent < waitingMax)
+        if (transientData.currentLocation is not null && spawnTimer >= spawnDelay && waitingCurrent < waitingMax)
         {
             var randomRoll = Random.Range(0, 100);
 

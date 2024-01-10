@@ -5,8 +5,8 @@ using System;
 
 public class LocationManager : MonoBehaviour
 {
-    public List<WorldLocation> debugLocationList = Locations.all;
-    public List<WorldRegion> debugRegionList = Regions.all;
+    public List<Location> debugLocationList = Locations.all;
+    public List<Region> debugRegionList = Regions.all;
     public bool allObjecctsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 1;
@@ -20,7 +20,7 @@ public class LocationManager : MonoBehaviour
     [System.Serializable]
     public class LocationWrapper //Necessary for Unity to read the .json contents as an object
     {
-        public WorldLocation[] locations;
+        public Location[] locations;
     }
     public void LoadFromJson(string fileName)
     {
@@ -35,7 +35,7 @@ public class LocationManager : MonoBehaviour
             {
                 if (dataWrapper.locations != null)
                 {
-                    foreach (WorldLocation location in dataWrapper.locations)
+                    foreach (Location location in dataWrapper.locations)
                     {
                         InitialiseLocation(location);
                     }
@@ -63,13 +63,13 @@ public class LocationManager : MonoBehaviour
         }
     }
 
-    public static void InitialiseLocation(WorldLocation location)
+    public static void InitialiseLocation(Location location)
     {
         objectIDReader(ref location);
         Locations.all.Add(location);
     }
 
-    public static void objectIDReader(ref WorldLocation location)
+    public static void objectIDReader(ref Location location)
     {
 
         //SET REGION
