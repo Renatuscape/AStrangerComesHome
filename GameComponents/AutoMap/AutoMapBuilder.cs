@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class AutoMapBuilder
 {
@@ -17,29 +18,36 @@ public class AutoMapBuilder
         edgeCreator = new();
     }
 
-    void GenerateMap(int rows, int columns)
+    void GenerateMap(Region region)
     {
+        int rowCounter = region.rows - 1;
 
-        int rowStartValue = rows / 2 * -1;
-        int columnStartValue = columns / 2 * -1;
-
-        for (int i = rowStartValue; i <= rows / 2; i++)
+        for (int i = 0; i < region.rows; i++)
         {
-            for (int j = columnStartValue; j <= columns / 2; j++)
+            for (int j = 0; j < region.columns; j++)
             {
                 Vector3 localPosition = new Vector3(j * spacing, i * spacing, 0);
-                var newTile = UnityEngine.Object.Instantiate(autoMap.tilePrefab);
+                var newTile = Object.Instantiate(autoMap.tilePrefab);
                 newTile.transform.parent = mapContainer.transform;
                 newTile.transform.localPosition = localPosition;  // Set local position relative to mapContainer
+                newTile.transform.localPosition = new Vector3(newTile.transform.localPosition.x - (region.columns / 2), newTile.transform.localPosition.y - (region.rows / 2));
                 newTile.GetComponent<MapTilePrefab>().autoMap = autoMap;
-                newTile.GetComponent<MapTilePrefab>().sprites = autoMap.tileSprites;
                 autoMap.mapTiles.Add(new Vector2Int(i, j), newTile);
+
+                if (autoMap.tilePainter.FlipTile(region, rowCounter, j, out var tile))
+                {
+                    var renderer = newTile.GetComponent<SpriteRenderer>();
+                    renderer.sprite = tile.sprite;
+                    newTile.name = $"{ tile.TileID} ({rowCounter}, {j})";
+                    if (!tile.isUnobstructive)
+                    {
+                        newTile.tag = "Untagged";
+                    }
+                }
             }
+            rowCounter--;
         }
-
-        edgeCreator.CreateEdge(autoMap.mapTiles, rows, columns);
     }
-
 
     void GenerateLocationMarkers(Region region)
     {
@@ -70,7 +78,7 @@ public class AutoMapBuilder
         autoMap.mapTiles = new();
         autoMap.mapMarkers = new();
 
-        GenerateMap(region.rows, region.columns);
+        GenerateMap(region);
         GenerateLocationMarkers(region);
         autoMap.playerToken.transform.localPosition = region.defaultStartingPosition;
     }
