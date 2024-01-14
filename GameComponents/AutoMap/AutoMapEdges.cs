@@ -53,5 +53,6 @@ public class AutoMapEdges
     {
         // Change the sprite color or material of the tile here
         tile.GetComponent<SpriteRenderer>().color = color;
+        tile.GetComponent<BoxCollider2D>().isTrigger = false;
     }
 }
