@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -17,14 +16,19 @@ public class AutoMap : MonoBehaviour
     public GameObject mapMarker;
     public GameObject locationMarker;
     public MapPlayerToken playerToken;
-    public List<Sprite> tileSprites;
     public SerializableDictionary<Vector2Int, GameObject> mapTiles = new();
     public List<GameObject> mapMarkers = new();
+    public List<Sprite> baseTiles;
+    public List<Sprite> edgeTiles;
+    public List<Sprite> terrainTiles;
+    public List<Sprite> markerTiles;
 
     public TransientDataScript transientData;
+    public DataManagerScript dataManager;
     public AutoMapBuilder mapBuilder;
     public AutoMapScroller mapScroller;
     public AutoMapTravelManager travelManager;
+    public AutoMapPainter tilePainter;
 
     Vector3 enabledPosition = new Vector3(0, 0, 0);
     Vector3 disabledPosition = new Vector3(200, 0, 0);
@@ -71,7 +75,7 @@ public class AutoMap : MonoBehaviour
         //TRAVEL LOGIC
         if (TransientDataScript.GameState == GameState.MapMenu || TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.JournalMenu)
         {
-            if (playerToken.transform.localPosition != mapMarker.transform.localPosition && travelManager is not null)
+            if (transientData.engineState != EngineState.Off && playerToken.transform.localPosition != mapMarker.transform.localPosition && travelManager is not null)
             {
                 travelManager.Travel();
             }
@@ -122,11 +126,13 @@ public class AutoMap : MonoBehaviour
         mapStartX = region.columns / 2 * -1;
         mapEndX = region.columns / 2;
 
-        mapScroller.xCutOff = mapEndX - 2;
-        mapScroller.yCutOff = mapEndY / 2 - 6;
+        mapScroller.xCutOff = mapEndX /2;
+        mapScroller.yCutOff = mapEndY / 2;
 
         mapBuilder.ChangeMap(region);
         mapContainer.transform.localPosition = new Vector3(0, 0, 0);
+
+        playerToken.transform.localPosition = new Vector3(dataManager.mapPositionX, dataManager.mapPositionY, 0);
     }
 
     public void GoToCoordinates(Vector3 coordinates)
