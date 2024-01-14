@@ -63,7 +63,7 @@ public class WaitingNPC : MonoBehaviour
         int random = Random.Range(0, transientData.currentRegion.locations.Count - 1);
         destination = transientData.currentRegion.locations[random];// (transientData.currentRegion.locations)Random.Range(0, System.Enum.GetValues(typeof(Location)).Length - 1);
 
-        if (destination is null || destination.name == "Verdant Estate" || destination == transientData.currentLocation)
+        if (destination is null || destination.name == "Verdant Estate" || destination == transientData.currentLocation || destination.type == LocationType.Crossing)
         {
             RollDestination();
         }
