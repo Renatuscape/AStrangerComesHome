@@ -7,7 +7,6 @@ public class MapTilePrefab : MonoBehaviour
     public AutoMap autoMap;
     public float doubleClickWindow;
     public bool doubleCLickReady;
-    public List<Sprite> sprites;
     private void OnMouseDown()
     {
         Debug.Log($"Tile: {(int)transform.localPosition.x}, {(int)transform.localPosition.y}");
