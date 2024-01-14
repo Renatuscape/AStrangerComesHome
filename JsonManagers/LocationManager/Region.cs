@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class Region
     public string name;
     public int columns;
     public int rows;
+    public List<AutoMapData> mapLayout = new();
     public List<Location> locations = new();
     public Vector3 defaultStartingPosition = new Vector3(0,0,0);
 }
@@ -21,4 +23,10 @@ public static class Regions
     {
         return all.FirstOrDefault(r => r.objectID == searchTerm);
     }
+}
+
+[Serializable]
+public class AutoMapData
+{
+    public List<string> row;
 }
