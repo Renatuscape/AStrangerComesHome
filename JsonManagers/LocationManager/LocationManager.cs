@@ -78,9 +78,7 @@ public class LocationManager : MonoBehaviour
             var region = Regions.FindByID("REGION"+i);
             if (region is null)
             {
-                region = new() {rows = 13, columns = 20 };
-                region.objectID = "REGION" + i;
-                Regions.all.Add(region);
+                Debug.Log("Could not find REGION"+i);
             }
             region.locations.Add(location);
         }
@@ -111,7 +109,7 @@ public class LocationManager : MonoBehaviour
         {
             location.type = LocationType.Temporary;
         }
-        else if (type == "CROSS")
+        else if (type == "CROS")
         {
             location.type = LocationType.Crossing;
         }
