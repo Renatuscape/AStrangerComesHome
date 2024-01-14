@@ -3,19 +3,101 @@ using UnityEngine.UIElements;
 
 public class AutoMapTravelManager
 {
-    TransientDataScript transientData;
-    DataManagerScript dataManager;
     AutoMap autoMap;
     GameObject playerToken;
     GameObject mapMarker;
+    float playerTokenSpeed;
 
     public AutoMapTravelManager(AutoMap autoMap)
     {
         playerToken = autoMap.playerToken.gameObject;
         mapMarker = autoMap.mapMarker;
-        transientData = autoMap.transientData;
-        dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
         this.autoMap = autoMap;
+    }
+
+    public void Travel()
+    {
+        if (MapBoundsCheck())
+        {
+            // ADJUST PLAYER SPEED ON MAP
+            playerTokenSpeed = autoMap.transientData.currentSpeed * 0.0006f;
+
+            // RETRIEVE POSITION FROM DATAMANAGER
+            var tempPosition = new Vector3(autoMap.dataManager.mapPositionX, autoMap.dataManager.mapPositionY, playerToken.transform.localPosition.z);
+
+            // Calculate the new position without moving the player yet
+            Vector3 newPosition = Vector3.MoveTowards(tempPosition, mapMarker.transform.localPosition, playerTokenSpeed);
+
+            // Check if the new position is over a basic tile
+            if (IsOverUnobstructedTile(newPosition))
+            {
+                // Move the player token to the new position
+                playerToken.transform.localPosition = newPosition;
+
+                // SAVE NEW POSITIONS
+                autoMap.dataManager.mapPositionX = playerToken.transform.localPosition.x;
+                autoMap.dataManager.mapPositionY = playerToken.transform.localPosition.y;
+
+                if (autoMap.transientData.engineState != EngineState.Off)
+                {
+                    if (playerToken.transform.localPosition == mapMarker.transform.localPosition)
+                    {
+                        autoMap.transientData.engineState = EngineState.Off; // STOP WHEN REACHING DESTINATION
+
+                        var location = Locations.FindByCoordinates((int)playerToken.transform.localPosition.x, (int)playerToken.transform.localPosition.y);
+                        if (location is not null)
+                        {
+                            autoMap.transientData.PushAlert("I have arrived at " + location.name);
+                            autoMap.transientData.currentLocation = location;
+                            autoMap.transientData.SpawnLocation(location);
+                        }
+                        else
+                        {
+                            autoMap.transientData.currentLocation = null;
+                            autoMap.transientData.PushAlert("I have arrived at my destination.");
+                        }
+                    }
+                    else
+                    {
+                        autoMap.transientData.currentLocation = null;
+                    }
+                }
+
+            }
+            else
+            {
+                autoMap.transientData.PushAlert("The road ahead is obstructed. I should check my map.");
+                autoMap.transientData.engineState = EngineState.Off; // STOP WHEN REACHING DESTINATION
+            }
+            // If not over a basic tile, you might want to handle it differently (e.g., stop movement or perform some other action)
+        }
+        else if (autoMap.transientData.engineState != EngineState.Off)
+        {
+            autoMap.transientData.engineState = EngineState.Off; // STOP WHEN REACHING DESTINATION
+            autoMap.transientData.PushAlert("I need to choose a destination.");
+        }
+    }
+
+    bool IsOverUnobstructedTile(Vector3 position)
+    {
+        //// Cast a ray to check for the "UnobstructedTile" tag at the new position
+        //int layerMask = LayerMask.GetMask("MapTile");
+        //RaycastHit2D hit = Physics2D.Raycast(position, Vector2.down, Mathf.Infinity, layerMask);  // Using a downward direction
+
+        //// Check if the ray hit an object
+        //if (hit.collider != null)
+        //{
+        //    Debug.Log($"Hit object: {hit.collider.gameObject.name}, Layer: {LayerMask.LayerToName(hit.collider.gameObject.layer)}, Tag: {hit.collider.tag}");
+
+        //    // Check if the hit object has the "UnobstructedTile" tag
+        //    if (hit.collider.CompareTag("UnobstructedTile"))
+        //    {
+        //        return true;
+        //    }
+        //}
+
+        //return false;
+        return true;
     }
 
     bool MapBoundsCheck()
@@ -27,55 +109,6 @@ public class AutoMapTravelManager
         {
             return true;
         }
-            return false;
-    }
-    public void Travel()
-    {
-        if (MapBoundsCheck())
-        {
-            //ADJUST PLAYER SPEED ON MAP
-            var playerTokenSpeed = transientData.currentSpeed * 0.0006f;
-
-            //RETRIEVE POSITION FROM DATAMANAGER
-            var tempPosition = new Vector3(dataManager.mapPositionX, dataManager.mapPositionY, playerToken.transform.localPosition.z);
-
-            //MOVE PLAYER TOKEN
-            playerToken.transform.localPosition = Vector3.MoveTowards(tempPosition, mapMarker.transform.localPosition, playerTokenSpeed);
-
-            //SAVE NEW POSITIONS
-            dataManager.mapPositionX = playerToken.transform.localPosition.x;
-            dataManager.mapPositionY = playerToken.transform.localPosition.y;
-
-            if (transientData.engineState != EngineState.Off)
-            {
-                if (playerToken.transform.localPosition == mapMarker.transform.localPosition)
-                {
-                    transientData.engineState = EngineState.Off; //STOP WHEN REACHING DESTINATION
-                                                                 //var locationToString = transientData.currentLocation.ToString();
-                                                                 //var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
-                    var location = Locations.FindByCoordinates((int)playerToken.transform.localPosition.x, (int)playerToken.transform.localPosition.y);
-                    if (location is not null)//(transientData.currentLocation != Location.None)
-                    {
-                        transientData.PushAlert("You have arrived at " + location.name);
-                        transientData.currentLocation = location;
-                        transientData.SpawnLocation(location);
-                    }
-                    else
-                    {
-                        transientData.currentLocation = null;
-                        transientData.PushAlert("You have arrived at your destination.");
-                    }
-                }
-                else
-                {
-                    transientData.currentLocation = null;
-                }
-            }
-        }
-        else if (transientData.engineState != EngineState.Off)
-        {
-            transientData.engineState = EngineState.Off; //STOP WHEN REACHING DESTINATION
-            transientData.PushAlert("Please choose destination.");
-        }
+        return false;
     }
 }
