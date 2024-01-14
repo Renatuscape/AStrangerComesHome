@@ -14,6 +14,8 @@ public class GameManagerScript : MonoBehaviour
     public GameObject characterManager;
     public GameObject dialogueManager;
     public GameObject questManager;
+    public GameObject locationManager;
+    public GameObject regionManager;
 
     public GameObject gameComponentMaster;
     public GameObject mainMenuComponent;
@@ -60,11 +62,13 @@ public class GameManagerScript : MonoBehaviour
             SetUpNewGame();
         }
 
-        Invoke("CreateGameController", 3);
+        Invoke("CreateGameController", 1.5f);
     }
 
     void InitiateJsonManagers()
     {
+        regionManager.SetActive(true);
+        locationManager.SetActive(true);
         itemManager.SetActive(true);
         skillManager.SetActive(true);
         upgradeManager.SetActive(true);
