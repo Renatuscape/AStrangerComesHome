@@ -15,11 +15,6 @@ public class DataManagerScript : MonoBehaviour
 
     public string playerNameColour;
     public int playerGold;
-    //public SerializableDictionary<string, int> playerItems = Player.items;
-    //public SerializableDictionary<string, int> playerSkills = Player.skills;
-    //public SerializableDictionary<string, int> playerUpgrades = Player.upgrades;
-    //public SerializableDictionary<string, int> playerQuests = Player.quests;
-    //public SerializableDictionary<string, int> playerFriendships = Player.friendships;
 
     public List<IdIntPair> inventoryList = Player.inventoryList;
 
@@ -39,6 +34,7 @@ public class DataManagerScript : MonoBehaviour
     //public SerializableDictionary<string, bool> faceMods;
 
     //JOURNEY DATA - SAVE READY
+    public string currentRegion;
     public float mapPositionX;
     public float mapPositionY;
     public float timeOfDay;
