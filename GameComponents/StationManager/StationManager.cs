@@ -17,9 +17,16 @@ public class StationManager : MonoBehaviour
 
     void Update()
     {
-        if (spawnedStation == null && transientData.currentLocation is not null)
+        if (spawnedStation == null && transientData.currentLocation is not null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
         {
-            SetUpStation();
+            if (transientData.currentLocation.type == LocationType.Crossing && transientData.currentLocation.gates.Count == 1)
+            {
+
+            }
+            else
+            {
+                SetUpStation();
+            }
         }
 
         if (spawnedStation != null && transientData.currentLocation is null)
@@ -44,5 +51,15 @@ public class StationManager : MonoBehaviour
         spawnedStation = Instantiate(stationPrefab);
         spawnedStation.name = "spawnedStation";
         transientData.activePrefabs.Add(spawnedStation);
+    }
+
+    private void OnDisable()
+    {
+        if (spawnedStation is not null)
+        {
+            transientData.activePrefabs.Remove(spawnedStation);
+            Destroy(spawnedStation);
+        }
+        transientData.currentLocation = null;
     }
 }
