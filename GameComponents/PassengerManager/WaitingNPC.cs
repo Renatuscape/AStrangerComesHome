@@ -61,7 +61,7 @@ public class WaitingNPC : MonoBehaviour
     void RollDestination()
     {
         int random = Random.Range(0, transientData.currentRegion.locations.Count - 1);
-        destination = transientData.currentRegion.locations[random];// (transientData.currentRegion.locations)Random.Range(0, System.Enum.GetValues(typeof(Location)).Length - 1);
+        destination = transientData.currentRegion.locations[random];
 
         if (destination is null || destination.name == "Verdant Estate" || destination == transientData.currentLocation || destination.type == LocationType.Crossing)
         {
@@ -100,9 +100,9 @@ public class WaitingNPC : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
-            var locationToString = destination.ToString();
-            var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
-            transientData.PrintFloatText("\'I'd like to go to\n" + locationName + ", please.\'");
+            //var locationToString = destination.ToString();
+            //var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
+            transientData.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
         }
 
     }
