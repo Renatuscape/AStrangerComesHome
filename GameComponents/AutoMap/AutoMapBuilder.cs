@@ -7,15 +7,12 @@ public class AutoMapBuilder
 
     float spacing = 1;
     GameObject mapContainer;
-    AutoMapEdges edgeCreator;
 
 
     public AutoMapBuilder(AutoMap autoMap, GameObject mapContainer)
     {
         this.autoMap = autoMap;
         this.mapContainer = mapContainer;
-
-        edgeCreator = new();
     }
 
     void GenerateMap(Region region)
@@ -65,6 +62,7 @@ public class AutoMapBuilder
     }
     public void ChangeMap(Region region)
     {
+        Debug.Log($"AutoMapBuilder attempting to build {region.objectID}");
         foreach (var t in autoMap.mapTiles)
         {
             Object.Destroy(t.Value);
@@ -80,6 +78,5 @@ public class AutoMapBuilder
 
         GenerateMap(region);
         GenerateLocationMarkers(region);
-        autoMap.playerToken.transform.localPosition = region.defaultStartingPosition;
     }
 }
