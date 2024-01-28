@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -59,7 +60,7 @@ public class GameManagerScript : MonoBehaviour
         }
         else //If there is no main menu, run new game routine directly
         {
-            SetUpNewGame();
+            NewGameRoutine();
         }
 
         Invoke("CreateGameController", 1.5f);
@@ -96,7 +97,7 @@ public class GameManagerScript : MonoBehaviour
         mainMenuComponent.SetActive(true);
     }
 
-    public void SetUpNewGame()
+    public void NewGameRoutine()
     {
         dataManager.playerName = "Morgan";
         dataManager.playerNameColour = "597266";
@@ -108,8 +109,9 @@ public class GameManagerScript : MonoBehaviour
         dataManager.playerGold = 0;
         dataManager.totalGameDays = 0;
         dataManager.timeOfDay = 0;
-        dataManager.mapPositionX = 0.5f;
-        dataManager.mapPositionY = 0.5f;
+        dataManager.currentRegion = "REGION1";
+        dataManager.mapPositionX = 0f;
+        dataManager.mapPositionY = 0f;
         dataManager.passengerIsActiveA = false;
         dataManager.passengerIsActiveB = false;
         dataManager.planterIsActiveA = false;
@@ -130,6 +132,13 @@ public class GameManagerScript : MonoBehaviour
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
+        InitialiseMap();
+    }
+
+    public void LoadRoutine()
+    {
+        //ResetGameComponents();
+        InitialiseMap();
     }
 
     public void ResetGameComponents()
@@ -143,6 +152,36 @@ public class GameManagerScript : MonoBehaviour
         {
             component.SetActive(true);
         }
+    }
+
+    public void InitialiseMap()
+    {
+        Debug.Log("Initialising map");
+        TransientDataScript.SetGameState(GameState.Loading, this.name, gameObject);
+        if (string.IsNullOrWhiteSpace(dataManager.currentRegion))
+        {
+            Debug.Log($"Region was null or whitespace: {dataManager.currentRegion}. Setting to REGION1 and default coordinates.");
+            dataManager.currentRegion = "REGION1";
+            dataManager.mapPositionX = 0;
+            dataManager.mapPositionY = 0;
+        }
+
+        mapComponent.mapScroller = new(mapComponent);
+        mapComponent.mapBuilder = new(mapComponent, mapComponent.mapContainer);
+
+        Region region = Regions.FindByID(dataManager.currentRegion);
+        Debug.Log($"Loading {dataManager.currentRegion}. Found {region.objectID}");
+
+        if (region is not null)
+        {
+            mapComponent.ChangeMap(region, dataManager.mapPositionX, dataManager.mapPositionY);
+        }
+
+        else
+        {
+            Debug.Log($"Region by the ID {dataManager.currentRegion} not found.");
+        }
+        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 }
 
