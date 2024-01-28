@@ -81,10 +81,10 @@ public static class DialogueTagParser
         }
 
         Debug.Log($"Tags contain {tags.Count} entries:");
-        foreach (KeyValuePair<string, string> kvp in tags)
-        {
-            Debug.Log($"{kvp.Key}: {kvp.Value}");
-        }
+        //foreach (KeyValuePair<string, string> kvp in tags)
+        //{
+        //    Debug.Log($"{kvp.Key}: {kvp.Value}");
+        //}
     }
 
     static void AddNewTag(string key, string value)
