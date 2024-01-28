@@ -47,9 +47,34 @@ public class AutoMapTravelManager
                         var location = Locations.FindByCoordinates((int)playerToken.transform.localPosition.x, (int)playerToken.transform.localPosition.y);
                         if (location is not null)
                         {
-                            autoMap.transientData.PushAlert("I have arrived at " + location.name);
-                            autoMap.transientData.currentLocation = location;
-                            autoMap.transientData.SpawnLocation(location);
+                            if (location.type is not LocationType.Crossing)
+                            {
+                                autoMap.transientData.PushAlert("I have arrived at " + location.name);
+                                autoMap.transientData.currentLocation = location;
+                                autoMap.transientData.SpawnLocation(location);
+                            }
+                            else
+                            {
+                                if (location.type == LocationType.Crossing && location.gates.Count == 1)
+                                {
+                                    //add checks here
+                                    Debug.Log("Attempting to travel by gate");
+
+                                    Gate gate = location.gates[0];
+
+                                    if (gate.AttemptChecks(out var x, out var y))
+                                    {
+                                        TransientDataScript.TravelByGate(location.gates[0]);
+                                    }
+                                    else
+                                    {
+                                        autoMap.transientData.PushAlert($"{gate.failText}");
+                                        autoMap.transientData.currentLocation = null;
+                                    }
+                                }
+
+                                autoMap.transientData.PushAlert($"I have arrived at {autoMap.transientData.currentRegion.name}.");
+                            }
                         }
                         else
                         {
