@@ -17,9 +17,6 @@ public class PassengerPrefabScript : MonoBehaviour
     public Location origin;
     public Location destination;
 
-    public GameObject originObject;
-    public GameObject destinationObject;
-
     public List<string> dialogueList;
 
     void Awake()
@@ -66,13 +63,6 @@ public class PassengerPrefabScript : MonoBehaviour
         var passengerSpriteList = GameObject.Find("PassengerSpawner").GetComponent<PassengerManager>().passengerSpriteList;
         spriteRenderer.sprite = passengerSpriteList[Random.Range(0, passengerSpriteList.Count - 1)];
 
-        var destinationName = destination.ToString();
-        var originName = origin.ToString();
-
-        destinationObject = GameObject.Find(destinationName);
-        originObject = GameObject.Find(originName);
-        destinationObject = GameObject.Find(destinationName);
-
         CalculateFare();
     }
 
@@ -93,16 +83,17 @@ public class PassengerPrefabScript : MonoBehaviour
 
     void CalculateFare()
     {
-
-        if (destinationObject != null && originObject != null)
-        {
-            var dist = Vector3.Distance(destinationObject.transform.position, originObject.transform.position);
-
-            fare = (int)(dist * dist) * 4;
-        }
-        else
-            Invoke("CalculateFare", 0.1f);
+        float distance = CalculateDistance(origin, destination);
+        Debug.Log("Distance between A and B: " + distance);
+        fare = (int) distance * 10;
     }
+
+    public static float CalculateDistance(Location pointA, Location pointB)
+    {
+        float distance = Mathf.Sqrt(Mathf.Pow(pointB.mapX - pointA.mapY, 2) + Mathf.Pow(pointB.mapX - pointA.mapY, 2));
+        return distance;
+    }
+
     private void OnMouseDown()
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
@@ -127,10 +118,10 @@ public class PassengerPrefabScript : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
-            var locationToString = destination.ToString();
-            var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
+            //var locationToString = destination.ToString();
+            //var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
 
-            transientData.PrintFloatText(passengerName + "\n" + locationName);
+            transientData.PrintFloatText(passengerName + "\n" + destination.name);
         }
     }
 
