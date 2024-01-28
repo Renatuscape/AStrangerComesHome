@@ -30,7 +30,7 @@ public class TransientDataScript : MonoBehaviour
 
     //PLAYER LOCATION DATA
     public Region currentRegion;
-    public Location currentLocation;
+    public Location currentLocation = null;
 
     //TIME DATA
     public int timeFlowSpeed = 1;
@@ -105,6 +105,13 @@ public class TransientDataScript : MonoBehaviour
     {
         SetGameState(GameState.Overworld, name, gameObject);
     }
+
+    public static void TravelByGate(Gate gate)
+    {
+        Debug.Log("Travel by Gate called at TransientDataScript");
+        GameObject.Find("GameManager").GetComponent<GameManagerScript>().mapComponent.TravelByGate(gate);
+    }
+
     static void LogStateChange(string callerScript, GameObject callerObject, GameState newState)
     {
         GameObject.Find("TransientData").GetComponent<TransientDataScript>().gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + GameState + " to " + newState + ".";
