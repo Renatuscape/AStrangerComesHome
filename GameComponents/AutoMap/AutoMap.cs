@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Rendering;
 using static UnityEngine.Rendering.DebugUI.Table;
 
 public class AutoMap : MonoBehaviour
@@ -46,7 +47,6 @@ public class AutoMap : MonoBehaviour
 
         playerToken.autoMap = this;
         ToggleEnable(false);
-        StartCoroutine(TestRegion());
     }
 
     public void ToggleEnable(bool isTrue)
@@ -62,12 +62,6 @@ public class AutoMap : MonoBehaviour
             transform.position = disabledPosition;
             mapContainer.transform.localPosition = new Vector3(0, 0, 0);
         }
-    }
-
-    IEnumerator TestRegion()
-    {
-        yield return new WaitForSeconds(1);
-        ChangeMap(Regions.FindByID("REGION1"));
     }
 
     private void Update()
@@ -117,20 +111,60 @@ public class AutoMap : MonoBehaviour
         }
     }
 
-    public void ChangeMap(Region region)
+    public void TravelByGate(Gate gate)
     {
+        Debug.Log("Travel by gate initiated at AutoMap");
+
+        Region destinationRegion = Regions.FindByID(gate.destinationRegion);
+
+        if (destinationRegion is not null)
+        {
+            Debug.Log($"Travel by gate calling ChangeMap for {destinationRegion.objectID}");
+            ChangeMap(destinationRegion, gate.xCoordinate, gate.yCoordinate);
+            transientData.currentLocation = null;
+            mapMarker.transform.position = playerToken.transform.position;
+        }
+        else
+        {
+            Debug.Log($"{gate.objectID}'s region could not be found by ID {gate.destinationRegion}");
+        }
+    }
+
+    public void ChangeMap(Region region, float x = 9999, float y = 9999)
+    {
+        Debug.Log($"Change map method received {region.objectID}.");
         transientData.currentRegion = region;
+        dataManager.currentRegion = region.objectID;
 
         mapStartY = region.rows / 2 * -1;
         mapEndY = region.rows / 2;
         mapStartX = region.columns / 2 * -1;
         mapEndX = region.columns / 2;
 
+        if (mapScroller is not null)
+        {
         mapScroller.xCutOff = mapEndX /2;
         mapScroller.yCutOff = mapEndY / 2;
+        }
+        else
+        {
+            Debug.Log("Map Scroller has not been initialised yet.");
+        }
+
 
         mapBuilder.ChangeMap(region);
         mapContainer.transform.localPosition = new Vector3(0, 0, 0);
+
+        if (x == 9999 || y == 9999)
+        {
+            dataManager.mapPositionX = region.defaultStartingPosition.x;
+            dataManager.mapPositionY = region.defaultStartingPosition.y;
+        }
+        else
+        {
+            dataManager.mapPositionX = x;
+            dataManager.mapPositionY = y;
+        }
 
         playerToken.transform.localPosition = new Vector3(dataManager.mapPositionX, dataManager.mapPositionY, 0);
     }
