@@ -77,7 +77,7 @@ public class QuestTracker : MonoBehaviour
 
                 foreach (string content in dialogue.content)
                 {
-                    Debug.Log(content);
+                    //Debug.Log(content);
                 }
             }
         }
