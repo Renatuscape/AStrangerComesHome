@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,11 +12,13 @@ public class SaveLoadManager : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public TransientDataScript transientData;
+    public GameManagerScript gameManager;
 
     private void Awake()
     {
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManagerScript>();
     }
 
     public void SaveGame()
@@ -24,12 +27,44 @@ public class SaveLoadManager : MonoBehaviour
         SaveJsonToFile(json);
     }
 
-    public void LoadGame()
+    //public void LoadGame()
+    //{
+    //    string json = LoadJsonFromFile();
+    //    if (!string.IsNullOrEmpty(json))
+    //    {
+    //        JsonUtility.FromJsonOverwrite(json, dataManager);
+    //    }
+    //}
+
+    //public void LoadGame()
+    //{
+    //    string json = LoadJsonFromFile();
+
+    //    // Log the JSON value before loading
+    //    Debug.Log("Loaded JSON data: " + json);
+
+    //    if (!string.IsNullOrEmpty(json))
+    //    {
+    //        JsonUtility.FromJsonOverwrite(json, dataManager);
+
+    //        // Log the value of currentRegion after loading
+    //        Debug.Log("currentRegion after loading: " + dataManager.currentRegion);
+    //    }
+    //}
+
+    public async void LoadGame()
     {
-        string json = LoadJsonFromFile();
+        TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
+
+        string json = await LoadJsonFromFileAsync();
+
+        // Log the JSON value before loading
+        Debug.Log("Loaded JSON data: " + json);
+
         if (!string.IsNullOrEmpty(json))
         {
             JsonUtility.FromJsonOverwrite(json, dataManager);
+            gameManager.LoadRoutine();
         }
     }
 
@@ -45,12 +80,15 @@ public class SaveLoadManager : MonoBehaviour
         string fullPath = GetSaveFilePath();
         if (File.Exists(fullPath))
         {
+            gameManager.LoadRoutine();
             return File.ReadAllText(fullPath);
         }
 
         Debug.LogError("Save file does not exist!");
         return null;
     }
+
+
 
     private string GetSaveFilePath()
     {
@@ -62,6 +100,23 @@ public class SaveLoadManager : MonoBehaviour
             Directory.CreateDirectory(dir);
 
         return Path.Combine(dir, fileName);
+    }
+
+    private async Task<string> LoadJsonFromFileAsync()
+    {
+        string fullPath = GetSaveFilePath();
+        if (File.Exists(fullPath))
+        {
+            using (StreamReader reader = new StreamReader(fullPath))
+            {
+                return await reader.ReadToEndAsync();
+            }
+        }
+        else
+        {
+            Debug.LogError("Save file does not exist!");
+            return null;
+        }
     }
 
 }
