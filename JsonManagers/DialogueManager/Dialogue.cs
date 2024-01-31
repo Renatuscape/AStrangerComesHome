@@ -17,6 +17,7 @@ public class Dialogue
     public string questID;
     public int questStage;
     public string topicName;
+    public string hint;
     public int startTime = 0;
     public int endTime = 0;
 
@@ -30,7 +31,6 @@ public class Dialogue
 
     //MEMORY SPECIFIC
     public string location;
-    public string hint;
 
     public bool CheckRequirements(out bool hasTimer, out bool hasLocation)
     {
