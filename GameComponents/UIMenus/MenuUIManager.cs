@@ -42,7 +42,7 @@ public class MenuUIManager : MonoBehaviour
                     startMenu.SetActive(true);
             }
 
-            else if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.I))
+            else if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.J))
             {
                 if (TransientDataScript.GameState == GameState.JournalMenu)
                 {
@@ -50,7 +50,10 @@ public class MenuUIManager : MonoBehaviour
                     Debug.Log(name + " changed GameState to " + GameState.Overworld);
                 }
                 else if (TransientDataScript.GameState == GameState.Overworld)
+                {
+                    TransientDataScript.SetGameState(GameState.JournalMenu, "Menu UI Manager", gameObject);
                     journalMenu.SetActive(true);
+                }
             }
 
             if (TransientDataScript.GameState == GameState.ShopMenu && !shopMenu.activeInHierarchy)
