@@ -80,7 +80,7 @@ public static class Player
             var character = (Character)dynamicObject;
             max = character.maxValue;
             id = character.objectID;
-            Debug.Log($"Character found. MaxValue is {max}");
+            //Debug.Log($"Character found. MaxValue is {max}");
         }
         if (id != "")
         {
