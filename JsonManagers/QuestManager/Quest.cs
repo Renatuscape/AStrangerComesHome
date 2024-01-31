@@ -6,6 +6,7 @@ public class Quest
 {
     public string objectID;
     public string name;
+    public string description;
     public bool excludeFromJournal;
     public int maxValue = 100;
     public Character questGiver; //Set from objectID by QuestManager
