@@ -157,7 +157,11 @@ public class GameManagerScript : MonoBehaviour
     public void InitialiseMap()
     {
         Debug.Log("Initialising map");
-        TransientDataScript.SetGameState(GameState.Loading, this.name, gameObject);
+        if (TransientDataScript.GameState != GameState.CharacterCreation)
+        {
+            TransientDataScript.SetGameState(GameState.Loading, this.name, gameObject);
+        }
+
         if (string.IsNullOrWhiteSpace(dataManager.currentRegion))
         {
             Debug.Log($"Region was null or whitespace: {dataManager.currentRegion}. Setting to REGION1 and default coordinates.");
@@ -181,7 +185,11 @@ public class GameManagerScript : MonoBehaviour
         {
             Debug.Log($"Region by the ID {dataManager.currentRegion} not found.");
         }
-        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
+
+        if (TransientDataScript.GameState != GameState.CharacterCreation)
+        {
+            TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
+        }
     }
 }
 
