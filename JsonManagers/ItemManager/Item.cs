@@ -68,7 +68,7 @@ public static class Items
         }
     }
 
-    public static Item FindByID(string searchWord, bool debug = true, string caller = "unknown")
+    public static Item FindByID(string searchWord, bool debug = false, string caller = "unknown")
     {
         if (string.IsNullOrWhiteSpace(searchWord))
         {
