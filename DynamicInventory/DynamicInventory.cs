@@ -19,6 +19,7 @@ public class DynamicInventory : MonoBehaviour
     public RectTransform windowSize;
     public GameObject dynamicItemPrefab;
     public GameObject itemContainer;
+    public RectTransform buttonContainer;
     public TextMeshProUGUI infoCardName;
     public TextMeshProUGUI infoCardDescription;
 
@@ -52,7 +53,9 @@ public class DynamicInventory : MonoBehaviour
 
     private void OnDisable()
     {
+        UpdateButtonContainerWidth(190);
         UpdateWindowPosition(0, 0);
+        UpdateWindowSize(190, 202);
     }
 
     public void UpdateWindowSize(int x, int y)
@@ -63,6 +66,11 @@ public class DynamicInventory : MonoBehaviour
     public void UpdateWindowPosition(float x, float y)
     {
         transform.localPosition = new Vector3(x, y, 0);
+    }
+
+    public void UpdateButtonContainerWidth(int x, int y = 30)
+    {
+        buttonContainer.sizeDelta = new Vector2(x, y);
     }
 
     public void PopulateInventoryButtons()
