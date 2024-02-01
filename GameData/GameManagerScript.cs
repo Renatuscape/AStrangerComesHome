@@ -35,7 +35,8 @@ public class GameManagerScript : MonoBehaviour
 
     public AutoMap mapComponent;
     public CameraController cameraComponent;
-    public FontManager fontManagerComponent;
+    public FontManager fontManager;
+    public PortraitRenderer portraitRenderer;
 
     void Awake()
     {
@@ -66,7 +67,7 @@ public class GameManagerScript : MonoBehaviour
             NewGameRoutine();
         }
 
-        Invoke("CreateGameController", 1.5f);
+        Invoke("CreateGameController", 1f);
     }
 
     void InitiateJsonManagers()
@@ -84,9 +85,11 @@ public class GameManagerScript : MonoBehaviour
     public void CreateGameController()
     {
         GlobalSettingsManager.LoadSettings();
-        fontManagerComponent.enabled = true;
-        fontManagerComponent.LoadFonts();
-        fontManagerComponent.enabled = false;
+        fontManager.enabled = true;
+        fontManager.LoadFonts();
+        fontManager.enabled = false;
+        portraitRenderer.gameObject.SetActive(true);
+        portraitRenderer.gameObject.SetActive(false);
         GameObject Controller = new();
         Controller.name = "Controller";
         Controller.AddComponent<GameController>();
@@ -144,7 +147,8 @@ public class GameManagerScript : MonoBehaviour
 
     public void LoadRoutine()
     {
-        //ResetGameComponents();
+        ResetGameComponents();
+        DialogueTagParser.UpdateTags(dataManager);
         InitialiseMap();
     }
 
@@ -192,6 +196,7 @@ public class GameManagerScript : MonoBehaviour
         {
             Debug.Log($"Region by the ID {dataManager.currentRegion} not found.");
         }
+
 
         if (TransientDataScript.GameState != GameState.CharacterCreation)
         {
