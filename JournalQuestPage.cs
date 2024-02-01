@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class JournalQuestPage : MonoBehaviour
 {
+    public FontManager fontManager;
     public GameObject questPrefab; // Assign your prefab in the inspector
     public GameObject questContainer; // Assign your container in the inspector
+    public GameObject detailContainer;
     public float delayBetweenQuests = 0.1f; // Adjust the delay duration as needed
     public List<GameObject> questPrefabs;
     public TextMeshProUGUI displayTitle;
     public TextMeshProUGUI displayTopicName;
     public TextMeshProUGUI displayDescription;
+    public TextMeshProUGUI pageTitle;
 
     private void Awake()
     {
@@ -22,6 +26,10 @@ public class JournalQuestPage : MonoBehaviour
     }
     private void OnEnable()
     {
+        displayTitle.font = fontManager.header.font;
+        displayTopicName.font = fontManager.subtitle.font;
+        displayDescription.font = fontManager.script.font;
+        pageTitle.font = fontManager.header.font;
         StartCoroutine(InstantiateQuests());
     }
 
@@ -31,13 +39,20 @@ public class JournalQuestPage : MonoBehaviour
         {
             if (!quest.excludeFromJournal && Player.GetEntry(quest.objectID, name, out var entry))
             {
+                questContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+
                 yield return new WaitForSeconds(delayBetweenQuests); // Add a delay
 
                 GameObject newQuest = Instantiate(questPrefab, questContainer.transform);
                 newQuest.GetComponent<QuestPrefab>().quest = quest;
                 newQuest.GetComponent<QuestPrefab>().journalQuestPage = this;
-                newQuest.transform.Find("QuestTitle").GetComponent<TextMeshProUGUI>().text = quest.name;
+                var textMesh = newQuest.transform.Find("QuestTitle").GetComponent<TextMeshProUGUI>();
+                textMesh.text = quest.name;
+                textMesh.font = fontManager.subtitle.font;
                 questPrefabs.Add(newQuest);
+
+                questContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+                Canvas.ForceUpdateCanvases();
             }
         }
     }
@@ -52,6 +67,7 @@ public class JournalQuestPage : MonoBehaviour
 
     public void DisplayQuestDetails(Quest quest)
     {
+        detailContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
         displayTitle.text = quest.name;
         string topicName = "";
         string description = "";
@@ -80,5 +96,10 @@ public class JournalQuestPage : MonoBehaviour
         }
 
         displayDescription.text = description;
+        detailContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
+        detailContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+        detailContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
     }
 }
