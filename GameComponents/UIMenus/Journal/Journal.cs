@@ -27,13 +27,6 @@ public enum QuestPage
     Romance
 }
 
-public enum CollectionsPage
-{
-    Recipes,
-    Treasures,
-    Cards,
-    People
-}
 public class Journal : MonoBehaviour
 {
     public JournalMainPage mainPage;
