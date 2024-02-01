@@ -77,7 +77,8 @@ public class JournalQuestPage : MonoBehaviour
         if (questStage < quest.dialogues.Count)
         {
             topicName = quest.dialogues[questStage].topicName ?? "";
-            description = quest.dialogues[questStage].hint ?? "";
+            var parsedText = DialogueTagParser.ParseText(quest.dialogues[questStage].hint);
+            description = parsedText;
         }
 
         if (topicName == "")
@@ -92,7 +93,8 @@ public class JournalQuestPage : MonoBehaviour
 
         if (description == "")
         {
-            description = quest.description ?? "Missing topic and quest description";
+            var parsedText = DialogueTagParser.ParseText(quest.description);
+            description = parsedText;
         }
 
         displayDescription.text = description;
