@@ -226,18 +226,7 @@ public class FontManager : MonoBehaviour
     {
         if (!string.IsNullOrWhiteSpace(GlobalSettings.HeaderFont))
         {
-            header.font = headerFonts.FirstOrDefault((f)=> {
-                if (f.name == GlobalSettings.HeaderFont)
-                {
-                    Debug.Log($"Header font HAS BEEN FOUND by name {f.name}. Font set to {header.font.name}");
-                    return true;
-                }
-                else
-                {
-                    Debug.Log($"Header font not found by name {f.name}. Font set to default.");
-                    return false;
-                }
-                }) ?? defaultHeaderFont;
+            header.font = headerFonts.FirstOrDefault((f)=> f.name == GlobalSettings.HeaderFont) ?? defaultHeaderFont;
             headerFontDropDown.value = headerFonts.IndexOf(header.font);
         }
         if (!string.IsNullOrWhiteSpace(GlobalSettings.SubtitleFont))
