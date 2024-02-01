@@ -45,21 +45,16 @@ public static class GlobalSettingsManager
         GlobalSettings.BodyFont = PlayerPrefs.GetString(BodyFontKey, "");
         GlobalSettings.ScriptFont = PlayerPrefs.GetString(ScriptFontKey, "");
 
-        Debug.Log("Loaded global settings" +
-            $"\nTrueName {PlayerPrefs.GetInt(AlwaysTrueNamePlateKey, 0)}" +
-            $"\nTrueNameEverywhere {PlayerPrefs.GetInt(AlwaysTrueNameEverywhereKey, 0)}" +
-            $"\nAlwaysHideCoachExterior {PlayerPrefs.GetInt(AlwaysHideCoachExteriorKey, 0)}" +
-            $"\nIsScriptEnabled {PlayerPrefs.GetInt(IsScriptEnabledKey, 1)}" +
-            $"\nTextSize {PlayerPrefs.GetInt(TextSizeKey, 0)}" +
-            $"\nHeaderFont {PlayerPrefs.GetString(HeaderFontKey, "")}" +
-            $"\nSubtitleFont {PlayerPrefs.GetString(SubtitleFontKey, "")}" +
-            $"\nBodyFont {PlayerPrefs.GetString(BodyFontKey, "")}" +
-            $"\nScriptFont {PlayerPrefs.GetString(ScriptFontKey, "")}");
-        Debug.Log($"Loaded fonts" +
-            $"\n{GlobalSettings.HeaderFont}" +
-            $"\n{GlobalSettings.SubtitleFont}" +
-            $"\n{GlobalSettings.BodyFont}" +
-            $"\n{GlobalSettings.ScriptFont}");
+        //Debug.Log("Loaded global settings" +
+        //    $"\nTrueName {PlayerPrefs.GetInt(AlwaysTrueNamePlateKey, 0)}" +
+        //    $"\nTrueNameEverywhere {PlayerPrefs.GetInt(AlwaysTrueNameEverywhereKey, 0)}" +
+        //    $"\nAlwaysHideCoachExterior {PlayerPrefs.GetInt(AlwaysHideCoachExteriorKey, 0)}" +
+        //    $"\nIsScriptEnabled {PlayerPrefs.GetInt(IsScriptEnabledKey, 1)}" +
+        //    $"\nTextSize {PlayerPrefs.GetInt(TextSizeKey, 0)}" +
+        //    $"\nHeaderFont {PlayerPrefs.GetString(HeaderFontKey, "")}" +
+        //    $"\nSubtitleFont {PlayerPrefs.GetString(SubtitleFontKey, "")}" +
+        //    $"\nBodyFont {PlayerPrefs.GetString(BodyFontKey, "")}" +
+        //    $"\nScriptFont {PlayerPrefs.GetString(ScriptFontKey, "")}");
     }
 }
 
