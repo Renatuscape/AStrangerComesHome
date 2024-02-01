@@ -29,20 +29,83 @@ public class PlayerIconPrefab : MonoBehaviour
             UpdateImages();
         }
     }
-    public void UpdateImages()
+
+    public bool UpdateImages()
     {
-        if (head != null && eyeColour != null && eyeLines != null && mouth != null && hairOutline != null && hairLinework != null && hairColour != null)
+        if (head != null)
         {
             head.sprite = playerSprite.head.sprite;
-            eyeColour.color = playerSprite.irises.color;
-            eyeLines.sprite = playerSprite.eyes.sprite;
-            mouth.sprite = playerSprite.mouth.sprite;
-            hairOutline.sprite = playerSprite.hairOutline.sprite;
-            hairLinework.sprite = playerSprite.hairLinework.sprite;
-            hairColour.sprite = playerSprite.hairColour.sprite;
-            hairColour.color = playerSprite.hairColour.color;
-            GetComponent<Image>().color = new Color(eyeColour.color.g -0.5f, eyeColour.color.b - 0.2f, eyeColour.color.r - 0.2f, 0.5f);
+        }
+        else
+        {
+            return false;
         }
 
+        if (eyeColour != null)
+        {
+            eyeColour.color = playerSprite.irises.color;
+            GetComponent<Image>().color = new Color(eyeColour.color.g - 0.5f, eyeColour.color.b - 0.2f, eyeColour.color.r - 0.2f, 0.5f);
+        }
+        else
+        {
+            return false;
+        }
+
+        if (eyeLines != null)
+        {
+            eyeLines.sprite = playerSprite.eyes.sprite;
+
+        }
+        else
+        {
+            return false;
+        }
+
+        if (mouth != null)
+        {
+
+            mouth.sprite = playerSprite.mouth.sprite;
+
+        }
+        else
+        {
+            return false;
+        }
+
+        if (hairOutline != null)
+        {
+
+            hairOutline.sprite = playerSprite.hairOutline.sprite;
+
+        }
+        else
+        {
+            return false;
+        }
+
+        if (hairLinework != null)
+        {
+
+            hairLinework.sprite = playerSprite.hairLinework.sprite;
+
+        }
+        else
+        {
+            return false;
+        }
+
+        if (hairColour != null)
+        {
+
+            hairColour.sprite = playerSprite.hairColour.sprite;
+            hairColour.color = playerSprite.hairColour.color;
+
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
     }
 }
