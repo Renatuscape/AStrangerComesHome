@@ -5,28 +5,45 @@ using UnityEngine;
 
 public class JournalStatisticsPage : MonoBehaviour
 {
+    public FontManager fontManager;
     public DataManagerScript dataManager;
-    public PlayerIconPrefab playerIconPrefab;
+    public PlayerIcon playerIcon;
     public PlayerSprite playerSprite;
     public TextMeshProUGUI namePlate;
+    public TextMeshProUGUI titleText;
     public TextMeshProUGUI totalDays;
     public TextMeshProUGUI totalMoney;
+
     void OnEnable()
     {
-        playerIconPrefab.playerSprite = playerSprite;
-        playerIconPrefab.UpdateImages();
-        var player = Characters.FindByID("ARC000");
+        playerIcon.playerSprite = playerSprite;
+        playerIcon.UpdateImages();
 
-        if (player != null)
+        if (Characters.all.Count > 0)
         {
-            namePlate.text = Characters.FindByID("ARC000").ForceTrueNamePlate();
+            var player = Characters.FindByID("ARC000");
+
+            if (player != null)
+            {
+                namePlate.text = player.ForceTrueNamePlate();
+            }
+            else
+            {
+                namePlate.text = dataManager.playerName;
+            }
         }
         else
         {
             namePlate.text = dataManager.playerName;
         }
 
+
         totalDays.text = $"Days passed: {dataManager.totalGameDays}";
         totalMoney.text = $"Gold: {dataManager.playerGold}";
+
+        namePlate.font = fontManager.header.font;
+        titleText.font = fontManager.subtitle.font;
+        totalDays.font = fontManager.script.font;
+        totalMoney.font = fontManager.script.font;
     }
 }
