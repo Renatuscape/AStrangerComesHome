@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class DialogueMenu : MonoBehaviour
 {
+    public FontManager fontManager;
     public RectMask2D containerMask;
     public GameObject bgReplacer;
     public GameObject dialogueContainer;
