@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
@@ -35,6 +37,7 @@ public enum CollectionsPage
 public class Journal : MonoBehaviour
 {
     public JournalMainPage mainPage;
+    public FontManager fontManager;
 
     public CardFloatAnimator inventoryAnimator;
     public CardFloatAnimator statisticsAnimator;
@@ -67,6 +70,23 @@ public class Journal : MonoBehaviour
 
         collectionsAnimator.positionIndex = 3;
         cards.Add(collectionsAnimator);
+
+        foreach (var card in cards)
+        {
+            // Access the TextMeshPro objects within the child components of each card
+            TMP_Text textMesh = card.GetComponentsInChildren<TMP_Text>(true).FirstOrDefault();
+            textMesh.font = fontManager.subtitle.font;
+        }
+    }
+
+    private void OnEnable()
+    {
+        foreach (var card in cards)
+        {
+            // Access the TextMeshPro objects within the child components of each card
+            TMP_Text textMesh = card.GetComponentsInChildren<TMP_Text>(true).FirstOrDefault();
+            textMesh.font = fontManager.subtitle.font;
+        }
     }
 
     private void Update()
