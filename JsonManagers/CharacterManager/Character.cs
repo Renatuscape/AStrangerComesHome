@@ -19,6 +19,7 @@ public class Character
     public string hexColour;
     public string description;
     public int maxValue = 99;
+    public bool excludeFromPrint = false;
 
     public CharacterType type;
     public Texture2D image;
@@ -36,11 +37,22 @@ public class Character
     }
     public string NamePlate()
     {
-        if (Player.GetCount($"{objectID}-QTN", objectID + " NamePlate()") >= 50)
+        var affection = Player.GetCount(objectID, objectID + " NamePlate()");
+
+        if (type == CharacterType.Arcana && affection >= 50)
         {
             return trueNamePlate;
         }
-        return namePlate;
+
+        else if (type != CharacterType.Arcana && affection >= 20)
+        {
+            return trueNamePlate;
+        }
+        else
+        {
+            return namePlate;
+        }
+
     }
 
     public string ForceTrueNamePlate()
@@ -80,6 +92,11 @@ public static class Characters
 
     public static Character FindByID(string searchWord)
     {
+        if (all.Count == 0)
+        {
+            Debug.LogWarning("Characters.all was empty. Something called on Characters.FindByID before JSON was loaded.");
+            return null;
+        }
         if (string.IsNullOrWhiteSpace(searchWord))
         {
             Debug.LogWarning($"Search term was null or white-space. Returned null. Ensure correct ID in calling script.");
