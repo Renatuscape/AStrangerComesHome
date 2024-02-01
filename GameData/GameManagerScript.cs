@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -34,6 +35,7 @@ public class GameManagerScript : MonoBehaviour
 
     public AutoMap mapComponent;
     public CameraController cameraComponent;
+    public FontManager fontManagerComponent;
 
     void Awake()
     {
@@ -45,6 +47,7 @@ public class GameManagerScript : MonoBehaviour
 
     void StartUpRoutine()
     {
+
         InitiateJsonManagers();
 
         gameComponentParent.SetActive(true); //if the game starts with this disabled, you can assure loading objects first
@@ -80,6 +83,10 @@ public class GameManagerScript : MonoBehaviour
 
     public void CreateGameController()
     {
+        GlobalSettingsManager.LoadSettings();
+        fontManagerComponent.enabled = true;
+        fontManagerComponent.LoadFonts();
+        fontManagerComponent.enabled = false;
         GameObject Controller = new();
         Controller.name = "Controller";
         Controller.AddComponent<GameController>();
@@ -174,7 +181,7 @@ public class GameManagerScript : MonoBehaviour
         mapComponent.mapBuilder = new(mapComponent, mapComponent.mapContainer);
 
         Region region = Regions.FindByID(dataManager.currentRegion);
-        Debug.Log($"Loading {dataManager.currentRegion}. Found {region.objectID}");
+        //Debug.Log($"Loading {dataManager.currentRegion}. Found {region.objectID}");
 
         if (region is not null)
         {
@@ -199,12 +206,4 @@ public static class ListExtenstions
     {
         list.AddRange(elements);
     }
-}
-
-public static class GlobalSettings
-{
-    public static bool AlwaysTrueNamePlate = false; //the traveller's nameplate always uses their True Name
-    public static bool AlwaysTrueNameEverywhere = false; //characters will use the traveller's True Name in dialogue
-    public static bool AlwaysHideCoachExterior = false; //The coach's exterior wall will never appear
-    public static int TextSize = 0; //increase or decrease text default size by this number
 }
