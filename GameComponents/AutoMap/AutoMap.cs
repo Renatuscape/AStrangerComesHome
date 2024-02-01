@@ -18,6 +18,7 @@ public class AutoMap : MonoBehaviour
     public GameObject locationMarker;
     public MapPlayerToken playerToken;
     public SerializableDictionary<Vector2Int, GameObject> mapTiles = new();
+    public SerializableDictionary<Vector2Int, GameObject> trueTilePositions = new();
     public List<GameObject> mapMarkers = new();
     public List<Sprite> baseTiles;
     public List<Sprite> edgeTiles;
@@ -167,6 +168,23 @@ public class AutoMap : MonoBehaviour
         }
 
         playerToken.transform.localPosition = new Vector3(dataManager.mapPositionX, dataManager.mapPositionY, 0);
+        CheckCurrentLocation();
+    }
+
+    public Location CheckCurrentLocation()
+    {
+        Vector2Int playerPosition = new Vector2Int((int)playerToken.transform.localPosition.x, (int)playerToken.transform.localPosition.y);
+
+        foreach (Location location in transientData.currentRegion.locations)
+        {
+            if (location.mapX == playerPosition.x && location.mapY == playerPosition.y)
+            {
+                transientData.currentLocation = location;
+                return location;
+            }
+        }
+
+        return null;
     }
 
     public void GoToCoordinates(Vector3 coordinates)
