@@ -6,6 +6,7 @@ public class planterScript : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public GardenManager gardenManager;
+    public BoxCollider2D boxCollider;
     public WhichPlanter thisPlanter;
     public GameObject weedsPrefab;
     public Skill overgrowth;
@@ -18,6 +19,7 @@ public class planterScript : MonoBehaviour
     void Awake()
     {
         gardenManager = transform.parent.GetComponent<GardenManager>();
+        boxCollider = GetComponent<BoxCollider2D>();
         weedTick = Random.Range(30, 120);
     }
 
@@ -25,10 +27,10 @@ public class planterScript : MonoBehaviour
     {
         if (TransientDataScript.CameraView == CameraView.Garden)
         {
-        if (currentWeeds == 0)
-            gardenManager.ClickPlanter(thisPlanter);
-        else
-            Debug.Log("I need to clear out these weeds first!");
+            if (currentWeeds == 0)
+                gardenManager.ClickPlanter(thisPlanter);
+            else
+                Debug.Log("I need to clear out these weeds first!");
         }
 
     }
@@ -41,7 +43,33 @@ public class planterScript : MonoBehaviour
             weedTimer = 0;
 
             if (currentWeeds < maxWeeds)
-            WeedTick();
+                WeedTick();
+        }
+    }
+
+    private void Update()
+    {
+        if (TransientDataScript.GameState == GameState.Overworld)
+        {
+            if (TransientDataScript.CameraView == CameraView.Garden)
+            {
+                if (currentWeeds == 0)
+                {
+                    boxCollider.enabled = true;
+                }
+                else
+                {
+                    boxCollider.enabled = false;
+                }
+            }
+            else
+            {
+                boxCollider.enabled = false;
+            }
+        }
+        else
+        {
+            boxCollider.enabled = false;
         }
     }
 
