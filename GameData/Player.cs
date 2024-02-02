@@ -47,7 +47,7 @@ public static class Player
 
     public static int AddDynamicObject(dynamic dynamicObject, int amount, string caller = "")
     {
-        Debug.Log($"Attempting to add dynamic object {dynamicObject.name} ({amount})");
+        //Debug.Log($"Attempting to add dynamic object {dynamicObject.name} ({amount})");
         int max = 0;
         string id = string.Empty;
 
