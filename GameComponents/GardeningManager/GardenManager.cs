@@ -191,7 +191,16 @@ public class GardenManager : MonoBehaviour
 
     private void ProcessPlanterClick(ref bool planterIsActive, ref float growthProgress, ref string seedID, ref int seedHealth, SpriteRenderer plantRenderer)
     {
-        var seed = Items.FindByID(seedID);
+        Item seed;
+
+        if (string.IsNullOrEmpty(seedID))
+        {
+            seed = Items.FindByID(seedID);
+        }
+        else
+        {
+            seed = null;
+        }
 
         //IF THE PLANTER IS EMPTY
         if (!planterIsActive)
