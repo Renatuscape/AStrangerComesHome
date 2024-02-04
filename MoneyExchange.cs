@@ -1,0 +1,322 @@
+﻿using UnityEngine;
+
+public static class MoneyExchange
+{
+    public static Character teller;
+    public static DayOfWeek freeExchangeDay = DayOfWeek.Solden;
+    public static float copperPenceValue = 0.1f;
+    public static int silverCrownValue = 1;
+    public static int goldCrownValue = 10;
+    public static int sovereignValue = 100;
+
+    public static int playerCopperPence;
+    public static int playerSilverCrowns;
+    public static int playerGoldCrowns;
+    public static int playerSovereigns;
+
+    public static float commission = 0.3f;
+
+    public static Character GetTeller()
+    {
+        if (Characters.all.Count > 0)
+        {
+            if (teller == null)
+            {
+                teller = Characters.FindByTag("Teller", "Money Manager, GetTeller()");
+            }
+
+            return teller;
+        }
+        else
+        {
+            Debug.Log("MoneyExchange tried to find Teller, but characters were not yet loaded from Json.");
+            return null;
+        }
+    }
+
+    public static int GetPlayerMoney()
+    {
+        int total = 0;
+        playerCopperPence = Player.GetCount("MIS000-JUN-NN", "Money Manager, GetPlayerMoney()"); // get copper
+        playerSilverCrowns = Player.GetCount("MIS001-COM-NN", "Money Manager, GetPlayerMoney()"); // get silver
+        playerGoldCrowns = Player.GetCount("MIS002-UNC-NN", "Money Manager, GetPlayerMoney()");
+        playerSovereigns = Player.GetCount("MIS003-RAR-NN", "Money Manager, GetPlayerMoney()");
+
+        total += playerSilverCrowns; // get silver
+        total += (playerGoldCrowns) * goldCrownValue;
+        total += (playerSovereigns) * sovereignValue;
+
+        return total;
+    }
+
+    #region Buy/Sell Methods
+    //  BUY/SELL METHODS
+    public static bool Purchase(int costInSilver)
+    {
+        if (GetPlayerMoney() < costInSilver) //get total and update the values with current data
+        {
+            return false; //If this doesn't trigger, exchange to silver should be successful
+        }
+
+        else
+        {
+            while (playerSilverCrowns < costInSilver)
+            {
+                bool goldExchanged = ExchangeGoldToSilver(1, out int silver);
+
+                if (!goldExchanged)
+                {
+                    ExchangeSovereignToGold(1, out int gold);
+                }
+
+                GetPlayerMoney();
+
+                if (playerSilverCrowns < costInSilver && playerGoldCrowns == 0 && playerSovereigns == 0)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static bool Sell(Item item, int amount = 1, bool randomCoins = true)
+    {
+        if (Player.GetCount(item.objectID, "Money Manager, Sell()") > 0)
+        {
+            var price = CalculateSellPrice(item);
+
+            if (randomCoins)
+            {
+                AddRandomDenomination(price);
+            }
+            else
+            {
+                AddHighestDenomination(price);
+            }
+            Player.Remove(item.objectID, amount);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static int CalculateSellPrice(Item item)
+    {
+        int price = item.basePrice;
+
+        float evaluation = 0.1f;
+        int mercantile = Player.GetCount("ATT002", "CalculateSellPrice");
+        int charm = Player.GetCount("ATT001", "CalculateSellPrice");
+
+        evaluation += (mercantile * 0.05f);
+        evaluation += (charm * 0.05f);
+        Debug.Log("Evaluation: " + evaluation);
+
+        Mathf.FloorToInt(price * evaluation);
+
+        if (price < 1)
+        {
+            price = 1;
+        }   
+
+        return price;
+    }
+    public static void AddHighestDenomination(int valueInSilver) {
+        int gold = 0;
+        int silver = 0;
+        int sovereign = 0;
+
+        while (valueInSilver > 0)
+        {
+            if (valueInSilver >= sovereignValue)
+            {
+                valueInSilver -= sovereignValue;
+                sovereign++;
+            }
+            else if (valueInSilver >= goldCrownValue)
+            {
+                valueInSilver -= goldCrownValue;
+                gold++;
+            }
+            else
+            {
+                valueInSilver -= 1;
+                silver++;
+            }
+        }
+
+        Player.Add("MIS003-RAR-NN", sovereign);
+        Player.Add("MIS002-UNC-NN", gold);
+        Player.Add("MIS001-COM-NN", silver);
+    }
+
+    public static void AddRandomDenomination(int valueInSilver)
+    {
+        int gold = 0;
+        int silver = 0;
+        int sovereign = 0;
+
+        while (valueInSilver > 0)
+        {
+            // Choose a random denomination to add to the inventory
+            int randomDenomination = Random.Range(1, 4); // Random number between 1 and 3 inclusive
+
+            switch (randomDenomination)
+            {
+                case 1: // Sovereign
+                    if (valueInSilver >= sovereignValue)
+                    {
+                        valueInSilver -= sovereignValue;
+                        sovereign++;
+                    }
+                    break;
+                case 2: // Gold crown
+                    if (valueInSilver >= goldCrownValue)
+                    {
+                        valueInSilver -= goldCrownValue;
+                        gold++;
+                    }
+                    break;
+                case 3: // Silver crown
+                    valueInSilver -= silverCrownValue;
+                    silver++;
+                    break;
+            }
+        }
+
+        // Add coins to player's inventory
+        Player.Add("MIS003-RAR-NN", sovereign);
+        Player.Add("MIS002-UNC-NN", gold);
+        Player.Add("MIS001-COM-NN", silver);
+    }
+
+    #endregion
+
+    #region Exchange Methods
+    //  EXCHANGE METHODS
+    public static bool ExchangeGoldToSilver(int gold, out int silver)
+    {
+        if (Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeGoldToSilver()") < gold)
+        {
+            silver = 0;
+            return false;
+        }
+
+        Player.Remove("MIS002-UNC-NN", gold);
+        silver = gold * goldCrownValue;
+        Player.Add("MIS001-COM-NN", silver);
+        return true;
+    }
+
+    public static bool ExchangeSovereignToGold(int sovereign, out int gold)
+    {
+        if (Player.GetCount("MIS003-RAR-NN", "Money Manager, ExchangeSovereignToGold()") < sovereign)
+        {
+            gold = 0;
+            return false;
+        }
+
+        Player.Remove("MIS003-RAR-NN", sovereign);
+        gold = sovereign * sovereignValue;
+        Player.Add("MIS002-UNC-NN", gold);
+        return true;
+    }
+
+    public static bool ExchangeCopperToSilver(int copper, out int silver)
+    {
+        silver = 0;
+
+        if (Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeCopperToSilver()") < copper)
+        {
+            return false;
+        }
+
+        if (copper % 10 == 0)
+        {
+            Player.Remove("MIS001-COM-NN", copper);
+            var valueInSilver = copper * copperPenceValue;
+            silver = (int)valueInSilver;
+            Player.Add("MIS001-COM-NN", silver);
+            return true;
+        }
+        return false;
+    }
+
+    public static bool ExchangeSilverToGold(int silver, out int gold)
+    {
+        if (Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeSilverToGold()") < silver)
+        {
+            gold = 0;
+            return false;
+        }
+        Player.Remove("MIS001-COM-NN", silver);
+        gold = silver * silverCrownValue;
+        Player.Add("MIS002-UNC-NN", gold);
+        return true;
+    }
+
+    public static bool ExchangeGoldToSovereign(int gold, out int sovereign)
+    {
+        if (Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeGoldToSovereign()") < gold)
+        {
+            sovereign = 0;
+            return false;
+        }
+
+        Player.Remove("MIS002-UNC-NN", gold);
+        sovereign = gold / sovereignValue;
+        Player.Add("MIS003-RAR-NN", sovereign);
+        return true;
+    }
+    #endregion
+
+    #region Commission Methods
+    //  COMMISSION METHODS
+    public static float CalculateCommission()
+    {
+        int affection = Player.GetCount(teller.objectID, "Money Manager, CalculateCommission()");
+        float rate;
+
+        if (TransientDataScript.GetWeekDay() == freeExchangeDay)
+        {
+            return 0;
+        }
+
+        if (affection > 90)
+        {
+            rate = 0;
+        }
+        else if (affection > 70)
+        {
+            rate = 0.03f;
+        }
+        else if (affection > 50)
+        {
+            rate = 0.07f;
+        }
+        else if (affection > 30)
+        {
+            rate = 0.1f;
+        }
+        else
+        {
+            rate = 0.15f;
+        }
+
+        rate = rate + ((float)TransientDataScript.GetWeekDay() * 0.01f); //increase rate by day of week
+
+        return rate;
+    }
+
+    public static void SubtractCommission(int itemCost)
+    {
+        float commission = CalculateCommission();
+        int commissionCost = (int)(itemCost * commission);
+        Purchase(commissionCost);
+    }
+    #endregion
+}
