@@ -14,7 +14,8 @@ public enum GameState
     Overworld,
     PlayerHome,
     Dialogue,
-    MapMenu
+    MapMenu,
+    BankMenu
 }
 
 public enum Language
@@ -31,27 +32,6 @@ public enum CameraView
     Garden,
     Pet
 }
-
-
-//TRAVEL ENUMS
-//public enum Region
-//{
-//    Plains,
-//    CapitalRegion
-//}
-//public enum Location
-//{
-//    None,
-//    VerdantEstate,
-//    CapitalCity,
-//    StellaTown,
-//    LittlemothVillage,
-//    ShoalsideTown,
-//    Moorbrook,
-//    Penfrost,
-//    StarlitBay,
-//    MoragRock
-//}
 
 public enum EngineState
 {
