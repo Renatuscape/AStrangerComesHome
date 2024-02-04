@@ -18,7 +18,6 @@ public class AutoMap : MonoBehaviour
     public GameObject locationMarker;
     public MapPlayerToken playerToken;
     public SerializableDictionary<Vector2Int, GameObject> mapTiles = new();
-    public SerializableDictionary<Vector2Int, GameObject> trueTilePositions = new();
     public List<GameObject> mapMarkers = new();
     public List<Sprite> baseTiles;
     public List<Sprite> edgeTiles;

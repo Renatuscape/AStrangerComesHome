@@ -17,6 +17,7 @@ public class AutoMapBuilder
 
     void GenerateMap(Region region)
     {
+
         int rowCounter = region.rows - 1;
 
         for (int i = 0; i < region.rows; i++)
@@ -30,7 +31,6 @@ public class AutoMapBuilder
                 newTile.transform.localPosition = new Vector3(newTile.transform.localPosition.x - (region.columns / 2), newTile.transform.localPosition.y - (region.rows / 2));
                 newTile.GetComponent<MapTilePrefab>().autoMap = autoMap;
                 autoMap.mapTiles.Add(new Vector2Int(i, j), newTile);
-                autoMap.trueTilePositions.Add(new Vector2Int((int)newTile.transform.position.x, (int)newTile.transform.position.y), newTile);
 
                 if (autoMap.tilePainter.FlipTile(region, rowCounter, j, out var tile))
                 {
