@@ -5,16 +5,16 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class DialogueMenu : MonoBehaviour
-{
-    public FontManager fontManager;
+{  
+    public DialogueSystem dialogueSystem;
+    public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
+
     public RectMask2D containerMask;
     public GameObject bgReplacer;
     public GameObject dialogueContainer;
     public Button autoPlay;
     public Button skip;
-    public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
     public Image dialogueContainerBG;
-    public DialogueSystem dialogueSystem;
     public List<GameObject> buttonList;
     public List<GameObject> continueButtons;
     public List<GameObject> printedChoices;
