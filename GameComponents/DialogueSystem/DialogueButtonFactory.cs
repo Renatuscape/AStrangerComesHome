@@ -18,6 +18,7 @@ public class DialogueButtonFactory
         RectTransform transform = button.GetComponent<RectTransform>();
         transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
         button.transform.SetParent(dialogueMenu.dialogueContainer.transform, false);
+        button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>().font = dialogueMenu.dialogueSystem.fontManager.body.font;
 
         dialogueMenu.buttonList.Add(button);
 
@@ -49,6 +50,7 @@ public class DialogueButtonFactory
         var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         textMesh.fontSize += 2;
         textMesh.fontSizeMax += 2;
+        textMesh.font = dialogueMenu.dialogueSystem.fontManager.subtitle.font;
 
         VerticalLayoutGroup layout = button.GetComponent<VerticalLayoutGroup>();
         layout.padding = new RectOffset(
