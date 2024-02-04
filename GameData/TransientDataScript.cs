@@ -106,17 +106,38 @@ public class TransientDataScript : MonoBehaviour
         SetGameState(GameState.Overworld, name, gameObject);
     }
 
+    public static DayOfWeek GetWeekDay()
+    {
+        return GameObject.Find("TransientData").GetComponent<TransientDataScript>().weekDay;
+    }
+
     public static void TravelByGate(Gate gate)
     {
         Debug.Log("Travel by Gate called at TransientDataScript");
         GameObject.Find("GameManager").GetComponent<GameManagerScript>().mapComponent.TravelByGate(gate);
     }
 
+    public static bool IsTimeFlowing() //in this state, mana regenerates and plants grow. Controllers are enabled
+    {
+        if (GameState == GameState.Overworld
+            || GameState == GameState.JournalMenu
+            || GameState == GameState.BankMenu
+            || GameState == GameState.ShopMenu
+            || GameState == GameState.Dialogue
+            || GameState == GameState.StartMenu)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     static void LogStateChange(string callerScript, GameObject callerObject, GameState newState)
     {
         GameObject.Find("TransientData").GetComponent<TransientDataScript>().gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + GameState + " to " + newState + ".";
     }
-
 }
 
 
