@@ -28,7 +28,7 @@ public class CollectionsPeople : MonoBehaviour
         people = new List<Character>();
         foreach (var character in Characters.all)
         {
-            if (!character.excludeFromPrint)// && Player.GetCount(character.objectID, this.ToString()) > 0)
+            if (!character.excludeFromPrint && Player.GetCount(character.objectID, ToString()) > 0)
             {
                 people.Add(character);
             }
