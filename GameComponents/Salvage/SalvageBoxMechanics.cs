@@ -1,30 +1,38 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
+using Random = UnityEngine.Random;
 
 public class SalvageBoxMechanics : MonoBehaviour
 {
-    DataManagerScript dataManager;
     TransientDataScript transientData;
     private SpriteRenderer sprite;
     private BoxCollider2D objectCollider;
     private Animator anim;
 
-    private int salvageRarity;
-
     public float parallaxMultiplier;
     private float parallaxEffect;
     private float alphaSetting = 1;
 
-    private int commonMoney;
-    private int uncommonMoney;
-    private int rareMoney;
-    private int legendaryMoney;
+    public List<Item> coins;
+    public List<Item> junkItems;
+    public List<Item> commonItems;
+    public List<Item> uncommonItems;
+    public List<Item> rareItems;
+
+    public ItemIntPair slotA = null;
+    public ItemIntPair slotB = null;
+    public ItemIntPair slotC = null;
+    public ItemIntPair slotD = null;
+    public ItemIntPair slotE = null;
+
+    public List<ItemIntPair> loot = new();
+
+    public int fortune;
 
     private void Awake()
     {
-        dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
     }
     void Start()
@@ -33,11 +41,8 @@ public class SalvageBoxMechanics : MonoBehaviour
         objectCollider = GetComponent<BoxCollider2D>();
         anim = GetComponent<Animator>();
 
-        salvageRarity = Random.Range(0, 100);
-        commonMoney = Random.Range(10, 30);
-        uncommonMoney = Random.Range(35, 45);
-        rareMoney = Random.Range(50, 80);
-        legendaryMoney = Random.Range(100, 150);
+        RollSlots();
+        loot = ConsolidateLoot();
     }
 
     void LateUpdate()
@@ -52,12 +57,170 @@ public class SalvageBoxMechanics : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (this.transform.position.x <= -28 || this.transform.position.x >= 28)
+        if (transform.position.x <= -28 || transform.position.x >= 28)
         {
             Destroy(gameObject);
         }
-
     }
+
+    void RollSlots()
+    {
+        slotA = RollLoot();
+
+        var slotRoll = Random.Range(0 + (fortune * 2), 100);
+
+        if (slotRoll >= 35)
+        {
+            slotB = RollLoot();
+        }
+
+        if (slotRoll >= 75)
+        {
+            slotC = RollLoot();
+        }
+
+        if (slotRoll >= 90)
+        {
+            slotD = RollLoot(true); //Higher rewards are guaranteed
+        }
+
+        if (slotRoll >= 99)
+        {
+            slotE = RollLoot(true); //Higher rewards are guaranteed
+        }
+    }
+
+    ItemIntPair RollLoot(bool rareSlot = false)
+    {
+        var rarityRoll = Random.Range(0 + (fortune * 2), 100);
+        var coinRoll = Random.Range(0 + (fortune * 2), 100);
+
+        if (rareSlot)
+        {
+            rarityRoll += 30 + (fortune * 2);
+        }
+
+        if (coinRoll < 65)
+        {
+            return RollCoins(rarityRoll);
+        }
+        else
+        {
+            return RollItems(rarityRoll);
+        }
+    }
+
+    ItemIntPair RollCoins(int rarityRoll)
+    {
+        if (rarityRoll >= 95)
+        {
+            return new()
+            {
+                item = coins.Find(x => x.rarity == ItemRarity.Rare),
+                count = Random.Range(1, 5)
+            };
+        }
+        else if (rarityRoll >= 80)
+        {
+            return new()
+            {
+                item = coins.Find(x => x.rarity == ItemRarity.Uncommon),
+                count = Random.Range(3, 20)
+            };
+        }
+        else if (rarityRoll >= 60)
+        {
+            return new()
+            {
+                item = coins.Find(x => x.rarity == ItemRarity.Common),
+                count = Random.Range(5, 30)
+            };
+        }
+        else
+        {
+            return new()
+            {
+                item = coins.Find(x => x.rarity == ItemRarity.Junk),
+                count = Random.Range(10, 50)
+            };
+        }
+    }
+
+    ItemIntPair RollItems(int rarityRoll)
+    {
+        if (rarityRoll >= 95)
+        {
+            return new()
+            {
+                item = rareItems[Random.Range(0, rareItems.Count)],
+                count = 1
+            };
+        }
+        else if (rarityRoll >= 80)
+        {
+            return new()
+            {
+                item = uncommonItems[Random.Range(0, uncommonItems.Count)],
+                count = Random.Range(1, 3)
+            };
+        }
+        else if (rarityRoll >= 50)
+        {
+            return new()
+            {
+                item = commonItems[Random.Range(0, commonItems.Count)],
+                count = Random.Range(1, 4)
+            };
+        }
+        else
+        {
+            return new()
+            {
+                item = junkItems[Random.Range(0, junkItems.Count)],
+                count = Random.Range(1, 5)
+            };
+        }
+    }
+
+    List<ItemIntPair> ConsolidateLoot()
+    {
+        var lootList = new List<ItemIntPair>();
+        var slots = new[] { slotA, slotB, slotC, slotD, slotE };
+
+        foreach (var slot in slots)
+        {
+            if (slot.item != null)
+            {
+                var existingSlot = lootList.Find(existingSlot => existingSlot != slot && existingSlot.item == slot.item);
+
+                if (existingSlot != null)
+                {
+                    Debug.Log($"Salvage loot consolidated {existingSlot.item.name} ({existingSlot.count}) and {slot.item.name} ({slot.count}) into one.");
+                    existingSlot.count += slot.count;
+                    slot.count = 0;
+                }
+                else
+                {
+                    lootList.Add(slot);
+                }
+            }
+        }
+
+        if (slotB == null || slotB.count == 0)
+        {
+            lootList.Remove(slotB);
+        }
+        if (slotC == null || slotC.count == 0)
+        {
+            lootList.Remove(slotC);
+        }
+        if (slotD == null || slotD.count == 0)
+        {
+            lootList.Remove(slotD);
+        }
+
+        return lootList;
+    }   
 
     void OnMouseDown()
     {
@@ -66,25 +229,15 @@ public class SalvageBoxMechanics : MonoBehaviour
             Destroy(objectCollider);
             anim.SetTrigger("Active");
 
-            if (salvageRarity < 50)
+
+            foreach (ItemIntPair pair in loot)
             {
-                dataManager.playerGold += commonMoney;
-                transientData.PushAlert("You found some common salvage! " + commonMoney + " gold gained.");
-            }
-            if (salvageRarity > 49 && salvageRarity < 86)
-            {
-                dataManager.playerGold += uncommonMoney;
-                transientData.PushAlert("You found some uncommon salvage! " + uncommonMoney + " gold gained.");
-            }
-            if (salvageRarity > 85 && salvageRarity < 97)
-            {
-                dataManager.playerGold += rareMoney;
-                transientData.PushAlert("You found some rare salvage!! " + rareMoney + " gold gained.");
-            }
-            if (salvageRarity > 96)
-            {
-                dataManager.playerGold += legendaryMoney;
-                transientData.PushAlert("You found some legendary salvage!! " + legendaryMoney + " gold gained.");
+                if (pair.item != null && pair.count > 0)
+                {
+                    pair.item.AddToPlayer(pair.count);
+
+                    transientData.PushAlert($"Found {pair.item.name} ({pair.count})!");
+                }
             }
 
             StartCoroutine(AlphaFade());
