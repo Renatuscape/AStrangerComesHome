@@ -4,6 +4,7 @@ using UnityEngine;
 public class DialogueSystem : MonoBehaviour
 {
     public DataManagerScript dataManager;
+    public FontManager fontManager;
     public GameObject button;
     public GameObject topicMenu;
     public GameObject dialogueMenu;
