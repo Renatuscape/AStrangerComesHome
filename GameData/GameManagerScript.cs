@@ -212,3 +212,10 @@ public static class ListExtenstions
         list.AddRange(elements);
     }
 }
+
+[Serializable]
+public class ItemIntPair
+{
+    public Item item;
+    public int count;
+}
