@@ -7,6 +7,7 @@ public class StationManager : MonoBehaviour
 {
     public TransientDataScript transientData;
     public GameObject stationPrefab;
+    public GameObject stationCapitalCity;
     public GameObject spawnedStation;
     public float parallaxMultiplier;
 
@@ -48,9 +49,18 @@ public class StationManager : MonoBehaviour
 
     void SetUpStation()
     {
-        spawnedStation = Instantiate(stationPrefab);
-        spawnedStation.name = "spawnedStation";
-        transientData.activePrefabs.Add(spawnedStation);
+        if (transientData.currentLocation.objectID == "R0-LOC00-CITY")
+        {
+            spawnedStation = Instantiate(stationCapitalCity);
+            spawnedStation.name = "spawnedStation";
+            transientData.activePrefabs.Add(spawnedStation);
+        }
+        else
+        {
+            spawnedStation = Instantiate(stationPrefab);
+            spawnedStation.name = "spawnedStation";
+            transientData.activePrefabs.Add(spawnedStation);
+        }
     }
 
     private void OnDisable()
