@@ -6,6 +6,7 @@ using UnityEngine;
 public class AutoMapPainter : MonoBehaviour
 {
     public List<TileSprite> tilePalette;
+    public List<Sprite> mapMarkers;
 
     public bool FlipTile(Region region, int xCoordinate, int yCoordinate, out TileSprite tile)
     {
@@ -14,6 +15,26 @@ public class AutoMapPainter : MonoBehaviour
         tile = tilePalette.FirstOrDefault((t)=> t.TileID == tileID);
 
         return tile is not null;
+    }
+
+    public Sprite FlipMarker(Location location)
+    {
+        Sprite foundSprite = null;
+
+        if (location.type == LocationType.Crossing)
+        {
+            foundSprite = mapMarkers.FirstOrDefault((m) => m.name == "Icon_Crossing");
+        }
+
+        if (foundSprite != null)
+        {
+            return foundSprite;
+        }
+        else
+        {
+            return mapMarkers.FirstOrDefault((m) => m.name == "Icon_House");
+        }
+
     }
 
     [Serializable]

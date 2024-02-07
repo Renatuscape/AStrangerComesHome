@@ -58,6 +58,7 @@ public class AutoMapBuilder
             newMarker.GetComponent<MapLocationPrefab>().location = location;
             newMarker.GetComponent<MapLocationPrefab>().transientData = autoMap.transientData;
             newMarker.GetComponent<MapLocationPrefab>().autoMap = autoMap;
+            newMarker.GetComponent<SpriteRenderer>().sprite = autoMap.tilePainter.FlipMarker(location);
             autoMap.mapMarkers.Add(newMarker);
         }
     }
