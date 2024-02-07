@@ -47,6 +47,7 @@ URPipeline
 *.controller
 *.json
 Q_*
+*.mp3
 
 .vs
 .vs/*
