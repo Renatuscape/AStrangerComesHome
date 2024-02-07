@@ -4,15 +4,15 @@ public static class MoneyExchange
 {
     public static Character teller;
     public static DayOfWeek freeExchangeDay = DayOfWeek.Solden;
-    public static float copperPenceValue = 0.1f;
-    public static int silverCrownValue = 1;
-    public static int goldCrownValue = 10;
-    public static int sovereignValue = 100;
+    public static float hellerValue = 0.1f;
+    public static int shillingValue = 1;
+    public static int crownValue = 100;
+    public static int guilderValue = 1000;
 
-    public static int playerCopperPence;
-    public static int playerSilverCrowns;
-    public static int playerGoldCrowns;
-    public static int playerSovereigns;
+    public static int playerHellers;
+    public static int playerShillings;
+    public static int playerCrowns;
+    public static int playerGuilders;
 
     public static float commission = 0.3f;
 
@@ -37,14 +37,14 @@ public static class MoneyExchange
     public static int GetPlayerMoney()
     {
         int total = 0;
-        playerCopperPence = Player.GetCount("MIS000-JUN-NN", "Money Manager, GetPlayerMoney()"); // get copper
-        playerSilverCrowns = Player.GetCount("MIS001-COM-NN", "Money Manager, GetPlayerMoney()"); // get silver
-        playerGoldCrowns = Player.GetCount("MIS002-UNC-NN", "Money Manager, GetPlayerMoney()");
-        playerSovereigns = Player.GetCount("MIS003-RAR-NN", "Money Manager, GetPlayerMoney()");
+        playerHellers = Player.GetCount("MIS000-JUN-NN", "Money Manager, GetPlayerMoney()"); // get copper
+        playerShillings = Player.GetCount("MIS001-COM-NN", "Money Manager, GetPlayerMoney()"); // get silver
+        playerCrowns = Player.GetCount("MIS002-UNC-NN", "Money Manager, GetPlayerMoney()");
+        playerGuilders = Player.GetCount("MIS003-RAR-NN", "Money Manager, GetPlayerMoney()");
 
-        total += playerSilverCrowns; // get silver
-        total += (playerGoldCrowns) * goldCrownValue;
-        total += (playerSovereigns) * sovereignValue;
+        total += playerShillings; // get silver
+        total += (playerCrowns) * crownValue;
+        total += (playerGuilders) * guilderValue;
 
         return total;
     }
@@ -60,18 +60,18 @@ public static class MoneyExchange
 
         else
         {
-            while (playerSilverCrowns < costInSilver)
+            while (playerShillings < costInSilver)
             {
-                bool goldExchanged = ExchangeGoldToSilver(1, out int silver);
+                bool goldExchanged = ExchangeCrownsToShillings(1, out int silver);
 
                 if (!goldExchanged)
                 {
-                    ExchangeSovereignToGold(1, out int gold);
+                    ExchangeGuildersToCrowns(1, out int gold);
                 }
 
                 GetPlayerMoney();
 
-                if (playerSilverCrowns < costInSilver && playerGoldCrowns == 0 && playerSovereigns == 0)
+                if (playerShillings < costInSilver && playerCrowns == 0 && playerGuilders == 0)
                 {
                     return false;
                 }
@@ -132,14 +132,14 @@ public static class MoneyExchange
 
         while (valueInSilver > 0)
         {
-            if (valueInSilver >= sovereignValue)
+            if (valueInSilver >= guilderValue)
             {
-                valueInSilver -= sovereignValue;
+                valueInSilver -= guilderValue;
                 sovereign++;
             }
-            else if (valueInSilver >= goldCrownValue)
+            else if (valueInSilver >= crownValue)
             {
-                valueInSilver -= goldCrownValue;
+                valueInSilver -= crownValue;
                 gold++;
             }
             else
@@ -168,21 +168,21 @@ public static class MoneyExchange
             switch (randomDenomination)
             {
                 case 1: // Sovereign
-                    if (valueInSilver >= sovereignValue)
+                    if (valueInSilver >= guilderValue)
                     {
-                        valueInSilver -= sovereignValue;
+                        valueInSilver -= guilderValue;
                         sovereign++;
                     }
                     break;
                 case 2: // Gold crown
-                    if (valueInSilver >= goldCrownValue)
+                    if (valueInSilver >= crownValue)
                     {
-                        valueInSilver -= goldCrownValue;
+                        valueInSilver -= crownValue;
                         gold++;
                     }
                     break;
                 case 3: // Silver crown
-                    valueInSilver -= silverCrownValue;
+                    valueInSilver -= shillingValue;
                     silver++;
                     break;
             }
@@ -198,78 +198,78 @@ public static class MoneyExchange
 
     #region Exchange Methods
     //  EXCHANGE METHODS
-    public static bool ExchangeGoldToSilver(int gold, out int silver)
+    public static bool ExchangeCrownsToShillings(int crowns, out int shillings)
     {
-        if (Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeGoldToSilver()") < gold)
+        if (Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeGoldToSilver()") < crowns)
         {
-            silver = 0;
+            shillings = 0;
             return false;
         }
 
-        Player.Remove("MIS002-UNC-NN", gold);
-        silver = gold * goldCrownValue;
-        Player.Add("MIS001-COM-NN", silver);
+        Player.Remove("MIS002-UNC-NN", crowns);
+        shillings = crowns * crownValue;
+        Player.Add("MIS001-COM-NN", shillings);
         return true;
     }
 
-    public static bool ExchangeSovereignToGold(int sovereign, out int gold)
+    public static bool ExchangeGuildersToCrowns(int guilders, out int crowns)
     {
-        if (Player.GetCount("MIS003-RAR-NN", "Money Manager, ExchangeSovereignToGold()") < sovereign)
+        if (Player.GetCount("MIS003-RAR-NN", "Money Manager, ExchangeSovereignToGold()") < guilders)
         {
-            gold = 0;
+            crowns = 0;
             return false;
         }
 
-        Player.Remove("MIS003-RAR-NN", sovereign);
-        gold = sovereign * sovereignValue;
-        Player.Add("MIS002-UNC-NN", gold);
+        Player.Remove("MIS003-RAR-NN", guilders);
+        crowns = guilders * guilderValue;
+        Player.Add("MIS002-UNC-NN", crowns);
         return true;
     }
 
-    public static bool ExchangeCopperToSilver(int copper, out int silver)
+    public static bool ExchangeHellersToShillings(int hellers, out int shillings)
     {
-        silver = 0;
+        shillings = 0;
 
-        if (Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeCopperToSilver()") < copper)
+        if (Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeCopperToSilver()") < hellers)
         {
             return false;
         }
 
-        if (copper % 10 == 0)
+        if (hellers % 10 == 0)
         {
-            Player.Remove("MIS001-COM-NN", copper);
-            var valueInSilver = copper * copperPenceValue;
-            silver = (int)valueInSilver;
-            Player.Add("MIS001-COM-NN", silver);
+            Player.Remove("MIS001-COM-NN", hellers);
+            var valueInSilver = hellers * hellerValue;
+            shillings = (int)valueInSilver;
+            Player.Add("MIS001-COM-NN", shillings);
             return true;
         }
         return false;
     }
 
-    public static bool ExchangeSilverToGold(int silver, out int gold)
+    public static bool ExchangeShillingsToCrowns(int shillings, out int crowns)
     {
-        if (Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeSilverToGold()") < silver)
+        if (Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeSilverToGold()") < shillings)
         {
-            gold = 0;
+            crowns = 0;
             return false;
         }
-        Player.Remove("MIS001-COM-NN", silver);
-        gold = silver * silverCrownValue;
-        Player.Add("MIS002-UNC-NN", gold);
+        Player.Remove("MIS001-COM-NN", shillings);
+        crowns = shillings * shillingValue;
+        Player.Add("MIS002-UNC-NN", crowns);
         return true;
     }
 
-    public static bool ExchangeGoldToSovereign(int gold, out int sovereign)
+    public static bool ExchangeCrownsToGuilders(int crowns, out int guilders)
     {
-        if (Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeGoldToSovereign()") < gold)
+        if (Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeGoldToSovereign()") < crowns)
         {
-            sovereign = 0;
+            guilders = 0;
             return false;
         }
 
-        Player.Remove("MIS002-UNC-NN", gold);
-        sovereign = gold / sovereignValue;
-        Player.Add("MIS003-RAR-NN", sovereign);
+        Player.Remove("MIS002-UNC-NN", crowns);
+        guilders = crowns / guilderValue;
+        Player.Add("MIS003-RAR-NN", guilders);
         return true;
     }
     #endregion
@@ -278,6 +278,11 @@ public static class MoneyExchange
     //  COMMISSION METHODS
     public static float CalculateCommission()
     {
+        if (teller == null)
+        {
+            teller = GetTeller();
+        }
+
         int affection = Player.GetCount(teller.objectID, "Money Manager, CalculateCommission()");
         float rate;
 
