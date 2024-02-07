@@ -14,7 +14,7 @@ public class BankManager : MonoBehaviour
     public GameObject chatButton;
 
     public GameObject exchangeMenu;
-    public GameObject loansMenu;
+    public GameObject accountMenu;
 
     public bool isBankActive;
 
@@ -56,7 +56,7 @@ public class BankManager : MonoBehaviour
 
         bankMenu.SetActive(true);
         exchangeMenu.SetActive(false);
-        loansMenu.SetActive(false);
+        accountMenu.SetActive(false);
 
         if (TransientDataScript.GetWeekDay() == DayOfWeek.Lunden)
         {
@@ -115,11 +115,11 @@ public class BankManager : MonoBehaviour
 
             if (difference > 1000)
             {
-                incrementAmount = 100;
+                incrementAmount = 500;
             }
             else
             {
-                incrementAmount = difference > 15 ? 10 : 1;
+                incrementAmount = difference > 20 ? 20 : 1;
             }
 
             if (currentNumber < newNumber)
@@ -149,5 +149,17 @@ public class BankManager : MonoBehaviour
     public void CloseBankMenu()
     {
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
+    }
+
+    public void OpenExchangeMenu()
+    {
+        exchangeMenu.SetActive(true);
+        accountMenu.SetActive(false);
+    }
+
+    public void OpenAccountMenu()
+    {
+        exchangeMenu.SetActive(false);
+        accountMenu.SetActive(true);
     }
 }
