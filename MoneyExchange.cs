@@ -14,6 +14,11 @@ public static class MoneyExchange
     public static int playerCrowns;
     public static int playerGuilders;
 
+    public static int maxHellers = 9999;
+    public static int maxShillings = 999;
+    public static int maxCrowns = 999;
+    public static int maxGuilders = 999;
+
     public static float commission = 0.3f;
 
     public static Character GetTeller()
@@ -60,25 +65,40 @@ public static class MoneyExchange
 
         else
         {
-            while (playerShillings < costInSilver)
-            {
-                bool goldExchanged = ExchangeCrownsToShillings(1, out int silver);
+            int totalPaid = 0;
 
-                if (!goldExchanged)
+            while (totalPaid < costInSilver)
+            {
+                int silverInInventory = Player.GetCount("MIS001-COM-NN", "Money Manager, Purchase()");
+
+                if (silverInInventory == 0)
                 {
-                    ExchangeGuildersToCrowns(1, out int gold);
+                    bool goldExchanged = ExchangeCrownsToShillings(1, out int silver);
+
+                    if (!goldExchanged)
+                    {
+                        ExchangeGuildersToCrowns(1, out int gold);
+                    }
                 }
 
-                GetPlayerMoney();
-
-                if (playerShillings < costInSilver && playerCrowns == 0 && playerGuilders == 0)
+                if (silverInInventory >= costInSilver)
                 {
-                    return false;
+                    Player.Remove("MIS001-COM-NN", costInSilver);
+                    return true;
+                }
+
+                else
+                {
+                    Player.Remove("MIS001-COM-NN", silverInInventory);
+                    totalPaid += silverInInventory;
                 }
             }
+            if (totalPaid == costInSilver)
+            {
+                return true;
+            }
         }
-
-        return true;
+        return false;
     }
 
     public static bool Sell(Item item, int amount = 1, bool randomCoins = true)
@@ -228,9 +248,11 @@ public static class MoneyExchange
 
     public static bool ExchangeHellersToShillings(int hellers, out int shillings)
     {
+        int hellersInventory = Player.GetCount("MIS000-JUN-NN", "Money Manager, ExchangeCopperToSilver()");
+        int shillingsInventory = Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeSilverToGold()");
         shillings = 0;
 
-        if (Player.GetCount("MIS000-JUN-NN", "Money Manager, ExchangeCopperToSilver()") < hellers)
+        if (hellersInventory < hellers)
         {
             Debug.Log("Too few hellers in inventory.");
             return false;
@@ -238,43 +260,77 @@ public static class MoneyExchange
 
         if (hellers % 100 == 0)
         {
-            Player.Remove("MIS000-JUN-NN", hellers);
             var valueInSilver = hellers * hellerValue;
             shillings = (int)valueInSilver;
-            Player.Add("MIS001-COM-NN", shillings);
 
-            Debug.Log($"{hellers} hellers exchanged for {shillings} shillings.");
-            return true;
+            if (shillingsInventory + shillings < maxShillings)
+            {
+                Player.Remove("MIS000-JUN-NN", hellers);
+                Player.Add("MIS001-COM-NN", shillings);
+
+                Debug.Log($"{hellers} hellers exchanged for {shillings} shillings.");
+                return true;
+            }
         }
-        Debug.Log($"Hellers ({hellers}) were not divisble by {hellerValue}");
+        Debug.Log($"Hellers ({hellers}) were not divisble by {hellerValue}, or inventory was full.");
         return false;
     }
 
     public static bool ExchangeShillingsToCrowns(int shillings, out int crowns)
     {
-        if (Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeSilverToGold()") < shillings)
+        int shillingsInventory = Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeSilverToGold()");
+        int crownsInventory = Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeSilverToGold()");
+        crowns = 0;
+
+        if (shillingsInventory < shillings)
         {
-            crowns = 0;
+            Debug.Log("Too few shillings in inventory.");
             return false;
         }
-        Player.Remove("MIS001-COM-NN", shillings);
-        crowns = shillings * shillingValue;
-        Player.Add("MIS002-UNC-NN", crowns);
-        return true;
+
+        if (shillings % 100 == 0)
+        {
+            crowns = shillings / crownValue;
+
+            if (crowns + crownsInventory < maxCrowns)
+            {
+                Player.Remove("MIS001-COM-NN", shillings);
+                Player.Add("MIS002-UNC-NN", crowns);
+
+                Debug.Log($"{shillings} shillings exchanged for {crowns} crowns.");
+                return true;
+            }
+        }
+
+        Debug.Log($"Shillings ({shillings}) were not divisble by {crownValue}, or inventory was full.");
+        return false;
     }
 
     public static bool ExchangeCrownsToGuilders(int crowns, out int guilders)
     {
-        if (Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeGoldToSovereign()") < crowns)
+        int crownsInventory = Player.GetCount("MIS002-UNC-NN", "Money Manager, ExchangeSilverToGold()");
+        int guildersInventory = Player.GetCount("MIS003-RAR-NN", "Money Manager, ExchangeSilverToGold()");
+        guilders = 0;
+
+        if (crownsInventory < crowns)
         {
-            guilders = 0;
+            Debug.Log("Too few crowns in inventory.");
             return false;
         }
 
-        Player.Remove("MIS002-UNC-NN", crowns);
-        guilders = crowns / guilderValue;
-        Player.Add("MIS003-RAR-NN", guilders);
-        return true;
+        if (crowns % 100 == 0)
+        {
+            guilders = crowns * 10 / guilderValue;
+
+            if (guildersInventory + guilders < maxGuilders)
+            {
+                Player.Remove("MIS002-UNC-NN", crowns);
+                Player.Add("MIS003-RAR-NN", guilders);
+                return true;
+            }
+        }
+        Debug.Log($"Crowns ({crowns}) were not divisble by {guilderValue}, or inventory was full.");
+        return false;
     }
     #endregion
 
