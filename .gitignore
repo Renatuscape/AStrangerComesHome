@@ -48,6 +48,8 @@ URPipeline
 *.json
 Q_*
 *.mp3
+*.wav
+*.ogg
 
 .vs
 .vs/*
