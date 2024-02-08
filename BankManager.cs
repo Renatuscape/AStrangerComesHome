@@ -24,7 +24,7 @@ public class BankManager : MonoBehaviour
     public TextMeshProUGUI hellers;
     public TextMeshProUGUI oldWorldObols;
 
-    public TextMeshProUGUI amountText;
+    public TextMeshProUGUI playerTotal;
 
     private void Update()
     {
@@ -89,10 +89,10 @@ public class BankManager : MonoBehaviour
 
     public void UpdateWallet()
     {
-        var playerGuilders = Player.GetCount("MIS003-RAR-NN", "BankManager");
-        var playerCrowns = Player.GetCount("MIS002-UNC-NN", "BankManager");
-        var playerShillings = Player.GetCount("MIS001-COM-NN", "BankManager");
         var playerHellers = Player.GetCount("MIS000-JUN-NN", "BankManager");
+        var playerShillings = Player.GetCount("MIS001-COM-NN", "BankManager");
+        var playerCrowns = Player.GetCount("MIS002-UNC-NN", "BankManager");
+        var playerGuilders = Player.GetCount("MIS003-RAR-NN", "BankManager");
         var playerObols = Player.GetCount("MIS010-COM-NN", "BankManager");
 
         StartCoroutine(DelayedAdjust(guilders, playerGuilders));
@@ -100,6 +100,7 @@ public class BankManager : MonoBehaviour
         StartCoroutine(DelayedAdjust(shillings, playerShillings));
         StartCoroutine(DelayedAdjust(hellers, playerHellers));
         StartCoroutine(DelayedAdjust(oldWorldObols, playerObols));
+        StartCoroutine(DelayedAdjust(playerTotal, MoneyExchange.GetPlayerMoney()));
     }
 
     IEnumerator DelayedAdjust(TextMeshProUGUI textMesh, int newNumber)
