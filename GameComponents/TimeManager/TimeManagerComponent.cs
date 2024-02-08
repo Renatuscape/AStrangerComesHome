@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TimeManagerComponent : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public TransientDataScript transientData;
+
+    public TextMeshProUGUI dayText;
+    public TextMeshProUGUI timeText;
+    public TextMeshProUGUI dateText;
 
     public int yearNumber;
     public int weekNumber;
@@ -65,14 +70,17 @@ public class TimeManagerComponent : MonoBehaviour
             if (timeOfDayNormalised > 12)
             {
                 calendarOutputText = $"{(DayOfWeek)dayOfWeekNumber}, {timeOfDayNormalised - 12} pm on the {dayOfMonthNumber}{ordinal}\nWeek {weekNumber} of month {monthNumber}\n{yearNumber} {years} in business";
+                timeText.text = $"{timeOfDayNormalised - 12} pm";
             }
             else if (timeOfDayNormalised < 1)
             {
                 calendarOutputText = $"{(DayOfWeek)dayOfWeekNumber}, 12 pm on the {dayOfMonthNumber}{ordinal}\nWeek {weekNumber} of month {monthNumber}\n{yearNumber} {years} in business";
+                timeText.text = $"{timeOfDayNormalised} pm";
             }
             else
             {
                 calendarOutputText = $"{(DayOfWeek)dayOfWeekNumber}, {timeOfDayNormalised} am on the {dayOfMonthNumber}{ordinal}\nWeek {weekNumber} of month {monthNumber}\n{yearNumber} {years} in business";
+                timeText.text = $"{timeOfDayNormalised} am";
             }
 
             //UPDATE CHANGES IN TRANSIENT DATA SCRIPT
@@ -80,6 +88,9 @@ public class TimeManagerComponent : MonoBehaviour
             transientData.date = dayOfMonthNumber;
             transientData.month = monthNumber;
             transientData.year = yearNumber;
+
+            dayText.text = $"{(DayOfWeek)dayOfWeekNumber}";
+            dateText.text = $"D{dayOfMonthNumber}M{monthNumber}Y{yearNumber}";
         }
     }
 }
