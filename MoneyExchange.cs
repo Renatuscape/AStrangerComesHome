@@ -4,7 +4,7 @@ public static class MoneyExchange
 {
     public static Character teller;
     public static DayOfWeek freeExchangeDay = DayOfWeek.Solden;
-    public static float hellerValue = 0.1f;
+    public static float hellerValue = 0.01f;
     public static int shillingValue = 1;
     public static int crownValue = 100;
     public static int guilderValue = 1000;
@@ -230,19 +230,23 @@ public static class MoneyExchange
     {
         shillings = 0;
 
-        if (Player.GetCount("MIS001-COM-NN", "Money Manager, ExchangeCopperToSilver()") < hellers)
+        if (Player.GetCount("MIS000-JUN-NN", "Money Manager, ExchangeCopperToSilver()") < hellers)
         {
+            Debug.Log("Too few hellers in inventory.");
             return false;
         }
 
-        if (hellers % 10 == 0)
+        if (hellers % 100 == 0)
         {
-            Player.Remove("MIS001-COM-NN", hellers);
+            Player.Remove("MIS000-JUN-NN", hellers);
             var valueInSilver = hellers * hellerValue;
             shillings = (int)valueInSilver;
             Player.Add("MIS001-COM-NN", shillings);
+
+            Debug.Log($"{hellers} hellers exchanged for {shillings} shillings.");
             return true;
         }
+        Debug.Log($"Hellers ({hellers}) were not divisble by {hellerValue}");
         return false;
     }
 
@@ -282,39 +286,44 @@ public static class MoneyExchange
         {
             teller = GetTeller();
         }
-
-        int affection = Player.GetCount(teller.objectID, "Money Manager, CalculateCommission()");
-        float rate;
-
-        if (TransientDataScript.GetWeekDay() == freeExchangeDay)
-        {
-            return 0;
-        }
-
-        if (affection > 90)
-        {
-            rate = 0;
-        }
-        else if (affection > 70)
-        {
-            rate = 0.03f;
-        }
-        else if (affection > 50)
-        {
-            rate = 0.07f;
-        }
-        else if (affection > 30)
-        {
-            rate = 0.1f;
-        }
         else
         {
-            rate = 0.15f;
+            int affection = Player.GetCount(teller.objectID, "Money Manager, CalculateCommission()");
+            float rate;
+
+            if (TransientDataScript.GetWeekDay() == freeExchangeDay && affection < 90)
+            {
+                return 2;
+            }
+
+            if (affection >= 90)
+            {
+                rate = 0;
+            }
+            else if (affection >= 70)
+            {
+                rate = 0.3f;
+            }
+            else if (affection >= 50)
+            {
+                rate = 0.7f;
+            }
+            else if (affection >= 30)
+            {
+                rate = 1.0f;
+            }
+            else
+            {
+                rate = 1.5f;
+            }
+
+            rate = rate + ((float)TransientDataScript.GetWeekDay() * 0.2f); //increase rate by day of week
+
+            return rate * 5;
         }
 
-        rate = rate + ((float)TransientDataScript.GetWeekDay() * 0.01f); //increase rate by day of week
-
-        return rate;
+        Debug.Log("Teller not found.");
+        return 1.5f;
     }
 
     public static void SubtractCommission(int itemCost)
