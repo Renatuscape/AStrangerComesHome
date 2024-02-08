@@ -27,6 +27,9 @@ public static class GlobalSettingsManager
         PlayerPrefs.SetString(SubtitleFontKey, GlobalSettings.SubtitleFont != null ? GlobalSettings.SubtitleFont : "");
         PlayerPrefs.SetString(BodyFontKey, GlobalSettings.BodyFont != null ? GlobalSettings.BodyFont : "");
         PlayerPrefs.SetString(ScriptFontKey, GlobalSettings.ScriptFont != null ? GlobalSettings.ScriptFont : "");
+        PlayerPrefs.SetFloat("musicVolume", GlobalSettings.musicVolume);
+        PlayerPrefs.SetFloat("ambientVolume", GlobalSettings.ambientVolume);
+        PlayerPrefs.SetFloat("uiVolume", GlobalSettings.uiVolume);
         PlayerPrefs.Save();
 
         Debug.Log("Saved global settings");
@@ -44,6 +47,10 @@ public static class GlobalSettingsManager
         GlobalSettings.SubtitleFont = PlayerPrefs.GetString(SubtitleFontKey, "");
         GlobalSettings.BodyFont = PlayerPrefs.GetString(BodyFontKey, "");
         GlobalSettings.ScriptFont = PlayerPrefs.GetString(ScriptFontKey, "");
+
+        GlobalSettings.musicVolume = PlayerPrefs.GetFloat("musicVolume", 0.4f);
+        GlobalSettings.ambientVolume = PlayerPrefs.GetFloat("ambientVolume", 0.6f);
+        GlobalSettings.uiVolume = PlayerPrefs.GetFloat("uiVolume", 0.6f);
 
         //Debug.Log("Loaded global settings" +
         //    $"\nTrueName {PlayerPrefs.GetInt(AlwaysTrueNamePlateKey, 0)}" +
@@ -69,4 +76,8 @@ public static class GlobalSettings
     public static string SubtitleFont;
     public static string BodyFont;
     public static string ScriptFont;
+
+    public static float musicVolume = 0.4f;
+    public static float ambientVolume = 0.6f;
+    public static float uiVolume = 0.6f;
 }
