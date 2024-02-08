@@ -128,6 +128,8 @@ public class Journal : MonoBehaviour
             mainPageIndex = 0;
         }
         mainPage = (JournalMainPage)mainPageIndex;
+        
+        AudioManager.PlayUISound("bookFlip2");
 
         foreach (var card in cards)
         {
@@ -160,7 +162,6 @@ public class Journal : MonoBehaviour
 
         // Ensure the card parent reaches exactly the target position
         cardParentTransform.position = targetPosition;
-
         yield return null;
     }
 }
