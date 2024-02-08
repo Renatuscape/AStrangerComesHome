@@ -24,13 +24,7 @@ public class BankExchange : MonoBehaviour
     void Start()
     {
         slider.onValueChanged.AddListener(OnSliderValueChanged);
-        slider.value = slider.maxValue;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        slider.value = slider.minValue;
     }
 
     private void OnEnable()
@@ -47,56 +41,9 @@ public class BankExchange : MonoBehaviour
         float crownsPriceAdjusted;
         float guildersPriceAdjusted;
 
-        if (slider.value != slider.maxValue)
-        {
-            shillingsPriceAdjusted = (100 + 100 * commission / 100) * slider.value;
-
-            crownsPriceAdjusted = (MoneyExchange.crownValue + 100 * commission / 100) * slider.value;
-
-            guildersPriceAdjusted = (MoneyExchange.guilderValue + 100 * commission / 100) * slider.value;
-        }
-        else
-        {
-            var hellers = Player.GetCount("MIS000-JUN-NN", "BankExchange, CalculatePrices()");
-            var shillings = Player.GetCount("MIS001-COM-NN", "BankExchange, CalculatePrices()");
-            var crowns = Player.GetCount("MIS002-UNC-NN", "BankExchange, CalculatePrices()");
-            var guilders = Player.GetCount("MIS003-RAR-NN", "BankExchange, CalculatePrices()");
-
-            if (hellers >= 100)
-            {
-                shillingsPriceAdjusted = (100 + 100 * commission / 100) * hellers;
-                var shillingsRemainder = shillings % 100;
-                shillingsPriceAdjusted = shillingsPriceAdjusted - shillingsRemainder;
-            }
-            else
-            {
-                shillingsPriceAdjusted = 0;
-            }
-
-            if (shillings >= MoneyExchange.crownValue)
-            {
-                crownsPriceAdjusted = (MoneyExchange.crownValue + 100 * commission / 100) * shillings;
-                var crownsRemainder = crowns % 100;
-                crownsPriceAdjusted = crownsPriceAdjusted - crownsRemainder;
-            }
-            else
-            {
-                crownsPriceAdjusted = 0;
-            }
-
-            if (MoneyExchange.GetPlayerMoney() >= MoneyExchange.guilderValue)
-            {
-                guildersPriceAdjusted = (MoneyExchange.guilderValue + 100 * commission / 100) * crowns;
-
-                var guildersRemainder = guilders % 100;
-
-                guildersPriceAdjusted = guildersPriceAdjusted - guildersRemainder;
-            }
-            else
-            {
-                guildersPriceAdjusted = 0;
-            }
-        }
+        shillingsPriceAdjusted = (100 + 100 * commission / 100) * slider.value;
+        crownsPriceAdjusted = (MoneyExchange.crownValue + 100 * commission / 100) * slider.value;
+        guildersPriceAdjusted = (MoneyExchange.guilderValue + 100 * commission / 100) * slider.value * 0.1f;
 
         adjustedShillingPrice = (int)Mathf.Ceil(shillingsPriceAdjusted);
         adjustedCrownPrice = (int)Mathf.Ceil(crownsPriceAdjusted);
@@ -104,19 +51,12 @@ public class BankExchange : MonoBehaviour
 
         shillingPrice.text = adjustedShillingPrice + " Hellers";
         crownPrice.text = adjustedCrownPrice + " Shilling";
-        guilderPrice.text = adjustedGuilderPrice + " Shilling";
+        guilderPrice.text = adjustedGuilderPrice + " Crowns";
     }
 
     public void OnSliderValueChanged(float value)
     {
-        if (slider.value == slider.maxValue)
-        {
-            buySellValue.text = "Max";
-        }
-        else
-        {
-            buySellValue.text = slider.value.ToString();
-        }
+        buySellValue.text = slider.value.ToString();
 
         CalculatePrices();
     }
@@ -127,34 +67,96 @@ public class BankExchange : MonoBehaviour
         int inventoryHellers = Player.GetCount("MIS000-JUN-NN", "BankExchange, SellHellers()");
         bool result = false;
 
-        if (slider.value == slider.maxValue)
-        {
-            sliderValue = inventoryHellers;
-        }
-
         int remainder = sliderValue - (sliderValue % 100);
         slider.value = remainder * 0.01f;
         var commissionCost = adjustedShillingPrice - remainder;
 
         if (commissionCost + remainder <= inventoryHellers)
         {
-            result = MoneyExchange.ExchangeHellersToShillings(remainder, out int sovereign);
+            result = MoneyExchange.ExchangeHellersToShillings(remainder, out int s);
 
             if (result)
             {
+                AudioManager.PlayUISound("handleCoins2");
                 Player.Remove("MIS000-JUN-NN", commissionCost);
+
+                bankManager.UpdateWallet();
             }
         }
         else
         {
-            if (slider.value > slider.minValue)
-            {
-                slider.value--;
-                SellHellers();
-            }
+            //if (slider.value > slider.minValue)
+            //{
+            //    slider.value--;
+            //    SellHellers();
+            //}
         }
 
-        bankManager.UpdateWallet();
+        Debug.Log($"Result of exchange: {result}. Attempted to exchange {remainder}. Calculated commission was {commissionCost} from price of {adjustedShillingPrice}");
+    }
+
+    public void BuyCrowns()
+    {
+        int sliderValue = (int)slider.value * 100;
+        int inventoryShillings = Player.GetCount("MIS001-COM-NN", "BankExchange, BuyCrowns()");
+        bool result = false;
+
+        int remainder = sliderValue - (sliderValue % 100);
+        slider.value = remainder * 0.01f;
+        var commissionCost = adjustedCrownPrice - remainder;
+
+        if (commissionCost + remainder <= inventoryShillings)
+        {
+            result = MoneyExchange.ExchangeShillingsToCrowns(remainder, out int crowns);
+
+            if (result)
+            {
+                AudioManager.PlayUISound("handleCoins2");
+                Player.Remove("MIS001-COM-NN", commissionCost);
+                bankManager.UpdateWallet();
+            }
+        }
+        else
+        {
+            //if (slider.value > slider.minValue)
+            //{
+            //    slider.value--;
+            //    BuyCrowns();
+            //}
+        }
+
+        Debug.Log($"Result of exchange: {result}. Attempted to exchange {remainder}. Calculated commission was {commissionCost} from price of {adjustedShillingPrice}");
+    }
+
+    public void BuyGuilders()
+    {
+        int sliderValue = (int)slider.value * 100;
+        int inventoryCrowns = Player.GetCount("MIS002-UNC-NN", "BankExchange, BuyCrowns()");
+        bool result = false;
+
+        int remainder = sliderValue - (sliderValue % 100);
+        slider.value = remainder * 0.01f;
+        var commissionCost = adjustedGuilderPrice - remainder;
+
+        if (commissionCost + remainder <= inventoryCrowns)
+        {
+            result = MoneyExchange.ExchangeCrownsToGuilders(remainder, out int crowns);
+
+            if (result)
+            {
+                AudioManager.PlayUISound("handleCoins2");
+                Player.Remove("MIS002-UNC-NN", commissionCost);
+                bankManager.UpdateWallet();
+            }
+        }
+        else
+        {
+            //if (slider.value > slider.minValue)
+            //{
+            //    slider.value--;
+            //    BuyGuilders();
+            //}
+        }
 
         Debug.Log($"Result of exchange: {result}. Attempted to exchange {remainder}. Calculated commission was {commissionCost} from price of {adjustedShillingPrice}");
     }
