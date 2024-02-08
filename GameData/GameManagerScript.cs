@@ -118,7 +118,7 @@ public class GameManagerScript : MonoBehaviour
 
         dataManager.playerGold = 0;
         dataManager.totalGameDays = 0;
-        dataManager.timeOfDay = 0;
+        dataManager.timeOfDay = 0.3f;
         dataManager.currentRegion = "REGION1";
         dataManager.mapPositionX = 0f;
         dataManager.mapPositionY = 0f;
