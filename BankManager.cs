@@ -101,6 +101,7 @@ public class BankManager : MonoBehaviour
         StartCoroutine(DelayedAdjust(hellers, playerHellers));
         StartCoroutine(DelayedAdjust(oldWorldObols, playerObols));
         StartCoroutine(DelayedAdjust(playerTotal, MoneyExchange.GetPlayerMoney()));
+
     }
 
     IEnumerator DelayedAdjust(TextMeshProUGUI textMesh, int newNumber)
@@ -114,7 +115,24 @@ public class BankManager : MonoBehaviour
 
             int incrementAmount;
 
-            if (difference > 1000)
+
+            if (difference > 100000)
+            {
+                incrementAmount = 100000;
+            }
+            else if (difference > 50000)
+            {
+                incrementAmount = 50000;
+            }
+            else if(difference > 10000)
+            {
+                incrementAmount = 10000;
+            }
+            else if (difference > 5000)
+            {
+                incrementAmount = 5000;
+            }
+            else if (difference > 1000)
             {
                 incrementAmount = 500;
             }
@@ -145,6 +163,7 @@ public class BankManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.03f);
         textMesh.gameObject.transform.position = new Vector3(textMesh.transform.position.x - nudgeAmount, textMesh.transform.position.y - nudgeAmount, textMesh.transform.position.z);
+        AudioManager.PlayUISound("handleCoins");
     }
 
     public void CloseBankMenu()
