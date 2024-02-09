@@ -145,42 +145,42 @@ public static class MoneyExchange
 
         return price;
     }
-    public static void AddHighestDenomination(int valueInSilver) {
-        int gold = 0;
-        int silver = 0;
-        int sovereign = 0;
+    public static void AddHighestDenomination(int valueInSovereigns) {
+        int crowns = 0;
+        int shillings = 0;
+        int guilders = 0;
 
-        while (valueInSilver > 0)
+        while (valueInSovereigns > 0)
         {
-            if (valueInSilver >= guilderValue)
+            if (valueInSovereigns >= guilderValue)
             {
-                valueInSilver -= guilderValue;
-                sovereign++;
+                valueInSovereigns -= guilderValue;
+                guilders++;
             }
-            else if (valueInSilver >= crownValue)
+            else if (valueInSovereigns >= crownValue)
             {
-                valueInSilver -= crownValue;
-                gold++;
+                valueInSovereigns -= crownValue;
+                crowns++;
             }
             else
             {
-                valueInSilver -= 1;
-                silver++;
+                valueInSovereigns -= 1;
+                shillings++;
             }
         }
 
-        Player.Add("MIS003-RAR-NN", sovereign);
-        Player.Add("MIS002-UNC-NN", gold);
-        Player.Add("MIS001-COM-NN", silver);
+        Player.Add("MIS003-RAR-NN", guilders);
+        Player.Add("MIS002-UNC-NN", crowns);
+        Player.Add("MIS001-COM-NN", shillings);
     }
 
-    public static void AddRandomDenomination(int valueInSilver)
+    public static void AddRandomDenomination(int valueInSovereigns)
     {
-        int gold = 0;
-        int silver = 0;
-        int sovereign = 0;
+        int crown = 0;
+        int shilling = 0;
+        int guilder = 0;
 
-        while (valueInSilver > 0)
+        while (valueInSovereigns > 0)
         {
             // Choose a random denomination to add to the inventory
             int randomDenomination = Random.Range(1, 4); // Random number between 1 and 3 inclusive
@@ -188,30 +188,30 @@ public static class MoneyExchange
             switch (randomDenomination)
             {
                 case 1: // Sovereign
-                    if (valueInSilver >= guilderValue)
+                    if (valueInSovereigns >= guilderValue)
                     {
-                        valueInSilver -= guilderValue;
-                        sovereign++;
+                        valueInSovereigns -= guilderValue;
+                        guilder++;
                     }
                     break;
                 case 2: // Gold crown
-                    if (valueInSilver >= crownValue)
+                    if (valueInSovereigns >= crownValue)
                     {
-                        valueInSilver -= crownValue;
-                        gold++;
+                        valueInSovereigns -= crownValue;
+                        crown++;
                     }
                     break;
                 case 3: // Silver crown
-                    valueInSilver -= shillingValue;
-                    silver++;
+                    valueInSovereigns -= shillingValue;
+                    shilling++;
                     break;
             }
         }
 
         // Add coins to player's inventory
-        Player.Add("MIS003-RAR-NN", sovereign);
-        Player.Add("MIS002-UNC-NN", gold);
-        Player.Add("MIS001-COM-NN", silver);
+        Player.Add("MIS003-RAR-NN", guilder);
+        Player.Add("MIS002-UNC-NN", crown);
+        Player.Add("MIS001-COM-NN", shilling);
     }
 
     #endregion
