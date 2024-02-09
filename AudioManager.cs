@@ -49,6 +49,7 @@ public class AudioManager : MonoBehaviour
     public static void PlayUISound(string soundName)
     {
         var clipList = FindObjectOfType<AudioManager>().uiEffects;
+
         AudioClip sound;
 
         if (soundName.ToLower() == "debug")
