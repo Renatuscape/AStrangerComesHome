@@ -74,12 +74,18 @@ public class Journal : MonoBehaviour
 
     private void OnEnable()
     {
+        AudioManager.PlayUISound("bookPlace1");
         foreach (var card in cards)
         {
             // Access the TextMeshPro objects within the child components of each card
             TMP_Text textMesh = card.GetComponentsInChildren<TMP_Text>(true).FirstOrDefault();
             textMesh.font = fontManager.subtitle.font;
         }
+    }
+
+    private void OnDisable()
+    {
+        AudioManager.PlayUISound("bookPlace1");
     }
 
     private void Update()
