@@ -43,7 +43,7 @@ public class PassengerPrefabScript : MonoBehaviour
         }
     }
     private void OnEnable()
-        {
+    {
         spiritEssence = Items.FindByID("CAT000");
         if (isPassengerA)
         {
@@ -100,9 +100,14 @@ public class PassengerPrefabScript : MonoBehaviour
         {
             if (destination == transientData.currentLocation)
             {
-                spiritEssence.AddToPlayer();
                 transientData.PushAlert("You brought " + passengerName + " to their destination.\nThey paid " + fare + "g  and dropped some Spirit Essence.");
-                dataManager.playerGold += fare;
+                //dataManager.playerGold += fare;
+
+                AudioManager.PlayAmbientSound("cloth3");
+                spiritEssence.AddToPlayer();
+                AudioManager.PlayAmbientSound("handleCoins");
+                MoneyExchange.AddHighestDenomination(fare);
+                Player.Add("MIS000-JUN-NN", Random.Range(0, fare));
 
                 if (isPassengerA)
                     dataManager.passengerIsActiveA = false;
