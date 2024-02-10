@@ -9,7 +9,7 @@ public class ItemManager : MonoBehaviour
     public List<Item> debugItemList = Items.all;
     public bool allObjecctsLoaded = false;
     public int filesLoaded = 0;
-    public int numberOfFilesToLoad = 7;
+    public int numberOfFilesToLoad = 8;
 
     void Start()
     {
@@ -19,6 +19,7 @@ public class ItemManager : MonoBehaviour
         LoadFromJson("Treasures.json");
         LoadFromJson("Catalysts.json");
         LoadFromJson("Books.json");
+        LoadFromJson("Trade.json");
         LoadFromJson("Misc.json");
         //Remember to update numberOfFilesToLoad if more files are added
         //Items.DebugList();
