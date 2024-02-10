@@ -79,19 +79,10 @@ public class BankExchange : MonoBehaviour
             {
                 AudioManager.PlayUISound("handleCoins2");
                 Player.Remove("MIS000-JUN-NN", commissionCost);
-
-                bankManager.UpdateWallet();
             }
         }
-        else
-        {
-            //if (slider.value > slider.minValue)
-            //{
-            //    slider.value--;
-            //    SellHellers();
-            //}
-        }
 
+        bankManager.UpdateWallet();
         Debug.Log($"Result of exchange: {result}. Attempted to exchange {remainder}. Calculated commission was {commissionCost} from price of {adjustedShillingPrice}");
     }
 
@@ -113,18 +104,10 @@ public class BankExchange : MonoBehaviour
             {
                 AudioManager.PlayUISound("handleCoins2");
                 Player.Remove("MIS001-COM-NN", commissionCost);
-                bankManager.UpdateWallet();
             }
         }
-        else
-        {
-            //if (slider.value > slider.minValue)
-            //{
-            //    slider.value--;
-            //    BuyCrowns();
-            //}
-        }
 
+        bankManager.UpdateWallet();
         Debug.Log($"Result of exchange: {result}. Attempted to exchange {remainder}. Calculated commission was {commissionCost} from price of {adjustedShillingPrice}");
     }
 
@@ -146,18 +129,10 @@ public class BankExchange : MonoBehaviour
             {
                 AudioManager.PlayUISound("handleCoins2");
                 Player.Remove("MIS002-UNC-NN", commissionCost);
-                bankManager.UpdateWallet();
             }
         }
-        else
-        {
-            //if (slider.value > slider.minValue)
-            //{
-            //    slider.value--;
-            //    BuyGuilders();
-            //}
-        }
 
+        bankManager.UpdateWallet();
         Debug.Log($"Result of exchange: {result}. Attempted to exchange {remainder}. Calculated commission was {commissionCost} from price of {adjustedShillingPrice}");
     }
 }
