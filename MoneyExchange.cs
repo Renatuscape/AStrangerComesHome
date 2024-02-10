@@ -349,7 +349,7 @@ public static class MoneyExchange
 
             if (TransientDataScript.GetWeekDay() == freeExchangeDay && affection < 90)
             {
-                return 2;
+                return 1.5f;
             }
 
             if (affection >= 90)
@@ -358,24 +358,24 @@ public static class MoneyExchange
             }
             else if (affection >= 70)
             {
-                rate = 0.3f;
+                rate = 0.3f * (1 + (float)TransientDataScript.GetWeekDay() * 0.2f);
             }
             else if (affection >= 50)
             {
-                rate = 0.7f;
+                rate = 0.7f * (1 + (float)TransientDataScript.GetWeekDay() * 0.2f);
             }
             else if (affection >= 30)
             {
-                rate = 1.0f;
+                rate = 1.0f * (1 + (float)TransientDataScript.GetWeekDay() * 0.3f);
             }
             else
             {
-                rate = 1.5f;
+                rate = 1.5f * (1 + (float)TransientDataScript.GetWeekDay() * 0.4f);
             }
 
-            rate = rate + ((float)TransientDataScript.GetWeekDay() * 0.2f); //increase rate by day of week
+            rate = Mathf.Ceil(rate * rate);
 
-            return rate * 5;
+            return rate;
         }
 
         Debug.Log("Teller not found.");
