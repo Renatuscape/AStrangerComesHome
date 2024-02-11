@@ -48,57 +48,68 @@ public class AudioManager : MonoBehaviour
 
     public static void PlayUISound(string soundName)
     {
-        var clipList = FindObjectOfType<AudioManager>().uiEffects;
+        var audioManager = FindObjectOfType<AudioManager>();
 
-        if (clipList != null)
+        if (audioManager != null)
         {
-            AudioClip sound;
+            var clipList = FindObjectOfType<AudioManager>().uiEffects;
 
-            if (soundName.ToLower() == "debug")
+            if (clipList != null)
             {
-                sound = clipList[Random.Range(1, clipList.Count)];
-            }
-            else
-            {
-                sound = clipList.FirstOrDefault(x => x.name == soundName);
-            }
+                AudioClip sound;
 
-            if (sound != null)
-            {
-                var audioSource = new GameObject().AddComponent<AudioSource>();
-                audioSource.clip = sound;
-                audioSource.Play();
-                audioSource.volume = GlobalSettings.uiVolume;
-                Destroy(audioSource.gameObject, sound.length);
+                if (soundName.ToLower() == "debug")
+                {
+                    sound = clipList[Random.Range(1, clipList.Count)];
+                }
+                else
+                {
+                    sound = clipList.FirstOrDefault(x => x.name == soundName);
+                }
+
+                if (sound != null)
+                {
+                    var audioSource = new GameObject().AddComponent<AudioSource>();
+                    audioSource.clip = sound;
+                    audioSource.Play();
+                    audioSource.volume = GlobalSettings.uiVolume;
+                    Destroy(audioSource.gameObject, sound.length);
+                }
             }
         }
+
     }
 
     public static void PlayAmbientSound(string soundName)
     {
-        var clipList = FindObjectOfType<AudioManager>().ambientEffects;
+        var audioManager = FindObjectOfType<AudioManager>();
 
-        if (clipList != null)
+        if (audioManager != null)
         {
-            AudioClip sound;
+            var clipList = FindObjectOfType<AudioManager>().ambientEffects;
 
-            if (soundName.ToLower() == "debug")
+            if (clipList != null)
             {
-                sound = clipList[Random.Range(1, clipList.Count)];
-            }
-            else
-            {
-                sound = clipList.FirstOrDefault(x => x.name == soundName);
-            }
+                AudioClip sound;
+
+                if (soundName.ToLower() == "debug")
+                {
+                    sound = clipList[Random.Range(1, clipList.Count)];
+                }
+                else
+                {
+                    sound = clipList.FirstOrDefault(x => x.name == soundName);
+                }
 
 
-            if (sound != null)
-            {
-                var audioSource = new GameObject().AddComponent<AudioSource>();
-                audioSource.clip = sound;
-                audioSource.Play();
-                audioSource.volume = GlobalSettings.ambientVolume;
-                Destroy(audioSource.gameObject, sound.length);
+                if (sound != null)
+                {
+                    var audioSource = new GameObject().AddComponent<AudioSource>();
+                    audioSource.clip = sound;
+                    audioSource.Play();
+                    audioSource.volume = GlobalSettings.ambientVolume;
+                    Destroy(audioSource.gameObject, sound.length);
+                }
             }
         }
     }
