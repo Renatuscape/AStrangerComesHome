@@ -76,8 +76,8 @@ public class BankManager : MonoBehaviour
         }
         else
         {
-            portraits.gameObject.SetActive(true);
-            portraits.EnableForShop("ARC004");
+            //portraits.gameObject.SetActive(true);
+            //portraits.EnableForShop("ARC004");
             leaveButton.SetActive(true);
             exchangeButton.SetActive(false);
             loansButton.SetActive(false);
