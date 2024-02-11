@@ -30,6 +30,8 @@ public static class GlobalSettingsManager
         PlayerPrefs.SetFloat("musicVolume", GlobalSettings.musicVolume);
         PlayerPrefs.SetFloat("ambientVolume", GlobalSettings.ambientVolume);
         PlayerPrefs.SetFloat("uiVolume", GlobalSettings.uiVolume);
+        PlayerPrefs.SetInt("uiWalletLarge", GlobalSettings.uiWalletLarge ? 1 : 0);
+        PlayerPrefs.SetInt("uiGearboxLarge", GlobalSettings.uiGearboxLarge ? 1 : 0);
         PlayerPrefs.Save();
 
         Debug.Log("Saved global settings");
@@ -51,6 +53,9 @@ public static class GlobalSettingsManager
         GlobalSettings.musicVolume = PlayerPrefs.GetFloat("musicVolume", 0.4f);
         GlobalSettings.ambientVolume = PlayerPrefs.GetFloat("ambientVolume", 0.6f);
         GlobalSettings.uiVolume = PlayerPrefs.GetFloat("uiVolume", 0.6f);
+
+        GlobalSettings.uiWalletLarge = PlayerPrefs.GetInt("uiWalletLarge", 1) == 1;
+        GlobalSettings.uiGearboxLarge = PlayerPrefs.GetInt("uiGearboxLarge", 1) == 1;
 
         //Debug.Log("Loaded global settings" +
         //    $"\nTrueName {PlayerPrefs.GetInt(AlwaysTrueNamePlateKey, 0)}" +
@@ -80,4 +85,7 @@ public static class GlobalSettings
     public static float musicVolume = 0.4f;
     public static float ambientVolume = 0.6f;
     public static float uiVolume = 0.6f;
+
+    public static bool uiWalletLarge = true;
+    public static bool uiGearboxLarge = true;
 }
