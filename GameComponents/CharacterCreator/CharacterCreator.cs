@@ -52,6 +52,11 @@ public class CharacterCreator : MonoBehaviour
         {
             dataManager.playerName = characterName.text;
         }
+
+        if (!portraitRenderer.activeInHierarchy)
+        {
+            portraitRenderer.SetActive(true);
+        }
     }
 
     void CreateIconPrefab()
