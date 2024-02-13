@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class DialogueSystem : MonoBehaviour
@@ -15,9 +16,11 @@ public class DialogueSystem : MonoBehaviour
     {
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(false);
+        button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
     }
     public void OpenTopicMenu(string speakerID)
     {
+        button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
         previousGameState = TransientDataScript.GetGameState();
         topicMenu.SetActive(true);
         topicMenu.GetComponent<TopicMenu>().OpenTopicsMenu(speakerID);
@@ -26,6 +29,8 @@ public class DialogueSystem : MonoBehaviour
 
     public void StartDialogue(Quest quest) //called primarily from topic manager
     {
+        button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
+
         DialogueTagParser.UpdateTags(dataManager);
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(true);
