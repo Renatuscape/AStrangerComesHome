@@ -22,6 +22,8 @@ public class PopUpMenu : MonoBehaviour
 
     public void UpdateText(Dialogue dialogue)
     {
+        textMesh.font = dialogueSystem.fontManager.body.font;
+
         for (int i = 0; i < dialogue.content.Count;i++)
         {
             dialogue.content[i] = DialogueTagParser.ParseText(dialogue.content[i]);
@@ -50,10 +52,6 @@ public class PopUpMenu : MonoBehaviour
     {
         GameObject button = Instantiate(dialogueSystem.button);
 
-        //Choose width by parent container width
-        float newSize = container.GetComponent<RectTransform>().sizeDelta.x - 20;
-        RectTransform transform = button.GetComponent<RectTransform>();
-        transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
         button.transform.SetParent(container.transform, false);
 
         buttons.Add(button);
@@ -69,12 +67,13 @@ public class PopUpMenu : MonoBehaviour
         button.GetComponent<Button>().onClick.AddListener(() => ContinueToNextStep(dialogue, button));
 
         //SET BUTTON SIZE
-        float newSize = 75;
+        float newSize = 165;
         RectTransform transform = button.GetComponent<RectTransform>();
         transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
 
         var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         textMesh.text = "Continue";
+        textMesh.fontSizeMax = 24;
 
         return button;
     }
