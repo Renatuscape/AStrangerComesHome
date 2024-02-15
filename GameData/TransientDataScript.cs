@@ -115,6 +115,7 @@ public class TransientDataScript : MonoBehaviour
     {
         Debug.Log("Travel by Gate called at TransientDataScript");
         GameObject.Find("GameManager").GetComponent<GameManagerScript>().mapComponent.TravelByGate(gate);
+        AudioManager.SkipNow();
     }
 
     public static bool IsTimeFlowing() //in this state, mana regenerates and plants grow. Controllers are enabled
