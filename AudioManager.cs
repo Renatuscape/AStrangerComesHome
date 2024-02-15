@@ -25,17 +25,25 @@ public class AudioManager : MonoBehaviour
             {
                 var time = dataManager.timeOfDay;
 
-                if (time >= 0.3f && time < 0.6f)
+                if (dataManager.currentRegion == "REGION2")
                 {
-                    musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Bright Morning");
+                    musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Contemplating Mountains");
                 }
-                else if (time >= 0.6f && time < 0.9f)
+                
+                if (dataManager.currentRegion == "REGION0" || dataManager.currentRegion == "REGION1")
                 {
-                    musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Sweet Evening");
-                }
-                else
-                {
-                    musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Pensive Night");
+                    if (time >= 0.3f && time < 0.6f)
+                    {
+                        musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Bright Morning");
+                    }
+                    else if (time >= 0.6f && time < 0.9f)
+                    {
+                        musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Sweet Evening");
+                    }
+                    else
+                    {
+                        musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Pensive Night");
+                    }
                 }
 
                 if (musicPlayer.clip != null)
@@ -43,6 +51,16 @@ public class AudioManager : MonoBehaviour
                     musicPlayer.Play();
                 }
             }
+        }
+    }
+
+    public static void SkipNow()
+    {
+        var audioManager = FindObjectOfType<AudioManager>();
+
+        if (audioManager != null)
+        {
+            audioManager.musicPlayer.Stop();
         }
     }
 
