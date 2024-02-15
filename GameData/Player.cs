@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 public static class Player
@@ -32,6 +33,20 @@ public static class Player
 
         Add(objectID, removeAmount);
     }
+
+    public static void Set(string objectID, int amount)
+    {
+        var foundObject = inventoryList.FirstOrDefault(o => o.objectID == objectID);
+        if (foundObject != null)
+        {
+            inventoryList.FirstOrDefault(o => o.objectID == objectID).amount = amount;
+        }
+        else
+        {
+            Add(objectID, amount);
+        }
+    }   
+
     public static void Add(string objectID, int amount = 1)
     {
         if (GameCodex.ParseID(objectID) != null)
