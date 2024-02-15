@@ -10,11 +10,18 @@ public class AutoMapPainter : MonoBehaviour
 
     public bool FlipTile(Region region, int xCoordinate, int yCoordinate, out TileSprite tile)
     {
-        string tileID = region.mapLayout[xCoordinate].row[yCoordinate];
+        try {
+            string tileID = region.mapLayout[xCoordinate].row[yCoordinate];
 
-        tile = tilePalette.FirstOrDefault((t)=> t.TileID == tileID);
+            tile = tilePalette.FirstOrDefault((t) => t.TileID == tileID);
 
-        return tile is not null;
+            return tile is not null;
+        }
+        catch
+        {
+            Debug.LogError($"Tile at {xCoordinate}, {yCoordinate} is out of bounds.");
+            tile = null; return false;
+        }
     }
 
     public Sprite FlipMarker(Location location)
