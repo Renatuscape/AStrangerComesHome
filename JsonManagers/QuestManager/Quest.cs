@@ -25,16 +25,7 @@ public class Quest
     }
     public void SetQuestStage(int stage)
     {
-        Player.GetEntry(objectID, "Quest", out var entry);
-        if (entry != null)
-        {
-            entry.amount = stage;
-        }
-        else
-        {
-            entry = new() { objectID = objectID, amount = stage };
-            Player.inventoryList.Add(entry);
-        }
+        Player.Set(objectID, stage);
     }
 }
 
