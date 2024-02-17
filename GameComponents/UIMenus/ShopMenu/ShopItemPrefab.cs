@@ -59,7 +59,7 @@ public class ShopItemPrefab : MonoBehaviour
           //  price = itemSource.basePrice * (1 + (itemSource.GetInventoryAmount() * itemSource.GetInventoryAmount())) * priceMultiplier;//price = itemSource.basePrice * shopMenu.priceMultiplier * (1 + (itemSource.dataValue * 3));
 
         priceAdjusted = (int)Mathf.Floor(price);
-        valueText.text = $"{priceAdjusted}g";
+        valueText.text = $"{priceAdjusted}";
     }
     public void MouseOverItem()
     {
