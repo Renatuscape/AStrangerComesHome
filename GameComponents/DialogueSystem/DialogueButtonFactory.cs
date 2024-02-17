@@ -48,9 +48,10 @@ public class DialogueButtonFactory
         character.NameSetup();
         GameObject button = PrintText(character.namePlate);
         var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        textMesh.fontSize += 2;
-        textMesh.fontSizeMax += 2;
+        textMesh.fontSize += 6;
+        textMesh.fontSizeMax += 6;
         textMesh.font = dialogueMenu.dialogueSystem.fontManager.subtitle.font;
+        textMesh.margin = new Vector4(0, -25, 0, -70);
 
         VerticalLayoutGroup layout = button.GetComponent<VerticalLayoutGroup>();
         layout.padding = new RectOffset(
@@ -82,7 +83,7 @@ public class DialogueButtonFactory
         button.GetComponent<Button>().onClick.AddListener(() => dialogueMenu.ContinueToNextStep(dialogue, button));
 
         //SET BUTTON SIZE
-        float newSize = 75;
+        float newSize = 145;
         RectTransform transform = button.GetComponent<RectTransform>();
         transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
 
@@ -102,7 +103,7 @@ public class DialogueButtonFactory
         textMesh.text = "Leave";
 
         //SET BUTTON SIZE
-        float newSize = 65;
+        float newSize = 125;
         RectTransform transform = button.GetComponent<RectTransform>();
         transform.sizeDelta = new Vector2(newSize, transform.sizeDelta.y);
 
