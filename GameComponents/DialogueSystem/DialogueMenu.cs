@@ -9,8 +9,6 @@ public class DialogueMenu : MonoBehaviour
     public DialogueSystem dialogueSystem;
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
 
-    public RectMask2D containerMask;
-    public GameObject bgReplacer;
     public GameObject dialogueContainer;
     public Button autoPlay;
     public Button skip;
@@ -55,17 +53,6 @@ public class DialogueMenu : MonoBehaviour
         buttonList = new();
         stepIndex = 0;
         SetValuesToDefault();
-    }
-    void Update()
-    {
-        if (dialogueContainer.GetComponent<RectTransform>().rect.height > 389 && bgReplacer.activeInHierarchy == false)
-        {
-            EnableReplacerBG();
-        }
-        else if (dialogueContainer.GetComponent<RectTransform>().rect.height < 389 && bgReplacer.activeInHierarchy == true)
-        {
-            SetValuesToDefault();
-        }
     }
 
 
@@ -172,21 +159,10 @@ public class DialogueMenu : MonoBehaviour
         Destroy(button);
     }
 
-    //HANDLE LAYOUT
     void SetValuesToDefault()
     {
-        bgReplacer.SetActive(false);
-        dialogueContainerBG.enabled = true;
-        containerMask.enabled = false;
         skip.onClick.RemoveAllListeners();
         autoPlay.onClick.RemoveAllListeners();
-    }
-
-    void EnableReplacerBG()
-    {
-        bgReplacer.SetActive(true);
-        dialogueContainerBG.enabled = false;
-        containerMask.enabled = true;
     }
 
     //Speed controls
