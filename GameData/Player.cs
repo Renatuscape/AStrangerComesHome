@@ -47,17 +47,21 @@ public static class Player
         }
     }   
 
-    public static void Add(string objectID, int amount = 1)
+    public static int Add(string objectID, int amount = 1)
     {
         if (GameCodex.ParseID(objectID) != null)
         {
-            AddDynamicObject(GameCodex.ParseID(objectID), amount);
+            return AddDynamicObject(GameCodex.ParseID(objectID), amount);
+        }
+        else
+        {
+            return 0;
         }
     }
 
-    public static void Add(IdIntPair entry)
+    public static int Add(IdIntPair entry)
     {
-        Add(entry.objectID, entry.amount);
+        return Add(entry.objectID, entry.amount);
     }
 
     public static int AddDynamicObject(dynamic dynamicObject, int amount, string caller = "")
