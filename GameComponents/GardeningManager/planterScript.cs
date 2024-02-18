@@ -28,9 +28,14 @@ public class planterScript : MonoBehaviour
         if (TransientDataScript.CameraView == CameraView.Garden)
         {
             if (currentWeeds == 0)
+            {
+                Debug.Log($"{thisPlanter} click registered.");
                 gardenManager.ClickPlanter(thisPlanter);
+            }
             else
+            {
                 Debug.Log("I need to clear out these weeds first!");
+            }
         }
 
     }
