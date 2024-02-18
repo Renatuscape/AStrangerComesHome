@@ -101,13 +101,13 @@ public class GardenManager : MonoBehaviour
     void GrowthTick()
     {
 
-        if (dataManager.planterIsActiveA && dataManager.seedA != null)
+        if (dataManager.planterIsActiveA && !string.IsNullOrEmpty(dataManager.seedA))
             UpdatePlanterData(ref plantSpriteA, ref dataManager.seedA, ref dataManager.progressSeedA);
 
-        if (dataManager.planterIsActiveB && dataManager.seedB != null)
+        if (dataManager.planterIsActiveB && !string.IsNullOrEmpty(dataManager.seedB))
             UpdatePlanterData(ref plantSpriteB, ref dataManager.seedB, ref dataManager.progressSeedB);
 
-        if (dataManager.planterIsActiveC && dataManager.seedC != null)
+        if (dataManager.planterIsActiveC && !string.IsNullOrEmpty(dataManager.seedC))
             UpdatePlanterData(ref plantSpriteC, ref dataManager.seedC, ref dataManager.progressSeedC);
 
     }
@@ -193,7 +193,7 @@ public class GardenManager : MonoBehaviour
     {
         Item seed;
 
-        if (string.IsNullOrEmpty(seedID))
+        if (!string.IsNullOrEmpty(seedID))
         {
             seed = Items.FindByID(seedID);
         }
@@ -201,6 +201,8 @@ public class GardenManager : MonoBehaviour
         {
             seed = null;
         }
+
+        Debug.Log($"Processinng click. Planter is active {planterIsActive}, growth progress {growthProgress}, seed ID {seedID}, seed object: {(seed != null ? seed.name : "null")}");
 
         //IF THE PLANTER IS EMPTY
         if (!planterIsActive)
@@ -217,6 +219,8 @@ public class GardenManager : MonoBehaviour
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
             if (growthProgress < maxGrowth && planterIsActive)
             {
+                Debug.Log($"{seed.name} is growing. {growthProgress}/{maxGrowth}");
+
                 string growthRate = "decent";
                 if (gardening < 3)
                     growthRate = "normal";
@@ -224,12 +228,14 @@ public class GardenManager : MonoBehaviour
                     growthRate = "great";
 
                 // Display info for the plant currently growing in this planter
-                Debug.Log($"This {outputPlant.name} is growing at a {growthRate} pace.");
+                TransientDataCalls.PushAlert($"This {outputPlant.name} is growing at a {growthRate} pace.");
             }
 
             //IF THE PLANTER IS READY TO BE HARVESTED
             if (growthProgress >= maxGrowth)
             {
+                Debug.Log($"{seed.name} is ready! {growthProgress}/{maxGrowth}");
+
                 //PLANT YIELD
                 var yield = seed.yield;
 
@@ -272,6 +278,26 @@ public class GardenManager : MonoBehaviour
                     planterIsActive = false;
                     plantRenderer.sprite = null;
                 }
+            }
+        }
+        else if (seed == null && planterIsActive)
+        {
+            //Check planters for bugs
+
+            if (string.IsNullOrEmpty(dataManager.seedA) && dataManager.planterIsActiveA)
+            {
+                Debug.LogWarning("Planter A is active but there is no seed. Deactivating planter.");
+                dataManager.planterIsActiveA = false;
+            }
+            if (string.IsNullOrEmpty(dataManager.seedB) && dataManager.planterIsActiveB)
+            {
+                Debug.LogWarning("Planter B is active but there is no seed. Deactivating planter.");
+                dataManager.planterIsActiveA = false;
+            }
+            if (string.IsNullOrEmpty(dataManager.seedC) && dataManager.planterIsActiveC)
+            {
+                Debug.LogWarning("Planter C is active but there is no seed. Deactivating planter.");
+                dataManager.planterIsActiveA = false;
             }
         }
     }
