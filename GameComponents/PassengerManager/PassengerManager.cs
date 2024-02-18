@@ -54,9 +54,9 @@ public class PassengerManager : MonoBehaviour
             Destroy(potentialPassenger);
             waitingCurrent -= 1;
 
-            var locationToString = destination.ToString();
-            var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
-            transientData.PushAlert("You picked up " + generatedName + ", who is going to " + locationName + ".");
+            //var locationToString = destination.ToString();
+            //var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
+            transientData.PushAlert("I picked up " + generatedName + ", who is going to " + destination.name + ".");
         }
         else
             transientData.PushAlert("There are no available seats.");
