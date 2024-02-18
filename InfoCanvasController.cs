@@ -20,6 +20,14 @@ public class InfoCanvasController : MonoBehaviour
             largeGearbox.SetActive(GlobalSettings.uiGearboxLarge);
             smallGearbox.SetActive(!GlobalSettings.uiGearboxLarge);
         }
+        else if (TransientDataScript.GameState == GameState.ShopMenu)
+        {
+            largeWallet.SetActive(GlobalSettings.uiWalletLarge);
+            smallWallet.SetActive(!GlobalSettings.uiWalletLarge);
+
+            largeGearbox.SetActive(false);
+            smallGearbox.SetActive(false);
+        }
         else
         {
             largeWallet.SetActive(false);
