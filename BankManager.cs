@@ -52,13 +52,13 @@ public class BankManager : MonoBehaviour
 
     public void OpenBankMenu()
     {
-        TransientDataScript.SetGameState(GameState.BankMenu, name, gameObject);
+        TransientDataCalls.SetGameState(GameState.BankMenu, name, gameObject);
 
         bankMenu.SetActive(true);
         exchangeMenu.SetActive(false);
         accountMenu.SetActive(false);
 
-        if (TransientDataScript.GetWeekDay() == DayOfWeek.Lunden)
+        if (TransientDataCalls.GetWeekDay() == DayOfWeek.Lunden)
         {
             leaveButton.SetActive(true);
             exchangeButton.SetActive(false);
@@ -116,7 +116,11 @@ public class BankManager : MonoBehaviour
             int incrementAmount;
 
 
-            if (difference > 100000)
+            if (difference > 1000000)
+            {
+                incrementAmount = 1000000;
+            }
+            else if (difference > 100000)
             {
                 incrementAmount = 100000;
             }
