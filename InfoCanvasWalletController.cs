@@ -25,14 +25,6 @@ public class InfoCanvasWalletController : MonoBehaviour
     float timer = 0.0f;
     float tick = 1.5f;
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (TransientDataScript.IsTimeFlowing() && TransientDataScript.GameState != GameState.BankMenu)
@@ -123,9 +115,8 @@ public class InfoCanvasWalletController : MonoBehaviour
 
     IEnumerator TextJump (GameObject container)
     {
-        var originalPosition = container.transform.localPosition;
         container.transform.localPosition = new Vector3(container.transform.localPosition.x + 1, container.transform.localPosition.y + 1, container.transform.localPosition.z);
         yield return new WaitForSeconds(0.1f);
-        container.transform.localPosition = originalPosition;
+        container.transform.localPosition = new Vector3(container.transform.localPosition.x - 1, container.transform.localPosition.y - 1, container.transform.localPosition.z);
     }
 }
