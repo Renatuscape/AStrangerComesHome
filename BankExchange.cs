@@ -43,7 +43,7 @@ public class BankExchange : MonoBehaviour
 
         shillingsPriceAdjusted = (100 + 100 * commission / 100) * slider.value;
         crownsPriceAdjusted = (MoneyExchange.crownValue + 100 * commission / 100) * slider.value;
-        guildersPriceAdjusted = (MoneyExchange.guilderValue + 100 * (commission * 10) / 100) * slider.value * 0.1f;
+        guildersPriceAdjusted = (MoneyExchange.guilderValue + 100 * (commission * 100) / 100) * slider.value * 0.01f;
 
         adjustedShillingPrice = (int)Mathf.Ceil(shillingsPriceAdjusted);
         adjustedCrownPrice = (int)Mathf.Ceil(crownsPriceAdjusted);
