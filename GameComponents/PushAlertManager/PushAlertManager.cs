@@ -45,6 +45,15 @@ public class PushAlertManager : MonoBehaviour
             StartCoroutine("PushAlert", alertQueue[0]);
             isDisplayingAlert = true;
         }
+
+        if (isDisplayingAlert)
+        {
+            alertText.raycastTarget = true;
+        }
+        else
+        {
+            alertText.raycastTarget = false;
+        }
     }
     IEnumerator PushAlert(string alertContent)
     {
