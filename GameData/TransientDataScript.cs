@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -106,11 +107,6 @@ public class TransientDataScript : MonoBehaviour
         SetGameState(GameState.Overworld, name, gameObject);
     }
 
-    public static DayOfWeek GetWeekDay()
-    {
-        return GameObject.Find("TransientData").GetComponent<TransientDataScript>().weekDay;
-    }
-
     public static void TravelByGate(Gate gate)
     {
         Debug.Log("Travel by Gate called at TransientDataScript");
@@ -138,6 +134,88 @@ public class TransientDataScript : MonoBehaviour
     static void LogStateChange(string callerScript, GameObject callerObject, GameState newState)
     {
         GameObject.Find("TransientData").GetComponent<TransientDataScript>().gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + GameState + " to " + newState + ".";
+    }
+}
+
+public static class TransientDataCalls
+{
+    public static TransientDataScript transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+    public static void PushAlert(string alert)
+    {
+        if (NullCheck())
+        {
+            transientData.PushAlert(alert);
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+        }
+    }
+
+    public static void PrintFloatText(string content)
+    {
+        if (NullCheck())
+        {
+            transientData.PrintFloatText(content);
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+        }
+    }
+
+    public static void DisableFloatText()
+    {
+        if (NullCheck())
+        {
+            transientData.DisableFloatText();
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+        }
+    }
+
+    public static void SetGameState(GameState newState, string callerScript, GameObject callerObject)
+    {
+        if (NullCheck())
+        {
+            TransientDataScript.SetGameState(newState, callerScript, callerObject);
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+        }
+    }
+
+    public static DayOfWeek GetWeekDay()
+    {
+        if (NullCheck())
+        {
+            return transientData.weekDay;
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+            return DayOfWeek.Solden;
+        }
+    }
+
+    private static bool NullCheck()
+    {
+        if (transientData == null)
+        {
+            transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+        }
+
+        if (transientData != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 
