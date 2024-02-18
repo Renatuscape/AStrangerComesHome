@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ public class PlantingManager : MonoBehaviour
     public WhichPlanter activePlanter;
     public Item activeSeed;
     public bool readyToPlant;
+    public List<GameObject> seedPrefabs;
 
     private void Awake()
     {
@@ -37,6 +39,13 @@ public class PlantingManager : MonoBehaviour
         readyToPlant = false;
 
         //spawn prefabs here
+        PrintSeeds();
+
+        DynamicPlanterSelection();
+    }
+
+    private void PrintSeeds()
+    {
         foreach (Item item in Items.all)
         {
             if (item.type == ItemType.Seed)
@@ -48,10 +57,25 @@ public class PlantingManager : MonoBehaviour
                     prefab.name = item.name;
                     prefab.transform.SetParent(seedContainter.transform, false);
                     prefab.GetComponent<GardenSeedPrefab>().EnableObject(item, this);
+                    seedPrefabs.Add(prefab);
                 }
             }
         }
-        DynamicPlanterSelection();
+    }
+
+    private void RemoveSeeds()
+    {
+        seedFrame?.SetActive(false);
+        seedFrame?.transform.SetParent(planterA.transform, false);
+
+        readyToPlant = false;
+
+        foreach (var seed in seedPrefabs)
+        {
+            Destroy(seed);
+        }
+
+        seedPrefabs.Clear();
     }
 
     private void DynamicPlanterSelection()
@@ -67,16 +91,13 @@ public class PlantingManager : MonoBehaviour
     {
         readyToPlant = false;
 
-        seedFrame.SetActive(false);
-        seedFrame.transform.SetParent(planterA.transform, false);
-        planterFrame.SetActive(false);
-        planterFrame.transform.SetParent(planterA.transform, false);
+        seedFrame?.SetActive(false);
+        seedFrame?.transform.SetParent(planterA.transform, false);
+        planterFrame?.SetActive(false);
+        planterFrame?.transform.SetParent(planterA.transform, false);
 
         //delete prefabs here
-        foreach (Transform child in seedContainter.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        RemoveSeeds();
     }
     void Update()
     {
@@ -140,61 +161,89 @@ public class PlantingManager : MonoBehaviour
     {
         if (readyToPlant && activeSeed != null) //both seed and planter has been selected
         {
-            if (activeSeed.GetOutput() != null)
+            if (Player.GetCount(activeSeed.objectID, name) > 0)
             {
-                if (activeSeed.GetCountPlayer() > 0)
+                //PLANTER A
+                if (activePlanter == WhichPlanter.PlanterA)
                 {
-                    //PLANTER A
-                    if (activePlanter == WhichPlanter.PlanterA)
+                    if (!dataManager.planterIsActiveA && !string.IsNullOrEmpty(activeSeed.objectID))
                     {
-                        if (!dataManager.planterIsActiveA)
-                        {
-                            StorePlanterData(ref dataManager.seedA, ref dataManager.seedHealthA, ref dataManager.planterIsActiveA);
-                        }
-                        else
-                            Debug.Log("This planter is occupied."); //add option to remove plant?
+                        StorePlanterData(ref dataManager.seedA, ref dataManager.seedHealthA, ref dataManager.planterIsActiveA);
                     }
-                    //PLANTER B
-                    if (activePlanter == WhichPlanter.PlanterB)
-                    {
-                        if (!dataManager.planterIsActiveB)
-                        {
-                            StorePlanterData(ref dataManager.seedB, ref dataManager.seedHealthB, ref dataManager.planterIsActiveB);
-                        }
-                        else
-                            Debug.Log("This planter is occupied."); //add option to remove plant?
-                    }
-                    //PLANTER C
-                    if (activePlanter == WhichPlanter.PlanterC)
-                    {
-                        if (!dataManager.planterIsActiveC)
-                        {
-                            StorePlanterData(ref dataManager.seedC, ref dataManager.seedHealthC, ref dataManager.planterIsActiveC);
-                        }
-                        else
-                            Debug.Log("This planter is occupied."); //add option to remove plant?
-                    }
+                    else
+                        Debug.Log("This planter is occupied."); //add option to remove plant?
                 }
-                else
-                    Debug.Log("I am all out of this type of seeds.");
+                //PLANTER B
+                if (activePlanter == WhichPlanter.PlanterB)
+                {
+                    if (!dataManager.planterIsActiveB && !string.IsNullOrEmpty(activeSeed.objectID))
+                    {
+                        StorePlanterData(ref dataManager.seedB, ref dataManager.seedHealthB, ref dataManager.planterIsActiveB);
+                    }
+                    else
+                        Debug.Log("This planter is occupied."); //add option to remove plant?
+                }
+                //PLANTER C
+                if (activePlanter == WhichPlanter.PlanterC)
+                {
+                    if (!dataManager.planterIsActiveC && !string.IsNullOrEmpty(activeSeed.objectID))
+                    {
+                        StorePlanterData(ref dataManager.seedC, ref dataManager.seedHealthC, ref dataManager.planterIsActiveC);
+                    }
+                    else
+                        Debug.Log("This planter is occupied."); //add option to remove plant?
+                }
+
+                if (Player.GetCount(activeSeed.objectID, name) == 0)
+                {
+                    GameObject outSeed = seedPrefabs.FirstOrDefault(x => x.name == activeSeed.name);
+
+                    if (seedPrefabs.Count > 1) //If there are more seeds available, hop to next one
+                    {
+                        var index = seedPrefabs.IndexOf(outSeed);
+                        int newIndex = 0;
+
+                        if (newIndex < seedPrefabs.Count)
+                        {
+                            newIndex = index + 1;
+                        }
+
+                        seedFrame.transform.SetParent(seedPrefabs[newIndex].transform);
+                        activeSeed = seedPrefabs[newIndex].GetComponent<GardenSeedPrefab>().itemSource;
+
+                        seedFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
+                    }
+                    else //if no more seeds are available, save the seed frame from deletion
+                    {
+                        readyToPlant = false;
+                        seedFrame?.SetActive(false);
+                        seedFrame?.transform.SetParent(planterA.transform, false);
+                    }
+
+                    seedPrefabs.Remove(outSeed);
+                    Destroy(outSeed);
+                }
             }
             else
-                Debug.Log("This seed will not grow into anything.");
+            {
+                Debug.Log("I am all out of this type of seeds.");
+            }
         }
-        else
-            Debug.Log("I must choose a seed and an empty planter.");
     }
 
     public void StorePlanterData(ref string storedSeed, ref int storedHealth, ref bool planterIsActive)
     {
-        activeSeed.AddToPlayer(-1);
-        storedSeed = activeSeed.objectID;
-        storedHealth = activeSeed.health;
-        planterIsActive = true;
+        if (activeSeed != null)
+        {
+            activeSeed.AddToPlayer(-1);
+            storedSeed = activeSeed.objectID;
+            storedHealth = activeSeed.health;
+            planterIsActive = true;
 
-        if (dataManager.planterIsActiveA && dataManager.planterIsActiveB && dataManager.planterIsActiveC)
-            gameObject.SetActive(false); //Close planting manager if all planters are occupied
+            if (dataManager.planterIsActiveA && dataManager.planterIsActiveB && dataManager.planterIsActiveC)
+                gameObject.SetActive(false); //Close planting manager if all planters are occupied
 
-        Invoke("DynamicPlanterSelection", 0.5f);
+            Invoke("DynamicPlanterSelection", 0.5f);
+        }
     }
 }
