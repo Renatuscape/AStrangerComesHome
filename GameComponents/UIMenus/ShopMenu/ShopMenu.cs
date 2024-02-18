@@ -96,7 +96,7 @@ public class ShopMenu : MonoBehaviour
                 var prefab = Instantiate(shopItemPrefab);
                 prefab.name = x.name;
                 prefab.transform.SetParent(shelf.transform, false);
-                prefab.GetComponent<ShopItemPrefab>().priceMultiplier = priceMultiplier;
+                prefab.GetComponent<ShopItemPrefab>().shopMultiplier = priceMultiplier;
                 prefab.GetComponent<ShopItemPrefab>().EnableObject(x, this);
             }
 
@@ -277,15 +277,32 @@ public class ShopMenu : MonoBehaviour
 
     public void AttemptPurchase(Item item, int itemCost)
     {
-        if (dataManager.playerGold >= itemCost)
+        var inventoryAmount = Player.GetCount(item.objectID, name);
+
+        if (inventoryAmount < item.maxStack)
         {
-            //Add confirm menu
-            dataManager.playerGold -= itemCost;
-            item.AddToPlayer();
-            Debug.Log($"{shopObject.sucessfulPurchaseText} You purchased {item.name} for {itemCost}. You now have {item.GetCountPlayer()} and your remaining gold is {dataManager.playerGold}");
+            var purchase = MoneyExchange.Purchase(itemCost);
+
+            if (purchase)
+            {
+                Player.Add(item.objectID);
+                AudioManager.PlayUISound("handleCoins");
+                Debug.Log($"{shopObject.sucessfulPurchaseText} You purchased {item.name} for {itemCost}.");
+                TransientDataCalls.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
+            }
+            else
+            {
+                Debug.Log("Exchange returned false.");
+                TransientDataCalls.PushAlert("I don't have enough money.");
+            }
+
         }
         else
-            Debug.Log(shopObject.notEnoguhMoneyText);
+        {
+            Debug.Log("I already have the maximum amount of this item.");
+            TransientDataCalls.PushAlert("I don't have enough space for more of this.");
+        }
+
     }
 
     public void PrintFloatText(string text)
