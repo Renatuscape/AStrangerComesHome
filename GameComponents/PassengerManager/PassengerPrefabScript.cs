@@ -100,14 +100,31 @@ public class PassengerPrefabScript : MonoBehaviour
         {
             if (destination == transientData.currentLocation)
             {
-                transientData.PushAlert("You brought " + passengerName + " to their destination.\nThey paid " + fare + "g  and dropped some Spirit Essence.");
-                //dataManager.playerGold += fare;
+                int fortune = Player.GetCount("ATT000", "PassengerPrefabScript");
+                int added = MoneyExchange.AddHighestDenomination(fare);
 
-                AudioManager.PlayAmbientSound("cloth3");
-                spiritEssence.AddToPlayer();
                 AudioManager.PlayAmbientSound("handleCoins");
-                MoneyExchange.AddHighestDenomination(fare);
+
+                // Ensure the player had inventory space for full fare
+                if (added < fare)
+                {
+                    transientData.PushAlert("I was unable to accept the total fare. Better go to the bank!");
+                }
+                else
+                {
+                    transientData.PushAlert($"{passengerName} paid {fare} shillings.");
+                }
+
                 Player.Add("MIS000-JUN-NN", Random.Range(0, fare));
+
+
+                //Spirit Essence drop
+                if (Random.Range(0, 100) > 80 - (fortune * 4))
+                {
+                    Player.Add(spiritEssence.objectID);
+                    transientData.PushAlert($"{passengerName} dropped some Spirit Essence.");
+                    AudioManager.PlayAmbientSound("cloth3");
+                }
 
                 if (isPassengerA)
                     dataManager.passengerIsActiveA = false;
