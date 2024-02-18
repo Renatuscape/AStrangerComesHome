@@ -7,7 +7,7 @@ public static class MoneyExchange
     public static float hellerValue = 0.01f;
     public static int shillingValue = 1;
     public static int crownValue = 100;
-    public static int guilderValue = 1000;
+    public static int guilderValue = 10000;
 
     public static int playerHellers;
     public static int playerShillings;
@@ -15,7 +15,7 @@ public static class MoneyExchange
     public static int playerGuilders;
 
     public static int maxHellers = 9999;
-    public static int maxShillings = 999;
+    public static int maxShillings = 9999;
     public static int maxCrowns = 999;
     public static int maxGuilders = 999;
 
@@ -48,57 +48,85 @@ public static class MoneyExchange
         playerGuilders = Player.GetCount("MIS003-RAR-NN", "Money Manager, GetPlayerMoney()");
 
         total += playerShillings; // get silver
-        total += (playerCrowns) * crownValue;
-        total += (playerGuilders) * guilderValue;
+        total += playerCrowns * crownValue;
+        total += playerGuilders * guilderValue;
 
         return total;
     }
 
     #region Buy/Sell Methods
     //  BUY/SELL METHODS
-    public static bool Purchase(int costInSilver)
+
+    public static bool Purchase(int costInShillings)
     {
-        if (GetPlayerMoney() < costInSilver) //get total and update the values with current data
+        if (GetPlayerMoney() < costInShillings) //get total and update the values with current data
         {
             return false; //If this doesn't trigger, exchange to silver should be successful
         }
-
         else
         {
+            Debug.Log($"Attempting to purchase. Cost: {costInShillings}, total: {GetPlayerMoney()}");
+
             int totalPaid = 0;
 
-            while (totalPaid < costInSilver)
+            while (totalPaid < costInShillings)
             {
-                int silverInInventory = Player.GetCount("MIS001-COM-NN", "Money Manager, Purchase()");
+                int shillingsInInventory = Player.GetCount("MIS001-COM-NN", "Money Manager, Purchase()");
+                int crownsInInventory = Player.GetCount("MIS002-UNC-NN", "Money Manager, Purchase()");
+                int guildersInInventory = Player.GetCount("MIS003-RAR-NN", "Money Manager, Purchase()");
 
-                if (silverInInventory == 0)
+                if (shillingsInInventory >= costInShillings - totalPaid)
                 {
-                    bool goldExchanged = ExchangeCrownsToShillings(1, out int silver);
-
-                    if (!goldExchanged)
+                    Player.Remove("MIS001-COM-NN", costInShillings - totalPaid);
+                    totalPaid += costInShillings - totalPaid;
+                }
+                else // Exchange higher denominations
+                {
+                    // If not enough shillings, try to exchange higher denominations
+                    if (crownsInInventory > 0)
                     {
-                        ExchangeGuildersToCrowns(1, out int gold);
+                        var crownExchange = ExchangeCrownsToShillings(1, out int shillings);
+                        Debug.Log($"Crown exchange was {crownExchange}.");
+                    }
+                    else if (guildersInInventory > 0)
+                    {
+                        Debug.Log($"No crowns in inventory. Getting guilders..");
+                        var guilderExchange = ExchangeGuildersToCrowns(1, out int crowns);
+                        Debug.Log($"Guilder exchange was {guilderExchange}.");
+
+                        var crownExchange = ExchangeCrownsToShillings(1, out int shillings);
+                        Debug.Log($"Crown exchange was {crownExchange}.");
+                    }
+                    else
+                    {
+                        Debug.Log($"All exchanges failed.");
+                        return false; // Unable to exchange
+                    }
+
+                    shillingsInInventory = Player.GetCount("MIS001-COM-NN", "Money Manager, Purchase()");
+
+                    if (shillingsInInventory >= costInShillings - totalPaid)
+                    {
+                        Player.Remove("MIS001-COM-NN", costInShillings - totalPaid);
+                        totalPaid += costInShillings - totalPaid;
+                    }
+                    else
+                    {
+                        Player.Remove("MIS001-COM-NN", shillingsInInventory);
+                        totalPaid += shillingsInInventory;
                     }
                 }
-
-                if (silverInInventory >= costInSilver)
-                {
-                    Player.Remove("MIS001-COM-NN", costInSilver);
-                    return true;
-                }
-
-                else
-                {
-                    Player.Remove("MIS001-COM-NN", silverInInventory);
-                    totalPaid += silverInInventory;
-                }
             }
-            if (totalPaid == costInSilver)
+
+            if (totalPaid == costInShillings)
             {
-                return true;
+                Debug.Log($"Purchase success with conversion. Cost: {costInShillings}, paid: {totalPaid}, new total: {GetPlayerMoney()}");
+                return true; // Purchase successful
             }
+
+            Debug.Log($"Failed outside while loop with totalPaid: {totalPaid} of price {costInShillings}.");
+            return false; // Unable to purchase
         }
-        return false;
     }
 
     public static bool Sell(Item item, int amount = 1, bool randomCoins = true)
@@ -145,42 +173,46 @@ public static class MoneyExchange
 
         return price;
     }
-    public static void AddHighestDenomination(int valueInSovereigns) {
+
+    public static int AddHighestDenomination(int valueToAddInShillings) {
         int crowns = 0;
         int shillings = 0;
         int guilders = 0;
 
-        while (valueInSovereigns > 0)
+        while (valueToAddInShillings > 0)
         {
-            if (valueInSovereigns >= guilderValue)
+            if (valueToAddInShillings >= guilderValue)
             {
-                valueInSovereigns -= guilderValue;
+                valueToAddInShillings -= guilderValue;
                 guilders++;
             }
-            else if (valueInSovereigns >= crownValue)
+            else if (valueToAddInShillings >= crownValue)
             {
-                valueInSovereigns -= crownValue;
+                valueToAddInShillings -= crownValue;
                 crowns++;
             }
             else
             {
-                valueInSovereigns -= 1;
+                valueToAddInShillings -= 1;
                 shillings++;
             }
         }
 
-        Player.Add("MIS003-RAR-NN", guilders);
-        Player.Add("MIS002-UNC-NN", crowns);
-        Player.Add("MIS001-COM-NN", shillings);
+        var guildersAdded = Player.Add("MIS003-RAR-NN", guilders);
+        var crownsAdded = Player.Add("MIS002-UNC-NN", crowns);
+        var shillingsAdded = Player.Add("MIS001-COM-NN", shillings);
+        var totalAdded = (guildersAdded * 10000) + (crownsAdded * 100) + shillingsAdded;
+        Debug.Log($"Attempted to add {valueToAddInShillings} using highest denomination. The equivalent of {totalAdded} shillings was added total.");
+        return totalAdded;
     }
 
-    public static void AddRandomDenomination(int valueInSovereigns)
+    public static void AddRandomDenomination(int valueToAddInShillings)
     {
         int crown = 0;
         int shilling = 0;
         int guilder = 0;
 
-        while (valueInSovereigns > 0)
+        while (valueToAddInShillings > 0)
         {
             // Choose a random denomination to add to the inventory
             int randomDenomination = Random.Range(1, 4); // Random number between 1 and 3 inclusive
@@ -188,21 +220,21 @@ public static class MoneyExchange
             switch (randomDenomination)
             {
                 case 1: // Sovereign
-                    if (valueInSovereigns >= guilderValue)
+                    if (valueToAddInShillings >= guilderValue)
                     {
-                        valueInSovereigns -= guilderValue;
+                        valueToAddInShillings -= guilderValue;
                         guilder++;
                     }
                     break;
                 case 2: // Gold crown
-                    if (valueInSovereigns >= crownValue)
+                    if (valueToAddInShillings >= crownValue)
                     {
-                        valueInSovereigns -= crownValue;
+                        valueToAddInShillings -= crownValue;
                         crown++;
                     }
                     break;
                 case 3: // Silver crown
-                    valueInSovereigns -= shillingValue;
+                    valueToAddInShillings -= shillingValue;
                     shilling++;
                     break;
             }
@@ -227,8 +259,9 @@ public static class MoneyExchange
         }
 
         Player.Remove("MIS002-UNC-NN", crowns);
-        shillings = crowns * crownValue;
+        shillings = crowns * 100;
         Player.Add("MIS001-COM-NN", shillings);
+        Debug.Log($"Exchanged {crowns} crowns for {shillings} shillings.");
         return true;
     }
 
@@ -240,9 +273,12 @@ public static class MoneyExchange
             return false;
         }
 
+        Debug.Log($"Attempting to exchange {guilders} guilders for crowns. Current total: {GetPlayerMoney()}");
+
         Player.Remove("MIS003-RAR-NN", guilders);
-        crowns = guilders * guilderValue;
+        crowns = guilders * 100;
         Player.Add("MIS002-UNC-NN", crowns);
+        Debug.Log($"Exchanged {guilders} guilders for {crowns} crowns. Current total: {GetPlayerMoney()}");
         return true;
     }
 
@@ -347,7 +383,7 @@ public static class MoneyExchange
             int affection = Player.GetCount(teller.objectID, "Money Manager, CalculateCommission()");
             float rate;
 
-            if (TransientDataScript.GetWeekDay() == freeExchangeDay && affection < 90)
+            if (TransientDataCalls.GetWeekDay() == freeExchangeDay && affection < 90)
             {
                 return 1.5f;
             }
@@ -358,19 +394,19 @@ public static class MoneyExchange
             }
             else if (affection >= 70)
             {
-                rate = 0.3f * (1 + (float)TransientDataScript.GetWeekDay() * 0.2f);
+                rate = 0.3f * (1 + (float)TransientDataCalls.GetWeekDay() * 0.2f);
             }
             else if (affection >= 50)
             {
-                rate = 0.7f * (1 + (float)TransientDataScript.GetWeekDay() * 0.2f);
+                rate = 0.7f * (1 + (float)TransientDataCalls.GetWeekDay() * 0.2f);
             }
             else if (affection >= 30)
             {
-                rate = 1.0f * (1 + (float)TransientDataScript.GetWeekDay() * 0.3f);
+                rate = 1.0f * (1 + (float)TransientDataCalls.GetWeekDay() * 0.3f);
             }
             else
             {
-                rate = 1.5f * (1 + (float)TransientDataScript.GetWeekDay() * 0.4f);
+                rate = 1.5f * (1 + (float)TransientDataCalls.GetWeekDay() * 0.4f);
             }
 
             rate = Mathf.Ceil(rate * rate);
