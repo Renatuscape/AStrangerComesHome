@@ -160,6 +160,10 @@ public class ItemManager : MonoBehaviour
         {
             return ItemType.Treasure;
         }
+        else if (objectID.Contains("SCR"))
+        {
+            return ItemType.Script;
+        }
         else
         {
             return ItemType.Misc;
@@ -192,6 +196,10 @@ public class ItemManager : MonoBehaviour
         else if (item.objectID.Contains("JUN"))
         {
             return ItemRarity.Junk;
+        }
+        else if (item.objectID.Contains("SCR"))
+        {
+            return ItemRarity.Script;
         }
         else
         {
