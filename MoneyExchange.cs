@@ -162,15 +162,14 @@ public static class MoneyExchange
 
         evaluation += (mercantile * 0.05f);
         evaluation += (charm * 0.05f);
-        Debug.Log("Evaluation: " + evaluation);
 
         Mathf.FloorToInt(price * evaluation);
 
         if (price < 1)
         {
             price = 1;
-        }   
-
+        }
+        Debug.Log($"Item({item.objectID}) base price: {item.basePrice}. Evaluation: {evaluation}. Returned price: {price}.");
         return price;
     }
 
