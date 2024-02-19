@@ -11,13 +11,13 @@ using TMPro;
 
 public class ShopMenu : MonoBehaviour
 {
-    public Shop shopObject;
-    public string shopkeeperID;
+    public Character shopkeeper;
+    public Shop activeShop;
     public int merchantile;
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
-    public float priceMultiplier;
+    public float profitMargin;
 
     public GameObject clearanceNotice;
     public GameObject shopItemPrefab;
@@ -32,125 +32,78 @@ public class ShopMenu : MonoBehaviour
     public List<ShopPage> shopPages;
     public TextMeshProUGUI categoryName;
     public int pageIndex;
-
-    [System.Serializable]
-    public struct ShopPage
-    {
-        public string typeName;
-        public List<Item> pageContent;
-    }
+    public List<Item> shopInventory;
+    public List<GameObject> spawnedPrefabs;
 
     void Awake()
     {
-        priceMultiplier = 2f;
+        profitMargin = 2f;
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
     }
 
-    void SyncSkills()
-    {
-        merchantile = Player.GetCount("ATT002", "ShopMenu");
-    }
-    public void ChangePage(bool pageBack)
-    {
-        var oldIndex = pageIndex;
-
-        if (pageBack)
-        {
-            if (pageIndex > 0)
-                pageIndex--;
-            else
-                pageIndex = shopPages.Count - 1;
-        }
-        else
-        {
-            if (pageIndex < shopPages.Count - 1)
-                pageIndex++;
-            else
-                pageIndex = 0;
-        }
-
-        if (oldIndex != pageIndex)
-            SpawnShopItems(pageIndex);
-    }
-
-    void SpawnShopItems(int pageIndex)
-    {
-        SyncSkills();
-
-        if (pageIndex >= 0 && pageIndex < shopPages.Count)
-        {
-            shelf.GetComponent<GridLayoutGroup>().enabled = false;
-            foreach (Transform child in shelf.transform)
-            {
-                Destroy(child.gameObject);
-            }
-            shelf.GetComponent<GridLayoutGroup>().enabled = true;
-            Canvas.ForceUpdateCanvases();
-            shelf.GetComponent<GridLayoutGroup>().enabled = false;
-
-            foreach (Item x in shopPages[pageIndex].pageContent)
-            {
-                var shelf = this.shelf;
-
-                var prefab = Instantiate(shopItemPrefab);
-                prefab.name = x.name;
-                prefab.transform.SetParent(shelf.transform, false);
-                prefab.GetComponent<ShopItemPrefab>().shopMultiplier = priceMultiplier;
-                prefab.GetComponent<ShopItemPrefab>().EnableObject(x, this);
-            }
-
-            shelf.GetComponent<GridLayoutGroup>().enabled = true;
-            Canvas.ForceUpdateCanvases();
-
-            categoryName.text = shopPages[pageIndex].typeName;
-        }
-
-    }
-
-    void EnablePortraits()
-    {
-        portraitRenderer.gameObject.SetActive(true);
-        portraitRenderer.EnableForShop(shopkeeperID);
-    }
     private void OnEnable()
     {
+        if (shopkeeper != null && activeShop != null)
+        {
+            SetUpShop(shopkeeper, activeShop);
+        }
+    }
+    private void OnDisable()
+    {
+        foreach (var item in spawnedPrefabs)
+        {
+            Destroy(item);
+        }
+
+        transientData.DisableFloatText();
+    }
+
+    public void SetUpShop(Character shopkeeper, Shop shop)
+    {
+        TransientDataScript.SetGameState(GameState.ShopMenu, name, gameObject);
+
+        this.shopkeeper = shopkeeper;
+        activeShop = shop;
+
         EnablePortraits();
         transientData.DisableFloatText();
         pageIndex = 0;
 
         shelf.GetComponent<GridLayoutGroup>().enabled = false;
         shelf.GetComponent<GridLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
 
-        if (transientData.currentShop != null)
-        {
-            shopObject = transientData.currentShop;
-        }
-
-        if (shopObject != null)
+        if (activeShop != null)
         {
             //CALCULATE SHOP RATE
-            if (shopObject.saleDay == transientData.weekDay)
+            if (activeShop.saleDay == transientData.weekDay)
             {
                 clearanceNotice.SetActive(true);
-                priceMultiplier = 1.5f - (merchantile * 0.1f);
+                profitMargin = activeShop.clearanceMargin - (merchantile * 0.5f);
             }
             else
             {
                 clearanceNotice.SetActive(false);
-                priceMultiplier = 2f - (merchantile * 0.1f);
+                profitMargin = activeShop.profitMargin - merchantile;
             }
 
-            //SET UP SHOP WITH PAGES
-            shopObject.SetupShop();
+            if (profitMargin < 0)
+            {
+                profitMargin = 0;
+            }
 
-            if (shopObject.shopInventory != null)
+
+            //SET UP SHOP WITH PAGES
+            shopInventory = activeShop.GetInventory();
+
+            if (shopInventory != null)
             {
                 //Set cell width
-                shelf.GetComponent<GridLayoutGroup>().cellSize = new Vector2(shopObject.cellWidth, 32);
+                //shelf.GetComponent<GridLayoutGroup>().cellSize = new Vector2(shopObject.cellWidth, 32);
 
                 //Sort items by rarity
-                var objectList = shopObject.shopInventory.OrderBy(obj => obj.rarity).ToList();
+                shopInventory = shopInventory.OrderBy(obj => obj.rarity).ToList();
 
 
                 //CREATE LIST OF PAGES
@@ -160,48 +113,25 @@ public class ShopMenu : MonoBehaviour
 
                 void SortShopObjects()
                 {
-                    var foundCatalysts = new List<Item>();
-                    var foundMaterials = new List<Item>();
-                    var foundSeeds = new List<Item>();
-                    var foundPlants = new List<Item>();
-                    var foundTrade = new List<Item>();
-                    var foundTreasures = new List<Item>();
-                    var foundUpgrades = new List<Item>();
-
-                    foreach (Item item in objectList)
+                    if (shopInventory.Count == 0)
                     {
-                        if (item.type == ItemType.Catalyst)
-                        {
-                            foundCatalysts.Add(item);
-                        }
-                        else if (item.type == ItemType.Material)
-                        {
-                            foundMaterials.Add(item);
-                        }
-                        else if (item.type == ItemType.Seed)
-                        {
-                            foundSeeds.Add(item);
-                        }
-                        else if (item.type == ItemType.Plant)
-                        {
-                            foundPlants.Add(item);
-                        }
-                        else if (item.type == ItemType.Trade)
-                        {
-                            foundTrade.Add(item);
-                        }
-                        else if (item.type == ItemType.Treasure)
-                        {
-                            foundTreasures.Add(item);
-                        }
+                        shopInventory = Items.all.Where(x=> x.notBuyable == false).ToList();
                     }
+                    var foundCatalysts = shopInventory.Where(x => x.type == ItemType.Catalyst).ToList();
+                    var foundMaterials = shopInventory.Where(x => x.type == ItemType.Material).ToList();
+                    var foundSeeds = shopInventory.Where(x => x.type == ItemType.Seed).ToList();
+                    var foundPlants = shopInventory.Where(x => x.type == ItemType.Plant).ToList();
+                    var foundTrade = shopInventory.Where(x => x.type == ItemType.Trade).ToList();
+                    var foundTreasures = shopInventory.Where(x => x.type == ItemType.Treasure).ToList();
+                    var foundBooks = shopInventory.Where(x => x.type == ItemType.Book).ToList();
+
 
                     GeneratePages(foundMaterials, "Materials");
                     GeneratePages(foundCatalysts, "Catalysts");
                     GeneratePages(foundSeeds, "Seeds");
                     GeneratePages(foundPlants, "Plants");
                     GeneratePages(foundTreasures, "Treasures");
-                    GeneratePages(foundUpgrades, "Upgrades");
+                    GeneratePages(foundBooks, "Books");
                     GeneratePages(foundTrade, "Trade");
 
                 }
@@ -246,33 +176,45 @@ public class ShopMenu : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    void SpawnShopItems(int pageIndex)
     {
-        //portraitRenderer.gameObject.SetActive(false);
+        SyncSkills();
 
-        foreach (Transform child in shelf.transform)
+        if (pageIndex >= 0 && pageIndex < shopPages.Count)
         {
-            Destroy(child.gameObject);
+            shelf.GetComponent<GridLayoutGroup>().enabled = false;
+            foreach (Transform child in shelf.transform)
+            {
+                Destroy(child.gameObject);
+            }
+            shelf.GetComponent<GridLayoutGroup>().enabled = true;
+            Canvas.ForceUpdateCanvases();
+            shelf.GetComponent<GridLayoutGroup>().enabled = false;
+
+            foreach (Item x in shopPages[pageIndex].pageContent)
+            {
+                var shelf = this.shelf;
+
+                var prefab = Instantiate(shopItemPrefab);
+                prefab.name = x.name;
+                prefab.transform.SetParent(shelf.transform, false);
+                prefab.GetComponent<ShopItemPrefab>().priceIncreasePercent = profitMargin;
+                prefab.GetComponent<ShopItemPrefab>().EnableObject(x, this);
+                spawnedPrefabs.Add(prefab);
+            }
+
+            shelf.GetComponent<GridLayoutGroup>().enabled = true;
+            Canvas.ForceUpdateCanvases();
+
+            categoryName.text = shopPages[pageIndex].typeName;
         }
 
-        foreach (Transform child in specialShelfA.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        foreach (Transform child in specialShelfB.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        foreach (Transform child in specialShelfC.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        foreach (Transform child in specialShelfD.transform)
-        {
-            Destroy(child.gameObject);
-        }
+    }
 
-        transientData.DisableFloatText();
+    void EnablePortraits()
+    {
+        portraitRenderer.gameObject.SetActive(true);
+        portraitRenderer.EnableForShop(shopkeeper.objectID);
     }
 
     public void AttemptPurchase(Item item, int itemCost)
@@ -287,7 +229,7 @@ public class ShopMenu : MonoBehaviour
             {
                 Player.Add(item.objectID);
                 AudioManager.PlayUISound("handleCoins");
-                Debug.Log($"{shopObject.sucessfulPurchaseText} You purchased {item.name} for {itemCost}.");
+                Debug.Log($"{activeShop.sucessfulPurchaseText} You purchased {item.name} for {itemCost}.");
                 TransientDataCalls.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
             }
             else
@@ -305,6 +247,33 @@ public class ShopMenu : MonoBehaviour
 
     }
 
+    void SyncSkills()
+    {
+        merchantile = Player.GetCount("ATT002", "ShopMenu");
+    }
+    public void ChangePage(bool pageBack)
+    {
+        var oldIndex = pageIndex;
+
+        if (pageBack)
+        {
+            if (pageIndex > 0)
+                pageIndex--;
+            else
+                pageIndex = shopPages.Count - 1;
+        }
+        else
+        {
+            if (pageIndex < shopPages.Count - 1)
+                pageIndex++;
+            else
+                pageIndex = 0;
+        }
+
+        if (oldIndex != pageIndex)
+            SpawnShopItems(pageIndex);
+    }
+
     public void PrintFloatText(string text)
     {
         transientData.PrintFloatText(text);
@@ -317,6 +286,14 @@ public class ShopMenu : MonoBehaviour
 
     public void ChatButton()
     {
-        dialogueSystem.OpenTopicMenu(shopkeeperID);
+        dialogueSystem.OpenTopicMenu(shopkeeper.objectID);
     }
+}
+
+
+[System.Serializable]
+public struct ShopPage
+{
+    public string typeName;
+    public List<Item> pageContent;
 }
