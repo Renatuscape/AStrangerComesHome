@@ -88,7 +88,12 @@ public class CharacterManager : MonoBehaviour
     public static CharacterType TypeFinder(ref Character character)
     {
         var objectID = character.objectID;
-        
+
+        if (objectID == "DEBUG")
+        {
+            objectID = "ARC001";
+        }
+
         if (objectID.Contains("ARC"))
         {
             return CharacterType.Arcana;
@@ -105,6 +110,11 @@ public class CharacterManager : MonoBehaviour
 
     public static Texture2D ImageFinder(ref string objectID)
     {
+        if (objectID == "DEBUG")
+        {
+            objectID = "ARC001";
+        }
+
         string fileDirectory = Application.streamingAssetsPath + "/Sprites/Characters/";
         string filePath = fileDirectory + objectID.Substring(0, 6) + ".png";
         Texture2D imageTexture;
