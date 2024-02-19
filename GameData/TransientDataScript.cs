@@ -43,7 +43,6 @@ public class TransientDataScript : MonoBehaviour
     //UI CONTENT
     public string mouseToolTip;
     public string infoBox;
-    public Shop currentShop;
 
     //*** CONTROLLER LISTENER ***
 
@@ -140,6 +139,7 @@ public class TransientDataScript : MonoBehaviour
 public static class TransientDataCalls
 {
     public static TransientDataScript transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+    public static GameManagerScript gameManager = GameObject.Find("GameManager").GetComponent<GameManagerScript>();
     public static void PushAlert(string alert)
     {
         if (NullCheck())
@@ -198,6 +198,32 @@ public static class TransientDataCalls
         {
             Debug.Log("transientData not found.");
             return DayOfWeek.Solden;
+        }
+    }
+
+    public static ShopMenu GetShopMenu()
+    {
+        if (NullCheck())
+        {
+            return gameManager.shopMenu;
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+            return null;
+        }
+    }
+
+    public static TransientDataScript GetTransientData()
+    {
+        if (NullCheck())
+        {
+            return transientData;
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+            return null;
         }
     }
 
