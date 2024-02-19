@@ -64,7 +64,8 @@ public enum ItemType
     Treasure,  //made from materials and catalysts
     Trade,     //has no function besides buy/sell at market
     Misc,      //modular and unique items, quest items, whatever. Not sold in any stores
-    Book       //bought/found/rewarded, can be opened and read 
+    Book,       //bought/found/rewarded, can be opened and read 
+    Script      //only for data used by scripts
 }
 
 public enum ObjectType
@@ -84,7 +85,8 @@ public enum ItemRarity
     Rare = 2,
     Extraordinary = 3,
     Mythical = 4,
-    Unique = 5
+    Unique = 5,
+    Script = 6,
 }
 
 
