@@ -37,6 +37,7 @@ public class GameManagerScript : MonoBehaviour
     public CameraController cameraComponent;
     public FontManager fontManager;
     public PortraitRenderer portraitRenderer;
+    public ShopMenu shopMenu;
 
     void Awake()
     {
