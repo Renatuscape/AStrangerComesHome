@@ -18,7 +18,7 @@ public class ShopItemPrefab : MonoBehaviour
     public GameObject buyButton;
     public Image displayImage;
     public Image displayShadow;
-    public float shopMultiplier;
+    public float priceIncreasePercent;
 
     int priceAdjusted;
 
@@ -40,22 +40,15 @@ public class ShopItemPrefab : MonoBehaviour
         displayImage.sprite = itemSource.sprite;
         displayShadow.sprite = itemSource.sprite;
         itemFrame = frameRound;
-
-        /*if (itemSource is Upgrade)
-        {
-            displayImage.rectTransform.sizeDelta = new Vector2(64, 32);
-            displayShadow.rectTransform.sizeDelta = new Vector2(64, 32);
-            displayShadow.transform.localPosition = new Vector3(1, 1, 0);
-            itemFrame = frameOval;
-        }*/
         isReady = true;
     }
 
     public void CalculatePrice()
     {
-        priceAdjusted = MoneyExchange.CalculateSellPrice(itemSource);//itemSource.basePrice * shopMultiplier;
+        var newPrice = itemSource.basePrice * (1 + priceIncreasePercent / 100);
+        priceAdjusted = (int)Mathf.Ceil(newPrice);
+        //Debug.Log($"Price {itemSource.basePrice} adjusted by {priceIncreasePercent}% to {priceAdjusted}");
 
-        //priceAdjusted = (int)Mathf.Floor(price);
         valueText.text = $"{priceAdjusted}";
     }
     public void MouseOverItem()
