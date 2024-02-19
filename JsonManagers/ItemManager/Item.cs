@@ -102,4 +102,33 @@ public static class Items
         }
         return 99;
     }
+
+    public static ItemRarity GetItemRarity(string rarityCode)
+    {
+        if (rarityCode == "COM")
+        {
+            return ItemRarity.Common;
+        }
+        else if (rarityCode == "UNC")
+        {
+            return ItemRarity.Uncommon;
+        }
+        else if (rarityCode == "RAR")
+        {
+            return ItemRarity.Rare;
+        }
+        else if (rarityCode == "EXT")
+        {
+            return ItemRarity.Extraordinary;
+        }
+        else if (rarityCode == "MYT")
+        {
+            return ItemRarity.Mythical;
+        }
+        else if (rarityCode == "UNI")
+        {
+            return ItemRarity.Unique;
+        }
+        return ItemRarity.Junk;
+    }
 }
