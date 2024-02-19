@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum CharacterType
@@ -29,6 +30,8 @@ public class Character
 
     public string namePlate;
     public string trueNamePlate;
+
+    public List<Shop> shops = new();
 
     public void NameSetup()
     {
@@ -72,6 +75,27 @@ public class Character
             return trueName;
         }
         return name;
+    }
+
+    public Shop GetShop(string shopID)
+    {
+        if (shops.Count > 0)
+        {
+            if (shops.Count == 1)
+            {
+                return shops[0];
+            }
+            else
+            {
+                return shops.Where(s => s.objectID == shopID).FirstOrDefault();
+            }
+        }
+        else
+        {
+            Debug.Log($"No shops found.");
+
+            return null;
+        }
     }
 }
 
