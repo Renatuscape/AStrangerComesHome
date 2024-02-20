@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class StationManager : MonoBehaviour
 {
     public TransientDataScript transientData;
-    public GameObject stationPrefab;
-    public GameObject stationCapitalCity;
+    public GameObject defaultStation;
+    //public GameObject stationCapitalCity;
     public GameObject spawnedStation;
     public float parallaxMultiplier;
+    public List<GameObject> customStations;
 
     void Awake()
     {
@@ -49,15 +51,16 @@ public class StationManager : MonoBehaviour
 
     void SetUpStation()
     {
-        if (transientData.currentLocation.objectID == "R0-LOC00-CITY")
+        var foundStation = customStations.Where(s => s.name.Contains(transientData.currentLocation.objectID)).FirstOrDefault();
+        if (foundStation != null)
         {
-            spawnedStation = Instantiate(stationCapitalCity);
+            spawnedStation = Instantiate(foundStation);
             spawnedStation.name = "spawnedStation";
             transientData.activePrefabs.Add(spawnedStation);
         }
         else
         {
-            spawnedStation = Instantiate(stationPrefab);
+            spawnedStation = Instantiate(defaultStation);
             spawnedStation.name = "spawnedStation";
             transientData.activePrefabs.Add(spawnedStation);
         }
