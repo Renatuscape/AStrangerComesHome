@@ -15,8 +15,12 @@ public class PlantingManager : MonoBehaviour
     public GameObject planterFrame;
     public GameObject seedFrame;
     public GameObject planterA;
+    public Image planterIconA;
     public GameObject planterB;
+    public Image planterIconB;
     public GameObject planterC;
+    public Image planterIconC;
+    public Sprite planterIconFree;
 
     public Image plantPreview;
     public WhichPlanter activePlanter;
@@ -30,6 +34,10 @@ public class PlantingManager : MonoBehaviour
         seedFrame.SetActive(false);
         planterFrame.SetActive(false);
         plantPreview.sprite = null;
+
+        planterIconA = planterA.GetComponent<Image>();
+        planterIconB = planterB.GetComponent<Image>();
+        planterIconC = planterC.GetComponent<Image>();
     }
 
     private void OnEnable()
@@ -42,8 +50,37 @@ public class PlantingManager : MonoBehaviour
         PrintSeeds();
 
         DynamicPlanterSelection();
+        UpdatePlanterIcons();
     }
 
+
+    private void UpdatePlanterIcons()
+    {
+        if (dataManager.planterIsActiveA)
+        {
+            planterIconA.sprite = Items.all.FirstOrDefault(x => x.objectID == dataManager.seedA).sprite;
+        }
+        else
+        {
+            planterIconA.sprite = planterIconFree;
+        }
+        if (dataManager.planterIsActiveB)
+        {
+            planterIconB.sprite = Items.all.FirstOrDefault(x => x.objectID == dataManager.seedB).sprite;
+        }
+        else
+        {
+            planterIconB.sprite = planterIconFree;
+        }
+        if (dataManager.planterIsActiveC)
+        {
+            planterIconC.sprite = Items.all.FirstOrDefault(x => x.objectID == dataManager.seedC).sprite;
+        }
+        else
+        {
+            planterIconC.sprite = planterIconFree;
+        }
+    }
     private void PrintSeeds()
     {
         foreach (Item item in Items.all)
@@ -194,6 +231,7 @@ public class PlantingManager : MonoBehaviour
                         Debug.Log("This planter is occupied."); //add option to remove plant?
                 }
 
+
                 if (Player.GetCount(activeSeed.objectID, name) == 0)
                 {
                     GameObject outSeed = seedPrefabs.FirstOrDefault(x => x.name == activeSeed.name);
@@ -201,11 +239,11 @@ public class PlantingManager : MonoBehaviour
                     if (seedPrefabs.Count > 1) //If there are more seeds available, hop to next one
                     {
                         var index = seedPrefabs.IndexOf(outSeed);
-                        int newIndex = 0;
+                        int newIndex = index + 1;
 
-                        if (newIndex < seedPrefabs.Count)
+                        if (newIndex >= seedPrefabs.Count)
                         {
-                            newIndex = index + 1;
+                            newIndex = 0;
                         }
 
                         seedFrame.transform.SetParent(seedPrefabs[newIndex].transform);
@@ -243,7 +281,9 @@ public class PlantingManager : MonoBehaviour
             if (dataManager.planterIsActiveA && dataManager.planterIsActiveB && dataManager.planterIsActiveC)
                 gameObject.SetActive(false); //Close planting manager if all planters are occupied
 
-            Invoke("DynamicPlanterSelection", 0.5f);
+            Invoke("DynamicPlanterSelection", 0.01f);
+
+            UpdatePlanterIcons();
         }
     }
 }
