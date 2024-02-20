@@ -11,13 +11,17 @@ public class TopicMenu : MonoBehaviour
     public PortraitRenderer portraitRenderer;
     public GameObject topicContainer;
     public List<GameObject> buttonList;
-    public void OpenTopicsMenu(string speakerID)
+    public void OpenTopicsMenu(string speakerID, bool noPortrait = false)
     {
         TransientDataScript.SetGameState(GameState.Dialogue, "TopicMenu", gameObject);
 
         questList = new();
-        portraitRenderer.gameObject.SetActive(true);
-        portraitRenderer.EnableForTopicMenu(speakerID);
+
+        if (!noPortrait)
+        {
+            portraitRenderer.gameObject.SetActive(true);
+            portraitRenderer.EnableForTopicMenu(speakerID);
+        }
 
         if (speakerID != "DEBUG")
         {
