@@ -4,30 +4,31 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Shop", menuName = "Scriptable Object/Shop")]
-public class Shop : ScriptableObject
+[System.Serializable]
+public class Shop
 {
-    public string shopName;
-    public GameObject externalPrefab; //WORLD OBJECT
-    public GameObject internalPrefab; //CANVAS OBJECT
-    public Character shopKeeper;
+    public string name;
+    public string objectID;
+    public string shopkeeper;
+    public int profitMargin = 25;
+    public int clearanceMargin = 10;
     public ItemRarity itemRarityA;
     public ItemRarity itemRarityB;
     public ItemRarity itemRarityC;
     public DayOfWeek saleDay;
-    public Item specialItemA;
-    public Item specialItemB;
-    public Item specialItemC;
-    public Item specialItemD;
-    public int cellWidth = 32;
+    public DayOfWeek closedDay;
+    public string specialItemA;
+    public string specialItemB;
+    public string specialItemC;
+    public string specialItemD;
 
-    public bool sellsUpgrades;
+    public bool sellsCustomOnly;
     public bool sellsSeeds;
     public bool sellsPlants;
-    public bool sellsCatalysts;
     public bool sellsTreasures;
     public bool sellsTrade;
     public bool sellsMaterials;
+    public bool sellsBooks;
     public bool buysItems;
 
     public string welcomeText;
@@ -40,69 +41,91 @@ public class Shop : ScriptableObject
     [TextArea(5, 20)]
     public string shopDescription;
 
-    public List<Item> shopInventory;
+    public List<string> customInventory = new();
 
-    public void SetupShop()
+    public Character GetShopkeeper()
     {
-        //shopKeeper.NameSetup();
-        shopInventory.Clear();
-        
-        foreach (Item item in Items.all)
-        {
-            if (item.rarity == itemRarityA || item.rarity == itemRarityB || item.rarity == itemRarityC)
-            {
-                /*if (sellsUpgrades == true)
-                    if (x is Upgrade)
-                    {
-                        if (shopInventory.Contains(x) != true)
-                            shopInventory.Add(x);
-                    }*/
+        DefineEnums();
+        return Characters.all.FirstOrDefault(x => x.name == shopkeeper);
+    }
+    public List<Item> GetInventory()
+    {
+        DefineEnums();
+        List<Item> shopInventory = new List<Item>();
 
-                if (!item.notBuyable)
+        if (customInventory.Count > 0)
+        {
+            foreach (string itemName in customInventory)
+            {
+                Item item = Items.all.FirstOrDefault(x => x.name == itemName);
+                if (item != null)
                 {
-                    if (sellsSeeds == true)
-                        if (item.type == ItemType.Seed)
-                        {
-                            if (shopInventory.Contains(item) != true)
-                                shopInventory.Add(item);
-                        }
-                    if (sellsPlants == true)
-                        if (item.type == ItemType.Plant)
-                        {
-                            if (shopInventory.Contains(item) != true)
-                                shopInventory.Add(item);
-                        }
-                    if (sellsCatalysts == true)
-                        if (item.type == ItemType.Catalyst)
-                        {
-                            if (shopInventory.Contains(item) != true)
-                                shopInventory.Add(item);
-                        }
-                    if (sellsTreasures == true)
-                        if (item.type == ItemType.Treasure)
-                        {
-                            if (shopInventory.Contains(item) != true)
-                                shopInventory.Add(item);
-                        }
-                    if (sellsMaterials == true)
-                        if (item.type == ItemType.Material)
-                        {
-                            if (shopInventory.Contains(item) != true)
-                                shopInventory.Add(item);
-                        }
-                    if (sellsTrade == true)
-                        if (item.type == ItemType.Trade)
-                        {
-                            if (shopInventory.Contains(item) != true)
-                                shopInventory.Add(item);
-                        }
+                    shopInventory.Add(item);
                 }
             }
+
+            if (sellsCustomOnly)
+            {
+                return shopInventory;
+            }
         }
+
+        var curatedItems = Items.all.Where(x => x.rarity == itemRarityA || x.rarity == itemRarityB || x.rarity == itemRarityC);
+        curatedItems = curatedItems.Where(x => !x.notBuyable && x.rarity != ItemRarity.Script);
+
+        foreach (var item in curatedItems)
+        {
+            if (sellsSeeds && item.type == ItemType.Seed)
+            {
+                shopInventory.Add(item);
+            }
+            if (sellsPlants && item.type == ItemType.Plant)
+            {
+                shopInventory.Add(item);
+            }
+            if (sellsTreasures && item.type == ItemType.Treasure)
+            {
+                shopInventory.Add(item);
+            }
+            if (sellsTrade && item.type == ItemType.Trade)
+            {
+                shopInventory.Add(item);
+            }
+            if (sellsMaterials && item.type == ItemType.Material)
+            {
+                shopInventory.Add(item);
+            }
+            if (sellsBooks && item.type == ItemType.Book)
+            {
+                shopInventory.Add(item);
+            }
+        }
+
+        return shopInventory;
     }
 
-    public void ClearShop()
+    public void DefineEnums()
     {
-        shopInventory = null;
+        var dataString = objectID.Split('-');
+
+        if (dataString.Length > 3)
+        {
+            itemRarityA = Items.GetItemRarity(dataString[1]);
+            itemRarityB = Items.GetItemRarity(dataString[2]);
+            itemRarityC = Items.GetItemRarity(dataString[3]);
+
+            if (dataString.Length > 4 && int.TryParse(dataString[4], out int dayOfWeekNumberSale))
+            {
+                saleDay = (DayOfWeek)(dayOfWeekNumberSale);
+            }
+            if (dataString.Length > 5 && int.TryParse(dataString[5], out int dayOfWeekNumberClosed))
+            {
+                closedDay = (DayOfWeek)(dayOfWeekNumberClosed);
+            }
+        }
+        else
+        {
+            Debug.Log($"Something was wrong with objectID ({objectID}) for shop ({name}). Enums could not be defined.");
+        }
     }
 }
