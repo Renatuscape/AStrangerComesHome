@@ -116,7 +116,8 @@ public class PassengerPrefabScript : MonoBehaviour
                 }
 
                 Player.Add("MIS000-JUN-NN", Random.Range(0, fare));
-
+                Player.Add("SCR000-SCR-NN");
+                Player.Add("SCR001-SCR-NN", fare);
 
                 //Spirit Essence drop
                 if (Random.Range(0, 100) > 80 - (fortune * 4))
