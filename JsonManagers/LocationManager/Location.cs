@@ -22,6 +22,7 @@ public class Location
     public string otherName;
     public LocationType type = LocationType.Stop;
     public bool isHidden = false;
+    public bool noPassengers = false;
     public string description;
     public int mapX;
     public int mapY;
