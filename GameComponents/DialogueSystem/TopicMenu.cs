@@ -22,23 +22,67 @@ public class TopicMenu : MonoBehaviour
             portraitRenderer.gameObject.SetActive(true);
             portraitRenderer.EnableForTopicMenu(speakerID);
         }
+        questList = FilterBySpeaker(speakerID);
 
-        if (speakerID != "DEBUG")
+        CreateTopicButtons();
+    }
+
+    public List<Quest> FilterBySpeaker(string speakerID)
+    {
+        Debug.Log("Sorting topics by speaker.");
+
+        List<Quest> foundQuests = new();
+
+        foreach (Quest quest in Quests.all)
         {
-            foreach (Quest quest in Quests.all)
+            string speaker = "";
+            int stage = Player.GetCount(quest.objectID, "topicMenu");
+
+            if (stage < quest.dialogues.Count)
             {
-                if (quest.questGiver.objectID == speakerID)
+                Dialogue activeDialogue = quest.dialogues[stage];
+
+                if (activeDialogue.stageType == StageType.Dialogue) // Make sure this stage is of type dialogue
                 {
-                    questList.Add(quest);
+                    speaker = activeDialogue.speakerID;
+                    Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
+                }
+
+                if (string.IsNullOrEmpty(speaker)) // If there is no speaker assigned to this dialogue, default to quest giver ID.
+                {
+                    speaker = quest.questGiver.objectID;
+                    Debug.Log($"Speaker was null or empty in dialogue. Speaker is set to {quest.questGiver.objectID} ({speaker})");
+                }
+
+                if (speaker == speakerID)
+                {
+                    Debug.Log($"SPEAKER MATCH FOUND. Checking requirements for dialogue {activeDialogue.objectID}");
+
+                    bool passedChecks = true;
+
+                    if (stage == 0)
+                    {
+                        passedChecks = quest.unlockRequirements.CheckRequirements(out var minDaysPassed);
+                    }
+
+                    if (passedChecks)
+                    {
+                        passedChecks = activeDialogue.CheckRequirements(out var hasTimer, out var hasLocation);
+
+                        if (passedChecks)
+                        {
+                            Debug.Log($"Check for quest and dialogue {activeDialogue.objectID} passed.");
+                            foundQuests.Add(quest);
+                        }
+                    }
                 }
             }
         }
-        else
-        {
-            questList = new(Quests.all);
-        }
-        CreateTopicButtons();
+
+        Debug.Log($"Found {foundQuests.Count} topics.");
+        return foundQuests;
     }
+
     public void CreateTopicButtons()
     {
         if (questList.Count > 0)
@@ -60,7 +104,7 @@ public class TopicMenu : MonoBehaviour
     {
         Dialogue dialogue = GetRelevantDialogue(quest, out var topicName);
         {
-            if (dialogue is not null && dialogue.stageType == StageType.Dialogue)
+            if (dialogue != null && dialogue.stageType == StageType.Dialogue)
             {
                 GameObject button = Instantiate(dialogueSystem.button);
 
@@ -85,7 +129,7 @@ public class TopicMenu : MonoBehaviour
         {
             if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
             {
-                if (entry.amount < quest.dialogues.Count) //CHECK IF QUEST IS COMPLETED
+                if (entry.amount < quest.dialogues.Count) //CHECK IF NEW DIALOGUES EXIST
                 {
                     topicName = quest.dialogues[entry.amount].topicName;
 
