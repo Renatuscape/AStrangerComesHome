@@ -33,10 +33,27 @@ public class CollectionsPeople : MonoBehaviour
                 people.Add(character);
             }
         }
+
+        if (people.Count == 0)
+        {
+            peoplePageTitle.text = "";
+            peoplePageTrueName.gameObject.SetActive(false);
+            peoplePageDescription.text = "I should add my old friends here when I find the time.";
+            peoplePagePicture.color = Color.black;
+        }
+        else
+        {
+            peoplePagePicture.color = Color.white;
+        }
     }
 
     void PrintPerson()
     {
+        if (index >= people.Count)
+        {
+            index = 0;
+        }
+
         if (people != null && people.Count > 0)
         {
             peoplePageTitle.text = people[index].namePlate;
@@ -63,29 +80,28 @@ public class CollectionsPeople : MonoBehaviour
 
     public void ChangePeoplePage(bool reverse = false)
     {
-        if (!reverse)
+        if (people.Count > 0)
         {
-            if (index + 1 < people.Count)
+            if (!reverse)
             {
                 index++;
             }
             else
             {
-                index = 0;
-            }
-        }
-        else
-        {
-            if (index - 1 >= 0)
-            {
                 index--;
             }
-            else
+
+            if (index >= people.Count)
+            {
+                index = 0;
+            }
+
+            if (index < 0)
             {
                 index = people.Count - 1;
             }
-        }
 
-        PrintPerson();
+            PrintPerson();
+        }
     }
 }
