@@ -15,11 +15,13 @@ public class Dialogue
     public StageType stageType;
     public string objectID;
     public string questID;
+    public string speakerID;
     public int questStage;
     public string topicName;
     public string hint;
     public int startTime = 0;
     public int endTime = 0;
+    public int minimumDaysPassed;
 
     public List<string> content;
     public List<DialogueStep> dialogueSteps = new(); //a step is one line of dialogue from one speaker
@@ -34,45 +36,54 @@ public class Dialogue
 
     public bool CheckRequirements(out bool hasTimer, out bool hasLocation)
     {
-        bool hasPassed = true;
         hasTimer = false;
         hasLocation = false;
 
-        if (startTime != 0 && endTime != 0)
+        if ((startTime != 0 && endTime != 0) || minimumDaysPassed > 0)
         {
             hasTimer = true;
         }
 
-        if (!string.IsNullOrWhiteSpace(location))
+        if (!string.IsNullOrEmpty(location))
         {
             hasLocation = true;
         }
 
-        if (requirements is not null && requirements.Count > 0)
+        if (requirements != null && requirements.Count > 0)
         {
-            foreach (IdIntPair entry in requirements)
+            Debug.Log($"Checking requirements for {objectID}.");
+
+            foreach (IdIntPair requirement in requirements)
             {
-                int amount = Player.GetCount(entry.objectID, "Choice Requirement Check");
-                if (amount < entry.amount)
+                int amount = Player.GetCount(requirement.objectID, "Choice Requirement Check");
+
+                Debug.Log($"{requirement.amount} {requirement.objectID} is required. Player has {amount}");
+
+                if (amount < requirement.amount)
                 {
-                    hasPassed = false;
-                    break;
+                    return false;
                 }
+
+                Debug.Log("Returned true.");
             }
         }
-        if (hasPassed && restrictions is not null && restrictions.Count > 0) //don't run if checks already failed
+
+        if (restrictions != null && restrictions.Count > 0) //don't run if checks already failed
         {
-            foreach (IdIntPair entry in restrictions)
+            foreach (IdIntPair restriction in restrictions)
             {
-                int amount = Player.GetCount(entry.objectID, "Choice Restriction Check");
-                if (amount >= entry.amount)
+                int amount = Player.GetCount(restriction.objectID, "Choice Restriction Check");
+                Debug.Log($"{restriction.objectID} is restricted to max {restriction.amount}. Player has {amount}.");
+                if (amount > restriction.amount)
                 {
-                    hasPassed = false;
-                    break;
+                    Debug.Log("Returned false.");
+                    return false;
                 }
             }
+            Debug.Log("Returned true.");
         }
-        return hasPassed;
+
+        return true;
     }
 }
 
