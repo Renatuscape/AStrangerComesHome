@@ -133,7 +133,10 @@ public class GameManagerScript : MonoBehaviour
         dataManager.isSynthActiveC = false;
 
         Player.inventoryList = new();
+        dataManager.inventoryList = new();
+        Debug.Log($"Player inventory = new(). Count is {Player.inventoryList.Count}. DataManager inventory = {dataManager.inventoryList.Count}");
         dataManager.inventoryList = Player.inventoryList;
+
 
         //Add all the skills to the player inventory from the start
         foreach (Skill skill in Skills.all.Where(s => s.type == SkillType.Attribute))
