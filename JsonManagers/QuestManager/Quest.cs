@@ -10,7 +10,7 @@ public class Quest
     public bool excludeFromJournal;
     public int maxValue = 100;
     public Character questGiver; //Set from objectID by QuestManager
-    public List<AdvancementCheck> unlockRequirements;
+    public AdvancementCheck unlockRequirements;
     public List<IdIntPair> rewards;
 
     //Repeatable quests increase in dataLevel to 100 on completion, and are reset to 10 (skipping discovery stages) by the world clock
