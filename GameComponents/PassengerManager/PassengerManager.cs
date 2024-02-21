@@ -54,8 +54,6 @@ public class PassengerManager : MonoBehaviour
             Destroy(potentialPassenger);
             waitingCurrent -= 1;
 
-            //var locationToString = destination.ToString();
-            //var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
             transientData.PushAlert("I picked up " + generatedName + ", who is going to " + destination.name + ".");
         }
         else
@@ -69,7 +67,6 @@ public class PassengerManager : MonoBehaviour
         {
             dataManager.passengerIsActiveA = true;
             dataManager.passengerNameA = passengerName;
-            //dataManager.passengerSpriteA = passengerSprite; //this somehow fucks up savegames
             dataManager.passengerOriginA = origin;
             dataManager.passengerDestinationA = destination;
             dataManager.passengerChatListA = dialogueList;
@@ -80,7 +77,6 @@ public class PassengerManager : MonoBehaviour
         {
             dataManager.passengerIsActiveB = true;
             dataManager.passengerNameB = passengerName;
-            //dataManager.passengerSpriteB = passengerSprite;
             dataManager.passengerOriginB = origin;
             dataManager.passengerDestinationB = destination;
             dataManager.passengerChatListB = dialogueList;
@@ -91,13 +87,13 @@ public class PassengerManager : MonoBehaviour
     public void PassengerSpawner()
     {
         var waitingPassenger = Instantiate(waitingPrefab);
-        var spawnArea = Random.Range( -15f, -4f);
+        var spawnArea = Random.Range(-15f, -4f);
 
         waitingPassenger.name = "WaitingPassenger";
         waitingPassenger.transform.position = new Vector3(spawnArea, -4.094f, 0f);
         waitingPassenger.GetComponent<WaitingNPC>().parent = gameObject;
 
-        spawnDelay = Random.Range(0.1f, 10f);
+        spawnDelay = Random.Range(2f, 15f);
         spawnTimer = 0;
     }
 
@@ -105,13 +101,36 @@ public class PassengerManager : MonoBehaviour
     {
         spawnTimer = spawnTimer + Time.deltaTime;
 
-        if (transientData.currentLocation is not null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID) && spawnTimer >= spawnDelay && waitingCurrent < waitingMax)
+        if (transientData.currentLocation != null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID) && spawnTimer >= spawnDelay)
         {
-            var randomRoll = Random.Range(0, 100);
-
-            if (randomRoll >= 90)
+            if (!transientData.currentLocation.noPassengers)
             {
-                PassengerSpawner();
+                if (transientData.currentLocation.type == LocationType.City)
+                {
+                    waitingMax = 7;
+                }
+                else if (transientData.currentLocation.type == LocationType.Town)
+                {
+                    waitingMax = 5;
+                }
+                else if (transientData.currentLocation.type == LocationType.Settlement)
+                {
+                    waitingMax = 3;
+                }
+                else
+                {
+                    waitingMax = 2;
+                }
+
+                if (waitingCurrent < waitingMax)
+                {
+                    var randomRoll = Random.Range(0, 100);
+
+                    if (randomRoll >= 90)
+                    {
+                        PassengerSpawner();
+                    }
+                }
             }
         }
 
