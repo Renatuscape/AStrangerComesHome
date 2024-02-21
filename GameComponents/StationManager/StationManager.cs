@@ -20,7 +20,7 @@ public class StationManager : MonoBehaviour
 
     void Update()
     {
-        if (spawnedStation == null && transientData.currentLocation is not null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
+        if (spawnedStation == null && transientData.currentLocation != null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
         {
             if (transientData.currentLocation.type == LocationType.Crossing && transientData.currentLocation.gates.Count == 1)
             {
