@@ -29,7 +29,7 @@ public class QuestTracker : MonoBehaviour
     {
         foreach (Quest quest in Quests.all)
         {
-            if (quest.dialogues is not null && quest.dialogues.Count > 0) //ensure that at least one dialogue entry exists
+            if (quest.dialogues != null && quest.dialogues.Count > 0) //ensure that at least one dialogue entry exists
             {
                 if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
                 {
@@ -55,18 +55,16 @@ public class QuestTracker : MonoBehaviour
 
     bool CheckQuestStage(Quest quest, Dialogue dialogue)
     {
-        bool foundQuest = false;
         if (dialogue.stageType == StageType.PopUp)
         {
-            if (CheckRequirements())
+            if (CheckRequirements(dialogue))
             {
                 TransientDataScript.SetGameState(GameState.Dialogue, "QuestTracker", gameObject);
 
                 popUpMenu.StartPopUp(dialogue);
-                foundQuest = true;
 
                 //Assuming pop-ups only have one choice for now:
-                if (dialogue.choices is not null && dialogue.choices.Count > 0)
+                if (dialogue.choices != null && dialogue.choices.Count > 0)
                 {
                     quest.SetQuestStage(dialogue.choices[0].advanceTo);
                 }
@@ -79,13 +77,16 @@ public class QuestTracker : MonoBehaviour
                 {
                     //Debug.Log(content);
                 }
+
+                return true;
             }
         }
-        return foundQuest;
+
+        return false;
     }
 
-    bool CheckRequirements()
+    bool CheckRequirements(Dialogue dialogue)
     {
-        return true;
+        return dialogue.CheckRequirements(out var hasTimer, out var hasLocation);
     }
 }
