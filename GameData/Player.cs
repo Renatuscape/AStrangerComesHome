@@ -101,6 +101,13 @@ public static class Player
             id = character.objectID;
             //Debug.Log($"Character found. MaxValue is {max}");
         }
+        else if (dynamicObject is Recipe)
+        {
+            var recipe = (Recipe)dynamicObject;
+            max = recipe.maxStack;
+            id = recipe.objectID;
+            //Debug.Log($"Character found. MaxValue is {max}");
+        }
         if (id != "")
         {
             bool itemExists = false;
