@@ -49,6 +49,7 @@ public class TimeManagerComponent : MonoBehaviour
             {
                 dataManager.timeOfDay = 0;
                 dataManager.totalGameDays++;
+                TransientDataCalls.DailyReset();
             }
 
             timeOfDayNormalised = Mathf.Round(dataManager.timeOfDay * 24);
