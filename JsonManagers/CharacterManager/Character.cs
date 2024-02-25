@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.FilePathAttribute;
 
 public enum CharacterType
 {
@@ -27,6 +28,7 @@ public class Character
     public List<Texture2D> imageAnimation;
     public Sprite sprite;
     public List<Sprite> spriteAnimation;
+    public List<WalkingLocation> walkingLocations;
 
     public string namePlate;
     public string trueNamePlate;
@@ -143,5 +145,98 @@ public static class Characters
         }
 
         return null;
+    }
+}
+
+[System.Serializable]
+public class WalkingLocation
+{
+    public List<string> locations;
+    public float timeStart;
+    public float timeEnd;
+    public List<int> daysOfWeek;
+    public List<IdIntPair> requirements;
+    public List<IdIntPair> restrictions;
+    public bool isBuying;
+    public bool isSelling;
+
+    public bool CheckRequirement()
+    {
+        // CHECK LOCATION
+        if (locations != null && locations.Count > 0)
+        {
+            bool hasFoundLocation = false;
+            foreach (string location in locations)
+            {
+                if (location == TransientDataCalls.transientData.currentLocation.objectID)
+                {
+                    hasFoundLocation = true;
+                }
+            }
+            if (!hasFoundLocation)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            Debug.Log("Walking Location had no actual locations.");
+        }
+
+        // CHECK TIME OF DAY
+        if (timeStart != timeEnd) // Skip if start and end time is identical, i. e. not set to any meaningful value
+        {
+            var timeOfDay = TransientDataCalls.GetTimeOfDay();
+
+            if (timeOfDay < timeStart || timeOfDay > timeEnd)
+            {
+                return false;
+            }
+        }
+
+        // CHECK DAYS OF WEEK
+        if (daysOfWeek != null && daysOfWeek.Count > 0) //if no days are listed, spawn any day
+        {
+            bool isValidDay = false;
+            int dayOfWeek = (int)TransientDataCalls.GetWeekDay();
+            foreach (int day in daysOfWeek)
+            {
+                if (day == dayOfWeek)
+                {
+                    isValidDay = true;
+                }
+            }
+
+            if (!isValidDay)
+            {
+                return false;
+            }
+        }
+
+        // CHECK REQUIREMENTS
+        if (requirements != null  && requirements.Count > 0)
+        {
+            foreach (var requirement in requirements)
+            {
+                if (Player.GetCount(requirement.objectID, "Walking Location Check") < requirement.amount)
+                {
+                    return false;
+                }
+            }
+        }
+
+        // CHECK RESTRICTIONS
+        if (restrictions != null  && restrictions.Count > 0)
+        {
+            foreach (var restriction in restrictions)
+            {
+                if (Player.GetCount(restriction.objectID, "Walking Location Check")  > restriction.amount)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
