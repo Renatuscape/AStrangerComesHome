@@ -14,8 +14,14 @@ public class Quest
     public List<IdIntPair> rewards;
 
     //Repeatable quests increase in dataLevel to 100 on completion, and are reset to 10 (skipping discovery stages) by the world clock
-    public int resetAfterDays;
-    public int autoAdvanceAfterDays;
+    public int resetChance = 100;
+    public int resetWeekDay = 0; //not all quests need to reset on the same day of the week
+    public bool advanceEveryDay;
+    public bool advanceEveryWeek;
+    public bool advanceEveryMonth;
+    public bool advanceEveryYear;
+    public bool resetOnComplete;
+    public bool resetToRandomStage;
 
     public List<Dialogue> dialogues = new();
 
