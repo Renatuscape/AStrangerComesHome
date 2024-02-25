@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class QuestTracker : MonoBehaviour
@@ -88,5 +89,68 @@ public class QuestTracker : MonoBehaviour
     bool CheckRequirements(Dialogue dialogue)
     {
         return dialogue.CheckRequirements(out var hasTimer, out var hasLocation);
+    }
+}
+
+public static class QuestResetter
+{
+    public static List<Quest> questsAdvancingDaily;
+    public static List<Quest> questsAdvancingWeekly;
+    public static List<Quest> questsAdvancingMonthly;
+    public static List<Quest> questsAdvancingYearly;
+    public static List<Quest> questsResettingOnComplete;
+
+    public static void Tick()
+    {
+        FindQuests();
+
+        int daysPassed = TransientDataCalls.GetDaysPassed();
+        foreach (Quest quest in questsAdvancingDaily)
+        {
+            Player.Add(quest.objectID);
+        }
+        if (daysPassed % 7 == 0)
+        {
+            // reset weekly quests
+        }
+        if (daysPassed % 28 == 0)
+        {
+
+        }
+        if (daysPassed % 336 == 0)
+        {
+
+        }
+
+        foreach (Quest quest in questsResettingOnComplete)
+        {
+            if (Random.Range(0, 100) < quest.resetChance)
+            {
+                int currentStage = Player.GetCount(quest.objectID, "QuestResetter");
+
+                if (currentStage >= 100 || currentStage >= quest.dialogues.Count)
+                {
+                    if (quest.resetToRandomStage)
+                    {
+                        Player.Set(quest.objectID, Random.Range(0, quest.dialogues.Count));
+                    }
+                    else
+                    {
+                        Player.Set(quest.objectID, 0);
+                    }
+                }
+            }
+
+        }
+    }
+
+    public static void FindQuests()
+    {
+        questsAdvancingDaily = Quests.all.Where(q => q.advanceEveryDay).ToList();
+        questsAdvancingWeekly = Quests.all.Where(q => q.advanceEveryWeek).ToList();
+        questsAdvancingMonthly = Quests.all.Where(q => q.advanceEveryMonth).ToList();
+        questsAdvancingYearly = Quests.all.Where(q => q.advanceEveryYear).ToList();
+
+        questsResettingOnComplete = Quests.all.Where(q => q.resetOnComplete || q.resetToRandomStage).ToList();
     }
 }
