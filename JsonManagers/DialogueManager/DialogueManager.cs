@@ -110,6 +110,10 @@ public class DialogueManager : MonoBehaviour
         {
             dialogue.stageType = StageType.PopUp;
         }
+        else if (dialogue.objectID.Substring(14, 1) == "N")
+        {
+            dialogue.stageType = StageType.Node;
+        }
 
         //SET QUEST STAGE
         dialogue.questStage = int.Parse(dialogue.objectID.Substring(11, 2));
