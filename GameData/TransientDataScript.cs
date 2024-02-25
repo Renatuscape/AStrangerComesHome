@@ -176,6 +176,11 @@ public static class TransientDataCalls
         }
     }
 
+    public static float GetTimeOfDay()
+    {
+        return gameManager.dataManager.timeOfDay;
+    }
+
     public static void SetGameState(GameState newState, string callerScript, GameObject callerObject)
     {
         if (NullCheck())
@@ -242,6 +247,16 @@ public static class TransientDataCalls
         {
             return false;
         }
+    }
+
+    public static void DailyReset()
+    {
+        QuestResetter.Tick();
+    }
+
+    public static int GetDaysPassed()
+    {
+        return gameManager.dataManager.totalGameDays;
     }
 }
 
