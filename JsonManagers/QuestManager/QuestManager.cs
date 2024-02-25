@@ -64,7 +64,32 @@ public class QuestManager : MonoBehaviour
     public static void InitialiseQuest(Quest quest, List<Quest> questList)
     {
         objectIDReader(ref quest);
-        quest.dialogues = Dialogues.FindQuestDialogues(quest.objectID);
+        if (quest.dialogues == null || quest.dialogues.Count == 0)
+        {
+            quest.dialogues = Dialogues.FindQuestDialogues(quest.objectID);
+        }
+        else
+        {
+            foreach (Dialogue dialogue in quest.dialogues)
+            {
+                //SET STAGE TYPE
+                if (dialogue.objectID.Substring(14, 1) == "M")
+                {
+                    dialogue.stageType = StageType.Memory;
+                }
+                else if (dialogue.objectID.Substring(14, 1) == "P")
+                {
+                    dialogue.stageType = StageType.PopUp;
+                }
+                else if (dialogue.objectID.Substring(14, 1) == "N")
+                {
+                    dialogue.stageType = StageType.Node;
+                }
+
+                Dialogues.all.Add(dialogue);
+            }
+        }
+
         questList.Add(quest);
     }
 
