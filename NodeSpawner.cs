@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class NodeSpawner : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class NodeSpawner : MonoBehaviour
     public Dialogue memory;
     public Dialogue itemNode;
     public Character character;
+    public MemoryMenu memoryMenu;
 
     public List<Sprite> placeholderNpc;
     public List<Sprite> itemCrate;
@@ -46,6 +48,15 @@ public class NodeSpawner : MonoBehaviour
                 animationTimer = 0;
             }
         }
+
+        if (TransientDataScript.GameState == GameState.Overworld)
+        {
+            boxCollider.enabled = true;
+        }
+        else
+        {
+            boxCollider.enabled = false;
+        }
     }
 
     private void OnMouseOver()
@@ -58,6 +69,11 @@ public class NodeSpawner : MonoBehaviour
         {
             TransientDataCalls.PrintFloatText("A Memory");
         }
+    }
+
+    private void OnMouseExit()
+    {
+        TransientDataCalls.DisableFloatText();
     }
 
     private void OnMouseDown()
@@ -103,7 +119,24 @@ public class NodeSpawner : MonoBehaviour
     }
     private void HandleMemoryClick()
     {
-        Debug.Log("Clicked memory. Implement menu.");
+        if (memoryMenu == null)
+        {
+            Debug.Log("Getting memory menu");
+            memoryMenu = TransientDataCalls.GetMemoryMenu();
+        }
+        if (memoryMenu != null)
+        {
+            bool isSuccess = memoryMenu.InitialiseReader(memoryNode.objectID, memoryNode.amount);
+
+            if (!isSuccess)
+            {
+                Debug.Log("Memory initialisation failed");
+            }
+            else
+            {
+                Debug.Log("Memory initialisation succeeded");
+            }
+        }
     }
     private void HandleItemClick()
     {
@@ -111,10 +144,11 @@ public class NodeSpawner : MonoBehaviour
         animationTimer = animationFrameRate; //Start animating immediately
         playAnimation = true;
         boxCollider.enabled = false;
-        Debug.Log("Clicked item node. Implement logic.");
+
+        Choice choice = itemNode.choices[Random.Range(0, itemNode.choices.Count)];
         Player.Set(repeatingItemQuest, itemNode.choices[0].advanceTo);
 
-        var rewards = itemNode.choices[0].rewards;
+        var rewards = choice.rewards;
 
         foreach (var entry in rewards)
         {
@@ -210,7 +244,7 @@ public class NodeSpawner : MonoBehaviour
     private void SetUpItem(Dialogue dialogue)
     {
         Debug.Log("Starting item setup.");
-        var random = UnityEngine.Random.Range(0, 100);
+        var random = Random.Range(0, 100);
 
         if (random < itemSpawnChance)
         {
