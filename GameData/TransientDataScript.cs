@@ -178,7 +178,15 @@ public static class TransientDataCalls
 
     public static float GetTimeOfDay()
     {
-        return gameManager.dataManager.timeOfDay;
+        if (NullCheck())
+        {
+            return gameManager.dataManager.timeOfDay;
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+            return 0.6f;
+        }
     }
 
     public static void SetGameState(GameState newState, string callerScript, GameObject callerObject)
@@ -211,6 +219,20 @@ public static class TransientDataCalls
         if (NullCheck())
         {
             return gameManager.shopMenu;
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+            return null;
+        }
+    }
+
+    public static MemoryMenu GetMemoryMenu()
+    {
+        if (NullCheck())
+        {
+            Debug.Log($"Returning memory menu ({gameManager.memoryMenu})");
+            return gameManager.memoryMenu;
         }
         else
         {
