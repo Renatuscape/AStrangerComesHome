@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [System.Serializable]
 public class Quest
@@ -32,6 +33,11 @@ public class Quest
     public void SetQuestStage(int stage)
     {
         Player.Set(objectID, stage);
+    }
+
+    public Dialogue GetStage(int stage)
+    {
+        return dialogues.Where(d => d.questStage == stage).FirstOrDefault();
     }
 }
 
