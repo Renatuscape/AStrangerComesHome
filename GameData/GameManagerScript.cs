@@ -39,6 +39,7 @@ public class GameManagerScript : MonoBehaviour
     public FontManager fontManager;
     public PortraitRenderer portraitRenderer;
     public ShopMenu shopMenu;
+    public MemoryMenu memoryMenu;
 
     void Awake()
     {
