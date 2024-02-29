@@ -28,7 +28,7 @@ public class MemoryMenu : MonoBehaviour
 
     void Awake()
     {
-        shadowColour = shadowBox.color;
+        shadowColour = new Color(0.1527f, 0.1073781f, 0.1792453f, 0.5f);
     }
 
     private void OnDisable()
@@ -140,11 +140,11 @@ public class MemoryMenu : MonoBehaviour
     IEnumerator FadeInShadowBox()
     {
         float shadowTranslucence = 0;
-        while (shadowBox.color != shadowColour)
+        while (shadowTranslucence < 0.5f)
         {
-            shadowTranslucence += 0.1f;
+            shadowTranslucence += 0.01f;
             shadowBox.color = new Color(shadowColour.r, shadowColour.g, shadowColour.b, shadowTranslucence);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
