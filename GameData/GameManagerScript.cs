@@ -14,8 +14,8 @@ public class GameManagerScript : MonoBehaviour
     public GameObject skillManager;
     public GameObject upgradeManager;
     public GameObject characterManager;
-    public GameObject dialogueManager;
     public GameObject questManager;
+    public GameObject dialogueManager;
     public GameObject locationManager;
     public GameObject regionManager;
     public GameObject recipeManager;
@@ -38,8 +38,8 @@ public class GameManagerScript : MonoBehaviour
     public CameraController cameraComponent;
     public FontManager fontManager;
     public PortraitRenderer portraitRenderer;
-    public ShopMenu shopMenu;
-    public MemoryMenu memoryMenu;
+    public StorySystem storySystem;
+    public MenuSystem menuSystem;
 
     void Awake()
     {
