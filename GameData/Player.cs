@@ -45,7 +45,7 @@ public static class Player
         {
             Add(objectID, amount);
         }
-    }   
+    }
 
     public static int Add(string objectID, int amount = 1)
     {
@@ -119,12 +119,24 @@ public static class Player
                     if (entry.amount + amount <= max && entry.amount + amount >= 0)
                     {
                         entry.amount += amount;
+
+                        if (dynamicObject is Item)
+                        {
+                            LogAlert.QueueAlert((Item)dynamicObject, amount);
+                        }
+
                         return amount;
                     }
                     else
                     {
                         int reduced = max - entry.amount;
                         entry.amount += reduced;
+
+                        if (dynamicObject is Item)
+                        {
+                            LogAlert.QueueAlert((Item)dynamicObject, reduced);
+                        }
+
                         return reduced;
                     }
                 }
@@ -138,12 +150,24 @@ public static class Player
                 if (amount >= 0 && amount <= max)
                 {
                     newEntry.amount += amount;
+
+                    if (dynamicObject is Item)
+                    {
+                        LogAlert.QueueAlert((Item)dynamicObject, amount);
+                    }
+
                     return amount;
                 }
                 else
                 {
                     int reduced = max - newEntry.amount;
                     newEntry.amount += reduced;
+
+                    if (dynamicObject is Item)
+                    {
+                        LogAlert.QueueAlert((Item)dynamicObject, reduced);
+                    }
+
                     return reduced;
                 }
             }
