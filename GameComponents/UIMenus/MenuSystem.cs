@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MenuUIManager : MonoBehaviour
+public class MenuSystem : MonoBehaviour
 {
     public TransientDataScript transientData;
 
     public GameObject startMenu;
-    public GameObject shopMenu;
+    public ShopMenu shopMenu;
     public GameObject journalMenu;
 
     void Awake()
@@ -56,9 +56,8 @@ public class MenuUIManager : MonoBehaviour
                 }
             }
 
-            if (TransientDataScript.GameState == GameState.ShopMenu && !shopMenu.activeInHierarchy)
+            if (TransientDataScript.GameState == GameState.ShopMenu && !shopMenu.gameObject.activeInHierarchy)
             {
-                shopMenu.SetActive(true);
                 transientData.engineState = EngineState.Off;
             }
         }
