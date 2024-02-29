@@ -214,11 +214,12 @@ public static class TransientDataCalls
         }
     }
 
-    public static ShopMenu GetShopMenu()
+    public static MenuSystem GetMenuSystem()
     {
         if (NullCheck())
         {
-            return gameManager.shopMenu;
+            Debug.Log($"Returning menu system ({gameManager.menuSystem})");
+            return gameManager.menuSystem;
         }
         else
         {
@@ -227,12 +228,12 @@ public static class TransientDataCalls
         }
     }
 
-    public static MemoryMenu GetMemoryMenu()
+    public static StorySystem GetStorySystem()
     {
         if (NullCheck())
         {
-            Debug.Log($"Returning memory menu ({gameManager.memoryMenu})");
-            return gameManager.memoryMenu;
+            Debug.Log($"Returning dialogue system ({gameManager.storySystem})");
+            return gameManager.storySystem;
         }
         else
         {
