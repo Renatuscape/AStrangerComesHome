@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PopUpMenu : MonoBehaviour
 {
-    public DialogueSystem dialogueSystem;
+    public StorySystem dialogueSystem;
     public TextMeshProUGUI textMesh;
     public GameObject container;
     public List<GameObject> buttons;

@@ -21,7 +21,7 @@ public class ShopMenu : MonoBehaviour
 
     public GameObject clearanceNotice;
     public GameObject shopItemPrefab;
-    public DialogueSystem dialogueSystem;
+    public StorySystem dialogueSystem;
 
     public GameObject shelf;
     public GameObject specialShelfA; //special item
@@ -62,6 +62,8 @@ public class ShopMenu : MonoBehaviour
     public void SetUpShop(Character shopkeeper, Shop shop)
     {
         TransientDataScript.SetGameState(GameState.ShopMenu, name, gameObject);
+        transform.parent.gameObject.SetActive(true);
+        gameObject.SetActive(true);
 
         this.shopkeeper = shopkeeper;
         activeShop = shop;

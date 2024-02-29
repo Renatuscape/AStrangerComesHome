@@ -9,7 +9,6 @@ public class StationShop : MonoBehaviour
 {
     public Character shopkeeper;
     public Shop shop;
-
     public ShopMenu shopMenu;
     public string shopkeeperID;
     public string shopID;
@@ -18,7 +17,7 @@ public class StationShop : MonoBehaviour
 
     void Start()
     {
-        shopMenu = TransientDataCalls.GetShopMenu();
+        shopMenu = TransientDataCalls.GetMenuSystem().shopMenu;
         transientData = TransientDataCalls.GetTransientData();
         col = GetComponent<BoxCollider2D>();
         Debug.Log($"Station spawned with shopkeeperID {shopkeeperID} and shopID {shopID}.");
@@ -89,7 +88,7 @@ public class StationShop : MonoBehaviour
         }
         if (shopMenu == null)
         {
-            shopMenu = TransientDataCalls.GetShopMenu();
+            shopMenu = TransientDataCalls.GetMenuSystem().shopMenu;
         }
 
         return shopkeeper != null && shop != null;

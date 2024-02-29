@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class DialogueMenu : MonoBehaviour
 {  
-    public DialogueSystem dialogueSystem;
+    public StorySystem dialogueSystem;
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
 
     public GameObject dialogueContainer;

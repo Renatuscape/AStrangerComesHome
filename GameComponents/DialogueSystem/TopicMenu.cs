@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class TopicMenu : MonoBehaviour
 {
     public List<Quest> questList;
-    public DialogueSystem dialogueSystem;
+    public StorySystem dialogueSystem;
     public PortraitRenderer portraitRenderer;
     public GameObject topicContainer;
     public List<GameObject> buttonList;
