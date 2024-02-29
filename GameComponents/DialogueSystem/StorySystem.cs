@@ -2,7 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class DialogueSystem : MonoBehaviour
+public class StorySystem : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public FontManager fontManager;
@@ -11,6 +11,7 @@ public class DialogueSystem : MonoBehaviour
     public GameObject dialogueMenu;
     public GameObject popUpMenu;
     public GameState previousGameState = GameState.Overworld;
+    public MemoryMenu memoryMenu;
 
     private void Start()
     {
