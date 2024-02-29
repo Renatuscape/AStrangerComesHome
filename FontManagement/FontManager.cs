@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FontManager : MonoBehaviour
 {
@@ -25,6 +27,8 @@ public class FontManager : MonoBehaviour
     public TMP_Dropdown subtitleFontDropDown;
     public TMP_Dropdown bodyFontDropDown;
     public TMP_Dropdown scriptFontDropDown;
+    public Slider fontSizeSlider;
+    public int fontSize;
 
     private void Awake()
     {
@@ -33,6 +37,7 @@ public class FontManager : MonoBehaviour
         subtitleFontDropDown.onValueChanged.AddListener(OnSelectSubtitle);
         bodyFontDropDown.onValueChanged.AddListener(OnSelectBody);
         scriptFontDropDown.onValueChanged.AddListener(OnSelectScript);
+        fontSizeSlider.onValueChanged.AddListener(OnFontSizeChange);
     }
 
     private void OnEnable()
@@ -125,6 +130,8 @@ public class FontManager : MonoBehaviour
         subtitle.font = defaultSubtitleFont;
         body.font = defaultBodyFont;
         script.font = defaultScriptFont;
+        OnFontSizeChange(0);
+        fontSizeSlider.value = 0;
         GlobalSettings.IsScriptEnabled = true;
     }
 
@@ -211,12 +218,19 @@ public class FontManager : MonoBehaviour
         }
     }
 
+    public void OnFontSizeChange(float value)
+    {
+        fontSize = (int)fontSizeSlider.value;
+        body.fontSize = 26 + fontSize;
+    }
+
     public void StoreFonts()
     {
         GlobalSettings.HeaderFont = header.font.name;
         GlobalSettings.SubtitleFont = subtitle.font.name;
         GlobalSettings.BodyFont = body.font.name;
         GlobalSettings.ScriptFont = script.font.name;
+        GlobalSettings.TextSize = fontSize;
         GlobalSettingsManager.SaveSettings();
 
         gameObject.SetActive(false);
