@@ -30,6 +30,7 @@ public class NodeSpawner : MonoBehaviour
     public bool isSpawningMemory = false;
     public bool isSpawningNpc = false;
     public bool isSpawningItem = false;
+    public bool isClickable = true;
 
     void Awake()
     {
@@ -49,7 +50,7 @@ public class NodeSpawner : MonoBehaviour
             }
         }
 
-        if (TransientDataScript.GameState == GameState.Overworld)
+        if (TransientDataScript.GameState == GameState.Overworld && isClickable)
         {
             boxCollider.enabled = true;
         }
@@ -122,7 +123,7 @@ public class NodeSpawner : MonoBehaviour
         if (memoryMenu == null)
         {
             Debug.Log("Getting memory menu");
-            memoryMenu = TransientDataCalls.GetMemoryMenu();
+            memoryMenu = TransientDataCalls.GetStorySystem().memoryMenu;
         }
         if (memoryMenu != null)
         {
@@ -141,9 +142,9 @@ public class NodeSpawner : MonoBehaviour
     private void HandleItemClick()
     {
         AudioManager.PlayUISound("cloth3");
-        animationTimer = animationFrameRate; //Start animating immediately
+        animationTimer = 100; //Start animating immediately
         playAnimation = true;
-        boxCollider.enabled = false;
+        isClickable = false;
 
         Choice choice = itemNode.choices[Random.Range(0, itemNode.choices.Count)];
         Player.Set(repeatingItemQuest, itemNode.choices[0].advanceTo);
