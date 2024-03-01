@@ -66,12 +66,13 @@ public static class Skills
         }
         foreach (Skill skill in all)
         {
-            if (skill.objectID.Contains(searchWord))
+            if (skill.objectID == searchWord)
             {
                 return skill;
             }
         }
         //Debug.LogWarning("No skill found with ID contianing this search term: " + searchWord);
+        //DebugList();
         return null;
     }
 
