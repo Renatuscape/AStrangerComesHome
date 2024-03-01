@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 public static class Player
 {
@@ -120,11 +121,7 @@ public static class Player
                     {
                         entry.amount += amount;
 
-                        if (dynamicObject is Item)
-                        {
-                            LogAlert.QueueAlert((Item)dynamicObject, amount);
-                        }
-
+                        AttemptToLog(dynamicObject, amount);
                         return amount;
                     }
                     else
@@ -132,11 +129,7 @@ public static class Player
                         int reduced = max - entry.amount;
                         entry.amount += reduced;
 
-                        if (dynamicObject is Item)
-                        {
-                            LogAlert.QueueAlert((Item)dynamicObject, reduced);
-                        }
-
+                        AttemptToLog(dynamicObject, reduced);
                         return reduced;
                     }
                 }
@@ -151,11 +144,7 @@ public static class Player
                 {
                     newEntry.amount += amount;
 
-                    if (dynamicObject is Item)
-                    {
-                        LogAlert.QueueAlert((Item)dynamicObject, amount);
-                    }
-
+                    AttemptToLog(dynamicObject, amount);
                     return amount;
                 }
                 else
@@ -163,16 +152,39 @@ public static class Player
                     int reduced = max - newEntry.amount;
                     newEntry.amount += reduced;
 
-                    if (dynamicObject is Item)
-                    {
-                        LogAlert.QueueAlert((Item)dynamicObject, reduced);
-                    }
-
+                    AttemptToLog(dynamicObject, reduced);
                     return reduced;
                 }
             }
         }
         return 0;
+    }
+
+    static void AttemptToLog(dynamic dynamicObject, int value)
+    {
+        if (dynamicObject is Item)
+        {
+            LogAlert.QueueItemAlert((Item)dynamicObject, value);
+        }
+        else if (dynamicObject is Character)
+        {
+            LogAlert.QueueAffectionAlert((Character)dynamicObject, value);
+        }
+        else if (dynamicObject is Skill)
+        {
+            var skill = (Skill)dynamicObject;
+            LogAlert.QueueTextAlert($"{skill.name} increased by {value}");
+        }
+        else if ( dynamicObject is Recipe)
+        {
+            var recipe = (Recipe)dynamicObject;
+            LogAlert.QueueTextAlert($"Obtained {recipe.name}!");
+        }
+        else if (dynamicObject is Upgrade)
+        {
+            var upgrade = (Upgrade)dynamicObject;
+            LogAlert.QueueTextAlert($"{upgrade.name} upgraded!");
+        }
     }
 
     public static int GetCount(string searchID, string caller)
