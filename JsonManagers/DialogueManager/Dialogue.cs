@@ -29,6 +29,7 @@ public class Dialogue
     public List<IdIntPair> requirements = new();
     public List<IdIntPair> restrictions = new();
     public List<Choice> choices = new(); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
+    public List<IdIntPair> displayProgress = new(); // For quests with multiple, non-chronological requirements that should be tracked in the journal. More responsive and situational than hints.
     public bool autoProgressStage = false; //automatically go to next stage when step is completed
     public bool noLeaveButton = true; //if this is enabled, it is impossible to leave dialogue until you reach a choice
 
@@ -74,10 +75,11 @@ public class Dialogue
             foreach (IdIntPair restriction in restrictions)
             {
                 int amount = Player.GetCount(restriction.objectID, "Choice Restriction Check");
-                Debug.Log($"{restriction.objectID} is restricted to max {restriction.amount}. Player has {amount}.");
+                //Debug.Log($"{restriction.objectID} is restricted to max {restriction.amount}. Player has {amount}.");
+
                 if (amount > restriction.amount)
                 {
-                    Debug.Log("Returned false.");
+                    //Debug.Log("Amount was higher than restricted amount. Returned false.");
                     return false;
                 }
             }
