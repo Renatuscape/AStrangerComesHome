@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine;
 
 public static class GameCodex
 {
@@ -57,7 +58,7 @@ public static class GameCodex
         }
 
         Skill foundSkill = Skills.FindByID(searchID);
-        if (foundItem != null)
+        if (foundSkill != null)
         {
             return foundSkill;
         }
@@ -80,6 +81,7 @@ public static class GameCodex
             return foundCharacter;
         }
 
+        Debug.Log($"Could not identify object {searchID}");
         return null;
     }
 }
