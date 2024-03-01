@@ -45,18 +45,18 @@ public class TopicMenu : MonoBehaviour
                 if (activeDialogue.stageType == StageType.Dialogue) // Make sure this stage is of type dialogue
                 {
                     speaker = activeDialogue.speakerID;
-                    Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
+                    //Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
                 }
 
                 if (string.IsNullOrEmpty(speaker)) // If there is no speaker assigned to this dialogue, default to quest giver ID.
                 {
                     speaker = quest.questGiver.objectID;
-                    Debug.Log($"Speaker was null or empty in dialogue. Speaker is set to {quest.questGiver.objectID} ({speaker})");
+                    //Debug.Log($"Speaker was null or empty in dialogue. Speaker is set to {quest.questGiver.objectID} ({speaker})");
                 }
 
                 if (speaker == speakerID)
                 {
-                    Debug.Log($"SPEAKER MATCH FOUND. Checking requirements for dialogue {activeDialogue.objectID}");
+                    //Debug.Log($"SPEAKER MATCH FOUND. Checking requirements for dialogue {activeDialogue.objectID}");
 
                     bool passedChecks = true;
 
@@ -71,7 +71,7 @@ public class TopicMenu : MonoBehaviour
 
                         if (passedChecks)
                         {
-                            Debug.Log($"Check for quest and dialogue {activeDialogue.objectID} passed.");
+                            //Debug.Log($"Check for quest and dialogue {activeDialogue.objectID} passed.");
                             foundQuests.Add(quest);
                         }
                     }
@@ -79,7 +79,7 @@ public class TopicMenu : MonoBehaviour
             }
         }
 
-        Debug.Log($"Found {foundQuests.Count} topics.");
+        //Debug.Log($"Found {foundQuests.Count} topics.");
         return foundQuests;
     }
 
