@@ -44,7 +44,7 @@ public class ShopMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        if (shopkeeper != null && activeShop != null)
+        if (shopkeeper != null && activeShop != null && !string.IsNullOrEmpty(shopkeeper.objectID) && !string.IsNullOrEmpty(activeShop.objectID))
         {
             SetUpShop(shopkeeper, activeShop);
         }
