@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine.UI;
 public class SkillManager : MonoBehaviour
 {
+    public List<Skill> debugSkillList = Skills.all;
     public bool allObjecctsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 1;
@@ -14,7 +15,7 @@ public class SkillManager : MonoBehaviour
     }
 
     [System.Serializable]
-    public class ItemsWrapper //Necessary for Unity to read the .json contents as an object
+    public class SkillWrapper //Necessary for Unity to read the .json contents as an object
     {
         public Skill[] skills;
     }
@@ -26,7 +27,7 @@ public class SkillManager : MonoBehaviour
         if (File.Exists(jsonPath))
         {
             string jsonData = File.ReadAllText(jsonPath);
-            ItemsWrapper dataWrapper = JsonUtility.FromJson<ItemsWrapper>(jsonData);
+            SkillWrapper dataWrapper = JsonUtility.FromJson<SkillWrapper>(jsonData);
 
             if (dataWrapper != null)
             {
@@ -45,7 +46,7 @@ public class SkillManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("Items array is null in JSON data. Check that the list has a wrapper with the \'skills\' tag.");
+                    Debug.LogError("Skill array is null in JSON data. Check that the list has a wrapper with the \'skills\' tag.");
                 }
             }
             else
@@ -60,24 +61,13 @@ public class SkillManager : MonoBehaviour
         }
     }
 
-    //ITEM DISPLAY TEST
-    public GameObject itemDisplayer;
-    public Transform canvasTransform;
-    public void DisplayItemSprite(Item item, GameObject prefab, Transform parentTransform)
-    {
-        GameObject newItem = Instantiate(prefab, parentTransform);
-        newItem.name = item.name;
-        Image imageComponent = newItem.GetComponent<Image>();
-        imageComponent.sprite = item.sprite;
-    }
-
     public static void InitialiseSkill(Skill skill, List<Skill> skillList)
     {
-        ItemIDReader(ref skill);
+        SkillIDReader(ref skill);
         skillList.Add(skill);
     }
 
-    public static void ItemIDReader(ref Skill skill)
+    public static void SkillIDReader(ref Skill skill)
     {
         skill.type = TypeFinder(ref skill.objectID);
         skill.image = ImageFinder(ref skill.objectID);
