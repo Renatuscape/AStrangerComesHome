@@ -9,14 +9,18 @@ public class LogAlert : MonoBehaviour
     public static LogAlert logAlert;
     public GameObject alertContainer;
     public List<GameObject> activeAlerts;
-    public List<ItemIntPair> queuedAlerts;
-    public float queueDelay = 1.0f;
-    public float alertDuration = 3f;
+    public List<ItemIntPair> queuedItemAlerts;
+    public List<string> queuedTextAlerts;
     public float queueTimer = 0;
     public float durationTimer = 0;
+    float queueDelay = 1.0f;
+    float alertDuration = 5f;
+
     void Start()
     {
         logAlert = GetComponent<LogAlert>();
+        queuedItemAlerts = new();
+        queuedTextAlerts = new();
     }
 
     // Update is called once per frame
@@ -26,15 +30,23 @@ public class LogAlert : MonoBehaviour
         {
             queueTimer += Time.deltaTime;
 
-            if (queuedAlerts.Count > 0 && queueTimer >= queueDelay)
+            if (queuedTextAlerts.Count > 0 && queueTimer >= queueDelay)
             {
                 if (activeAlerts.Count < 15)
                 {
-                    PrintAlert(queuedAlerts[0]);
+                    PrintTextAlert(queuedTextAlerts[0]);
                 }
                 queueTimer = 0;
             }
-            else if (queuedAlerts.Count == 0)
+            else if (queuedItemAlerts.Count > 0 && queueTimer >= queueDelay)
+            {
+                if (activeAlerts.Count < 15)
+                {
+                    PrintItemAlert(queuedItemAlerts[0]);
+                }
+                queueTimer = 0;
+            }
+            else if (queuedItemAlerts.Count == 0)
             {
                 queueTimer = queueDelay;
             }
@@ -52,14 +64,47 @@ public class LogAlert : MonoBehaviour
         }
     }
 
-    void PrintAlert(ItemIntPair entry)
+    void PrintItemAlert(ItemIntPair entry)
     {
         Debug.Log("Attempting to print item to log");
-        queuedAlerts.RemoveAt(0);
+        queuedItemAlerts.RemoveAt(0);
         var alert = BoxFactory.CreateItemRewardRow(entry.item, entry.count);
-        alert.GetComponent<Button>().onClick.AddListener(() => DestroyAlertPrefab(alert));
+        AddBehaviour(alert);
         alert.transform.SetParent(alertContainer.transform, false);
         activeAlerts.Add(alert);
+    }
+
+    void PrintTextAlert(string alertText)
+    {
+        logAlert.gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
+        Debug.Log("Attempting to print text to log");
+        queuedTextAlerts.RemoveAt(0);
+        var alert = BoxFactory.CreateButton(alertText, 330);
+        AddBehaviour(alert);
+        alert.transform.SetParent(alertContainer.transform, false);
+        activeAlerts.Add(alert);
+
+        logAlert.gameObject.GetComponent<VerticalLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
+        logAlert.gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
+        logAlert.gameObject.GetComponent<VerticalLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
+    }
+
+    void AddBehaviour(GameObject prefab)
+    {
+        prefab.GetComponent<Button>().onClick.AddListener(() => DestroyAlertPrefab(prefab));
+
+        if (prefab.GetComponent<Anim_ScaleOnEnable>() == null)
+        {
+            prefab.AddComponent<Anim_ScaleOnEnable>();
+        }
+        var animator = prefab.GetComponent<Anim_ScaleOnEnable>();
+        animator.startScale = new Vector3(0.2f, 0.8f, 0);
+        animator.endScale = new Vector3(1, 1, 1);
+        animator.duration = 0.2f;
+        animator.destroyOnEnd = false;
+        animator.enabled = true;
     }
 
     public void DestroyAlertPrefab(GameObject prefab)
@@ -68,20 +113,51 @@ public class LogAlert : MonoBehaviour
         Destroy(prefab);
     }
 
-    public static void QueueAlert(Item item, int amount)
+    public static void QueueItemAlert(Item item, int amount)
     {
         if (item == null)
         {
             Debug.Log("Item was null upon reaching Log Alert");
         }
 
-        if (logAlert.queuedAlerts.Count >= 25)
+        if (logAlert.queuedItemAlerts.Count >= 25)
         {
             Debug.Log($"Too many queued alerts. Alert for {item.name} ignored");
         }
-        else
+        else if (item.type != ItemType.Script)
         {
-            logAlert.queuedAlerts.Add(new ItemIntPair() { item = item, count = amount });
+            logAlert.queuedItemAlerts.Add(new ItemIntPair() { item = item, count = amount });
+        }
+    }
+
+    public static void QueueAffectionAlert(Character character, int amount)
+    {
+        if (character != null && !character.excludeFromPrint)
+        {
+            if (amount < 0)
+            {
+                QueueTextAlert($"{character.NamePlate()} disapproves.");
+            }
+            else if (amount < 3)
+            {
+                QueueTextAlert($"{character.NamePlate()} approves.");
+            }
+            else if (amount < 5)
+            {
+                QueueTextAlert($"{character.NamePlate()} likes that.");
+            }
+            else if (amount >= 5)
+            {
+                QueueTextAlert($"{character.NamePlate()} loves that.");
+            }
+        }
+    }
+
+    public static void QueueTextAlert(string alertText)
+    {
+        if (logAlert.queuedTextAlerts.Count < 25)
+        {
+            logAlert.queuedTextAlerts.Add(alertText);
         }
     }
 
