@@ -18,9 +18,9 @@ public class NodeSpawner : MonoBehaviour
     public Character character;
     public MemoryMenu memoryMenu;
 
-    public List<Sprite> placeholderNpc;
+    public AnimatedSprite placeholderNpc; //Retrieve information from AnimationLibrary
     public List<Sprite> itemCrate;
-    public List<Sprite> memoryShard;
+    public AnimatedSprite memoryShard; //Retrieve information from AnimationLibrary
 
     public float animationFrameRate;
     public float animationTimer;
@@ -232,14 +232,14 @@ public class NodeSpawner : MonoBehaviour
     private void SetUpMemory()
     {
         isSpawningMemory = true;
-        nodeSprite.sprite = memoryShard[0];
+        nodeSprite.sprite = memoryShard.still;
     }
 
     private void SetUpWalkingNpc(Character foundCharacter)
     {
         isSpawningNpc = true;
         character = foundCharacter;
-        nodeSprite.sprite = placeholderNpc[0];
+        nodeSprite.sprite = placeholderNpc.still;
     }
 
     private void SetUpItem(Dialogue dialogue)
