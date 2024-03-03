@@ -12,6 +12,7 @@ public class StorySystem : MonoBehaviour
     public GameObject popUpMenu;
     public GameState previousGameState = GameState.Overworld;
     public MemoryMenu memoryMenu;
+    public string activeSpeaker;
 
     private void Start()
     {
@@ -21,6 +22,7 @@ public class StorySystem : MonoBehaviour
     }
     public void OpenTopicMenu(string speakerID)
     {
+        activeSpeaker = speakerID;
         button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
         previousGameState = TransientDataScript.GetGameState();
         topicMenu.SetActive(true);
@@ -41,13 +43,22 @@ public class StorySystem : MonoBehaviour
     public void CloseTopicMenuAndLeave()
     {
         topicMenu.SetActive(false);
-        TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
+        activeSpeaker = string.Empty;
+        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 
     public void CloseDialogueMenu()
     {
         dialogueMenu.SetActive(false);
-        TransientDataScript.SetGameState(previousGameState, "DialogueSystem", gameObject);
+
+        if (!string.IsNullOrEmpty(activeSpeaker))
+        {
+            OpenTopicMenu(activeSpeaker);
+        }
+        else
+        {
+            TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
+        }
     }
 
     public void ColosePopUpMenu()
@@ -58,7 +69,7 @@ public class StorySystem : MonoBehaviour
         IEnumerator GameStateDelay()
         {
             yield return new WaitForSeconds(1);
-            TransientDataScript.SetGameState(GameState.Overworld, "DialogueSystem", gameObject);
+            TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
         }
     }
 }
