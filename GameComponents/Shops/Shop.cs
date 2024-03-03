@@ -128,4 +128,9 @@ public class Shop
             Debug.Log($"Something was wrong with objectID ({objectID}) for shop ({name}). Enums could not be defined.");
         }
     }
+
+    public bool CheckRequirements()
+    {
+        return true;
+    }
 }
