@@ -12,7 +12,7 @@ public enum LocationType
     Town,
     City,
     Crossing,
-    Temporary
+    Hidden
 }
 [System.Serializable]
 public class Location

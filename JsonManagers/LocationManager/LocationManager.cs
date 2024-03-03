@@ -105,13 +105,13 @@ public class LocationManager : MonoBehaviour
         {
             location.type = LocationType.Stop;
         }
-        else if (type == "TEMP")
-        {
-            location.type = LocationType.Temporary;
-        }
         else if (type == "CROS")
         {
             location.type = LocationType.Crossing;
+        }
+        else if (type == "HIDD")
+        {
+            location.type = LocationType.Hidden;
         }
         else
         {
