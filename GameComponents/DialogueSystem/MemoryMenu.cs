@@ -16,6 +16,7 @@ public class MemoryMenu : MonoBehaviour
     public TextMeshProUGUI memoryTitle;
     public Image shadowBox;
     public Image illustration;
+    public Image illustrationFade;
     public List<Sprite> illustrations;
 
     public List<GameObject> dialogueList;
@@ -34,6 +35,7 @@ public class MemoryMenu : MonoBehaviour
     private void OnDisable()
     {
         shadowBox.color = new Color(shadowColour.r, shadowColour.g, shadowColour.b, 0);
+        illustrationFade.color = new Color(illustrationFade.color.r, illustrationFade.color.g, illustrationFade.color.b, 1);
 
         foreach (var prefab in dialogueList)
         {
@@ -134,6 +136,7 @@ public class MemoryMenu : MonoBehaviour
         dialogueList.Clear();
 
         illustration.gameObject.SetActive(true);
+        StartCoroutine(FadeRevealIllustration());
         endButton.gameObject.SetActive(true);
     }
 
@@ -144,6 +147,18 @@ public class MemoryMenu : MonoBehaviour
         {
             shadowTranslucence += 0.01f;
             shadowBox.color = new Color(shadowColour.r, shadowColour.g, shadowColour.b, shadowTranslucence);
+            yield return new WaitForSeconds(0.05f);
+        }
+    }
+
+    IEnumerator FadeRevealIllustration()
+    {
+        float translucense = 1;
+
+        while (translucense > 0)
+        {
+            translucense -= 0.01f;
+            illustrationFade.color = new Color(illustrationFade.color.r, illustrationFade.color.g, illustrationFade.color.b, translucense);
             yield return new WaitForSeconds(0.05f);
         }
     }
