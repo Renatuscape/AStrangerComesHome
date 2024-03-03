@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class NodeSpawner : MonoBehaviour
+public class InteractNode : MonoBehaviour
 {
     public IdIntPair memoryNode;
     public string walkingNpcId;
+    public bool ignoreWalkingConditions;
     public string repeatingItemQuest;
     public int itemSpawnChance = 100;
 
@@ -116,7 +117,8 @@ public class NodeSpawner : MonoBehaviour
 
     private void HandleNpcClick()
     {
-        Debug.Log("Clicked wandering NPC. Implement menu.");
+        Debug.Log($"Opening interact menu with {character.name}");
+        InteractMenu.Open(character);
     }
     private void HandleMemoryClick()
     {
@@ -176,7 +178,13 @@ public class NodeSpawner : MonoBehaviour
             }
             else if (foundCharacter.walkingLocations == null || foundCharacter.walkingLocations.Count == 0)
             {
-                Debug.LogWarning($"Attempting to walk NPC without walking locations {walkingNpcId}");
+                Debug.LogWarning($"Attempting to walk NPC without walking locations {walkingNpcId}.");
+
+                if (ignoreWalkingConditions)
+                {
+                    Debug.LogWarning("Ignoring walking conditions.");
+                    SetUpWalkingNpc(foundCharacter);
+                }
             }
             else
             {
@@ -191,7 +199,6 @@ public class NodeSpawner : MonoBehaviour
                 }
                 if (foundValidWalkingLocation)
                 {
-
                     SetUpWalkingNpc(foundCharacter);
                 }
 
