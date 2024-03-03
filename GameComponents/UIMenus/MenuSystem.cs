@@ -8,11 +8,14 @@ public class MenuSystem : MonoBehaviour
 
     public GameObject startMenu;
     public ShopMenu shopMenu;
+    public InteractMenu interactMenu;
     public GameObject journalMenu;
 
     void Awake()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+        interactMenu.gameObject.SetActive(true); //Ensures that the static method has an instance to use
+        interactMenu.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
