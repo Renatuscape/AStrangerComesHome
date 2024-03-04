@@ -41,6 +41,11 @@ public static class Locations
     {
         return all.Where(l => l.mapX == mapX && l.mapY == mapY).FirstOrDefault();
     }
+
+    public static Location FindByID(string objectID)
+    {
+        return all.Where(l => l.objectID == objectID).FirstOrDefault();
+    }
 }
 
 [Serializable]
