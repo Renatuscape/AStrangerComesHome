@@ -184,8 +184,21 @@ public static class TransientDataCalls
         }
         else
         {
-            Debug.Log("transientData not found.");
+            Debug.Log("gameManager not found.");
             return 0.6f;
+        }
+    }
+
+    public static Location GetCurrentLocation()
+    {
+        if (NullCheck())
+        {
+            return transientData.currentLocation;
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+            return null;
         }
     }
 
