@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -238,8 +239,20 @@ public class InteractNode : MonoBehaviour
 
     private void SetUpMemory()
     {
-        isSpawningMemory = true;
-        nodeSprite.sprite = memoryShard.still;
+        try
+        {
+            Dialogue foundMemory = Quests.all.Where(q => (q.objectID == memoryNode.objectID)).FirstOrDefault().dialogues[memoryNode.amount] ?? null;
+
+            if (RequirementChecker.CheckDialogueRequirements(foundMemory))
+            {
+                isSpawningMemory = true;
+                nodeSprite.sprite = memoryShard.still;
+            }
+        }
+        catch (IndexOutOfRangeException)
+        {
+            Debug.Log($"No valid quest found for {memoryNode.objectID} stage {memoryNode.amount}.");
+        }
     }
 
     private void SetUpWalkingNpc(Character foundCharacter)
@@ -265,5 +278,108 @@ public class InteractNode : MonoBehaviour
         {
             Debug.Log("Failed random spawn check!");
         }
+    }
+}
+
+public static class RequirementChecker
+{
+
+    public static bool CheckDialogueRequirements(Dialogue dialogue)
+    {
+        bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
+        bool locationCheck = CheckLocation(dialogue.location);
+        bool requirementCheck = CheckRequirements(dialogue.requirements);
+        bool restrictionCheck = CheckRestrictions(dialogue.restrictions);
+
+        if (timeCheck && locationCheck && requirementCheck && restrictionCheck)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static bool CheckTime(float startTime, float endTime)
+    {
+        if (startTime != endTime)
+        {
+            float currentTime = TransientDataCalls.GetTimeOfDay();
+
+            if (currentTime > endTime)
+            {
+                return false;
+            }
+            else if (currentTime < startTime)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
+
+    }
+    public static bool CheckLocation(string objectID)
+    {
+        Location requiredLocation = Locations.FindByID(objectID);
+
+        if (requiredLocation == null)
+        {
+            Debug.LogWarning("Location check returned true because required location returned null.");
+            return true;
+        }
+        else
+        {
+            if (TransientDataCalls.GetCurrentLocation() == requiredLocation)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+    public static bool CheckRequirements(List<IdIntPair> requirements)
+    {
+        if (requirements != null && requirements.Count > 0)
+        {
+            foreach (IdIntPair requirement in requirements)
+            {
+                int amount = Player.GetCount(requirement.objectID, "Choice Requirement Check");
+
+                if (amount < requirement.amount)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static bool CheckRestrictions(List<IdIntPair> restrictions)
+    {
+        if (restrictions != null && restrictions.Count > 0) //don't run if checks already failed
+        {
+            foreach (IdIntPair restriction in restrictions)
+            {
+                int amount = Player.GetCount(restriction.objectID, "Choice Restriction Check");
+
+                if (amount > restriction.amount)
+                {
+                    return false;
+                }
+            }
+            Debug.Log("Returned true.");
+        }
+
+        return true;
     }
 }
