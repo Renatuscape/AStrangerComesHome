@@ -241,7 +241,7 @@ public class InteractNode : MonoBehaviour
     {
         try
         {
-            Dialogue foundMemory = Quests.all.Where(q => (q.objectID == memoryNode.objectID)).FirstOrDefault().dialogues[memoryNode.amount] ?? null;
+            Dialogue foundMemory = Quests.GetDialogueByQuestStage(memoryNode.objectID, memoryNode.amount);
 
             if (RequirementChecker.CheckDialogueRequirements(foundMemory))
             {
