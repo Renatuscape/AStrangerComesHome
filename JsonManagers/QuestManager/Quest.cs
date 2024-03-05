@@ -55,6 +55,14 @@ public static class Quests
         }
     }
 
+    public static Dialogue GetDialogueByQuestStage(string questID, int stage)
+    {
+        Quest quest = all.Where(q => q.objectID == questID).FirstOrDefault();
+        Dialogue dialogue = quest.dialogues.Where(d => d.questStage == stage).FirstOrDefault();
+
+        return dialogue;
+    }
+
     public static void DebugAllItems()
     {
         foreach (Quest quest in all)
