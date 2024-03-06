@@ -116,6 +116,13 @@ public static class Characters
         return found;
     }
 
+    public static List<Character> FindAllWalkers()
+    {
+        var walkingNpcs = all.Where((c)=> c.walkingLocations != null && c.walkingLocations.Count > 1).ToList();
+
+        return walkingNpcs;
+    }
+
     public static Character FindByID(string searchWord)
     {
         if (all.Count == 0)
