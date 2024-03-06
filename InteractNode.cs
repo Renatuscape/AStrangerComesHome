@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class InteractNode : MonoBehaviour
 {
     public IdIntPair memoryNode;
+    public bool prioritiseAnyWalkingNPC;
     public string walkingNpcId;
     public bool ignoreWalkingConditions;
     public string repeatingItemQuest;
@@ -24,20 +24,31 @@ public class InteractNode : MonoBehaviour
     public List<Sprite> itemCrate;
     public AnimatedSprite memoryShard; //Retrieve information from AnimationLibrary
 
-    public float animationFrameRate;
-    public float animationTimer;
-    public int animationFrameIndex;
-    public bool playAnimation;
+    float animationFrameRate;
+    float animationTimer;
+    int animationFrameIndex;
+    bool playAnimation;
 
-    public bool isSpawningMemory = false;
-    public bool isSpawningNpc = false;
-    public bool isSpawningItem = false;
-    public bool isClickable = true;
+    bool isSpawningMemory = false;
+    bool isSpawningNpc = false;
+    bool isSpawningItem = false;
+    bool isClickable = true;
 
     void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
         SetUpNode();
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log($"Removing {character} from activeWalkingNpcs.");
+        TransientDataCalls.activeWalkingNpcs.Remove(character);
+
+        foreach (var walker in TransientDataCalls.activeWalkingNpcs)
+        {
+            Debug.Log($"{walker} is still in activeWalkingNpcs list");
+        }
     }
 
     private void Update()
@@ -162,7 +173,34 @@ public class InteractNode : MonoBehaviour
 
     private void SetUpNode()
     {
-        if (!string.IsNullOrEmpty(memoryNode.objectID))
+        if (prioritiseAnyWalkingNPC)
+        {
+            var possibleWalkers = Characters.FindAllWalkers();
+            var viableWalkers = new List<Character>();
+
+            if (possibleWalkers.Count > 0)
+            {
+                Debug.Log($"Found {possibleWalkers.Count} walking NPCs.");
+
+                foreach (var possibleWalker in possibleWalkers)
+                {
+                    if (RequirementChecker.CheckWalkingRequirements(possibleWalker)
+                        && !TransientDataCalls.activeWalkingNpcs.Contains(possibleWalker))
+                    {
+                        Debug.Log($"{possibleWalker.name} was valid walking NPC and not yet spawned.");
+                        viableWalkers.Add(possibleWalker);
+                    }
+                }
+            }
+
+            Debug.Log($"Found {viableWalkers.Count} viable walking NPCs for this location.");
+            if (viableWalkers.Count > 0)
+            {
+                SetUpWalkingNpc(viableWalkers[0]);
+            }
+        }
+
+        if (!isSpawningNpc && !string.IsNullOrEmpty(memoryNode.objectID))
         {
             if (Player.GetCount(memoryNode.objectID, name) == memoryNode.amount)
             {
@@ -255,10 +293,11 @@ public class InteractNode : MonoBehaviour
         }
     }
 
-    private void SetUpWalkingNpc(Character foundCharacter)
+    private void SetUpWalkingNpc(Character walker)
     {
+        TransientDataCalls.activeWalkingNpcs.Add(walker);
         isSpawningNpc = true;
-        character = foundCharacter;
+        character = walker;
         nodeSprite.sprite = placeholderNpc.still;
     }
 
@@ -278,108 +317,5 @@ public class InteractNode : MonoBehaviour
         {
             Debug.Log("Failed random spawn check!");
         }
-    }
-}
-
-public static class RequirementChecker
-{
-
-    public static bool CheckDialogueRequirements(Dialogue dialogue)
-    {
-        bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
-        bool locationCheck = CheckLocation(dialogue.location);
-        bool requirementCheck = CheckRequirements(dialogue.requirements);
-        bool restrictionCheck = CheckRestrictions(dialogue.restrictions);
-
-        if (timeCheck && locationCheck && requirementCheck && restrictionCheck)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public static bool CheckTime(float startTime, float endTime)
-    {
-        if (startTime != endTime)
-        {
-            float currentTime = TransientDataCalls.GetTimeOfDay();
-
-            if (currentTime > endTime)
-            {
-                return false;
-            }
-            else if (currentTime < startTime)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-        else
-        {
-            return true;
-        }
-
-    }
-    public static bool CheckLocation(string objectID)
-    {
-        Location requiredLocation = Locations.FindByID(objectID);
-
-        if (requiredLocation == null)
-        {
-            Debug.LogWarning("Location check returned true because required location returned null.");
-            return true;
-        }
-        else
-        {
-            if (TransientDataCalls.GetCurrentLocation() == requiredLocation)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-    public static bool CheckRequirements(List<IdIntPair> requirements)
-    {
-        if (requirements != null && requirements.Count > 0)
-        {
-            foreach (IdIntPair requirement in requirements)
-            {
-                int amount = Player.GetCount(requirement.objectID, "Choice Requirement Check");
-
-                if (amount < requirement.amount)
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public static bool CheckRestrictions(List<IdIntPair> restrictions)
-    {
-        if (restrictions != null && restrictions.Count > 0) //don't run if checks already failed
-        {
-            foreach (IdIntPair restriction in restrictions)
-            {
-                int amount = Player.GetCount(restriction.objectID, "Choice Restriction Check");
-
-                if (amount > restriction.amount)
-                {
-                    return false;
-                }
-            }
-            Debug.Log("Returned true.");
-        }
-
-        return true;
     }
 }
