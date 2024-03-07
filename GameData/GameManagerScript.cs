@@ -131,9 +131,7 @@ public class GameManagerScript : MonoBehaviour
         dataManager.planterIsActiveA = false;
         dataManager.planterIsActiveB = false;
         dataManager.planterIsActiveC = false;
-        dataManager.isSynthActiveA = false;
-        dataManager.isSynthActiveB = false;
-        dataManager.isSynthActiveC = false;
+        dataManager.alchemySynthesisers = new();
 
         Player.inventoryList = new();
         dataManager.inventoryList = new();
