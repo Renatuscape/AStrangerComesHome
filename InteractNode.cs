@@ -295,10 +295,17 @@ public class InteractNode : MonoBehaviour
 
     private void SetUpWalkingNpc(Character walker)
     {
-        TransientDataCalls.activeWalkingNpcs.Add(walker);
-        isSpawningNpc = true;
-        character = walker;
-        nodeSprite.sprite = placeholderNpc.still;
+        if (walker != null)
+        {
+            TransientDataCalls.activeWalkingNpcs.Add(walker);
+            isSpawningNpc = true;
+            character = walker;
+            nodeSprite.sprite = placeholderNpc.still;
+        }
+        else
+        {
+            Debug.Log("Walker was null");
+        }
     }
 
     private void SetUpItem(Dialogue dialogue)
