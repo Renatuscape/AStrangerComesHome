@@ -24,7 +24,7 @@ public class InteractNode : MonoBehaviour
     public List<Sprite> itemCrate;
     public AnimatedSprite memoryShard; //Retrieve information from AnimationLibrary
 
-    float animationFrameRate;
+    float animationFrameRate = 0.1f;
     float animationTimer;
     int animationFrameIndex;
     bool playAnimation;
