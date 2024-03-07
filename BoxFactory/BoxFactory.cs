@@ -46,6 +46,36 @@ public class BoxFactory : MonoBehaviour
         return newBodyText;
     }
 
+    GameObject InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32)
+    {
+        GameObject newIcon = Instantiate(iconPrefab);
+
+
+        Image[] images = newIcon.transform.Find("ImageContainer").GetComponentsInChildren<Image>();
+
+        foreach (Image image in images)
+        {
+            image.sprite = item.sprite;
+        }
+
+        var tag = newIcon.transform.Find("Tag").gameObject;
+
+        if (!displayInventoryAmount)
+        {
+            tag.SetActive(false);
+        }
+        else
+        {
+            TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
+            text.text = $"{Player.GetCount(item.objectID, name)}";
+        }
+
+        RectTransform transform = newIcon.GetComponent<RectTransform>();
+        transform.sizeDelta = new Vector2(size, size);
+
+        return newIcon;
+
+    }
     GameObject InstantiateIconRowPrefab(Item item, float amount)
     {
         GameObject newButton = Instantiate(iconRowPrefab);
@@ -133,8 +163,8 @@ public class BoxFactory : MonoBehaviour
         }
         return boxFactory.InstantiateIconRowPrefab(item, amount);
     }
-    public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount)
+    public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32)
     {
-        return null;
+        return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size);
     }
 }
