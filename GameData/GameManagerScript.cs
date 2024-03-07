@@ -224,5 +224,5 @@ public static class ListExtenstions
 public class ItemIntPair
 {
     public Item item;
-    public int count;
+    public int amount;
 }

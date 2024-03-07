@@ -8,6 +8,7 @@ public class Recipe
 {
     public string objectID;
     public string name; // custom or set by yield item
+    public string description;
     public ItemRarity rarity; //set by yield item
 
     public int maxStack = 1;
@@ -137,7 +138,7 @@ public static class Recipes
         {
             Item item = Items.FindByID(entry.objectID);
 
-            recipeIngredients.Add(new() { item = item, count = entry.amount });
+            recipeIngredients.Add(new() { item = item, amount = entry.amount });
         }
 
         ItemIntPair catalystIn = ingredientsIn.Where(entry => entry.item.type == ItemType.Catalyst).FirstOrDefault();
@@ -152,11 +153,11 @@ public static class Recipes
         if (catalystIn != null && catalystIn.item.objectID == catalystRecipe.item.objectID)
         {
 
-            if (catalystIn.count > catalystRecipe.count)
+            if (catalystIn.amount > catalystRecipe.amount)
             {
                 alchemyLog.Add("The amount of catalyst is too high.");
             }
-            else if (catalystIn.count < catalystRecipe.count)
+            else if (catalystIn.amount < catalystRecipe.amount)
             {
                 alchemyLog.Add("The amount of catalyst is too low.");
             }
@@ -170,11 +171,11 @@ public static class Recipes
         {
             if (isAcolyte)
             {
-                if (plantIn.count > plantRecipe.count)
+                if (plantIn.amount > plantRecipe.amount)
                 {
                     alchemyLog.Add("I need less plant matter for the infusion.");
                 }
-                else if (plantIn.count < plantRecipe.count)
+                else if (plantIn.amount < plantRecipe.amount)
                 {
                     alchemyLog.Add("I need more plant matter for the infusion.");
                 }
@@ -268,11 +269,11 @@ public static class Recipes
             {
                 var recipeMatch = materialIngredientsRecipe.Where(m => m.item.objectID == material.item.objectID).FirstOrDefault();
 
-                if (material.count > recipeMatch.count)
+                if (material.amount > recipeMatch.amount)
                 {
                     alchemyLog.Add($"There was too much of one material.");
                 }
-                else if (material.count < recipeMatch.count)
+                else if (material.amount < recipeMatch.amount)
                 {
                     alchemyLog.Add($"There was too little of one material.");
                 }

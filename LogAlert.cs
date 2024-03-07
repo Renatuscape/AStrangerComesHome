@@ -68,7 +68,7 @@ public class LogAlert : MonoBehaviour
     {
         Debug.Log("Attempting to print item to log");
         queuedItemAlerts.RemoveAt(0);
-        var alert = BoxFactory.CreateItemRewardRow(entry.item, entry.count);
+        var alert = BoxFactory.CreateItemRewardRow(entry.item, entry.amount);
         AddBehaviour(alert);
         alert.transform.SetParent(alertContainer.transform, false);
         activeAlerts.Add(alert);
@@ -126,7 +126,7 @@ public class LogAlert : MonoBehaviour
         }
         else if (item.type != ItemType.Script)
         {
-            logAlert.queuedItemAlerts.Add(new ItemIntPair() { item = item, count = amount });
+            logAlert.queuedItemAlerts.Add(new ItemIntPair() { item = item, amount = amount });
         }
     }
 

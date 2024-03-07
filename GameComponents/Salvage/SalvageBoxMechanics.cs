@@ -117,7 +117,7 @@ public class SalvageBoxMechanics : MonoBehaviour
             return new()
             {
                 item = coins.Find(x => x.rarity == ItemRarity.Rare),
-                count = Random.Range(1, 5)
+                amount = Random.Range(1, 5)
             };
         }
         else if (rarityRoll >= 80)
@@ -125,7 +125,7 @@ public class SalvageBoxMechanics : MonoBehaviour
             return new()
             {
                 item = coins.Find(x => x.rarity == ItemRarity.Uncommon),
-                count = Random.Range(3, 20)
+                amount = Random.Range(3, 20)
             };
         }
         else if (rarityRoll >= 60)
@@ -133,7 +133,7 @@ public class SalvageBoxMechanics : MonoBehaviour
             return new()
             {
                 item = coins.Find(x => x.rarity == ItemRarity.Common),
-                count = Random.Range(5, 30)
+                amount = Random.Range(5, 30)
             };
         }
         else
@@ -141,7 +141,7 @@ public class SalvageBoxMechanics : MonoBehaviour
             return new()
             {
                 item = coins.Find(x => x.rarity == ItemRarity.Junk),
-                count = Random.Range(10, 50)
+                amount = Random.Range(10, 50)
             };
         }
     }
@@ -153,7 +153,7 @@ public class SalvageBoxMechanics : MonoBehaviour
             return new()
             {
                 item = rareItems[Random.Range(0, rareItems.Count)],
-                count = 1
+                amount = 1
             };
         }
         else if (rarityRoll >= 80)
@@ -161,7 +161,7 @@ public class SalvageBoxMechanics : MonoBehaviour
             return new()
             {
                 item = uncommonItems[Random.Range(0, uncommonItems.Count)],
-                count = Random.Range(1, 3)
+                amount = Random.Range(1, 3)
             };
         }
         else if (rarityRoll >= 50)
@@ -169,7 +169,7 @@ public class SalvageBoxMechanics : MonoBehaviour
             return new()
             {
                 item = commonItems[Random.Range(0, commonItems.Count)],
-                count = Random.Range(1, 4)
+                amount = Random.Range(1, 4)
             };
         }
         else
@@ -177,7 +177,7 @@ public class SalvageBoxMechanics : MonoBehaviour
             return new()
             {
                 item = junkItems[Random.Range(0, junkItems.Count)],
-                count = Random.Range(1, 5)
+                amount = Random.Range(1, 5)
             };
         }
     }
@@ -195,9 +195,9 @@ public class SalvageBoxMechanics : MonoBehaviour
 
                 if (existingSlot != null)
                 {
-                    Debug.Log($"Salvage loot consolidated {existingSlot.item.name} ({existingSlot.count}) and {slot.item.name} ({slot.count}) into one.");
-                    existingSlot.count += slot.count;
-                    slot.count = 0;
+                    Debug.Log($"Salvage loot consolidated {existingSlot.item.name} ({existingSlot.amount}) and {slot.item.name} ({slot.amount}) into one.");
+                    existingSlot.amount += slot.amount;
+                    slot.amount = 0;
                 }
                 else
                 {
@@ -206,15 +206,15 @@ public class SalvageBoxMechanics : MonoBehaviour
             }
         }
 
-        if (slotB == null || slotB.count == 0)
+        if (slotB == null || slotB.amount == 0)
         {
             lootList.Remove(slotB);
         }
-        if (slotC == null || slotC.count == 0)
+        if (slotC == null || slotC.amount == 0)
         {
             lootList.Remove(slotC);
         }
-        if (slotD == null || slotD.count == 0)
+        if (slotD == null || slotD.amount == 0)
         {
             lootList.Remove(slotD);
         }
@@ -232,11 +232,11 @@ public class SalvageBoxMechanics : MonoBehaviour
 
             foreach (ItemIntPair pair in loot)
             {
-                if (pair.item != null && pair.count > 0)
+                if (pair.item != null && pair.amount > 0)
                 {
-                    pair.item.AddToPlayer(pair.count);
+                    pair.item.AddToPlayer(pair.amount);
 
-                    transientData.PushAlert($"Found {pair.item.name} ({pair.count})!");
+                    transientData.PushAlert($"Found {pair.item.name} ({pair.amount})!");
                 }
             }
 
