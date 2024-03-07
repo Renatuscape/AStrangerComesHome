@@ -77,22 +77,27 @@ public class DataManagerScript : MonoBehaviour
     public float progressSeedC;
     public int seedHealthC;
 
-    //ALCHEMY SYNTHESISER - A
-    public bool isSynthActiveA;
-    public Item synthItemA;
-    public float progressSynthA;
-    public bool isSynthPausedA;
+    //ALCHEMY SYNTHESISERS
+    public List<SynthesiserData> alchemySynthesisers;
+}
 
-    //ALCHEMY SYNTHESISER - B
-    public bool isSynthActiveB;
-    public Item synthItemB;
-    public float progressSynthB;
-    public bool isSynthPausedB;
+[Serializable]
+public class SynthesiserData
+{
+    public string synthesiserID;
+    public bool isSynthActive;
+    public Recipe synthRecipe;
+    public float progressSynth;
+    public bool isSynthPaused;
+}
 
-    //ALCHEMY SYNTHESISER - C
-    public bool isSynthActiveC;
-    public Item synthItemC;
-    public float progressSynthC;
-    public bool isSynthPausedC;
-
+[Serializable]
+public class PlanterData
+{
+    public string planterID;
+    public bool planterIsActive;
+    public int planterSprite;
+    public string seed;
+    public float progressSeed;
+    public int seedHealth;
 }
