@@ -140,7 +140,7 @@ public static class TransientDataCalls
 {
     public static TransientDataScript transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
     public static GameManagerScript gameManager = GameObject.Find("GameManager").GetComponent<GameManagerScript>();
-    public static List<Character> activeWalkingNpcs;
+    public static List<Character> activeWalkingNpcs = new();
     public static void PushAlert(string alert)
     {
         if (NullCheck())
