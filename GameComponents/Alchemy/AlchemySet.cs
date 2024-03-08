@@ -18,4 +18,18 @@ public class AlchemySet : MonoBehaviour
     {
         
     }
+
+    private void OnMouseDown()
+    {
+        if (alchemyMenu == null)
+        {
+            alchemyMenu = TransientDataCalls.gameManager.menuSystem.alchemyMenu;
+        }
+
+
+        if (alchemyMenu != null )
+        {
+            alchemyMenu.Initialise(synthesiser);
+        }
+    }
 }
