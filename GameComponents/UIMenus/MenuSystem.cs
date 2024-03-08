@@ -10,6 +10,7 @@ public class MenuSystem : MonoBehaviour
     public ShopMenu shopMenu;
     public InteractMenu interactMenu;
     public GameObject journalMenu;
+    public AlchemyMenu alchemyMenu;
 
     void Awake()
     {
