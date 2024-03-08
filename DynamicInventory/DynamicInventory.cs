@@ -60,6 +60,15 @@ public class DynamicInventory : MonoBehaviour
 
     public void UpdateWindowSize(int x, int y)
     {
+        if (x < 255)
+        {
+            x = 255;
+        }
+        if (y < 330)
+        {
+            y = 330;
+        }
+
         windowSize.sizeDelta = new Vector2(x, y);
     }
 
