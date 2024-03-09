@@ -10,9 +10,13 @@ public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandl
 
         // Here we instantiate the second object, that we want to drag. 
         GameObject go = alchemyMenu.SpawnDraggableItem(item);
-        go.transform.position = Input.mousePosition;
 
-        eventData.pointerDrag = go; // assign instantiated object
+        if (go != null)
+        {
+            go.transform.position = Input.mousePosition;
+
+            eventData.pointerDrag = go; // assign instantiated object
+        }
     }
     public void OnDrag(PointerEventData eventData)
     {
