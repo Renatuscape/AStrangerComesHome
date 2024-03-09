@@ -19,9 +19,10 @@ public enum SynthesiserType
 public class AlchemyMenu : MonoBehaviour
 {
     public DataManagerScript dataManager;
+    public AlchemySelectedIngredients selectedIngredients;
     public ItemIntPair selectedCatalyst;
     public ItemIntPair selectedPlant;
-    public List<ItemIntPair> selectedMaterials;
+    //public List<Item> selectedMaterials;
 
     public List<GameObject> ingredientPrefabs = new();
     public List<GameObject> inventoryPrefabs = new();
@@ -60,7 +61,7 @@ public class AlchemyMenu : MonoBehaviour
             tableContainer.AddComponent<RadialLayout>();
             var tableLayout = tableContainer.GetComponent<RadialLayout>();
             tableLayout.MinAngle = 360;
-            tableLayout.fDistance = 264;
+            tableLayout.fDistance = 280;
 
             infusionContainer.AddComponent<AlchemyContainer>();
             infusionContainer.GetComponent<AlchemyContainer>().itemLimit = 20;
@@ -131,6 +132,7 @@ public class AlchemyMenu : MonoBehaviour
     {
         var entry = availableIngredients.FirstOrDefault(entry => entry.item.objectID == item.objectID);
         var prefab = inventoryPrefabs.FirstOrDefault(prefab => prefab.GetComponent<AlchemyInventoryItem>().item == item);
+        var script = prefab.GetComponent<AlchemyInventoryItem>();
 
         if (entry.amount > 0)
         {
@@ -141,10 +143,8 @@ public class AlchemyMenu : MonoBehaviour
                 prefab.transform.SetParent(inventoryPage.transform, false);
                 prefab.AddComponent<AlchemyInventoryItem>();
 
-                var script = prefab.GetComponent<AlchemyInventoryItem>();
                 script.alchemyMenu = this;
                 script.item = entry.item;
-
                 inventoryPrefabs.Add(prefab);
             }
 
@@ -169,7 +169,7 @@ public class AlchemyMenu : MonoBehaviour
         }
         else
         {
-            var prefab = BoxFactory.CreateItemIcon(item, false, 64);
+            var prefab = BoxFactory.CreateItemIcon(item, false, 96);
             prefab.transform.SetParent(dragParent.transform, false);
             prefab.name = item.name;
             prefab.AddComponent<AlchemyDraggableItem>();
@@ -181,11 +181,11 @@ public class AlchemyMenu : MonoBehaviour
 
             ingredientPrefabs.Add(prefab);
 
-            var matchingEntry = availableIngredients.FirstOrDefault(entry => entry.item == item);
+            var matchingEntryInInventory = availableIngredients.FirstOrDefault(entry => entry.item == item);
 
-            if (matchingEntry != null)
+            if (matchingEntryInInventory != null)
             {
-                matchingEntry.amount--;
+                matchingEntryInInventory.amount--;
             }
             else
             {
@@ -193,6 +193,7 @@ public class AlchemyMenu : MonoBehaviour
             }
 
             UpdateInventoryItem(script.item);
+            //selectedIngredients.UpdateIngredient(script, false);
             return prefab;
         }
     }
@@ -205,10 +206,10 @@ public class AlchemyMenu : MonoBehaviour
         {
             ingredientPrefabs.Remove(prefab);
 
-            Item item = prefab.GetComponent<AlchemyDraggableItem>().item;
-            ItemIntPair matchingEntry = availableIngredients.FirstOrDefault(entry => entry.item == item);
+            var script = prefab.GetComponent<AlchemyDraggableItem>();
+            ItemIntPair matchingEntry = availableIngredients.FirstOrDefault(entry => entry.item == script.item);
 
-            if (item == null)
+            if (script.item == null)
             {
                 Debug.LogWarning("Item in prefab's AlchemyDraggableItem script was null. Something went wrong.");
             }
@@ -223,9 +224,10 @@ public class AlchemyMenu : MonoBehaviour
                     Debug.Log("Something went wrong when returning the item.");
                 }
 
-                UpdateInventoryItem(item);
+                UpdateInventoryItem(script.item);
+                selectedIngredients.UpdateIngredient(script, true);
             }
-            Destroy(prefab);
+            Destroy(prefab); Debug.Log("Found entry. Attempting to update");
         }
 
         if (ingredientObject != null)
