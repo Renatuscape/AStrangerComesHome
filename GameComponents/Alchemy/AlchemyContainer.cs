@@ -14,8 +14,17 @@ public class AlchemyContainer : MonoBehaviour, IDropHandler
     {
         GameObject dropped = eventData.pointerDrag;
         AlchemyDraggableItem draggableItem = dropped.GetComponent<AlchemyDraggableItem>();
-        draggableItem.parentContainer = gameObject.transform;
-        Debug.Log("Dropped item");
+
+        if (draggableItem != null)
+        {
+            draggableItem.parentContainer = gameObject.transform;
+            //Debug.Log("Dropped item");
+        }
+        else
+        {
+            Debug.Log("Attempted to drop null object on container.");
+        }
+
     }
 
     private void Update()
