@@ -9,7 +9,7 @@ public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandl
     {
 
         // Here we instantiate the second object, that we want to drag. 
-        GameObject go = alchemyMenu.SpawnDraggableItem(item);
+        GameObject go = alchemyMenu.DragItemFromInventory(item);
 
         if (go != null)
         {
