@@ -33,27 +33,38 @@ public class AlchemySelectedIngredients : MonoBehaviour
             }
         }
 
-        BuildIngredientList(draggableItem);
+        BuildIngredientList();
     }
 
-    public void UpdateItemContainer(AlchemyDraggableItem draggableItem)
+    public void UpdateItemContainer(AlchemyDraggableItem callerScript, GameObject draggableObject)
     {
-        var matchingEntry = draggableItems.FirstOrDefault(e => e == draggableItem);
+        var alchemyMenu = callerScript.alchemyMenu;
+        var matchingEntry = draggableItems.FirstOrDefault(e => e == callerScript);
 
         if (matchingEntry == null)
         {
-            draggableItems.Add(draggableItem);
+            draggableItems.Add(callerScript);
         }
 
-        BuildIngredientList(draggableItem);
+        // Sort similar objects
+        foreach (GameObject ingredientPrefab in alchemyMenu.draggableIngredientPrefabs)
+        {
+            var prefabScript = ingredientPrefab.GetComponent<AlchemyDraggableItem>();
+
+            if (prefabScript.item == callerScript.item)
+            {
+                ingredientPrefab.transform.SetParent(draggableObject.transform.parent.transform, false);
+                prefabScript.isInfusion = callerScript.isInfusion;
+            }
+        }
+
+        BuildIngredientList();
     }
 
-    void BuildIngredientList(AlchemyDraggableItem lastItemAdded)
+    void BuildIngredientList()
     {
-        Debug.Log($"Building ingredient list with {draggableItems.Count} draggable items.");
+        //Debug.Log($"Building ingredient list with {draggableItems.Count} draggable items.");
         ClearList();
-        int uniqueEntries = 0;
-        int totalEntries = 0;
 
         foreach (var draggable in draggableItems)
         {
@@ -63,13 +74,12 @@ public class AlchemySelectedIngredients : MonoBehaviour
 
                 if (existingEntry != null)
                 {
-                    Debug.Log("Item was infusion and not null.");
+                    //Debug.Log("Item was infusion and not null.");
                     existingEntry.amount++;
                 }
                 else
                 {
-                    uniqueEntries++;
-                    Debug.Log("Item was infusion and returned null.");
+                    //Debug.Log("Item was infusion and returned null.");
                     selectedInfusions.Add(new ItemIntPair() { item = draggable.item, amount = 1 });
                 }
             }
@@ -79,41 +89,18 @@ public class AlchemySelectedIngredients : MonoBehaviour
 
                 if (existingEntry != null)
                 {
-                    Debug.Log("Item was not infusion and not null.");
+                    //Debug.Log("Item was not infusion and not null.");
                     existingEntry.amount++;
                 }
                 else
                 {
-                    uniqueEntries++;
-                    Debug.Log("Item was not infusion and returned null.");
+                    //Debug.Log("Item was not infusion and returned null.");
                     selectedMaterials.Add(new ItemIntPair() { item = draggable.item, amount = 1 });
                 }
             }
         }
 
-        totalEntries = selectedMaterials.Count + selectedInfusions.Count;
-
-        if (uniqueEntries > 10)
-        {
-            TransientDataCalls.PushAlert("Too many types of ingredients!");
-
-            lastItemAdded.ReturnToInventory();
-            draggableItems.Remove(lastItemAdded);
-
-            BuildIngredientList(null);
-        }
-        else if (totalEntries > 60)
-        {
-            TransientDataCalls.PushAlert("Too many ingredients!");
-            lastItemAdded.ReturnToInventory();
-            draggableItems.Remove(lastItemAdded);
-
-            BuildIngredientList(null);
-        }
-        else
-        {
-            ConfigureRendering();
-        }
+        ConfigureRendering();
     }
 
     void ConfigureRendering()
@@ -184,6 +171,6 @@ public class AlchemySelectedIngredients : MonoBehaviour
         infusionContainer.SetActive(true);
         tipText.gameObject.SetActive(false);
 
-        Debug.Log($"Spawned prefab ({newPrefab.name}).");
+        //Debug.Log($"Spawned prefab ({newPrefab.name}).");
     }
 }
