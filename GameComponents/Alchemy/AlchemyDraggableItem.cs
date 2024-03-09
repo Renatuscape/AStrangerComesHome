@@ -18,6 +18,11 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
         images = transform.Find("ImageContainer").GetComponentsInChildren<Image>();
     }
 
+    private void Start()
+    {
+        lastCollision = alchemyMenu.tableContainer;
+    }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         //Debug.Log($"Beginning drag {item}");
@@ -68,12 +73,38 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
         else if (lastCollision == alchemyMenu.infusionContainer)
         {
             isInfusion = true;
-            alchemyMenu.selectedIngredients.UpdateItemContainer(this);
+            alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
         }
         else if (lastCollision == alchemyMenu.tableContainer)
         {
             isInfusion = false;
-            alchemyMenu.selectedIngredients.UpdateItemContainer(this);
+            alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
+        }
+        else if (lastCollision.name == "Image")
+        {
+            var draggableItemScript = lastCollision.transform.parent.transform.parent.GetComponent<AlchemyDraggableItem>();
+
+            if (draggableItemScript != null)
+            {
+                isInfusion = draggableItemScript.isInfusion;
+                transform.SetParent(lastCollision.transform.parent.transform.parent.transform.parent, false);
+            }
+            else
+            {
+                var inventoryItemScript = lastCollision.transform.parent.transform.parent.GetComponent<AlchemyInventoryItem>();
+
+                if (inventoryItemScript != null)
+                {
+                    ReturnToInventory();
+                }
+                else
+                {
+                    Debug.Log("Last collision was named Image, but could not find AlchemyDraggableItem or AlchemyInventoryItem script. Defaulting to table.");
+                    isInfusion = false;
+                    transform.SetParent(alchemyMenu.tableContainer.transform, false);
+                }
+            }
+            alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
         }
     }
 
