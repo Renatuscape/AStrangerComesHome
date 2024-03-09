@@ -11,6 +11,7 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
     public Item item;
     public Image[] images;
     public GameObject lastCollision;
+    public bool isInfusion;
 
     private void Awake()
     {
@@ -19,7 +20,7 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log($"Beginning drag {item}");
+        //Debug.Log($"Beginning drag {item}");
         parentContainer = transform.parent;
         transform.SetAsLastSibling();
 
@@ -45,7 +46,7 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log($"Ending drag {item}");
+        //Debug.Log($"Ending drag {item}");
         transform.SetParent(parentContainer);
         transform.SetAsLastSibling();
 
@@ -58,9 +59,27 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
             && lastCollision != alchemyMenu.infusionContainer
             && lastCollision.name != "Image")
         {
-            alchemyMenu.ReturnIngredientToInventory(gameObject);
+            ReturnToInventory();
         }
         else if (transform.parent.gameObject == dragParent)
+        {
+            ReturnToInventory();
+        }
+        else if (lastCollision == alchemyMenu.infusionContainer)
+        {
+            isInfusion = true;
+            alchemyMenu.selectedIngredients.UpdateItemContainer(this);
+        }
+        else if (lastCollision == alchemyMenu.tableContainer)
+        {
+            isInfusion = false;
+            alchemyMenu.selectedIngredients.UpdateItemContainer(this);
+        }
+    }
+
+    public void ReturnToInventory()
+    {
+        if (gameObject != null)
         {
             alchemyMenu.ReturnIngredientToInventory(gameObject);
         }
