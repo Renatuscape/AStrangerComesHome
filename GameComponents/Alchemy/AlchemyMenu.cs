@@ -4,7 +4,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using static UnityEditor.Progress;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public enum SynthesiserType
 {
@@ -20,11 +19,8 @@ public class AlchemyMenu : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public AlchemySelectedIngredients selectedIngredients;
-    public ItemIntPair selectedCatalyst;
-    public ItemIntPair selectedPlant;
-    //public List<Item> selectedMaterials;
 
-    public List<GameObject> ingredientPrefabs = new();
+    public List<GameObject> draggableIngredientPrefabs = new();
     public List<GameObject> inventoryPrefabs = new();
 
     public GameObject tableContainer;
@@ -51,6 +47,29 @@ public class AlchemyMenu : MonoBehaviour
         }
     }
 
+    public void Initialise(SynthesiserType synthesiserType)
+    {
+        string name = synthesiserType.ToString();
+
+        if (dataManager == null)
+        {
+            dataManager = TransientDataCalls.gameManager.dataManager;
+        }
+
+        var synthesiserData = dataManager.alchemySynthesisers.FirstOrDefault(s => s.synthesiserID == name);
+
+        if (synthesiserData == null)
+        {
+            synthesiserData = new() { synthesiserID = name };
+            dataManager.alchemySynthesisers.Add(synthesiserData);
+        }
+
+        availableIngredients = GetIngredientsInInventory();
+        RenderInventory(ItemType.Catalyst);
+        gameObject.SetActive(true);
+    }
+
+    #region Initial Setup
     void SetUpContainers()
     {
         if (!containersEnabled)
@@ -71,168 +90,6 @@ public class AlchemyMenu : MonoBehaviour
             infusionLayout.fDistance = 110;
 
             containersEnabled = true;
-        }
-    }
-    public void Initialise(SynthesiserType synthesiserType)
-    {
-        string name = synthesiserType.ToString();
-
-        if (dataManager == null)
-        {
-            dataManager = TransientDataCalls.gameManager.dataManager;
-        }
-
-        var synthesiserData = dataManager.alchemySynthesisers.FirstOrDefault(s => s.synthesiserID == name);
-
-        if (synthesiserData == null)
-        {
-            synthesiserData = new() { synthesiserID = name };
-            dataManager.alchemySynthesisers.Add(synthesiserData);
-        }
-
-        availableIngredients = GetIngredientsInInventory();
-        RenderInventory(ItemType.Catalyst);
-    }
-
-    public void RenderInventory(ItemType pageType, bool printAll = false)
-    {
-        foreach (var prefab in inventoryPrefabs)
-        {
-            Destroy(prefab);
-        }
-
-        inventoryPrefabs = new();
-
-        foreach (var entry in availableIngredients)
-        {
-            if (entry.amount > 0)
-            {
-                if (entry.item.type == pageType || printAll || isDebugging)
-                {
-                    var prefab = BoxFactory.CreateItemIcon(entry.item, true, 64);
-                    prefab.name = entry.item.name;
-                    prefab.transform.SetParent(inventoryPage.transform, false);
-                    prefab.AddComponent<AlchemyInventoryItem>();
-                    var script = prefab.GetComponent<AlchemyInventoryItem>();
-                    script.alchemyMenu = this;
-                    script.item = entry.item;
-
-                    var tag = prefab.transform.Find("Tag").gameObject;
-
-                    TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
-                    text.text = $"{entry.amount}";
-
-                    inventoryPrefabs.Add(prefab);
-                }
-            }
-        }
-    }
-
-    public void UpdateInventoryItem(Item item)
-    {
-        var entry = availableIngredients.FirstOrDefault(entry => entry.item.objectID == item.objectID);
-        var prefab = inventoryPrefabs.FirstOrDefault(prefab => prefab.GetComponent<AlchemyInventoryItem>().item == item);
-        var script = prefab.GetComponent<AlchemyInventoryItem>();
-
-        if (entry.amount > 0)
-        {
-            if (prefab == null)
-            {
-                prefab = BoxFactory.CreateItemIcon(entry.item, true, 64);
-                prefab.name = entry.item.name;
-                prefab.transform.SetParent(inventoryPage.transform, false);
-                prefab.AddComponent<AlchemyInventoryItem>();
-
-                script.alchemyMenu = this;
-                script.item = entry.item;
-                inventoryPrefabs.Add(prefab);
-            }
-
-            var tag = prefab.transform.Find("Tag").gameObject;
-
-            TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
-            text.text = $"{entry.amount}";
-        }
-        else
-        {
-            inventoryPrefabs.Remove(prefab);
-            Destroy(prefab);
-        }
-    }
-
-    public GameObject SpawnDraggableItem(Item item)
-    {
-        if (item == null)
-        {
-            Debug.Log("Could not spawn item. It was null.");
-            return null;
-        }
-        else
-        {
-            var prefab = BoxFactory.CreateItemIcon(item, false, 96);
-            prefab.transform.SetParent(dragParent.transform, false);
-            prefab.name = item.name;
-            prefab.AddComponent<AlchemyDraggableItem>();
-
-            var script = prefab.GetComponent<AlchemyDraggableItem>();
-            script.item = item;
-            script.dragParent = dragParent;
-            script.alchemyMenu = this;
-
-            ingredientPrefabs.Add(prefab);
-
-            var matchingEntryInInventory = availableIngredients.FirstOrDefault(entry => entry.item == item);
-
-            if (matchingEntryInInventory != null)
-            {
-                matchingEntryInInventory.amount--;
-            }
-            else
-            {
-                Debug.Log("Something went wrong when removing the item.");
-            }
-
-            UpdateInventoryItem(script.item);
-            //selectedIngredients.UpdateIngredient(script, false);
-            return prefab;
-        }
-    }
-
-    public void ReturnIngredientToInventory(GameObject ingredientObject)
-    {
-        GameObject prefab = ingredientPrefabs.FirstOrDefault(obj => obj == ingredientObject);
-
-        if (prefab != null)
-        {
-            ingredientPrefabs.Remove(prefab);
-
-            var script = prefab.GetComponent<AlchemyDraggableItem>();
-            ItemIntPair matchingEntry = availableIngredients.FirstOrDefault(entry => entry.item == script.item);
-
-            if (script.item == null)
-            {
-                Debug.LogWarning("Item in prefab's AlchemyDraggableItem script was null. Something went wrong.");
-            }
-            else
-            {
-                if (matchingEntry != null)
-                {
-                    matchingEntry.amount++;
-                }
-                else
-                {
-                    Debug.Log("Something went wrong when returning the item.");
-                }
-
-                UpdateInventoryItem(script.item);
-                selectedIngredients.UpdateIngredient(script, true);
-            }
-            Destroy(prefab); Debug.Log("Found entry. Attempting to update");
-        }
-
-        if (ingredientObject != null)
-        {
-            Destroy(ingredientObject);
         }
     }
 
@@ -269,5 +126,225 @@ public class AlchemyMenu : MonoBehaviour
         }
 
         return availableIngredients;
+    }
+
+    public void RenderInventory(ItemType pageType, bool printAll = false)
+    {
+        foreach (var prefab in inventoryPrefabs)
+        {
+            Destroy(prefab);
+        }
+
+        inventoryPrefabs = new();
+
+        foreach (var entry in availableIngredients)
+        {
+            if (entry.amount > 0)
+            {
+                if (entry.item.type == pageType || printAll || isDebugging)
+                {
+                    var prefab = BoxFactory.CreateItemIcon(entry.item, true, 64);
+                    prefab.name = entry.item.name;
+                    prefab.transform.SetParent(inventoryPage.transform, false);
+                    prefab.AddComponent<AlchemyInventoryItem>();
+                    var script = prefab.GetComponent<AlchemyInventoryItem>();
+                    script.alchemyMenu = this;
+                    script.item = entry.item;
+
+                    var tag = prefab.transform.Find("Tag").gameObject;
+
+                    TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
+                    text.text = $"{entry.amount}";
+
+                    inventoryPrefabs.Add(prefab);
+                }
+            }
+        }
+    }
+    #endregion
+
+    public GameObject DragItemFromInventory(Item item)
+    {
+        int maxTypes = 10;
+        int maxAmount = 60;
+        int uniqueEntries = selectedIngredients.selectedInfusions.Count + selectedIngredients.selectedMaterials.Count;
+        int totalEntries = selectedIngredients.draggableItems.Count;
+
+
+        if (totalEntries >= maxAmount)
+        {
+            TransientDataCalls.PushAlert("Too many ingredients!");
+            Debug.Log("Could not spawn item. Too many were already on the table.");
+            return null;
+        }
+        else if (uniqueEntries >= maxTypes)
+        {
+            var match = selectedIngredients.draggableItems.FirstOrDefault(d => d.item == item);
+
+            if (match != null && totalEntries < maxAmount)
+            {
+                return SpawnDraggableItem(item);
+            }
+            else
+            {
+                TransientDataCalls.PushAlert("Too many types of ingredients!");
+                Debug.Log("Could not spawn item. Too many were already on the table.");
+                return null;
+            }
+        }
+        else if (uniqueEntries < maxTypes && totalEntries < maxAmount)
+        {
+            return SpawnDraggableItem(item);
+        }
+
+        return null;
+    }
+
+    GameObject SpawnDraggableItem(Item item)
+    {
+        if (item == null)
+        {
+            Debug.Log("Could not spawn item. It was null.");
+            return null;
+        }
+        else
+        {
+            var prefab = BoxFactory.CreateItemIcon(item, false, 96);
+            prefab.transform.SetParent(dragParent.transform, false);
+            prefab.name = item.name;
+            prefab.AddComponent<AlchemyDraggableItem>();
+
+            var script = prefab.GetComponent<AlchemyDraggableItem>();
+            script.item = item;
+            script.dragParent = dragParent;
+            script.alchemyMenu = this;
+            draggableIngredientPrefabs.Add(prefab);
+
+            var matchingEntryInInventory = availableIngredients.FirstOrDefault(entry => entry.item == item);
+
+            if (matchingEntryInInventory != null)
+            {
+                matchingEntryInInventory.amount--;
+            }
+            else
+            {
+                Debug.Log("Something went wrong when removing the item.");
+            }
+
+            UpdateInventoryItemNumber(script.item);
+            return prefab;
+        }
+    }
+
+    public void ReturnIngredientToInventory(GameObject draggableCallerObject)
+    {
+        GameObject draggableIngredient = draggableIngredientPrefabs.FirstOrDefault(obj => obj == draggableCallerObject);
+        var script = draggableIngredient.GetComponent<AlchemyDraggableItem>();
+        ItemIntPair matchingInventoryEntry = availableIngredients.FirstOrDefault(entry => entry.item == script.item);
+
+        if (draggableIngredient != null)
+        {
+            Debug.Log("Found entry. Attempting to update");
+
+            draggableIngredientPrefabs.Remove(draggableIngredient);
+
+
+            if (script.item == null)
+            {
+                Debug.LogWarning("Item in prefab's AlchemyDraggableItem script was null. Something went wrong.");
+            }
+            else
+            {
+                if (matchingInventoryEntry != null)
+                {
+                    matchingInventoryEntry.amount++;
+                }
+                else
+                {
+                    Debug.Log("Something went wrong when returning the item.");
+                }
+
+                UpdateInventoryItemNumber(script.item);
+                selectedIngredients.UpdateIngredient(script, true);
+            }
+
+            Destroy(draggableIngredient);
+        }
+    }
+
+    void UpdateInventoryItemNumber(Item item)
+    {
+        var entry = availableIngredients.FirstOrDefault(entry => entry.item.objectID == item.objectID);
+        var prefab = inventoryPrefabs.FirstOrDefault(prefab => prefab.GetComponent<AlchemyInventoryItem>().item == item);
+
+        if (prefab != null)
+        {
+            if (entry.amount > 0)
+            {
+                var tag = prefab.transform.Find("Tag").gameObject;
+
+                TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
+                text.text = $"{entry.amount}";
+                prefab.SetActive(true);
+            }
+            else
+            {
+                prefab.SetActive(false);
+            }
+        }
+        else
+        {
+            Debug.Log($"Could not find prefab for {item}.");
+        }
+    }
+
+
+    public void CancelAlchemy()
+    {
+
+    }
+
+    public void ClearTable()
+    {
+        for (int i = draggableIngredientPrefabs.Count - 1; i >= 0; i--)
+        {
+            float time = 0.2f * i;
+            if (time > 1)
+            {
+                time = time / 2;
+            }
+            if (time > 2)
+            {
+                time = 0.9f;
+            }
+            StartCoroutine(ClearTableInStyle(draggableIngredientPrefabs[i], time));
+        }
+    }
+
+    IEnumerator ClearTableInStyle(GameObject prefab, float duration)
+    {
+        prefab.transform.SetParent(dragParent.transform);
+        Vector3 targetLocation = inventoryPage.transform.position;
+        Vector3 startPosition = prefab.transform.position;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            prefab.transform.position = Vector3.Lerp(startPosition, targetLocation, t);
+            yield return null;
+        }
+
+        // Ensure the object is exactly at the target position
+        prefab.transform.position = targetLocation;
+
+        ReturnIngredientToInventory(prefab);
+    }
+
+    public void Leave()
+    {
+        gameObject.SetActive(false);
+        TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
     }
 }
