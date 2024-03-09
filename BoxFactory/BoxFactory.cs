@@ -155,7 +155,7 @@ public class BoxFactory : MonoBehaviour
         return newButton;
     }
 
-    public static GameObject CreateItemRewardRow(Item item, float amount)
+    public static GameObject CreateItemRow(Item item, float amount)
     {
         if (item == null)
         {

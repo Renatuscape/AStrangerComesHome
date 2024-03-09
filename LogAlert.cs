@@ -68,7 +68,7 @@ public class LogAlert : MonoBehaviour
     {
         Debug.Log("Attempting to print item to log");
         queuedItemAlerts.RemoveAt(0);
-        var alert = BoxFactory.CreateItemRewardRow(entry.item, entry.amount);
+        var alert = BoxFactory.CreateItemRow(entry.item, entry.amount);
         AddBehaviour(alert);
         alert.transform.SetParent(alertContainer.transform, false);
         activeAlerts.Add(alert);
