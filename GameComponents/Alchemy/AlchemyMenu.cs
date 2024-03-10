@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public enum SynthesiserType
 {
@@ -18,7 +16,9 @@ public enum SynthesiserType
 public class AlchemyMenu : MonoBehaviour
 {
     public DataManagerScript dataManager;
+    public SynthesiserData synthData;
     public AlchemySelectedIngredients selectedIngredients;
+    public SynthesiserType synthesiserType;
 
     public List<GameObject> draggableIngredientPrefabs = new();
     public List<GameObject> inventoryPrefabs = new();
@@ -31,7 +31,7 @@ public class AlchemyMenu : MonoBehaviour
     public List<ItemIntPair> availableIngredients = new();
 
     bool containersEnabled;
-    bool isDebugging = true;
+    public bool isDebugging = true;
 
     private void Start()
     {
@@ -49,6 +49,8 @@ public class AlchemyMenu : MonoBehaviour
 
     public void Initialise(SynthesiserType synthesiserType)
     {
+        this.synthesiserType = synthesiserType;
+
         string name = synthesiserType.ToString();
 
         if (dataManager == null)
@@ -56,12 +58,16 @@ public class AlchemyMenu : MonoBehaviour
             dataManager = TransientDataCalls.gameManager.dataManager;
         }
 
-        var synthesiserData = dataManager.alchemySynthesisers.FirstOrDefault(s => s.synthesiserID == name);
+        synthData = dataManager.alchemySynthesisers.FirstOrDefault(s => s.synthesiserID == name);
 
-        if (synthesiserData == null)
+        if (synthData == null)
         {
-            synthesiserData = new() { synthesiserID = name };
-            dataManager.alchemySynthesisers.Add(synthesiserData);
+            synthData = new() { synthesiserID = name };
+            if (synthData.synthesiserID.ToLower().Contains("coach"))
+            {
+                synthData.consumesMana = true;
+            }
+            dataManager.alchemySynthesisers.Add(synthData);
         }
 
         availableIngredients = GetIngredientsInInventory();
@@ -296,55 +302,5 @@ public class AlchemyMenu : MonoBehaviour
         {
             Debug.Log($"Could not find prefab for {item}.");
         }
-    }
-
-
-    public void CancelAlchemy()
-    {
-
-    }
-
-    public void ClearTable()
-    {
-        for (int i = draggableIngredientPrefabs.Count - 1; i >= 0; i--)
-        {
-            float time = 0.2f * i;
-            if (time > 1)
-            {
-                time = time / 2;
-            }
-            if (time > 2)
-            {
-                time = 0.9f;
-            }
-            StartCoroutine(ClearTableInStyle(draggableIngredientPrefabs[i], time));
-        }
-    }
-
-    IEnumerator ClearTableInStyle(GameObject prefab, float duration)
-    {
-        prefab.transform.SetParent(dragParent.transform);
-        Vector3 targetLocation = inventoryPage.transform.position;
-        Vector3 startPosition = prefab.transform.position;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsedTime / duration);
-            prefab.transform.position = Vector3.Lerp(startPosition, targetLocation, t);
-            yield return null;
-        }
-
-        // Ensure the object is exactly at the target position
-        prefab.transform.position = targetLocation;
-
-        ReturnIngredientToInventory(prefab);
-    }
-
-    public void Leave()
-    {
-        gameObject.SetActive(false);
-        TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
     }
 }
