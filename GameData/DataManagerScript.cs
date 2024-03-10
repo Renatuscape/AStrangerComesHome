@@ -89,6 +89,7 @@ public class SynthesiserData
     public Recipe synthRecipe;
     public float progressSynth;
     public bool isSynthPaused;
+    public bool consumesMana;
 }
 
 [Serializable]
