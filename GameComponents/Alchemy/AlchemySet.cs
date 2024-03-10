@@ -21,6 +21,8 @@ public class AlchemySet : MonoBehaviour
 
     private void OnMouseDown()
     {
+        // Add check to ensure that the corresponding synthesiser is actually unlocked
+
         if (alchemyMenu == null)
         {
             alchemyMenu = TransientDataCalls.gameManager.menuSystem.alchemyMenu;
@@ -29,6 +31,7 @@ public class AlchemySet : MonoBehaviour
 
         if (alchemyMenu != null )
         {
+            alchemyMenu.isDebugging = false;
             alchemyMenu.Initialise(synthesiser);
         }
     }
