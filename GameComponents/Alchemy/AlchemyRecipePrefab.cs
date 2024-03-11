@@ -3,18 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
-public class AlchemyRecipePrefab : MonoBehaviour
+public class AlchemyRecipePrefab : MonoBehaviour, IPointerClickHandler
 {
+    public Recipe recipe;
     public TextMeshProUGUI recipeTitle;
     public Anim_BobLoop bobAnimation;
     public GameObject recipeContent;
-    public Func<Recipe> pinRecipe;
+    public Action<Recipe> pinRecipe;
     public float xOffset;
 
     void Start()
     {
+        recipeTitle.text = recipe.name.Replace(" Recipe", "");
         xOffset = Random.Range(-7, 7);
         BringToBack();
     }
@@ -36,5 +39,10 @@ public class AlchemyRecipePrefab : MonoBehaviour
         transform.SetAsFirstSibling();
         OffsetContent(xOffset);
         bobAnimation.enabled = false;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        pinRecipe(recipe);
     }
 }
