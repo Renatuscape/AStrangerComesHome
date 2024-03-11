@@ -16,6 +16,21 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
     private void Awake()
     {
         images = transform.Find("ImageContainer").GetComponentsInChildren<Image>();
+
+        foreach (var image in images)
+        {
+            if (image.gameObject.name == "Shadow")
+            {
+                // Get the RectTransform component of the image
+                RectTransform rectTransform = image.GetComponent<RectTransform>();
+
+                // Set the left property to 0
+                rectTransform.offsetMin = new Vector2(0, rectTransform.offsetMin.y);
+
+                // Set the top property to 40
+                rectTransform.offsetMax = new Vector2(rectTransform.offsetMax.x, -40);
+            }
+        }
     }
 
     private void Start()
