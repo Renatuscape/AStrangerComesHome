@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class AlchemyRecipeCard : MonoBehaviour, IDragHandler
+public class AlchemyPinnedRecipe : MonoBehaviour, IDragHandler
 {
     [SerializeField]
     private RectTransform dragRectTransform;
