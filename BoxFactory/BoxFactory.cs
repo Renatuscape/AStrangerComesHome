@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,6 +18,8 @@ public class BoxFactory : MonoBehaviour
     GameObject iconPrefab;
     [SerializeField]
     GameObject iconRowPrefab;
+    [SerializeField]
+    GameObject iconRowPlainTextPrefab;
     [SerializeField]
     FontManager fontManager;
 
@@ -80,6 +83,42 @@ public class BoxFactory : MonoBehaviour
     {
         GameObject newButton = Instantiate(iconRowPrefab);
         FormatText(newButton, $"({amount}) {item.name}", TextAlignmentOptions.Left);
+
+        Image[] images = newButton.transform.Find("ImageContainer").GetComponentsInChildren<Image>();
+
+        foreach (Image image in images)
+        {
+            image.sprite = item.sprite;
+        }
+
+        return newButton;
+    }
+
+    private GameObject InstantiateIconRowPlainTextPrefab(Item item, float amount, bool displayAmount)
+    {
+        GameObject newButton = Instantiate(iconRowPlainTextPrefab);
+        //FormatText(newButton, $"{item.name}{(displayAmount ? $" - {amount}" : "")}", TextAlignmentOptions.Left);
+
+        TextMeshProUGUI[] buttonText = newButton.GetComponentsInChildren<TextMeshProUGUI>();
+
+        foreach (TextMeshProUGUI text in buttonText)
+        {
+            if (text.gameObject.name == "AmountText")
+            {
+                if (displayAmount)
+                {
+                    text.text = ParseText(amount.ToString());
+                }
+                else
+                {
+                    text.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                text.text = ParseText(item.name);
+            }
+        }
 
         Image[] images = newButton.transform.Find("ImageContainer").GetComponentsInChildren<Image>();
 
@@ -163,6 +202,16 @@ public class BoxFactory : MonoBehaviour
         }
         return boxFactory.InstantiateIconRowPrefab(item, amount);
     }
+
+    public static GameObject CreateItemRowPlainText(Item item, float amount, bool displayAmount)
+    {
+        if (item == null)
+        {
+            Debug.Log("Item was null upon reaching Box Factory.");
+        }
+        return boxFactory.InstantiateIconRowPlainTextPrefab(item, amount,  displayAmount);
+    }
+
     public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32)
     {
         return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size);
