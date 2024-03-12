@@ -16,6 +16,7 @@ public class AlchemyPinnedRecipe : MonoBehaviour, IDragHandler
 
     public void Initialise(Recipe recipe)
     {
+        gameObject.SetActive(false);
         Debug.Log($"Initialised pinned card with recipe {recipe.objectID}. Ingredient list has {recipe.ingredients.Count} entries.");
         ClearPrefabs();
         gameObject.SetActive(true);
