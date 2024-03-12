@@ -90,7 +90,10 @@ public class RecipeManager : MonoBehaviour
     public static void ParseID(Recipe recipe)
     {
         var dataArray = recipe.objectID.Split('-');
-        var buySellData = dataArray[1];
+        var rarityData = dataArray[1];
+        var buySellData = dataArray[2];
+
+        recipe.rarity = Items.GetItemRarity(rarityData);
 
         if (buySellData[0] == 'N')
         {
