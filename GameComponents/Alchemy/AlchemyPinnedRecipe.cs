@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class AlchemyPinnedRecipe : MonoBehaviour, IDragHandler
 {
@@ -14,14 +16,26 @@ public class AlchemyPinnedRecipe : MonoBehaviour, IDragHandler
 
     public void Initialise(Recipe recipe)
     {
+        Debug.Log($"Initialised pinned card with recipe {recipe.objectID}. Ingredient list has {recipe.ingredients.Count} entries.");
         ClearPrefabs();
         gameObject.SetActive(true);
-        recipeTitle.text = recipe.name;
+        recipeTitle.text = recipe.name.Replace(" Recipe", "");
 
         foreach (IdIntPair ingredient in recipe.ingredients)
         {
-            var prefab = BoxFactory.CreateItemRow(Items.FindByID(ingredient.objectID), ingredient.amount);
-            prefab.transform.SetParent(prefabContainer.transform, false);
+            var item = Items.FindByID(ingredient.objectID);
+
+            if (item != null)
+            {
+                var prefab = BoxFactory.CreateItemRowPlainText(item, ingredient.amount, true);
+                prefab.transform.SetParent(prefabContainer.transform, false);
+                prefabs.Add(prefab);
+            }
+            else
+            {
+                Debug.Log($"Searched for {ingredient.objectID}, but return was null.");
+            }
+
         }
     }
 
@@ -43,7 +57,7 @@ public class AlchemyPinnedRecipe : MonoBehaviour, IDragHandler
             Destroy(prefab);
         }
 
-        prefabs.Clear();
+        prefabs = new();
     }
 
     private void OnDisable()
