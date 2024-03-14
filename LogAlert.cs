@@ -32,7 +32,7 @@ public class LogAlert : MonoBehaviour
 
             if (queuedTextAlerts.Count > 0 && queueTimer >= queueDelay)
             {
-                if (activeAlerts.Count < 15)
+                if (activeAlerts.Count < 10)
                 {
                     PrintTextAlert(queuedTextAlerts[0]);
                 }
@@ -40,7 +40,7 @@ public class LogAlert : MonoBehaviour
             }
             else if (queuedItemAlerts.Count > 0 && queueTimer >= queueDelay)
             {
-                if (activeAlerts.Count < 15)
+                if (activeAlerts.Count < 10)
                 {
                     PrintItemAlert(queuedItemAlerts[0]);
                 }
@@ -66,7 +66,7 @@ public class LogAlert : MonoBehaviour
 
     void PrintItemAlert(ItemIntPair entry)
     {
-        Debug.Log("Attempting to print item to log");
+        //Debug.Log("Attempting to print item to log");
         queuedItemAlerts.RemoveAt(0);
         var alert = BoxFactory.CreateItemRow(entry.item, entry.amount);
         AddBehaviour(alert);
@@ -77,7 +77,7 @@ public class LogAlert : MonoBehaviour
     void PrintTextAlert(string alertText)
     {
         logAlert.gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
-        Debug.Log("Attempting to print text to log");
+        //Debug.Log("Attempting to print text to log");
         queuedTextAlerts.RemoveAt(0);
         var alert = BoxFactory.CreateButton(alertText, 330);
         AddBehaviour(alert);
@@ -120,7 +120,7 @@ public class LogAlert : MonoBehaviour
             Debug.Log("Item was null upon reaching Log Alert");
         }
 
-        if (logAlert.queuedItemAlerts.Count >= 25)
+        if (logAlert.queuedItemAlerts.Count >= 20)
         {
             Debug.Log($"Too many queued alerts. Alert for {item.name} ignored");
         }
