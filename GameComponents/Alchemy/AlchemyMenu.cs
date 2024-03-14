@@ -18,15 +18,15 @@ public class AlchemyMenu : MonoBehaviour
     public DataManagerScript dataManager;
     public SynthesiserData synthData;
     public AlchemySelectedIngredients selectedIngredients;
+    public AlchemyInventory inventory;
     public SynthesiserType synthesiserType;
 
     public List<GameObject> draggableIngredientPrefabs = new();
-    public List<GameObject> inventoryPrefabs = new();
 
     public GameObject tableContainer;
     public GameObject infusionContainer;
     public GameObject dragParent;
-    public GameObject inventoryPage;
+    //public GameObject inventoryPage;
 
     public List<ItemIntPair> availableIngredients = new();
 
@@ -70,13 +70,11 @@ public class AlchemyMenu : MonoBehaviour
             dataManager.alchemySynthesisers.Add(synthData);
         }
 
-        availableIngredients = GetIngredientsInInventory();
-        RenderInventory(ItemType.Catalyst);
+        availableIngredients = inventory.GetIngredientsInInventory(isDebugging);
+        inventory.RenderInventory(ItemType.Catalyst, false, isDebugging);
         gameObject.SetActive(true);
         TransientDataCalls.SetGameState(GameState.Dialogue, name, gameObject);
     }
-
-    #region Initial Setup
     void SetUpContainers()
     {
         if (!containersEnabled)
@@ -99,76 +97,6 @@ public class AlchemyMenu : MonoBehaviour
             containersEnabled = true;
         }
     }
-
-    public List<ItemIntPair> GetIngredientsInInventory()  //call only once at Initialisation or on Clear, and edit availableIngredients when manipulating materials.
-    {
-        List<ItemIntPair> availableIngredients = new();
-
-        foreach (var item in Items.all) // exclude seeds, misc, scripts and books, and any unique item
-        {
-            if (item.type == ItemType.Treasure
-            || item.type == ItemType.Plant
-            || item.type == ItemType.Trade
-            || item.type == ItemType.Catalyst
-            || item.type == ItemType.Material)
-            {
-                if (item.rarity != ItemRarity.Unique)
-                {
-
-                    if (isDebugging)
-                    {
-                        availableIngredients.Add(new() { item = item, amount = 5 });
-                    }
-                    else
-                    {
-                        int amount = item.GetCountPlayer();
-
-                        if (amount > 0)
-                        {
-                            availableIngredients.Add(new() { item = item, amount = amount });
-                        }
-                    }
-                }
-            }
-        }
-
-        return availableIngredients;
-    }
-
-    public void RenderInventory(ItemType pageType, bool printAll = false)
-    {
-        foreach (var prefab in inventoryPrefabs)
-        {
-            Destroy(prefab);
-        }
-
-        inventoryPrefabs = new();
-
-        foreach (var entry in availableIngredients)
-        {
-            if (entry.amount > 0)
-            {
-                if (entry.item.type == pageType || printAll || isDebugging)
-                {
-                    var prefab = BoxFactory.CreateItemIcon(entry.item, true, 64);
-                    prefab.name = entry.item.name;
-                    prefab.transform.SetParent(inventoryPage.transform, false);
-                    prefab.AddComponent<AlchemyInventoryItem>();
-                    var script = prefab.GetComponent<AlchemyInventoryItem>();
-                    script.alchemyMenu = this;
-                    script.item = entry.item;
-
-                    var tag = prefab.transform.Find("Tag").gameObject;
-
-                    TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
-                    text.text = $"{entry.amount}";
-
-                    inventoryPrefabs.Add(prefab);
-                }
-            }
-        }
-    }
-    #endregion
 
     public GameObject DragItemFromInventory(Item item)
     {
@@ -251,7 +179,7 @@ public class AlchemyMenu : MonoBehaviour
 
         if (draggableIngredient != null)
         {
-            Debug.Log("Found entry. Attempting to update");
+            //Debug.Log("Found entry. Attempting to update");
 
             draggableIngredientPrefabs.Remove(draggableIngredient);
 
@@ -282,7 +210,7 @@ public class AlchemyMenu : MonoBehaviour
     void UpdateInventoryItemNumber(Item item)
     {
         var entry = availableIngredients.FirstOrDefault(entry => entry.item.objectID == item.objectID);
-        var prefab = inventoryPrefabs.FirstOrDefault(prefab => prefab.GetComponent<AlchemyInventoryItem>().item == item);
+        var prefab = inventory.inventoryPrefabs.FirstOrDefault(prefab => prefab.GetComponent<AlchemyInventoryItem>().item == item);
 
         if (prefab != null)
         {
