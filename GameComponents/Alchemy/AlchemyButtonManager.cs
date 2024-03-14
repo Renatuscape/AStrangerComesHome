@@ -99,7 +99,7 @@ public class AlchemyButtonManager : MonoBehaviour
     IEnumerator ClearTableInStyle(GameObject prefab, float duration)
     {
         prefab.transform.SetParent(alchemyMenu.dragParent.transform);
-        Vector3 targetLocation = alchemyMenu.inventoryPage.transform.position;
+        Vector3 targetLocation = alchemyMenu.inventory.prefabContainer.transform.position;
         Vector3 startPosition = prefab.transform.position;
         float elapsedTime = 0f;
 
