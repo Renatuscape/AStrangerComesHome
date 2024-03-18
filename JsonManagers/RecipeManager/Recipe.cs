@@ -10,6 +10,7 @@ public class Recipe
     public string name; // custom or set by yield item
     public string description;
     public ItemRarity rarity; //set by yield item
+    public int requiredProgress = 100;
 
     public int maxStack = 1;
     public int workload;
