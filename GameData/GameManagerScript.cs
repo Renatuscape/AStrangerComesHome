@@ -40,6 +40,7 @@ public class GameManagerScript : MonoBehaviour
     public PortraitRenderer portraitRenderer;
     public StorySystem storySystem;
     public MenuSystem menuSystem;
+    public AlchemyTracker alchemyTracker;
 
     void Awake()
     {
@@ -139,11 +140,10 @@ public class GameManagerScript : MonoBehaviour
         dataManager.inventoryList = Player.inventoryList;
 
 
-        //Add all the skills to the player inventory from the start
-        foreach (Skill skill in Skills.all.Where(s => s.type == SkillType.Attribute))
-        {
-            Player.inventoryList.Add(new IdIntPair { objectID = skill.objectID, amount = 1 });
-        }
+        //Add skills to the player inventory from the start
+        Player.Add("ATT000", 5); // Wandering begins at 5
+        Player.Add("ATT001", 5); // Fate begins at 5
+        Player.Add("ATT006", 1);
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
@@ -155,6 +155,7 @@ public class GameManagerScript : MonoBehaviour
         ResetGameComponents();
         DialogueTagParser.UpdateTags(dataManager);
         InitialiseMap();
+        alchemyTracker.gameObject.SetActive(true); // Ensure that alchemyTracker is enabled after loading from JSON in case of any running synthesisers.
     }
 
     public void ResetGameComponents()
