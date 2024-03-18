@@ -141,8 +141,8 @@ public class GameManagerScript : MonoBehaviour
 
 
         //Add skills to the player inventory from the start
-        Player.Add("ATT000", 6); // Wandering begins at 6
-        Player.Add("ATT001", 4); // Fate begins at 4
+        Player.Add("ATT000", 10); // Wandering
+        Player.Add("ATT001", 8); // Fate
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
