@@ -41,7 +41,7 @@ public class SalvageSpawner : MonoBehaviour
 
     void SyncSkills()
     {
-        fortune = Player.GetCount("ATT000", "SalvageSpawner");
+        fortune = Player.GetCount("ATT006", "SalvageSpawner");
     }
 
     void SalvageSpawn()
