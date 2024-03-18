@@ -44,10 +44,13 @@ public class AlchemyTracker : MonoBehaviour
 
         foreach (SynthesiserData synth in dataManager.alchemySynthesisers)
         {
-            if (synth.isSynthActive && !synth.isSynthPaused && synth.progressSynth < synth.synthRecipe.requiredProgress)
+            if (synth.isSynthActive && !synth.isSynthPaused && synth.synthRecipe != null)
             {
-                anyActiveSynthesiser = true;
-                synth.progressSynth += progressAmount;
+                if (synth.progressSynth < synth.synthRecipe.requiredProgress)
+                {
+                    anyActiveSynthesiser = true;
+                    synth.progressSynth += progressAmount;
+                }
             }
         }
 
