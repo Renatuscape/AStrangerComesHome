@@ -119,7 +119,7 @@ public class TransientDataScript : MonoBehaviour
             || GameState == GameState.JournalMenu
             || GameState == GameState.BankMenu
             || GameState == GameState.ShopMenu
-            || GameState == GameState.Dialogue
+            || GameState == GameState.Dialogue // Used by pop dialogue, memories and alchemy too
             || GameState == GameState.StartMenu)
         {
             return true;
