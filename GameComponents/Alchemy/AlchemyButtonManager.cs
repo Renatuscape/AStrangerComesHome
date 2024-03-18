@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class AlchemyButtonManager : MonoBehaviour
 {
     public AlchemyMenu alchemyMenu;
+    public AlchemyTracker alchemyTracker;
     public SynthesiserData synthData;
     public SynthesiserType synthesiserType;
     public GameObject confirmMenu;
@@ -20,6 +21,7 @@ public class AlchemyButtonManager : MonoBehaviour
     public Button leaveButton;
     public Button cancelButton;
     public Button clearButton;
+    public Button claimButton;
 
     private void OnEnable()
     {
@@ -28,13 +30,14 @@ public class AlchemyButtonManager : MonoBehaviour
         confirmMenu.SetActive(false);
         buttonContainer.SetActive(true);
 
-        clearButton.onClick.AddListener(() => ClearTable());
-        pauseButton.onClick.AddListener(() => Pause());
-        resumeButton.onClick.AddListener(() => Resume());
-        createButton.onClick.AddListener(() => Create());
-        leaveButton.onClick.AddListener(() => Leave());
-        cancelButton.onClick.AddListener(() => Cancel());
-        cancelConfirmationButton.onClick.AddListener(() => CancelConfirmation());
+        clearButton.onClick.AddListener(ClearTable);
+        pauseButton.onClick.AddListener(Pause);
+        resumeButton.onClick.AddListener(Resume);
+        createButton.onClick.AddListener(Create);
+        leaveButton.onClick.AddListener(Leave);
+        cancelButton.onClick.AddListener(Cancel);
+        claimButton.onClick.AddListener(Claim);
+        cancelConfirmationButton.onClick.AddListener(CancelConfirmation);
 
         CheckButtons();
     }
@@ -49,33 +52,48 @@ public class AlchemyButtonManager : MonoBehaviour
         createButton.onClick.RemoveAllListeners();
         leaveButton.onClick.RemoveAllListeners();
         cancelButton.onClick.RemoveAllListeners();
+        claimButton.onClick.RemoveAllListeners();
         cancelConfirmationButton.onClick.RemoveAllListeners();
     }
 
     public void CheckButtons()
     {
-        if (synthData.isSynthActive)
+
+        if (synthData.progressSynth >= synthData.synthRecipe.requiredProgress)
         {
+            claimButton.gameObject.SetActive(true);
             createButton.gameObject.SetActive(false);
-            cancelButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            createButton.gameObject.SetActive(true);
             pauseButton.gameObject.SetActive(false);
             resumeButton.gameObject.SetActive(false);
             cancelButton.gameObject.SetActive(false);
         }
+        else
+        {
+            claimButton.gameObject.SetActive(false);
 
-        if (synthData.isSynthActive && synthData.isSynthPaused)
-        {
-            resumeButton.gameObject.SetActive(true);
-            pauseButton.gameObject.SetActive(false);
-        }
-        else if (synthData.isSynthActive && !synthData.isSynthPaused)
-        {
-            resumeButton.gameObject.SetActive(false);
-            pauseButton.gameObject.SetActive(true);
+            if (synthData.isSynthActive)
+            {
+                createButton.gameObject.SetActive(false);
+                cancelButton.gameObject.SetActive(true);
+            }
+            else
+            {
+                createButton.gameObject.SetActive(true);
+                pauseButton.gameObject.SetActive(false);
+                resumeButton.gameObject.SetActive(false);
+                cancelButton.gameObject.SetActive(false);
+            }
+
+            if (synthData.isSynthActive && synthData.isSynthPaused)
+            {
+                resumeButton.gameObject.SetActive(true);
+                pauseButton.gameObject.SetActive(false);
+            }
+            else if (synthData.isSynthActive && !synthData.isSynthPaused)
+            {
+                resumeButton.gameObject.SetActive(false);
+                pauseButton.gameObject.SetActive(true);
+            }
         }
     }
 
@@ -143,12 +161,17 @@ public class AlchemyButtonManager : MonoBehaviour
         TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
     }
 
+    public void Claim()
+    {
+
+    }
+
     public void Create() // Opens confirmation menu
     {
         confirmMenu.gameObject.SetActive(true);
         buttonContainer.SetActive(false);
         confirmButton.onClick.RemoveAllListeners();
-        confirmButton.onClick.AddListener(() => ConfirmCreate());
+        confirmButton.onClick.AddListener(ConfirmCreate);
         confirmWarning.text = "Begin synthesis?\nIngredients cannot be recovered once the process begins.";
     }
 
@@ -157,7 +180,7 @@ public class AlchemyButtonManager : MonoBehaviour
         confirmMenu.gameObject.SetActive(true);
         buttonContainer.SetActive(false);
         confirmButton.onClick.RemoveAllListeners();
-        confirmButton.onClick.AddListener(() => ConfirmCancel());
+        confirmButton.onClick.AddListener(ConfirmCancel);
         confirmWarning.text = "Cancel synthesis?\nAll ingredients and progress will be lost.";
     }
 
@@ -177,6 +200,7 @@ public class AlchemyButtonManager : MonoBehaviour
         synthData.isSynthActive = true;
         synthData.isSynthPaused = false;
 
+        alchemyTracker.gameObject.SetActive(true);
         CheckButtons();
     }
 
