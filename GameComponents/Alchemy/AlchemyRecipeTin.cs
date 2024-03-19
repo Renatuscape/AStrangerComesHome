@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -21,7 +22,7 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         pinnedRecipeCard.gameObject.SetActive(false);
         Debug.Log($"Total of {Recipes.all.Count} recipes found in the game.");
 
-        foreach (Recipe rx in Recipes.all)
+        foreach (Recipe rx in Recipes.all.Where(r => !r.hidden))
         {
             recipes.Add(rx);
         }
