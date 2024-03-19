@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -10,18 +11,38 @@ public class Recipe
     public string name; // custom or set by yield item
     public string description;
     public ItemRarity rarity; //set by yield item
-    public int requiredProgress = 100;
+    public int baseCraft = 10; // 10 is default. This is multiplied by type and rarity. Reduce or increase in JSON only when an item deviates from standard.
 
     public int maxStack = 1;
     public int workload;
     public int manaDrainRate = 1;
     public int basePrice;
+    public int requiredLevel;
     public bool notBuyable;
     public bool notResearchable;
+    public bool hidden; // Will never be displayed in any recipe list
 
     public IdIntPair yield;
     public List<IdIntPair> ingredients;
 
+    public bool CheckCraftability(int alchemySkill)
+    {
+        if (!hidden && (!notResearchable || Player.GetCount(objectID, objectID) > 0))
+        {
+            if (requiredLevel > alchemySkill)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
     public bool CheckIngredients(List<IdIntPair> ingredientsIn)
     {
         // Check if items exist in player inventory
@@ -43,25 +64,13 @@ public class Recipe
         return ingredientsInSet.SetEquals(recipeIngredientsSet);
     }
 
-    public bool PerformAlchemy(List<IdIntPair> ingredientsIn, out IdIntPair result)
+    public int GetRequiredProgress()
     {
-        result = null;
+        var rarityModifier = (int)rarity + 6;
 
-        if (CheckIngredients(ingredientsIn))
-        {
-            foreach (IdIntPair entry in ingredientsIn)
-            {
-                Player.Remove(entry.objectID, entry.amount);
-            }
+        var craftProgressRequired = baseCraft * rarityModifier * rarityModifier * yield.amount;
 
-            Player.Add(yield.objectID, yield.amount);
-            result = yield;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return craftProgressRequired;
     }
 }
 
@@ -78,44 +87,39 @@ public static class Recipes
         }
     }
 
-    public static IdIntPair AttemptExperiment(List<IdIntPair> ingredientsIn, bool performAlchemy)
+    public static Recipe FindByID(string objectID)
     {
-        List<Recipe> viableRecipes = Recipes.all.Where(r => !r.notResearchable).ToList();
+        return all.FirstOrDefault(r => r.objectID == objectID);
+    }
 
-        Recipe matchingRecipe = null;
-        foreach (Recipe recipe in viableRecipes)
+    public static bool AttemptAlchemy(List<IdIntPair> ingredientsIn, out Recipe recipe)
+    {
+        int alchemySkill = Player.GetCount("AlC001", "Recipes");
+
+        foreach (Recipe rx in  all)
         {
-            if (recipe.CheckIngredients(ingredientsIn))
+            if (rx.CheckCraftability(alchemySkill))
             {
+                if (rx.CheckIngredients(ingredientsIn))
                 {
-                    matchingRecipe = recipe; break;
+                    recipe = rx;
+                    return true;
                 }
             }
         }
 
-        if (matchingRecipe != null)
-        {
-            if (performAlchemy)
-            {
-                matchingRecipe.PerformAlchemy(ingredientsIn, out var yield);
-            }
-
-            return matchingRecipe.yield;
-        }
-        else
-        {
-            return new IdIntPair() { objectID = "MAT030-JUN-NN", amount = 1 };
-        }
+        recipe = FindByID("REC001-JUN-NN");
+        return false;
     }
 
     public static List<string> AttemptSecretAlchemy(Recipe attemptedRecipe, List<ItemIntPair> ingredientsIn)
     {
         List<string> alchemyLog = new();
         List<ItemIntPair> recipeIngredients = new List<ItemIntPair>();
-        bool isAcolyte = false; 
-        bool isJourneyman = false; 
-        bool isExpert = false; 
-        bool isMaster = false; 
+        bool isAcolyte = false;
+        bool isJourneyman = false;
+        bool isExpert = false;
+        bool isMaster = false;
         int secretAlchemy = Player.GetCount("ALC001", "Recipes, AttemptSecretAlchemy()");
 
         if (secretAlchemy >= 8)
