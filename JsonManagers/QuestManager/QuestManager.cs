@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Linq;
 
 public class QuestManager : MonoBehaviour
 {
@@ -11,8 +12,23 @@ public class QuestManager : MonoBehaviour
 
     void Start()
     {
-        LoadFromJson("Quests.json");
-        //Remember to update numberOfFilesToLoad if more files are added
+        //LoadFromJson("Quests.json");
+
+        var info = new DirectoryInfo(Application.streamingAssetsPath + "/JsonData/Quests/");
+        var fileInfo = info.GetFiles();
+        numberOfFilesToLoad = fileInfo.Count();
+
+        foreach (var file in fileInfo)
+        {
+            if (file.Extension != ".json")
+            {
+                numberOfFilesToLoad -= 1;
+            }
+            else
+            {
+                LoadFromJson(Path.GetFileName(file.FullName)); // Pass only the file name
+            }
+        }
     }
 
     [System.Serializable]
