@@ -119,8 +119,9 @@ public class TransientDataScript : MonoBehaviour
             || GameState == GameState.JournalMenu
             || GameState == GameState.BankMenu
             || GameState == GameState.ShopMenu
-            || GameState == GameState.Dialogue // Used by pop dialogue, memories and alchemy too
-            || GameState == GameState.StartMenu)
+            || GameState == GameState.Dialogue // Used by pop dialogue and memories. Disables floating text.
+            || GameState == GameState.StartMenu
+            || GameState == GameState.AlchemyMenu)
         {
             return true;
         }
