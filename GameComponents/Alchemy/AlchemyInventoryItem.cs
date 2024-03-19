@@ -7,15 +7,17 @@ public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandl
     public Item item;
     public void OnInitializePotentialDrag(PointerEventData eventData)
     {
-
-        // Here we instantiate the second object, that we want to drag. 
-        GameObject go = alchemyMenu.DragItemFromInventory(item);
-
-        if (go != null)
+        if (alchemyMenu.synthData != null && !alchemyMenu.synthData.isSynthActive)
         {
-            go.transform.position = Input.mousePosition;
+            // Here we instantiate the second object, that we want to drag. 
+            GameObject go = alchemyMenu.DragItemFromInventory(item);
 
-            eventData.pointerDrag = go; // assign instantiated object
+            if (go != null)
+            {
+                go.transform.position = Input.mousePosition;
+
+                eventData.pointerDrag = go; // assign instantiated object
+            }
         }
     }
     public void OnDrag(PointerEventData eventData)
