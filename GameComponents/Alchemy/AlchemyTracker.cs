@@ -46,7 +46,7 @@ public class AlchemyTracker : MonoBehaviour
         {
             if (synth.isSynthActive && !synth.isSynthPaused && synth.synthRecipe != null)
             {
-                if (synth.progressSynth < synth.synthRecipe.requiredProgress)
+                if (synth.progressSynth < synth.synthRecipe.GetRequiredProgress())
                 {
                     anyActiveSynthesiser = true;
                     synth.progressSynth += progressAmount;
@@ -65,6 +65,6 @@ public class AlchemyTracker : MonoBehaviour
     {
         timer = 0;
         tick = 10 - (Player.GetCount("ALC004", name) * 0.5f);
-        progressAmount = 1 + (Player.GetCount("ALC003", name) * 0.2f);
+        progressAmount = 1 + (Player.GetCount("ALC003", name) * 0.4f);
     }
 }
