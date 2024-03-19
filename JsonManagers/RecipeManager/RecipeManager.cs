@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.IO.Ports;
 
 public class RecipeManager : MonoBehaviour
 {
@@ -81,6 +82,7 @@ public class RecipeManager : MonoBehaviour
         }
 
         ParseID(recipe);
+        SetRequiredLevel(recipe);
 
         recipeList.Add(recipe);
     }
@@ -108,6 +110,30 @@ public class RecipeManager : MonoBehaviour
         else if (buySellData[1] != 'R')
         {
             Debug.LogError($"{recipe.objectID} ID was not formatted correctly. Could not find N/R at index[1] after split");
+        }
+    }
+
+    public static void SetRequiredLevel(Recipe recipe)
+    {
+        if (recipe.rarity >= ItemRarity.Mythical)
+        {
+            recipe.requiredLevel = 9;
+        }
+        else if (recipe.rarity >= ItemRarity.Extraordinary)
+        {
+            recipe.requiredLevel = 7;
+        }
+        else if (recipe.rarity >= ItemRarity.Rare)
+        {
+            recipe.requiredLevel = 5;
+        }
+        else if (recipe.rarity >= ItemRarity.Uncommon)
+        {
+            recipe.requiredLevel = 3;
+        }
+        else
+        {
+            recipe.requiredLevel = 1;
         }
     }
 
