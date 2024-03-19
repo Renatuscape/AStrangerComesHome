@@ -37,7 +37,7 @@ public class RecipeManager : MonoBehaviour
                 {
                     foreach (Recipe recipe in dataWrapper.recipes)
                     {
-                        InitialiseItem(recipe, Recipes.all);
+                        InitialiseRecipe(recipe, Recipes.all);
                     }
                     filesLoaded++;
                     if (filesLoaded == numberOfFilesToLoad)
@@ -63,22 +63,33 @@ public class RecipeManager : MonoBehaviour
         }
     }
 
-    public static void InitialiseItem(Recipe recipe, List<Recipe> recipeList)
+    public static void InitialiseRecipe(Recipe recipe, List<Recipe> recipeList)
     {
-        var yieldItem = Items.FindByID(recipe.yield.objectID);
+        List<Item> yieldItems = new();
+        foreach (IdIntPair item in recipe.yield)
+        {
+            var foundItem = Items.FindByID(item.objectID);
+            yieldItems.Add(foundItem);
+            if (foundItem == null)
+            {
+                Debug.Log($"{item.objectID} returned null. Check JSON data for recipe {recipe.objectID} yield.");
+            }
+        }
 
-        recipe.rarity = yieldItem.rarity;
+        recipe.rarity = yieldItems[0].rarity;
 
-        recipe.basePrice = CalculatePrice(ref recipe, yieldItem);
+        recipe.basePrice = CalculatePrice(ref recipe, yieldItems[0]);
 
         if (string.IsNullOrEmpty(recipe.name))
         {
-            recipe.name = yieldItem.name + " Recipe";
+            recipe.name = yieldItems[0].name + " Recipe";
         }
 
         if (recipe.workload == 0)
         {
-            recipe.workload = 100 * ((int)recipe.rarity + 1);
+            var rarityModifier = (int)recipe.rarity + 6;
+
+            recipe.workload = recipe.baseWorkload * rarityModifier * rarityModifier * recipe.yield[0].amount;
         }
 
         ParseID(recipe);
@@ -90,10 +101,7 @@ public class RecipeManager : MonoBehaviour
     public static void ParseID(Recipe recipe)
     {
         var dataArray = recipe.objectID.Split('-');
-        var rarityData = dataArray[1];
-        var buySellData = dataArray[2];
-
-        recipe.rarity = Items.GetItemRarity(rarityData);
+        var buySellData = dataArray[1];
 
         if (buySellData[0] == 'N')
         {
@@ -141,11 +149,11 @@ public class RecipeManager : MonoBehaviour
     {
         int rarityMultiplier = 1;
 
-        if ((int)yieldItem.rarity >= 0)
+        if ((int)yieldItem.rarity+1 >= 0)
         {
             rarityMultiplier = (int)yieldItem.rarity + 1;
         }
 
-        return yieldItem.basePrice * recipe.yield.amount * 10 * rarityMultiplier;
+        return yieldItem.basePrice * recipe.yield[0].amount * 10 * rarityMultiplier;
     }
 }
