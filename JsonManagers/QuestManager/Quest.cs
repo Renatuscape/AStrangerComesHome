@@ -37,7 +37,7 @@ public class Quest
 
     public Dialogue GetStage(int stage)
     {
-        return dialogues.Where(d => d.questStage == stage).FirstOrDefault();
+        return dialogues.FirstOrDefault(d => d.questStage == stage);
     }
 }
 
@@ -57,8 +57,8 @@ public static class Quests
 
     public static Dialogue GetDialogueByQuestStage(string questID, int stage)
     {
-        Quest quest = all.Where(q => q.objectID == questID).FirstOrDefault();
-        Dialogue dialogue = quest.dialogues.Where(d => d.questStage == stage).FirstOrDefault();
+        Quest quest = all.FirstOrDefault(q => q.objectID == questID);
+        Dialogue dialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
 
         return dialogue;
     }
