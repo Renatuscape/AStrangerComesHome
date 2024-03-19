@@ -46,7 +46,7 @@ public class AlchemyTracker : MonoBehaviour
         {
             if (synth.isSynthActive && !synth.isSynthPaused && synth.synthRecipe != null)
             {
-                if (synth.progressSynth < synth.synthRecipe.GetRequiredProgress())
+                if (synth.progressSynth < synth.synthRecipe.workload)
                 {
                     anyActiveSynthesiser = true;
                     synth.progressSynth += progressAmount;
