@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
-//Base template for items of various types. Each itemtype needs its own script with additional data and CreateAssetMenu in this space
 
 [System.Serializable]
 public class Item
@@ -61,34 +60,13 @@ public static class Items
     {
         foreach (Item item in all)
         {
-            item.AddToPlayer(5);
-            item.AddToPlayer(10);
-            item.AddToPlayer(25);
             item.AddToPlayer(100);
         }
     }
 
-    public static Item FindByID(string searchWord, bool debug = false, string caller = "unknown")
+    public static Item FindByID(string searchWord)
     {
-        if (string.IsNullOrWhiteSpace(searchWord))
-        {
-            Debug.LogWarning($"Search term {searchWord} was null or white-space. Returned null. Ensure correct ID in calling script.");
-            return null;
-        }
-        foreach (Item item in all)
-        {
-            if (item.objectID.Contains(searchWord))
-            {
-                return item;
-            }
-        }
-
-        if (debug)
-        {
-            Debug.LogWarning("Caller " + caller + " found no item with ID containing this search term: " + searchWord);
-        }
-
-        return null;
+        return all.FirstOrDefault(i => i.objectID.Contains(searchWord));
     }
 
     public static int GetMax(string searchWord)
