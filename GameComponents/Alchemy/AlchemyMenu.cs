@@ -73,7 +73,7 @@ public class AlchemyMenu : MonoBehaviour
         availableIngredients = inventory.GetIngredientsInInventory(isDebugging);
         inventory.RenderInventory(ItemType.Catalyst, false, isDebugging);
         gameObject.SetActive(true);
-        TransientDataCalls.SetGameState(GameState.Dialogue, name, gameObject);
+        TransientDataCalls.SetGameState(GameState.AlchemyMenu, name, gameObject);
     }
     void SetUpContainers()
     {
