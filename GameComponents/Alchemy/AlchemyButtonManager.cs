@@ -59,9 +59,10 @@ public class AlchemyButtonManager : MonoBehaviour
     public void CheckButtons()
     {
 
-        if (synthData != null && synthData.synthRecipe != null && synthData.progressSynth >= synthData.synthRecipe.GetRequiredProgress())
+        if (synthData != null && synthData.synthRecipe != null && synthData.progressSynth >= synthData.synthRecipe.workload)
         {
             claimButton.gameObject.SetActive(true);
+            clearButton.gameObject.SetActive(false);
             createButton.gameObject.SetActive(false);
             pauseButton.gameObject.SetActive(false);
             resumeButton.gameObject.SetActive(false);
@@ -74,11 +75,13 @@ public class AlchemyButtonManager : MonoBehaviour
             if (synthData.isSynthActive)
             {
                 createButton.gameObject.SetActive(false);
+                clearButton.gameObject.SetActive(false);
                 cancelButton.gameObject.SetActive(true);
             }
             else
             {
                 createButton.gameObject.SetActive(true);
+                clearButton.gameObject.SetActive(true);
                 pauseButton.gameObject.SetActive(false);
                 resumeButton.gameObject.SetActive(false);
                 cancelButton.gameObject.SetActive(false);
@@ -201,6 +204,9 @@ public class AlchemyButtonManager : MonoBehaviour
         synthData.isSynthPaused = false;
 
         alchemyTracker.gameObject.SetActive(true);
+
+        // Creation animation and deletion of prefabs goes here
+
         CheckButtons();
     }
 
@@ -211,6 +217,8 @@ public class AlchemyButtonManager : MonoBehaviour
         confirmButton.onClick.RemoveAllListeners();
         synthData.isSynthActive = false;
         synthData.progressSynth = 0;
+
+        //Cancel animation and resetting of components goes here
 
         CheckButtons();
     }
