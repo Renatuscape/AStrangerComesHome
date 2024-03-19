@@ -11,7 +11,7 @@ public class Recipe
     public string name; // custom or set by yield item
     public string description;
     public ItemRarity rarity; //set by yield item
-    public int baseCraft = 10; // 10 is default. This is multiplied by type and rarity. Reduce or increase in JSON only when an item deviates from standard.
+    public int baseWorkload = 10; // 10 is default. This is multiplied by type and rarity. Reduce or increase in JSON only when an item deviates from standard.
 
     public int maxStack = 1;
     public int workload;
@@ -22,7 +22,7 @@ public class Recipe
     public bool notResearchable;
     public bool hidden; // Will never be displayed in any recipe list
 
-    public IdIntPair yield;
+    public List<IdIntPair> yield;
     public List<IdIntPair> ingredients;
 
     public bool CheckCraftability(int alchemySkill)
@@ -63,15 +63,6 @@ public class Recipe
         // Check if the hash sets are equal (i.e., contain the same elements)
         return ingredientsInSet.SetEquals(recipeIngredientsSet);
     }
-
-    public int GetRequiredProgress()
-    {
-        var rarityModifier = (int)rarity + 6;
-
-        var craftProgressRequired = baseCraft * rarityModifier * rarityModifier * yield.amount;
-
-        return craftProgressRequired;
-    }
 }
 
 public static class Recipes
@@ -108,7 +99,7 @@ public static class Recipes
             }
         }
 
-        recipe = FindByID("REC001-JUN-NN");
+        recipe = FindByID("REC001-NN");
         return false;
     }
 
