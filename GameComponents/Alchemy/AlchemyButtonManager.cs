@@ -59,7 +59,7 @@ public class AlchemyButtonManager : MonoBehaviour
     public void CheckButtons()
     {
 
-        if (synthData != null && synthData.synthRecipe != null && synthData.progressSynth >= synthData.synthRecipe.requiredProgress)
+        if (synthData != null && synthData.synthRecipe != null && synthData.progressSynth >= synthData.synthRecipe.GetRequiredProgress())
         {
             claimButton.gameObject.SetActive(true);
             createButton.gameObject.SetActive(false);
