@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum SkillType
@@ -59,21 +60,7 @@ public static class Skills
 
     public static Skill FindByID(string searchWord)
     {
-        if (string.IsNullOrWhiteSpace(searchWord))
-        {
-            Debug.LogWarning("Search term was empty, returned null. Ensure correct ID in calling script.");
-            return null;
-        }
-        foreach (Skill skill in all)
-        {
-            if (skill.objectID == searchWord)
-            {
-                return skill;
-            }
-        }
-        //Debug.LogWarning("No skill found with ID contianing this search term: " + searchWord);
-        //DebugList();
-        return null;
+        return all.FirstOrDefault(s => s.objectID == searchWord);
     }
 
     public static int GetMax(string searchWord)
