@@ -38,7 +38,7 @@ public class SecretAlchemy : MonoBehaviour
 
     void FillPages()
     {
-        foreach (Recipe rx in Recipes.all.Where(r => !r.notResearchable))
+        foreach (Recipe rx in Recipes.all.Where(r => !r.notResearchable && !r.hidden))
         {
             if (book5.isUnlocked && rx.rarity >= ItemRarity.Mythical)
             {
