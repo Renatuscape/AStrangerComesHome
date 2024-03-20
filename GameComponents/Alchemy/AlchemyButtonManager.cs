@@ -8,7 +8,6 @@ public class AlchemyButtonManager : MonoBehaviour
 {
     public AlchemyMenu alchemyMenu;
     public SynthesiserData synthData;
-    public SynthesiserType synthesiserType;
     public GameObject confirmMenu;
     public GameObject buttonContainer;
     public TextMeshProUGUI confirmWarning;
@@ -25,7 +24,6 @@ public class AlchemyButtonManager : MonoBehaviour
     private void OnEnable()
     {
         synthData = alchemyMenu.synthData;
-        synthesiserType = alchemyMenu.synthesiserType;
         confirmMenu.SetActive(false);
         buttonContainer.SetActive(true);
 
@@ -119,6 +117,10 @@ public class AlchemyButtonManager : MonoBehaviour
             {
                 time = 0.9f;
             }
+            if (time < 0.2f)
+            {
+                time = 0.2f;
+            }
 
             StartCoroutine(ClearTableInStyle(allDraggables[i], time));
         }
@@ -172,7 +174,8 @@ public class AlchemyButtonManager : MonoBehaviour
 
     public void Claim()
     {
-
+        alchemyMenu.HandleClaim();
+        CheckButtons();
     }
 
     public void Create() // Opens confirmation menu
