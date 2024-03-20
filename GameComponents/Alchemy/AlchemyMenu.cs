@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,9 @@ public class AlchemyMenu : MonoBehaviour
     public SynthesiserData synthData;
     public AlchemySelectedIngredients selectedIngredients;
     public AlchemyInventory inventory;
+    public AlchemyProgressBar progressBar;
+    public AlchemyYieldManager yieldManager;
+    public AlchemyButtonManager buttonManager;
     public SynthesiserType synthesiserType;
 
     public List<AlchemyObject> alchemyObjects = new();
@@ -73,10 +77,18 @@ public class AlchemyMenu : MonoBehaviour
             dataManager.alchemySynthesisers.Add(synthData);
         }
 
-        alchemyObjects = SetUpAlchemyObjects(isDebugging);
-        inventory.RenderInventory(ItemType.Catalyst, false);
-        gameObject.SetActive(true);
-        TransientDataCalls.SetGameState(GameState.AlchemyMenu, name, gameObject);
+        if (synthData != null && synthData.synthRecipe != null)
+        {
+            synthData.synthRecipe.SetWorkload(); // In case the formula has been changed, update workload
+
+            alchemyObjects = SetUpAlchemyObjects(isDebugging);
+            inventory.RenderInventory(ItemType.Catalyst, false);
+            gameObject.SetActive(true);
+            TransientDataCalls.SetGameState(GameState.AlchemyMenu, name, gameObject);
+            progressBar.alchemyMenu = this;
+            progressBar.Initialise(synthData);
+            yieldManager.Setup(synthData);
+        }
     }
     void SetUpContainers()
     {
@@ -139,10 +151,19 @@ public class AlchemyMenu : MonoBehaviour
         {
             AlchemyObject newObject = new();
             newObject.AddToInventory(entry, this);
-            alcObjects.Add( newObject );
+            alcObjects.Add(newObject);
         }
 
         return alcObjects;
+    }
+
+    public void HandleClaim()
+    {
+        yieldManager.Clear();
+        synthData.synthRecipe.AddYieldToPlayer();
+        synthData.isSynthActive = false;
+        synthData.progressSynth = 0;
+        synthData.synthRecipe = null;
     }
 
     public void HandleCreate()
@@ -154,46 +175,64 @@ public class AlchemyMenu : MonoBehaviour
 
         if (foundCatalyst == null || foundPlant == null)
         {
-            TransientDataCalls.PushAlert("All recipes are built on an infusion.");
-            TransientDataCalls.PushAlert("I need a catalyst and a type of plant in the bowl.");
+            TransientDataCalls.PushAlert("I need a catalyst and a type of plant for the infusion.");
         }
         else
         {
-            List<IdIntPair> ingredientList = new();
+            var infusions = alchemyObjects.Where(ob => ob.isInfusion && ob.currentlyOnTable > 0).ToList();
+            List<AlchemyDraggableItem> draggablePrefabs = new();
 
-            foreach (var ob in alchemyObjects)
+            if (infusions.Count != 2)
             {
-                if (ob.currentlyOnTable > 0)
+                //Debug.Log($"Infusions list count was {infusions.Count}");
+                TransientDataCalls.PushAlert("The infusion isn't correctly balanced.");
+                TransientDataCalls.PushAlert("There should be one type of catalyst and one type of plant in the bowl.");
+            }
+            else
+            {
+                List<IdIntPair> ingredientList = new();
+                foreach (var ob in alchemyObjects)
                 {
-                    ingredientList.Add(new() {objectID = ob.objectID, amount = ob.currentlyOnTable});
-                    ob.UseForCreation(isDebugging);
+                    if (ob.currentlyOnTable > 0)
+                    {
+                        ingredientList.Add(new() { objectID = ob.objectID, amount = ob.currentlyOnTable });
+                        draggablePrefabs.AddRange(ob.draggableObjects);
+                        ob.UseForCreation(isDebugging);
+                    }
                 }
+
+                synthData.synthRecipe = Recipes.AttemptAlchemy(ingredientList, out bool isSuccessful, isDebugging);
+                synthData.isSynthActive = true;
+                synthData.isSynthPaused = false;
+
+                alchemyTracker.gameObject.SetActive(true);
+
+                InitialiseAnimateCreate(draggablePrefabs, animationTimer);
+
+                if (!isSuccessful)
+                {
+                    Invoke("CreateFailure", animationTimer);
+                }
+
+                Debug.Log($"Began crafting {synthData.synthRecipe.objectID} ({synthData.synthRecipe.name})");
             }
+        }
+    }
 
-            synthData.synthRecipe = Recipes.AttemptAlchemy(ingredientList, out bool isSuccessful, isDebugging);
-            synthData.isSynthActive = true;
-            synthData.isSynthPaused = false;
+    void InitialiseAnimateCreate(List<AlchemyDraggableItem> draggablePrefabs, float duration)
+    {
+        for (int i = draggablePrefabs.Count - 1; i >= 0; i--)
+        {
+            duration += i * 0.1f;
+            duration = duration * 0.3f;
 
-            alchemyTracker.gameObject.SetActive(true);
-
-            for (int i = selectedIngredients.draggableItems.Count - 1; i >= 0; i--)
-            {
-                AlchemyDraggableItem draggableObject = selectedIngredients.draggableItems[i];
-                selectedIngredients.draggableItems.Remove(draggableObject);
-                StartCoroutine(AnimateCreate(draggableObject.gameObject, animationTimer));
-            }
-
-            if (!isSuccessful)
-            {
-                Invoke("CreateFailure", animationTimer);
-            }
-
-            Debug.Log($"Began crafting {synthData.synthRecipe.objectID} ({synthData.synthRecipe.name})");
+            StartCoroutine(AnimateCreate(draggablePrefabs[i].gameObject, duration));
         }
     }
 
     IEnumerator AnimateCreate(GameObject prefab, float duration)
     {
+        //Debug.Log($"Animating {prefab.name}");
         prefab.transform.SetParent(dragParent.transform);
         Vector3 targetLocation = infusionContainer.transform.position;
         Vector3 startPosition = prefab.transform.position;
@@ -235,5 +274,16 @@ public class AlchemyMenu : MonoBehaviour
         }
 
         alchemyObjects.Clear();
+    }
+
+    public void SynthComplete()
+    {
+        if (!yieldManager.isYieldPrinted)
+        {
+            Debug.Log("Progress bar registered that synth was complete.");
+            yieldManager.CheckCompletion();
+            buttonManager.CheckButtons();
+        }
+
     }
 }
