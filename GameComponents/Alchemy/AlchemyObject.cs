@@ -181,7 +181,7 @@ public class AlchemyObject
         foreach (var draggable in draggableObjects)
         {
             currentlyOnTable--;
-            UnityEngine.Object.Destroy(draggable.gameObject);
+            //UnityEngine.Object.Destroy(draggable.gameObject); // Handle destroy in the animation component
         }
 
         draggableObjects.Clear();
@@ -201,7 +201,6 @@ public class AlchemyObject
         prefab.AddComponent<AlchemyDraggableItem>();
 
         var script = prefab.GetComponent<AlchemyDraggableItem>();
-        Debug.Log($"Script for {item.name} was {script}");
         script.item = item;
         script.dragParent = dragParent;
         script.alchemyObject = this;
