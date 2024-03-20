@@ -162,6 +162,7 @@ public static class MoneyExchange
 
         evaluation += (mercantile * 0.05f);
         evaluation += (charm * 0.05f);
+        evaluation = evaluation * (int)item.type + 1;
 
         Mathf.FloorToInt(price * evaluation);
 
