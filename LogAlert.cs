@@ -154,9 +154,12 @@ public class LogAlert : MonoBehaviour
 
     public static void QueueTextAlert(string alertText)
     {
-        if (logAlert.queuedTextAlerts.Count < 25)
+        if (logAlert != null)
         {
-            logAlert.queuedTextAlerts.Add(alertText);
+            if (logAlert.queuedTextAlerts.Count < 25)
+            {
+                logAlert.queuedTextAlerts.Add(alertText);
+            }
         }
     }
 
