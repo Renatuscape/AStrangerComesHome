@@ -14,7 +14,6 @@ public class AlchemyInventory : MonoBehaviour
     public Button btnTrade;
     public Button btnAll;
     public GameObject prefabContainer;
-    public List<GameObject> inventoryPrefabs = new();
 
     void Start()
     {
@@ -76,41 +75,12 @@ public class AlchemyInventory : MonoBehaviour
         return availableIngredients;
     }
 
-    public void RenderInventory(ItemType pageType, bool printAll = false, bool isDebugging = false)
+    public void RenderInventory(ItemType pageType, bool printAll = false)
     {
-        ClearInventory();
 
-        foreach (var entry in alchemyMenu.availableIngredients)
+        foreach (var alcObject in alchemyMenu.alchemyObjects)
         {
-            if (entry.amount > 0)
-            {
-                if (entry.item.type == pageType || printAll || isDebugging)
-                {
-                    var prefab = BoxFactory.CreateItemIcon(entry.item, true, 64);
-                    prefab.name = entry.item.name;
-                    prefab.transform.SetParent(prefabContainer.transform, false);
-                    prefab.AddComponent<AlchemyInventoryItem>();
-                    var script = prefab.GetComponent<AlchemyInventoryItem>();
-                    script.alchemyMenu = alchemyMenu;
-                    script.item = entry.item;
-
-                    var tag = prefab.transform.Find("Tag").gameObject;
-
-                    TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
-                    text.text = $"{entry.amount}";
-
-                    inventoryPrefabs.Add(prefab);
-                }
-            }
+            alcObject.CheckInventoryDisplay(pageType, printAll);
         }
-    }
-
-    void ClearInventory()
-    {
-        foreach (var prefab in inventoryPrefabs)
-        {
-            Destroy(prefab);
-        }
-        inventoryPrefabs = new();
     }
 }
