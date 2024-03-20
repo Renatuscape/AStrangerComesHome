@@ -20,48 +20,90 @@ public class Recipe
     public int requiredLevel;
     public bool notBuyable;
     public bool notResearchable;
-    public bool hidden; // Will never be displayed in any recipe list
+    public bool hidden = false; // Will never be displayed in any recipe list
 
-    public List<IdIntPair> yield;
+    public List<IdIntPair> yield = new();
     public List<IdIntPair> ingredients;
 
     public bool CheckCraftability(int alchemySkill)
     {
-        if (!hidden && (!notResearchable || Player.GetCount(objectID, objectID) > 0))
+        Debug.Log($"Checking craftability of {objectID}");
+        bool isUnlocked = Player.GetCount(objectID, objectID) > 0;
+
+        if (!hidden && (!notResearchable || isUnlocked))
         {
-            if (requiredLevel > alchemySkill)
             {
-                return false;
-            }
-            else
-            {
-                return true;
+                if (requiredLevel > alchemySkill)
+                {
+                    Debug.Log("Required alchemy level was too low");
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
         }
         else
         {
+            if (hidden) {
+                Debug.Log("Recipe was hidden");
+            }
+            if (notResearchable && !isUnlocked)
+            {
+                Debug.Log("Recipe is not researchable and was not unlocked");
+            }
+            Debug.Log("Recipe is hidden from discovery");
             return false;
         }
     }
     public bool CheckIngredients(List<IdIntPair> ingredientsIn)
     {
-        // Check if items exist in player inventory
-        foreach (IdIntPair entry in ingredientsIn)
+        if (ingredientsIn.Count != ingredients.Count) // ensures no extra ingredients are present and stops early
         {
-            int amount = Player.GetCount(entry.objectID, name);
+            return false;
+        }
 
-            if (amount < entry.amount)
+        foreach (IdIntPair recipeEntry in ingredients)
+        {
+            var match = ingredientsIn.FirstOrDefault(inputEntry => inputEntry.objectID == recipeEntry.objectID && inputEntry.amount == recipeEntry.amount);
+
+            if (match == null)
             {
                 return false;
             }
         }
 
-        // Create hash sets for this recipe's ingredients and the other collection's ingredients
-        HashSet<IdIntPair> ingredientsInSet = new HashSet<IdIntPair>(ingredientsIn);
-        HashSet<IdIntPair> recipeIngredientsSet = new HashSet<IdIntPair>(ingredients);
+        return true;
+    }
 
-        // Check if the hash sets are equal (i.e., contain the same elements)
-        return ingredientsInSet.SetEquals(recipeIngredientsSet);
+    public void SetWorkload()
+    {
+        if (yield != null && yield.Count > 0 && yield[0] != null)
+        {
+            int rarityModifier = (int)rarity + 6;
+            int typeModifier = 1;
+            Item yieldItem = Items.FindByID(yield[0].objectID);
+
+            if (yieldItem != null)
+            {
+                typeModifier+= (int)yieldItem.type;
+            }
+
+            workload = (baseWorkload + rarityModifier + yield[0].amount) * typeModifier;
+        }
+        else
+        {
+            Debug.Log($"yield for {objectID} {name} was null.");
+        }
+    }
+
+    public void AddYieldToPlayer()
+    {
+        foreach (var entry in yield)
+        {
+            Player.Add(entry.objectID, entry.amount);
+        }
     }
 }
 
@@ -85,7 +127,7 @@ public static class Recipes
 
     public static Recipe AttemptAlchemy(List<IdIntPair> ingredientsIn, out bool isSuccess, bool isDebugging = false)
     {
-        int alchemySkill = Player.GetCount("AlC001", "Recipes");
+        int alchemySkill = Player.GetCount("ALC000", "Recipes");
 
         if (isDebugging)
         {
