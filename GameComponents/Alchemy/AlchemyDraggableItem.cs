@@ -4,14 +4,14 @@ using UnityEngine.UI;
 
 public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-    public AlchemyMenu alchemyMenu;
+    public AlchemyObject alchemyObject;
     public Transform parentContainer;
     public GameObject dragParent;
 
     public Item item;
     public Image[] images;
     public GameObject lastCollision;
-    public bool isInfusion;
+    //public bool isInfusion;
 
     private void Awake()
     {
@@ -35,7 +35,7 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
 
     private void Start()
     {
-        lastCollision = alchemyMenu.tableContainer;
+        lastCollision = alchemyObject.materialContainer;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -75,25 +75,25 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
             image.raycastTarget = true;
         }
 
-        if (lastCollision != alchemyMenu.tableContainer
-            && lastCollision != alchemyMenu.infusionContainer
+        if (lastCollision != alchemyObject.materialContainer
+            && lastCollision != alchemyObject.infusionContainer
             && lastCollision.name != "Image")
         {
-            ReturnToInventory();
+            alchemyObject.ReturnToInventory(this);
         }
         else if (transform.parent.gameObject == dragParent)
         {
-            ReturnToInventory();
+            alchemyObject.ReturnToInventory(this);
         }
-        else if (lastCollision == alchemyMenu.infusionContainer)
+        else if (lastCollision == alchemyObject.infusionContainer)
         {
-            isInfusion = true;
-            alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
+            alchemyObject.SetAsInfusion();
+            //alchemyObject.alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
         }
-        else if (lastCollision == alchemyMenu.tableContainer)
+        else if (lastCollision == alchemyObject.materialContainer)
         {
-            isInfusion = false;
-            alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
+            alchemyObject.SetAsMaterial();
+            //alchemyObject.alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
         }
         else if (lastCollision.name == "Image")
         {
@@ -101,8 +101,15 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
 
             if (draggableItemScript != null)
             {
-                isInfusion = draggableItemScript.isInfusion;
-                transform.SetParent(lastCollision.transform.parent.transform.parent.transform.parent, false);
+                if (alchemyObject.isInfusion)
+                {
+                    alchemyObject.SetAsInfusion();
+                }
+                else
+                {
+                    alchemyObject.SetAsMaterial();
+                }
+                //transform.SetParent(lastCollision.transform.parent.transform.parent.transform.parent, false);
             }
             else
             {
@@ -110,24 +117,16 @@ public class AlchemyDraggableItem : MonoBehaviour, IBeginDragHandler, IEndDragHa
 
                 if (inventoryItemScript != null)
                 {
-                    ReturnToInventory();
+                    alchemyObject.ReturnToInventory(this);
                 }
                 else
                 {
                     Debug.Log("Last collision was named Image, but could not find AlchemyDraggableItem or AlchemyInventoryItem script. Defaulting to table.");
-                    isInfusion = false;
-                    transform.SetParent(alchemyMenu.tableContainer.transform, false);
+                    alchemyObject.SetAsMaterial();
+                    //transform.SetParent(alchemyObject.materialContainer.transform, false);
                 }
             }
-            alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
-        }
-    }
-
-    public void ReturnToInventory()
-    {
-        if (gameObject != null)
-        {
-            alchemyMenu.ReturnIngredientToInventory(gameObject);
+            //alchemyObject.alchemyMenu.selectedIngredients.UpdateItemContainer(this, gameObject);
         }
     }
 }
