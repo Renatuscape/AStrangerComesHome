@@ -147,13 +147,8 @@ public class RecipeManager : MonoBehaviour
 
     public static int CalculatePrice(ref Recipe recipe, Item yieldItem)
     {
-        int rarityMultiplier = 1;
+        var itemPrice = MoneyExchange.CalculateSellPrice(yieldItem);
 
-        if ((int)yieldItem.rarity+1 >= 0)
-        {
-            rarityMultiplier = (int)yieldItem.rarity + 1;
-        }
-
-        return yieldItem.basePrice * recipe.yield[0].amount * 10 * rarityMultiplier;
+        return (100 * ((int)yieldItem.rarity + 2)) + (150 * ((int)yieldItem.type + 1)) + itemPrice;
     }
 }
