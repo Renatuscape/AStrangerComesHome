@@ -87,9 +87,7 @@ public class RecipeManager : MonoBehaviour
 
         if (recipe.workload == 0)
         {
-            var rarityModifier = (int)recipe.rarity + 6;
-
-            recipe.workload = recipe.baseWorkload * rarityModifier * rarityModifier * recipe.yield[0].amount;
+            recipe.SetWorkload();
         }
 
         ParseID(recipe);
