@@ -170,7 +170,7 @@ public static class MoneyExchange
         {
             price = 1;
         }
-        Debug.Log($"Item({item.objectID}) base price: {item.basePrice}. Evaluation: {evaluation}. Returned price: {price}.");
+        //Debug.Log($"Item({item.objectID}) base price: {item.basePrice}. Evaluation: {evaluation}. Returned price: {price}.");
         return price;
     }
 
