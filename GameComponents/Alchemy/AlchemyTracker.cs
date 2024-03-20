@@ -64,7 +64,7 @@ public class AlchemyTracker : MonoBehaviour
     void UpdateValues()
     {
         timer = 0;
-        tick = 10 - (Player.GetCount("ALC004", name) * 0.5f);
-        progressAmount = 1 + (Player.GetCount("ALC003", name) * 0.4f);
+        tick = 10 - (Player.GetCount("ALC004", name) * 0.9f);
+        progressAmount = 1 + (Player.GetCount("ALC003", name) * 0.6f);
     }
 }
