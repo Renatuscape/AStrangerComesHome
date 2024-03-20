@@ -58,15 +58,15 @@ public enum DayOfWeek
 //OBJECT ENUMS
 public enum ItemType
 {
-    Seed,
-    Plant,     //made from seeds
-    Catalyst,  //made from plants
-    Material,  //made from ingredients and catalysts
-    Treasure,  //made from materials and catalysts
-    Trade,     //has no function besides buy/sell at market
-    Misc,      //modular and unique items, quest items, whatever. Not sold in any stores
-    Book,       //bought/found/rewarded, can be opened and read 
-    Script      //only for data used by scripts
+    Seed = 0,
+    Plant = 1,     //made from seeds
+    Material = 2, //made from ingredients and catalysts
+    Catalyst = 3,  //made from plants
+    Trade = 4,     //has no function besides buy/sell at market
+    Book = 5,       //bought/found/rewarded, can be opened and read 
+    Misc = 6,      //modular and unique items, quest items, whatever. Not sold in any stores
+    Treasure = 7,  //made from materials and catalysts
+    Script = 8      //only for data used by scripts
 }
 
 public enum ObjectType
