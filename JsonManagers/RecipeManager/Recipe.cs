@@ -83,9 +83,15 @@ public static class Recipes
         return all.FirstOrDefault(r => r.objectID == objectID);
     }
 
-    public static bool AttemptAlchemy(List<IdIntPair> ingredientsIn, out Recipe recipe)
+    public static Recipe AttemptAlchemy(List<IdIntPair> ingredientsIn, out bool isSuccess, bool isDebugging = false)
     {
         int alchemySkill = Player.GetCount("AlC001", "Recipes");
+
+        if (isDebugging)
+        {
+            Debug.Log("Alchemy skill treated as 10 for debugging purposes.");
+            alchemySkill = 10;
+        }
 
         foreach (Recipe rx in  all)
         {
@@ -93,14 +99,14 @@ public static class Recipes
             {
                 if (rx.CheckIngredients(ingredientsIn))
                 {
-                    recipe = rx;
-                    return true;
+                    isSuccess = true;
+                    return rx;
                 }
             }
         }
 
-        recipe = FindByID("REC001-NN");
-        return false;
+        isSuccess = false;
+        return FindByID("REC001-NN");
     }
 
     public static List<string> AttemptSecretAlchemy(Recipe attemptedRecipe, List<ItemIntPair> ingredientsIn)
