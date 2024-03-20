@@ -3,14 +3,14 @@ using UnityEngine.EventSystems;
 
 public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    public AlchemyMenu alchemyMenu;
+    public AlchemyObject alchemyObject;
     public Item item;
     public void OnInitializePotentialDrag(PointerEventData eventData)
     {
-        if (alchemyMenu.synthData != null && !alchemyMenu.synthData.isSynthActive)
+        if (alchemyObject.alchemyMenu.synthData != null && !alchemyObject.alchemyMenu.synthData.isSynthActive)
         {
             // Here we instantiate the second object, that we want to drag. 
-            GameObject go = alchemyMenu.DragItemFromInventory(item);
+            GameObject go = alchemyObject.SpawnDraggable();
 
             if (go != null)
             {
