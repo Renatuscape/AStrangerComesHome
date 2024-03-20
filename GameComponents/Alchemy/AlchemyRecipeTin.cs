@@ -27,6 +27,7 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
             recipes.Add(rx);
         }
 
+        recipes.OrderBy(rx => rx.name);
         StockTin();
         nextRecipe.onClick.AddListener(() => NextRecipe());
     }
