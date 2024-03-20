@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Linq;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class AlchemyButtonManager : MonoBehaviour
 {
     public AlchemyMenu alchemyMenu;
-    public AlchemyTracker alchemyTracker;
     public SynthesiserData synthData;
     public SynthesiserType synthesiserType;
     public GameObject confirmMenu;
@@ -59,7 +58,7 @@ public class AlchemyButtonManager : MonoBehaviour
     public void CheckButtons()
     {
 
-        if (synthData != null && synthData.synthRecipe != null && synthData.progressSynth >= synthData.synthRecipe.workload)
+        if (synthData != null && synthData.synthRecipe != null && synthData.isSynthActive && synthData.progressSynth >= synthData.synthRecipe.workload)
         {
             claimButton.gameObject.SetActive(true);
             clearButton.gameObject.SetActive(false);
@@ -102,7 +101,14 @@ public class AlchemyButtonManager : MonoBehaviour
 
     public void ClearTable()
     {
-        for (int i = alchemyMenu.draggableIngredientPrefabs.Count - 1; i >= 0; i--)
+        List<AlchemyDraggableItem> allDraggables = new();
+
+        foreach (var alchemyObject in alchemyMenu.alchemyObjects)
+        {
+            allDraggables.AddRange(alchemyObject.draggableObjects);
+        }
+
+        for (int i = allDraggables.Count - 1; i >= 0; i--)
         {
             float time = 0.2f * i;
             if (time > 1)
@@ -113,29 +119,29 @@ public class AlchemyButtonManager : MonoBehaviour
             {
                 time = 0.9f;
             }
-            StartCoroutine(ClearTableInStyle(alchemyMenu.draggableIngredientPrefabs[i], time));
+
+            StartCoroutine(ClearTableInStyle(allDraggables[i], time));
         }
-    }
 
-    IEnumerator ClearTableInStyle(GameObject prefab, float duration)
-    {
-        prefab.transform.SetParent(alchemyMenu.dragParent.transform);
-        Vector3 targetLocation = alchemyMenu.inventory.prefabContainer.transform.position;
-        Vector3 startPosition = prefab.transform.position;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < duration)
+        IEnumerator ClearTableInStyle(AlchemyDraggableItem prefab, float duration)
         {
-            elapsedTime += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsedTime / duration);
-            prefab.transform.position = Vector3.Lerp(startPosition, targetLocation, t);
-            yield return null;
+            prefab.transform.SetParent(alchemyMenu.dragParent.transform);
+            Vector3 targetLocation = alchemyMenu.inventory.prefabContainer.transform.position;
+            Vector3 startPosition = prefab.transform.position;
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsedTime / duration);
+                prefab.transform.position = Vector3.Lerp(startPosition, targetLocation, t);
+                yield return null;
+            }
+
+            // Ensure the object is exactly at the target position
+            prefab.transform.position = targetLocation;
+            prefab.alchemyObject.ReturnToInventory(prefab);
         }
-
-        // Ensure the object is exactly at the target position
-        prefab.transform.position = targetLocation;
-
-        alchemyMenu.ReturnIngredientToInventory(prefab);
     }
 
     public void Pause()
@@ -194,21 +200,6 @@ public class AlchemyButtonManager : MonoBehaviour
 
         CheckButtons();
     }
-    public void ConfirmCreate() // Actually starts the synthesis
-    {
-        confirmMenu.gameObject.SetActive(false);
-        buttonContainer.SetActive(true);
-
-        // Placeholder for testing
-        synthData.isSynthActive = true;
-        synthData.isSynthPaused = false;
-
-        alchemyTracker.gameObject.SetActive(true);
-
-        // Creation animation and deletion of prefabs goes here
-
-        CheckButtons();
-    }
 
     public void ConfirmCancel() // Actually cancels the synthesis
     {
@@ -219,6 +210,18 @@ public class AlchemyButtonManager : MonoBehaviour
         synthData.progressSynth = 0;
 
         //Cancel animation and resetting of components goes here
+
+        CheckButtons();
+    }
+
+    public void ConfirmCreate() // Actually starts the synthesis
+    {
+        confirmMenu.gameObject.SetActive(false);
+        buttonContainer.SetActive(true);
+
+        alchemyMenu.HandleCreate();
+
+        // Creation animation and deletion of prefabs goes here
 
         CheckButtons();
     }
