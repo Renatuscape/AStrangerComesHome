@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -16,22 +17,24 @@ public enum SynthesiserType
 public class AlchemyMenu : MonoBehaviour
 {
     public DataManagerScript dataManager;
+    public AlchemyTracker alchemyTracker;
     public SynthesiserData synthData;
     public AlchemySelectedIngredients selectedIngredients;
     public AlchemyInventory inventory;
     public SynthesiserType synthesiserType;
 
-    public List<GameObject> draggableIngredientPrefabs = new();
+    public List<AlchemyObject> alchemyObjects = new();
 
-    public GameObject tableContainer;
+    public GameObject inventoryContainer;
+    public GameObject materialContainer;
     public GameObject infusionContainer;
     public GameObject dragParent;
-    //public GameObject inventoryPage;
 
-    public List<ItemIntPair> availableIngredients = new();
+    public GameObject infusionList;
+    public GameObject materialList;
 
-    bool containersEnabled;
     public bool isDebugging = true;
+    bool containersEnabled;
 
     private void Start()
     {
@@ -70,8 +73,8 @@ public class AlchemyMenu : MonoBehaviour
             dataManager.alchemySynthesisers.Add(synthData);
         }
 
-        availableIngredients = inventory.GetIngredientsInInventory(isDebugging);
-        inventory.RenderInventory(ItemType.Catalyst, false, isDebugging);
+        alchemyObjects = SetUpAlchemyObjects(isDebugging);
+        inventory.RenderInventory(ItemType.Catalyst, false);
         gameObject.SetActive(true);
         TransientDataCalls.SetGameState(GameState.AlchemyMenu, name, gameObject);
     }
@@ -79,11 +82,11 @@ public class AlchemyMenu : MonoBehaviour
     {
         if (!containersEnabled)
         {
-            tableContainer.AddComponent<AlchemyContainer>();
-            tableContainer.GetComponent<AlchemyContainer>().itemLimit = 40;
-            tableContainer.GetComponent<AlchemyContainer>().reverseAnimation = true;
-            tableContainer.AddComponent<RadialLayout>();
-            var tableLayout = tableContainer.GetComponent<RadialLayout>();
+            materialContainer.AddComponent<AlchemyContainer>();
+            materialContainer.GetComponent<AlchemyContainer>().itemLimit = 40;
+            materialContainer.GetComponent<AlchemyContainer>().reverseAnimation = true;
+            materialContainer.AddComponent<RadialLayout>();
+            var tableLayout = materialContainer.GetComponent<RadialLayout>();
             tableLayout.MinAngle = 360;
             tableLayout.fDistance = 280;
 
@@ -98,138 +101,139 @@ public class AlchemyMenu : MonoBehaviour
         }
     }
 
-    public GameObject DragItemFromInventory(Item item)
+    List<AlchemyObject> SetUpAlchemyObjects(bool isDebugging = false)
     {
-        int maxTypes = 10;
-        int maxAmount = 60;
-        int uniqueEntries = selectedIngredients.selectedInfusions.Count + selectedIngredients.selectedMaterials.Count;
-        int totalEntries = selectedIngredients.draggableItems.Count;
+        var alcObjects = new List<AlchemyObject>();
 
+        List<ItemIntPair> availableIngredients = new();
 
-        if (totalEntries >= maxAmount)
+        foreach (var item in Items.all) // exclude seeds, misc, scripts and books, and any unique item
         {
-            TransientDataCalls.PushAlert("Too many ingredients!");
-            Debug.Log("Could not spawn item. Too many were already on the table.");
-            return null;
-        }
-        else if (uniqueEntries >= maxTypes)
-        {
-            var match = selectedIngredients.draggableItems.FirstOrDefault(d => d.item == item);
-
-            if (match != null && totalEntries < maxAmount)
+            if (item.type == ItemType.Treasure
+            || item.type == ItemType.Plant
+            || item.type == ItemType.Trade
+            || item.type == ItemType.Catalyst
+            || item.type == ItemType.Material)
             {
-                return SpawnDraggableItem(item);
+                if (item.rarity != ItemRarity.Unique)
+                {
+
+                    if (isDebugging)
+                    {
+                        availableIngredients.Add(new() { item = item, amount = 30 });
+                    }
+                    else
+                    {
+                        int amount = item.GetCountPlayer();
+
+                        if (amount > 0)
+                        {
+                            availableIngredients.Add(new() { item = item, amount = amount });
+                        }
+                    }
+                }
             }
-            else
-            {
-                TransientDataCalls.PushAlert("Too many types of ingredients!");
-                Debug.Log("Could not spawn item. Too many were already on the table.");
-                return null;
-            }
-        }
-        else if (uniqueEntries < maxTypes && totalEntries < maxAmount)
-        {
-            return SpawnDraggableItem(item);
         }
 
-        return null;
+        foreach (ItemIntPair entry in availableIngredients)
+        {
+            AlchemyObject newObject = new();
+            newObject.AddToInventory(entry, this);
+            alcObjects.Add( newObject );
+        }
+
+        return alcObjects;
     }
 
-    GameObject SpawnDraggableItem(Item item)
+    public void HandleCreate()
     {
-        if (item == null)
+        float animationTimer = 2;
+
+        var foundCatalyst = alchemyObjects.FirstOrDefault(ob => ob.isInfusion && ob.itemEntry.item.type == ItemType.Catalyst);
+        var foundPlant = alchemyObjects.FirstOrDefault(ob => ob.isInfusion && ob.itemEntry.item.type == ItemType.Plant);
+
+        if (foundCatalyst == null || foundPlant == null)
         {
-            Debug.Log("Could not spawn item. It was null.");
-            return null;
+            TransientDataCalls.PushAlert("All recipes are built on an infusion.");
+            TransientDataCalls.PushAlert("I need a catalyst and a type of plant in the bowl.");
         }
         else
         {
-            var prefab = BoxFactory.CreateItemIcon(item, false, 96);
-            prefab.transform.SetParent(dragParent.transform, false);
-            prefab.name = item.name;
-            prefab.AddComponent<AlchemyDraggableItem>();
+            List<IdIntPair> ingredientList = new();
 
-            var script = prefab.GetComponent<AlchemyDraggableItem>();
-            script.item = item;
-            script.dragParent = dragParent;
-            script.alchemyMenu = this;
-            draggableIngredientPrefabs.Add(prefab);
-
-            var matchingEntryInInventory = availableIngredients.FirstOrDefault(entry => entry.item == item);
-
-            if (matchingEntryInInventory != null)
+            foreach (var ob in alchemyObjects)
             {
-                matchingEntryInInventory.amount--;
-            }
-            else
-            {
-                Debug.Log("Something went wrong when removing the item.");
+                if (ob.currentlyOnTable > 0)
+                {
+                    ingredientList.Add(new() {objectID = ob.objectID, amount = ob.currentlyOnTable});
+                    ob.UseForCreation(isDebugging);
+                }
             }
 
-            UpdateInventoryItemNumber(script.item);
-            return prefab;
+            synthData.synthRecipe = Recipes.AttemptAlchemy(ingredientList, out bool isSuccessful, isDebugging);
+            synthData.isSynthActive = true;
+            synthData.isSynthPaused = false;
+
+            alchemyTracker.gameObject.SetActive(true);
+
+            for (int i = selectedIngredients.draggableItems.Count - 1; i >= 0; i--)
+            {
+                AlchemyDraggableItem draggableObject = selectedIngredients.draggableItems[i];
+                selectedIngredients.draggableItems.Remove(draggableObject);
+                StartCoroutine(AnimateCreate(draggableObject.gameObject, animationTimer));
+            }
+
+            if (!isSuccessful)
+            {
+                Invoke("CreateFailure", animationTimer);
+            }
+
+            Debug.Log($"Began crafting {synthData.synthRecipe.objectID} ({synthData.synthRecipe.name})");
         }
     }
 
-    public void ReturnIngredientToInventory(GameObject draggableCallerObject)
+    IEnumerator AnimateCreate(GameObject prefab, float duration)
     {
-        GameObject draggableIngredient = draggableIngredientPrefabs.FirstOrDefault(obj => obj == draggableCallerObject);
-        var script = draggableIngredient.GetComponent<AlchemyDraggableItem>();
-        ItemIntPair matchingInventoryEntry = availableIngredients.FirstOrDefault(entry => entry.item == script.item);
+        prefab.transform.SetParent(dragParent.transform);
+        Vector3 targetLocation = infusionContainer.transform.position;
+        Vector3 startPosition = prefab.transform.position;
+        float elapsedTime = 0f;
 
-        if (draggableIngredient != null)
+        while (elapsedTime < duration)
         {
-            //Debug.Log("Found entry. Attempting to update");
-
-            draggableIngredientPrefabs.Remove(draggableIngredient);
-
-
-            if (script.item == null)
-            {
-                Debug.LogWarning("Item in prefab's AlchemyDraggableItem script was null. Something went wrong.");
-            }
-            else
-            {
-                if (matchingInventoryEntry != null)
-                {
-                    matchingInventoryEntry.amount++;
-                }
-                else
-                {
-                    Debug.Log("Something went wrong when returning the item.");
-                }
-
-                UpdateInventoryItemNumber(script.item);
-                selectedIngredients.UpdateIngredient(script, true);
-            }
-
-            Destroy(draggableIngredient);
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            prefab.transform.position = Vector3.Lerp(startPosition, targetLocation, t);
+            yield return null;
         }
+
+        // Ensure the object is exactly at the target position
+        prefab.transform.position = targetLocation;
+
+        Destroy(prefab);
     }
 
-    void UpdateInventoryItemNumber(Item item)
+    void CreateFailure()
     {
-        var entry = availableIngredients.FirstOrDefault(entry => entry.item.objectID == item.objectID);
-        var prefab = inventory.inventoryPrefabs.FirstOrDefault(prefab => prefab.GetComponent<AlchemyInventoryItem>().item == item);
+        TransientDataCalls.PushAlert("I think something went wrong...");
+    }
 
-        if (prefab != null)
+    private void OnDisable()
+    {
+        foreach (var entry in alchemyObjects)
         {
-            if (entry.amount > 0)
-            {
-                var tag = prefab.transform.Find("Tag").gameObject;
+            Destroy(entry.inventoryClass.gameObject);
+            Destroy(entry.selectedEntryPrefab);
 
-                TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
-                text.text = $"{entry.amount}";
-                prefab.SetActive(true);
-            }
-            else
+            if (entry.draggableObjects != null)
             {
-                prefab.SetActive(false);
+                foreach (var obj in entry.draggableObjects)
+                {
+                    Destroy(obj.gameObject);
+                }
             }
         }
-        else
-        {
-            Debug.Log($"Could not find prefab for {item}.");
-        }
+
+        alchemyObjects.Clear();
     }
 }
