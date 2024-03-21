@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
-public class SimpleAnimator : MonoBehaviour
+public class Anim_SimpleLoop : MonoBehaviour
 {
     public SpriteRenderer spriteRenderer;
     public List<Sprite> spriteList = new();
