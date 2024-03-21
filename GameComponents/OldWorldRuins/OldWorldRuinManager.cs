@@ -90,14 +90,7 @@ public class OldWorldRuinManager : MonoBehaviour
         public int difficulty;
         public int depth;
         public List<RuinRoom> rooms;
-        public List<MoDataSet> completionReward;
-    }
-
-    [System.Serializable]
-    public struct MoDataSet
-    {
-        public MotherObject rewardType;
-        public int amount;
+        public List<IdIntPair> completionReward;
     }
 
     [System.Serializable]
