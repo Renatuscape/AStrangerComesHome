@@ -213,15 +213,15 @@ public class InteractNode : MonoBehaviour
 
             if (foundCharacter == null)
             {
-                Debug.LogWarning($"Walking NPC ID {walkingNpcId} was not found in Characters.all.");
+                //Debug.LogWarning($"Walking NPC ID {walkingNpcId} was not found in Characters.all.");
             }
             else if (foundCharacter.walkingLocations == null || foundCharacter.walkingLocations.Count == 0)
             {
-                Debug.LogWarning($"Attempting to walk NPC without walking locations {walkingNpcId}.");
+                //Debug.LogWarning($"Attempting to walk NPC without walking locations {walkingNpcId}.");
 
                 if (ignoreWalkingConditions)
                 {
-                    Debug.LogWarning("Ignoring walking conditions.");
+                    //Debug.LogWarning("Ignoring walking conditions.");
                     SetUpWalkingNpc(foundCharacter);
                 }
             }
@@ -248,19 +248,19 @@ public class InteractNode : MonoBehaviour
             Quest quest = Quests.FindByID(repeatingItemQuest);
             int stage = Player.GetCount(repeatingItemQuest, "node checker");
 
-            Debug.Log($"Node Spawner looking for {repeatingItemQuest}. Found {quest.name}");
+            //Debug.Log($"Node Spawner looking for {repeatingItemQuest}. Found {quest.name}");
 
             if (stage < quest.dialogues.Count)
             {
                 Dialogue foundDialogue = quest.dialogues[stage];
-                Debug.Log($"Dialogue found is {foundDialogue.objectID}. Dialogue count is {quest.dialogues.Count}");
+                //Debug.Log($"Dialogue found is {foundDialogue.objectID}. Dialogue count is {quest.dialogues.Count}");
 
                 if (foundDialogue != null)
                 {
-                    Debug.Log("Found dialogue was not null.");
+                    //Debug.Log("Found dialogue was not null.");
                     if (foundDialogue.stageType == StageType.Node)
                     {
-                        Debug.Log("Stage type was node.");
+                        //Debug.Log("Stage type was node.");
                         SetUpItem(foundDialogue);
                     }
 
@@ -322,7 +322,7 @@ public class InteractNode : MonoBehaviour
         }
         else
         {
-            Debug.Log("Failed random spawn check!");
+            Debug.Log("Failed random spawn check. No loot today :)");
         }
     }
 }
