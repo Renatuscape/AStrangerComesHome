@@ -17,6 +17,11 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
     public List<Recipe> recipes;
     public int recipeIndex;
     public bool toggleOpen;
+
+    private void Start()
+    {
+        nextRecipe.onClick.AddListener(() => NextRecipe());
+    }
     private void OnEnable()
     {
         pinnedRecipeCard.gameObject.SetActive(false);
@@ -29,7 +34,6 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
 
         recipes.OrderBy(rx => rx.name);
         StockTin();
-        nextRecipe.onClick.AddListener(() => NextRecipe());
     }
     private void OnDisable()
     {
@@ -38,15 +42,6 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
 
     void StockTin()
     {
-        if (recipes.Count < 8)
-        {
-            nextRecipe.gameObject.SetActive(false);
-        }
-        else
-        {
-            nextRecipe.gameObject.SetActive(true);
-        }
-
         recipeIndex = 0;
 
         foreach (Recipe rx in recipes)
@@ -58,6 +53,15 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
                 break;
             }
         }
+
+        if (recipes.Count <= 8)
+        {
+            nextRecipe.gameObject.SetActive(false);
+        }
+        else
+        {
+            nextRecipe.gameObject.SetActive(true);
+        }
     }
 
     void EmptyTin()
@@ -66,9 +70,10 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         {
             Destroy(prefab);
         }
-        recipeCardPrefabs = new();
+
+        recipeCardPrefabs.Clear();
         recipeIndex = 0;
-        recipes = new();
+        recipes.Clear();
     }
 
     void InstantiateRecipePrefab(Recipe rx)
