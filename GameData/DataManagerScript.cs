@@ -31,7 +31,6 @@ public class DataManagerScript : MonoBehaviour
 
     public string hairHexColour;
     public string eyesHexColour;
-    //public SerializableDictionary<string, bool> faceMods;
 
     //JOURNEY DATA - SAVE READY
     public string currentRegion;
@@ -39,6 +38,7 @@ public class DataManagerScript : MonoBehaviour
     public float mapPositionY;
     public float timeOfDay;
     public int totalGameDays;
+    public List<string> giftedThisWeek;
 
     //PASSENGER DATA - A
     public bool passengerIsActiveA;
