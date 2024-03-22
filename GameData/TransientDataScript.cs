@@ -290,6 +290,19 @@ public static class TransientDataCalls
     public static void DailyReset()
     {
         QuestResetter.Tick();
+
+        if (GetDaysPassed() % 7 == 0)
+        {
+            if (gameManager.dataManager.giftedThisWeek != null)
+            {
+                gameManager.dataManager.giftedThisWeek.Clear();
+            }
+        }
+    }
+
+    public static bool GiftCheck(Character character)
+    {
+        return gameManager.dataManager.giftedThisWeek.Contains(character.objectID);
     }
 
     public static int GetDaysPassed()
