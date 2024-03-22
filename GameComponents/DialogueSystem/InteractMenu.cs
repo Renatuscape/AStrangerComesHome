@@ -35,6 +35,11 @@ public class InteractMenu : MonoBehaviour
             {
                 PrintShopButton(character, shop);
             }
+
+            if (character.type != CharacterType.Generic)
+            {
+                PrintGiftButton(character);
+            }
         }
 
         gameObject.SetActive(true);
@@ -86,10 +91,24 @@ public class InteractMenu : MonoBehaviour
 
     }
 
+    void PrintGiftButton(Character character)
+    {
+        if (TransientDataCalls.GiftCheck(character))
+        {
+            var giftButton = GetButton($"Gift already given");
+            giftButton.GetComponent<Button>().enabled = false;
+        }
+
+        else
+        {
+            var giftButton = GetButton($"Gift");
+            giftButton.GetComponent<Button>().onClick.AddListener(() => menuSystem.giftMenu.Setup(character));
+        }
+    }
+
     void PrintLeaveButton()
     {
         var leaveButton = GetButton($"Leave");
-        leaveButton.transform.SetParent(prefabContainer.transform);
         buttons.Add(leaveButton);
 
         leaveButton.GetComponent<Button>().onClick.AddListener(() => TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject));
