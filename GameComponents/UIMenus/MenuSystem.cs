@@ -8,6 +8,7 @@ public class MenuSystem : MonoBehaviour
 
     public GameObject startMenu;
     public ShopMenu shopMenu;
+    public GiftMenu giftMenu;
     public InteractMenu interactMenu;
     public GameObject journalMenu;
     public AlchemyMenu alchemyMenu;
