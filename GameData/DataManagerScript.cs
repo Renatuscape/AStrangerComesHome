@@ -28,10 +28,10 @@ public class DataManagerScript : MonoBehaviour
     public int headIndex;
     public int eyesIndex;
     public int mouthIndex;
-    public int frameIndex;
 
     public string hairHexColour;
     public string eyesHexColour;
+    public string frameID;
 
     //JOURNEY DATA - SAVE READY
     public string currentRegion;
