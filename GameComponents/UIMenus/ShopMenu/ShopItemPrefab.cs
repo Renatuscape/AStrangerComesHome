@@ -21,10 +21,12 @@ public class ShopItemPrefab : MonoBehaviour
     public float priceIncreasePercent;
 
     int priceAdjusted;
+    int rhetorics;
 
     void Awake()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+        rhetorics = Player.GetCount("MAG002", "ShopMenu");
         frameOval.SetActive(false);
         frameRound.SetActive(false);
         itemFrame.SetActive(false);
@@ -46,7 +48,10 @@ public class ShopItemPrefab : MonoBehaviour
     public void CalculatePrice()
     {
         var newPrice = itemSource.basePrice * (1 + priceIncreasePercent / 100);
-        priceAdjusted = (int)Mathf.Ceil(newPrice);
+        float rhetoricsDiscount = Mathf.Clamp(rhetorics * 0.02f, 0f, 0.20f); // 0.02f represents 2%, 0.20f represents 20%
+        float finalPrice = newPrice - (newPrice * rhetoricsDiscount);
+
+        priceAdjusted = (int)Mathf.Ceil(finalPrice);
         //Debug.Log($"Price {itemSource.basePrice} adjusted by {priceIncreasePercent}% to {priceAdjusted}");
 
         valueText.text = $"{priceAdjusted}";

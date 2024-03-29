@@ -14,7 +14,6 @@ public class ShopMenu : MonoBehaviour
     public Character shopkeeper;
     public Shop activeShop;
     public int judgement;
-    public int rhetorics;
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
@@ -83,12 +82,12 @@ public class ShopMenu : MonoBehaviour
             if (activeShop.saleDay == transientData.weekDay)
             {
                 clearanceNotice.SetActive(true);
-                profitMargin = activeShop.clearanceMargin - (judgement * 0.5f) - (rhetorics * 0.25f);
+                profitMargin = activeShop.clearanceMargin - (judgement * 0.5f);
             }
             else
             {
                 clearanceNotice.SetActive(false);
-                profitMargin = activeShop.profitMargin - judgement - (rhetorics * 0.5f);
+                profitMargin = activeShop.profitMargin - judgement;
             }
 
             if (profitMargin < 0)
@@ -253,7 +252,6 @@ public class ShopMenu : MonoBehaviour
     void SyncSkills()
     {
         judgement = Player.GetCount("ATT002", "ShopMenu");
-        rhetorics = Player.GetCount("MAG002", "ShopMenu");
     }
     public void ChangePage(bool pageBack)
     {
