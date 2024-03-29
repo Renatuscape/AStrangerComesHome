@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class AlchemyMiniSynth : MonoBehaviour
 {
     public SynthesiserData synthData;
+    public CoachCabinetMenu cabinetMenu;
+
     public TextMeshProUGUI recipeTitle;
     public TextMeshProUGUI statusText;
     public TextMeshProUGUI manaDrainRate;
@@ -24,8 +26,11 @@ public class AlchemyMiniSynth : MonoBehaviour
     public Button btnExamine;
     public Button btnPause;
     public Button btnResume;
-    public void Initialise(SynthesiserData synthData)
+
+    public void Initialise(SynthesiserData synthData, CoachCabinetMenu cabinetMenu)
     {
+        this.cabinetMenu = cabinetMenu;
+
         if (synthData != null)
         {
             btnExamine.enabled = true;
@@ -58,7 +63,8 @@ public class AlchemyMiniSynth : MonoBehaviour
 
     public void Examine()
     {
-        // Open alchemy menu with correct synthData...
+        TransientDataCalls.gameManager.menuSystem.alchemyMenu.Initialise(synthData);
+        cabinetMenu.CloseCabinet();
     }
 
     public void PauseSynth()
