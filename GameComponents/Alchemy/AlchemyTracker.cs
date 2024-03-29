@@ -8,9 +8,11 @@ public class AlchemyTracker : MonoBehaviour
     public float timer;
     public float tick;
     public float progressAmount;
+    public int baseManaConsumption;
 
     private void OnEnable()
     {
+        baseManaConsumption = 5;
         Debug.Log("Enabling Alchemy Tracker.");
         dataManager = TransientDataCalls.gameManager.dataManager;
         UpdateValues();
@@ -48,8 +50,26 @@ public class AlchemyTracker : MonoBehaviour
             {
                 if (synth.progressSynth < synth.synthRecipe.workload)
                 {
-                    anyActiveSynthesiser = true;
-                    synth.progressSynth += progressAmount;
+                    if (synth.consumesMana)
+                    {
+                        int manaCost = baseManaConsumption * synth.synthRecipe.manaDrainRate;
+
+                        if (TransientDataCalls.transientData.currentMana > manaCost)
+                        {
+                            TransientDataCalls.transientData.currentMana -= manaCost;
+                            anyActiveSynthesiser = true;
+                            synth.progressSynth += progressAmount;
+                        }
+                        else
+                        {
+                            synth.isSynthPaused = true;
+                        }
+                    }
+                    else
+                    {
+                        anyActiveSynthesiser = true;
+                        synth.progressSynth += progressAmount;
+                    }
                 }
             }
         }
