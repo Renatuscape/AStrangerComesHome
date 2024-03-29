@@ -67,6 +67,11 @@ public class AlchemyMenu : MonoBehaviour
 
         synthData = dataManager.alchemySynthesisers.FirstOrDefault(s => s.synthesiserID == name);
 
+        Initialise(synthData);
+    }
+
+    public void Initialise(SynthesiserData synthData)
+    {
         if (synthData == null)
         {
             synthData = new() { synthesiserID = name };
