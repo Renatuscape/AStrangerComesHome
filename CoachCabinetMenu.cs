@@ -77,7 +77,7 @@ public class CoachCabinetMenu : MonoBehaviour
                 miniSynth.transform.SetParent(menuContainer.transform, false);
 
                 var script = miniSynth.GetComponent<AlchemyMiniSynth>();
-                script.Initialise(synthData);
+                script.Initialise(synthData, this);
 
                 miniSynthInstances.Add(miniSynth);
                 miniSynth.name = synthData.synthesiserID;
