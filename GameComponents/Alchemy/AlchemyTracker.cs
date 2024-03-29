@@ -46,31 +46,18 @@ public class AlchemyTracker : MonoBehaviour
 
         foreach (SynthesiserData synth in dataManager.alchemySynthesisers)
         {
-            if (synth.isSynthActive && !synth.isSynthPaused && synth.synthRecipe != null)
+            if (synth.isSynthActive && !synth.isSynthPaused && synth.synthRecipe != null && synth.progressSynth < synth.synthRecipe.workload)
             {
-                if (synth.progressSynth < synth.synthRecipe.workload)
+                if (synth.consumesMana)
                 {
-                    if (synth.consumesMana)
-                    {
-                        int manaCost = baseManaConsumption * synth.synthRecipe.manaDrainRate;
-
-                        if (TransientDataCalls.transientData.currentMana > manaCost)
-                        {
-                            TransientDataCalls.transientData.currentMana -= manaCost;
-                            anyActiveSynthesiser = true;
-                            synth.progressSynth += progressAmount;
-                        }
-                        else
-                        {
-                            synth.isSynthPaused = true;
-                        }
-                    }
-                    else
-                    {
-                        anyActiveSynthesiser = true;
-                        synth.progressSynth += progressAmount;
-                    }
+                    ConsumeMana(synth);
                 }
+                else
+                {
+                    synth.progressSynth += progressAmount;
+                }
+
+                anyActiveSynthesiser = true;
             }
         }
 
@@ -78,6 +65,21 @@ public class AlchemyTracker : MonoBehaviour
         {
             Debug.Log("No active synthesiser was found. Disabling Alchemy Tracker.");
             gameObject.SetActive(false);
+        }
+    }
+
+    void ConsumeMana(SynthesiserData synth)
+    {
+        int manaCost = baseManaConsumption * synth.synthRecipe.manaDrainRate;
+
+        if (TransientDataCalls.transientData.currentMana > manaCost)
+        {
+            TransientDataCalls.transientData.currentMana -= manaCost;
+            synth.progressSynth += progressAmount;
+        }
+        else
+        {
+            synth.isSynthPaused = true;
         }
     }
 
