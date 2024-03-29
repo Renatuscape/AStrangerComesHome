@@ -6,10 +6,13 @@ using UnityEngine;
 public class CoachCabinetMenu : MonoBehaviour
 {
     public GameObject menuContainer;
+    public Canvas cabinetCanvas;
     public GameObject miniSynthPrefab;
+    public List<GameObject> miniSynthInstances;
 
     public void OpenCabinet()
     {
+        cabinetCanvas.gameObject.SetActive(true);
         int coachSynthesisersUnlocked = Player.GetCount("SCR004-SCR-NN", name);
 
         if (coachSynthesisersUnlocked > 0)
@@ -52,6 +55,17 @@ public class CoachCabinetMenu : MonoBehaviour
         }
     }
 
+    public void CloseCabinet()
+    {
+        foreach (GameObject prefab in miniSynthInstances)
+        {
+            Destroy(prefab);
+        }
+
+        miniSynthInstances.Clear();
+        cabinetCanvas.gameObject.SetActive(true);
+    }
+
     void PrintSynthesisers(List<SynthesiserData> synthesisers)
     {
         if (synthesisers != null && synthesisers.Count > 0)
@@ -63,8 +77,10 @@ public class CoachCabinetMenu : MonoBehaviour
                 miniSynth.transform.SetParent(menuContainer.transform, false);
 
                 var script = miniSynth.GetComponent<AlchemyMiniSynth>();
-
                 script.Initialise(synthData);
+
+                miniSynthInstances.Add(miniSynth);
+                miniSynth.name = synthData.synthesiserID;
             }
         }
     }
