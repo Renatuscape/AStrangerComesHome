@@ -8,17 +8,22 @@ public class SettingsMenu : MonoBehaviour
 {
     public CanvasScaler canvasScaler;
     public Dropdown canvasScaleDropDown;
-    void Start()
+    public Toggle alwaysHideCoachExteriorToggle;
+
+    private void Start()
     {
-        
+        alwaysHideCoachExteriorToggle.onValueChanged.AddListener(ToggleAlwaysHideCoachExterior);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        
+        alwaysHideCoachExteriorToggle.isOn = GlobalSettings.AlwaysHideCoachExterior;
     }
 
+    void ToggleAlwaysHideCoachExterior(bool toggle)
+    {
+        GlobalSettings.AlwaysHideCoachExterior = toggle;
+    }
 
     public void DropDownScaleUI(int index)
     {
