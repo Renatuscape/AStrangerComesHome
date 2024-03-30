@@ -31,17 +31,17 @@ public class AlchemyTracker : MonoBehaviour
                 }
             }
         }
-        else
-        {
-            gameObject.SetActive(false); // Don't use this resource unless it's actually necessary
-        }
+        //else
+        //{
+        //    gameObject.SetActive(false); // Don't use this resource unless it's actually necessary
+        //}
     }
 
     void Progress()
     {
         UpdateValues();
 
-        bool anyActiveSynthesiser = false;
+        //bool anyActiveSynthesiser = false;
 
         foreach (SynthesiserData synth in dataManager.alchemySynthesisers)
         {
@@ -56,22 +56,22 @@ public class AlchemyTracker : MonoBehaviour
                     synth.progressSynth += progressAmount;
                 }
 
-                anyActiveSynthesiser = true;
+                //anyActiveSynthesiser = true;
             }
         }
 
-        if (!anyActiveSynthesiser)
-        {
-            Debug.Log("No active synthesiser was found. Disabling Alchemy Tracker.");
-            gameObject.SetActive(false);
-        }
+        //if (!anyActiveSynthesiser)
+        //{
+        //    Debug.Log("No active synthesiser was found. Disabling Alchemy Tracker.");
+        //    gameObject.SetActive(false);
+        //}
     }
 
     void ConsumeMana(SynthesiserData synth)
     {
         int manaCost = baseManaConsumption * synth.synthRecipe.manaDrainRate;
 
-        if (TransientDataCalls.transientData.currentMana >= manaCost)
+        if (TransientDataCalls.transientData.currentMana >= manaCost + 5)
         {
             TransientDataCalls.transientData.currentMana -= manaCost;
             synth.progressSynth += progressAmount;
@@ -81,6 +81,7 @@ public class AlchemyTracker : MonoBehaviour
             TransientDataCalls.transientData.currentMana = 0;
             synth.progressSynth += 1;
             synth.isSynthPaused = true;
+            TransientDataCalls.PushAlert($"Alchemy synthesis was paused due to low mana.");
         }
     }
 
