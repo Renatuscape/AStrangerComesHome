@@ -107,11 +107,12 @@ public class AlchemyMiniSynth : MonoBehaviour
             if (synthData != null && synthData.synthRecipe != null && synthData.isSynthActive && synthData.synthRecipe.workload > 0)
             {
                 progressBar.value = CalculatePercentage();
-                currentMana.text = $"{TransientDataCalls.transientData.currentMana} / {TransientDataCalls.transientData.manapool}";
+                currentMana.text = $"{TransientDataCalls.transientData.currentMana}/{TransientDataCalls.transientData.manapool}";
             }
             else if (synthData == null || !synthData.isSynthActive)
             {
                 progressBar.value = 0;
+                currentMana.text = $"{TransientDataCalls.transientData.currentMana}/{TransientDataCalls.transientData.manapool}";
             }
         }
     }
