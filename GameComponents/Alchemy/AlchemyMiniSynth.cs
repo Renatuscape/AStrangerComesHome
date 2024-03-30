@@ -126,10 +126,11 @@ public class AlchemyMiniSynth : MonoBehaviour
 
             if (synthData.isSynthPaused)
             {
-                SetStatusText();
-                ToggleButtons();
                 isEnabled = false;
             }
+
+            SetStatusText();
+            ToggleButtons();
         }
 
         currentMana.text = $"{(int)TransientDataCalls.transientData.currentMana}/{(int)TransientDataCalls.transientData.manapool}";
@@ -142,7 +143,7 @@ public class AlchemyMiniSynth : MonoBehaviour
             if (synthData.isSynthPaused)
             {
                 statusText.text = "Synthesis has been paused.";
-                manaDrainRate.text = $"({synthData.synthRecipe.manaDrainRate})";
+                manaDrainRate.text = $"({synthData.synthRecipe.manaDrainRate} drain)";
             }
             else if (synthData.progressSynth < synthData.synthRecipe.workload)
             {
