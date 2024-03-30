@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CoachCabinetMenu : MonoBehaviour
 {
@@ -10,10 +11,31 @@ public class CoachCabinetMenu : MonoBehaviour
     public GameObject miniSynthPrefab;
     public List<GameObject> miniSynthInstances;
 
+    public Button btnClose;
+
+    private void Start()
+    {
+        btnClose.onClick.AddListener(CloseCabinet);
+    }
+
+    private void OnMouseDown()
+    {
+        OpenCabinet();
+    }
+
     public void OpenCabinet()
     {
         cabinetCanvas.gameObject.SetActive(true);
         int coachSynthesisersUnlocked = Player.GetCount("SCR004-SCR-NN", name);
+
+        if (coachSynthesisersUnlocked > 3)
+        {
+            menuContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(1250, 530);
+        }
+        else
+        {
+            menuContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 530);
+        }
 
         if (coachSynthesisersUnlocked > 0)
         {
