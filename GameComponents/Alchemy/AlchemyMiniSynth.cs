@@ -23,8 +23,16 @@ public class AlchemyMiniSynth : MonoBehaviour
     public Button btnPause;
     public Button btnResume;
 
+    private void Start()
+    {
+        btnPause.onClick.AddListener(() => PauseSynth());
+        btnResume.onClick.AddListener(() => ResumeSynth());
+        btnExamine.onClick.AddListener(() => Examine());
+    }
+
     public void Initialise(SynthesiserData synthData, CoachCabinetMenu cabinetMenu)
     {
+        this.synthData = synthData;
         this.cabinetMenu = cabinetMenu;
 
         if (synthData != null)
@@ -46,18 +54,21 @@ public class AlchemyMiniSynth : MonoBehaviour
             }
             else
             {
+                progressBar.value = 0;
                 recipeTitle.text = "Inactive";
                 isEnabled = false; // stay false. No need to update the progress bar if there's no recipe
             }
 
             SetStatusText();
             ToggleButtons();
+            UpdateSliderValue(synthData.progressSynth);
         }
     }
 
     public void Examine()
     {
-        TransientDataCalls.gameManager.menuSystem.alchemyMenu.Initialise(synthData);
+        Debug.Log($"Sending {synthData.synthesiserID} to alchemy menu.");
+        TransientDataCalls.gameManager.menuSystem.alchemyMenu.InitialiseBySynthesiser(synthData);
         cabinetMenu.CloseCabinet();
     }
 
@@ -66,7 +77,6 @@ public class AlchemyMiniSynth : MonoBehaviour
         synthData.isSynthPaused = true;
         ToggleButtons();
         SetStatusText();
-        currentMana.text = "";
         isEnabled = false;
     }
 
@@ -84,19 +94,19 @@ public class AlchemyMiniSynth : MonoBehaviour
         {
             if (synthData.isSynthPaused)
             {
-                btnResume.enabled = true;
-                btnPause.enabled = false;
+                btnResume.interactable = true;
+                btnPause.interactable = false;
             }
             else
             {
-                btnResume.enabled = false;
-                btnPause.enabled = true;
+                btnResume.interactable = false;
+                btnPause.interactable = true;
             }
         }
         else
         {
-            btnResume.enabled = false;
-            btnPause.enabled = false;
+            btnResume.interactable = false;
+            btnPause.interactable = false;
         }
     }
 
@@ -106,15 +116,23 @@ public class AlchemyMiniSynth : MonoBehaviour
         {
             if (synthData != null && synthData.synthRecipe != null && synthData.isSynthActive && synthData.synthRecipe.workload > 0)
             {
-                progressBar.value = CalculatePercentage();
-                currentMana.text = $"{TransientDataCalls.transientData.currentMana}/{TransientDataCalls.transientData.manapool}";
+                UpdateSliderValue(synthData.progressSynth);
+                currentMana.text = $"{(int)TransientDataCalls.transientData.currentMana}/{(int)TransientDataCalls.transientData.manapool}";
             }
             else if (synthData == null || !synthData.isSynthActive)
             {
-                progressBar.value = 0;
-                currentMana.text = $"{TransientDataCalls.transientData.currentMana}/{TransientDataCalls.transientData.manapool}";
+                UpdateSliderValue(0);
+            }
+
+            if (synthData.isSynthPaused)
+            {
+                SetStatusText();
+                ToggleButtons();
+                isEnabled = false;
             }
         }
+
+        currentMana.text = $"{(int)TransientDataCalls.transientData.currentMana}/{(int)TransientDataCalls.transientData.manapool}";
     }
 
     void SetStatusText()
@@ -129,7 +147,7 @@ public class AlchemyMiniSynth : MonoBehaviour
             else if (synthData.progressSynth < synthData.synthRecipe.workload)
             {
                 statusText.text = "Synthesis in progress. Consuming mana.";
-                manaDrainRate.text = $"- {synthData.synthRecipe.manaDrainRate}/tick";
+                manaDrainRate.text = $"- {synthData.synthRecipe.manaDrainRate} drain";
             }
             else
             {
@@ -144,18 +162,28 @@ public class AlchemyMiniSynth : MonoBehaviour
         }
     }
 
-    float CalculatePercentage()
+    void UpdateSliderValue(float currentValue)
     {
-        if (synthData == null || synthData.synthRecipe == null)
-        {
-            return 0;
-        }
-        float maxValue = synthData.synthRecipe.workload;
-        float currentValue = synthData.progressSynth;
+        float maxValue;
         float minValue = 0;
 
-        // Calculate the percentage completion
+        if (synthData != null && synthData.synthRecipe != null)
+        {
+            maxValue = synthData.synthRecipe.workload;
+        }
+        else
+        {
+            maxValue = 100;
+            currentValue = 0;
+        }
+
+        // Calculate the percentage
         float percentage = Mathf.Clamp01((currentValue - minValue) / (maxValue - minValue));
-        return percentage;
+
+        // Calculate the target value for the slider
+        float targetValue = Mathf.Lerp(0, 1, percentage); // Assuming the slider's range is from 0 to 1
+
+        // Smoothly move the slider to the target value
+        progressBar.value = Mathf.Lerp(progressBar.value, targetValue, Time.deltaTime * 2);
     }
 }
