@@ -17,6 +17,7 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
     public List<Recipe> recipes;
     public int recipeIndex;
     public bool toggleOpen;
+    public bool isStocked;
 
     private void Start()
     {
@@ -24,6 +25,7 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
     }
     private void OnEnable()
     {
+        isStocked = false;
         pinnedRecipeCard.gameObject.SetActive(false);
         Debug.Log($"Total of {Recipes.all.Count} recipes found in the game.");
 
@@ -33,7 +35,7 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         }
 
         recipes.OrderBy(rx => rx.name);
-        StockTin();
+        //StockTin();
     }
     private void OnDisable()
     {
@@ -42,11 +44,14 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
 
     void StockTin()
     {
+        isStocked = true;
         recipeIndex = 0;
+        float spawnDelay = 0;
 
         foreach (Recipe rx in recipes)
         {
-            InstantiateRecipePrefab(rx);
+            StartCoroutine(InstantiateRecipePrefab(rx, spawnDelay));
+            spawnDelay += 0.2f;
 
             if (recipeIndex >= 8)
             {
@@ -66,6 +71,10 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
 
     void EmptyTin()
     {
+        lid.transform.localPosition = new Vector3(0, 0, 0);
+        tin.transform.localPosition = new Vector3(0, 0, 0);
+        toggleOpen = false;
+
         foreach (GameObject prefab in recipeCardPrefabs)
         {
             Destroy(prefab);
@@ -74,10 +83,13 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         recipeCardPrefabs.Clear();
         recipeIndex = 0;
         recipes.Clear();
+        isStocked = false;
     }
 
-    void InstantiateRecipePrefab(Recipe rx)
+    IEnumerator InstantiateRecipePrefab(Recipe rx, float delay)
     {
+        yield return new WaitForSeconds(delay);
+
         var rxPrefab = Instantiate(recipeCardPrefab);
         recipeCardPrefabs.Add(rxPrefab);
         rxPrefab.transform.SetParent(recipeContainer.transform);
@@ -89,6 +101,7 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         recipeIndex++;
 
         rxPrefab.name = rx.name;
+        AudioManager.PlayUISound("draw");
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -104,6 +117,11 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
             lid.transform.localPosition = new Vector3(0, 140, 0);
             tin.transform.localPosition = new Vector3(0, -350, 0);
             toggleOpen = true;
+
+            if (!isStocked)
+            {
+                StockTin();
+            }
         }
     }
 
@@ -127,6 +145,6 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
             recipeIndex = 0;
         }
 
-        InstantiateRecipePrefab(recipes[recipeIndex]);
+        InstantiateRecipePrefab(recipes[recipeIndex], 0);
     }
 }
