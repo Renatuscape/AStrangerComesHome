@@ -5,11 +5,16 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager instance;
     public DataManagerScript dataManager;
     public AudioSource musicPlayer;
     public List<AudioClip> bgMusic;
-    public List<AudioClip> uiEffects;
-    public List<AudioClip> ambientEffects;
+    public List<AudioClip> soundEffects;
+
+    private void Start()
+    {
+        instance = this;
+    }
 
     private void OnEnable()
     {
@@ -56,78 +61,58 @@ public class AudioManager : MonoBehaviour
 
     public static void SkipNow()
     {
-        var audioManager = FindObjectOfType<AudioManager>();
-
-        if (audioManager != null)
+        if (instance != null)
         {
-            audioManager.musicPlayer.Stop();
+            instance.musicPlayer.Stop();
         }
     }
 
     public static void PlayUISound(string soundName)
     {
-        var audioManager = FindObjectOfType<AudioManager>();
-
-        if (audioManager != null)
-        {
-            var clipList = FindObjectOfType<AudioManager>().uiEffects;
-
-            if (clipList != null)
-            {
-                AudioClip sound;
-
-                if (soundName.ToLower() == "debug")
-                {
-                    sound = clipList[Random.Range(1, clipList.Count)];
-                }
-                else
-                {
-                    sound = clipList.FirstOrDefault(x => x.name == soundName);
-                }
-
-                if (sound != null)
-                {
-                    var audioSource = new GameObject().AddComponent<AudioSource>();
-                    audioSource.clip = sound;
-                    audioSource.Play();
-                    audioSource.volume = GlobalSettings.uiVolume;
-                    Destroy(audioSource.gameObject, sound.length);
-                }
-            }
-        }
-
+        instance.PlaySoundEffect(soundName, "ui");
     }
 
     public static void PlayAmbientSound(string soundName)
     {
-        var audioManager = FindObjectOfType<AudioManager>();
-
-        if (audioManager != null)
+        if (instance != null)
         {
-            var clipList = FindObjectOfType<AudioManager>().ambientEffects;
+            instance.PlaySoundEffect(soundName, "ambient");
+        }
+    }
 
-            if (clipList != null)
+    void PlaySoundEffect(string soundName, string type)
+    {
+        var clipList = FindObjectOfType<AudioManager>().soundEffects;
+
+        if (clipList != null)
+        {
+            AudioClip sound;
+
+            if (soundName.ToLower() == "debug")
             {
-                AudioClip sound;
+                sound = clipList[Random.Range(1, clipList.Count)];
+            }
+            else
+            {
+                sound = clipList.FirstOrDefault(x => x.name == soundName);
+            }
 
-                if (soundName.ToLower() == "debug")
+
+            if (sound != null)
+            {
+                var audioSource = new GameObject().AddComponent<AudioSource>();
+                audioSource.clip = sound;
+                audioSource.Play();
+
+                if (type == "ambient")
                 {
-                    sound = clipList[Random.Range(1, clipList.Count)];
+                    audioSource.volume = GlobalSettings.ambientVolume;
                 }
                 else
                 {
-                    sound = clipList.FirstOrDefault(x => x.name == soundName);
+                    audioSource.volume = GlobalSettings.uiVolume;
                 }
-
-
-                if (sound != null)
-                {
-                    var audioSource = new GameObject().AddComponent<AudioSource>();
-                    audioSource.clip = sound;
-                    audioSource.Play();
-                    audioSource.volume = GlobalSettings.ambientVolume;
-                    Destroy(audioSource.gameObject, sound.length);
-                }
+                Destroy(audioSource.gameObject, sound.length);
             }
         }
     }
