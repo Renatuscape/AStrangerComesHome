@@ -12,30 +12,31 @@ public class CoachCabinetMenu : MonoBehaviour
     public List<GameObject> miniSynthInstances;
 
     public Button btnClose;
+    int coachSynthesisersUnlocked = 0;
 
     private void Start()
     {
-        btnClose.onClick.AddListener(CloseCabinet);
+        btnClose.onClick.AddListener(() => CloseCabinet());
+        cabinetCanvas.gameObject.SetActive(false);
     }
 
     private void OnMouseDown()
     {
-        OpenCabinet();
+        coachSynthesisersUnlocked = Player.GetCount("SCR004-SCR-NN", name);
+
+        if (coachSynthesisersUnlocked > 0)
+        {
+            OpenCabinet();
+        }
+        else
+        {
+            TransientDataCalls.PushAlert("Nothing in here yet.");
+        }
     }
 
     public void OpenCabinet()
     {
         cabinetCanvas.gameObject.SetActive(true);
-        int coachSynthesisersUnlocked = Player.GetCount("SCR004-SCR-NN", name);
-
-        if (coachSynthesisersUnlocked > 3)
-        {
-            menuContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(1250, 530);
-        }
-        else
-        {
-            menuContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 530);
-        }
 
         if (coachSynthesisersUnlocked > 0)
         {
@@ -50,7 +51,7 @@ public class CoachCabinetMenu : MonoBehaviour
             {
                 while (coachSynthesisers.Count < coachSynthesisersUnlocked)
                 {
-                    SynthesiserData newSynth = new SynthesiserData() { synthesiserID = $"Coach{coachSynthesisers.Count + 1}" };
+                    SynthesiserData newSynth = new SynthesiserData() { synthesiserID = $"Coach{coachSynthesisers.Count + 1}", consumesMana = true };
                     synthesisers.Add(newSynth);
                     coachSynthesisers.Add(newSynth);
                 }
@@ -61,12 +62,21 @@ public class CoachCabinetMenu : MonoBehaviour
 
                 for (int i = 0; i < coachSynthesisersUnlocked; i++)
                 {
-                    SynthesiserData newSynth = new SynthesiserData() { synthesiserID = $"Coach{i + 1}" };
+                    SynthesiserData newSynth = new SynthesiserData() { synthesiserID = $"Coach{i + 1}", consumesMana = true };
                     synthesisers.Add(newSynth);
                     coachSynthesisers.Add(newSynth);
 
                     Debug.Log($"Synthesiser with ID Coach{i + 1} created.");
                 }
+            }
+
+            if (coachSynthesisers.Count > 3)
+            {
+                menuContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(1250, 790);
+            }
+            else
+            {
+                menuContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 790);
             }
 
             PrintSynthesisers(coachSynthesisers);
@@ -85,7 +95,7 @@ public class CoachCabinetMenu : MonoBehaviour
         }
 
         miniSynthInstances.Clear();
-        cabinetCanvas.gameObject.SetActive(true);
+        cabinetCanvas.gameObject.SetActive(false);
     }
 
     void PrintSynthesisers(List<SynthesiserData> synthesisers)
