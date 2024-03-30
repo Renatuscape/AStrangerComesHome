@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
-
 public enum SynthesiserType
 {
     Stella,
@@ -37,7 +35,7 @@ public class AlchemyMenu : MonoBehaviour
     public GameObject infusionList;
     public GameObject materialList;
 
-    public bool isDebugging = true;
+    public bool isDebugging = false;
     bool containersEnabled;
 
     private void Start()
@@ -46,41 +44,41 @@ public class AlchemyMenu : MonoBehaviour
         SetUpContainers();
     }
 
-    private void OnEnable()
-    {
-        if (isDebugging)
-        {
-            Initialise(SynthesiserType.Stella);
-        }
-    }
-
     public void Initialise(SynthesiserType synthesiserType)
     {
         this.synthesiserType = synthesiserType;
 
-        string name = synthesiserType.ToString();
+        string synthName = synthesiserType.ToString();
 
         if (dataManager == null)
         {
             dataManager = TransientDataCalls.gameManager.dataManager;
         }
 
-        synthData = dataManager.alchemySynthesisers.FirstOrDefault(s => s.synthesiserID == name);
+        var foundSynth = dataManager.alchemySynthesisers.FirstOrDefault(s => s.synthesiserID == synthName);
 
-        Initialise(synthData);
-    }
-
-    public void Initialise(SynthesiserData synthData)
-    {
-        if (synthData == null)
+        if (foundSynth == null)
         {
-            synthData = new() { synthesiserID = name };
-            if (synthData.synthesiserID.ToLower().Contains("coach"))
+            Debug.Log($"Found synth with id {synthName} was null. Creating new.");
+
+            foundSynth = new() { synthesiserID = synthName };
+
+            if (foundSynth.synthesiserID.ToLower().Contains("coach"))
             {
                 synthData.consumesMana = true;
             }
-            dataManager.alchemySynthesisers.Add(synthData);
+
+            dataManager.alchemySynthesisers.Add(foundSynth);
         }
+
+        InitialiseBySynthesiser(foundSynth, isDebugging);
+    }
+
+    public void InitialiseBySynthesiser(SynthesiserData incomingSynthesiser, bool isDebugging = false)
+    {
+        Debug.Log($"Received {incomingSynthesiser.synthesiserID} at alchemy menu.");
+
+        synthData = incomingSynthesiser;
 
         if (synthData != null && synthData.synthRecipe != null)
         {
