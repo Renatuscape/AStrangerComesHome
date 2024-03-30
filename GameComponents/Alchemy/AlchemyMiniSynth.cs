@@ -12,14 +12,10 @@ public class AlchemyMiniSynth : MonoBehaviour
     public TextMeshProUGUI recipeTitle;
     public TextMeshProUGUI statusText;
     public TextMeshProUGUI manaDrainRate;
+    public TextMeshProUGUI currentMana;
 
     // Progress bar
-    public GameObject fillBar;
-    public GameObject containerBG;
-    public float fullCoordinate;
-    public float currentCoordinate;
-    public float emptyCoordinate;
-    public float percentageFill;
+    public Slider progressBar;
     public bool isEnabled;
 
     // Buttons
@@ -46,18 +42,16 @@ public class AlchemyMiniSynth : MonoBehaviour
                     recipeTitle.text = "Unknown Recipe";
                 }
 
-                manaDrainRate.text = synthData.synthRecipe.manaDrainRate.ToString();
-
                 isEnabled = true;
             }
             else
             {
-                manaDrainRate.text = "0";
                 recipeTitle.text = "Inactive";
                 isEnabled = false; // stay false. No need to update the progress bar if there's no recipe
             }
 
             SetStatusText();
+            ToggleButtons();
         }
     }
 
@@ -70,13 +64,40 @@ public class AlchemyMiniSynth : MonoBehaviour
     public void PauseSynth()
     {
         synthData.isSynthPaused = true;
+        ToggleButtons();
         SetStatusText();
+        currentMana.text = "";
+        isEnabled = false;
     }
 
     public void ResumeSynth()
     {
         synthData.isSynthPaused = false;
+        ToggleButtons();
         SetStatusText();
+        isEnabled = true;
+    }
+
+    void ToggleButtons()
+    {
+        if (synthData.isSynthActive)
+        {
+            if (synthData.isSynthPaused)
+            {
+                btnResume.enabled = true;
+                btnPause.enabled = false;
+            }
+            else
+            {
+                btnResume.enabled = false;
+                btnPause.enabled = true;
+            }
+        }
+        else
+        {
+            btnResume.enabled = false;
+            btnPause.enabled = false;
+        }
     }
 
     void Update()
@@ -85,13 +106,12 @@ public class AlchemyMiniSynth : MonoBehaviour
         {
             if (synthData != null && synthData.synthRecipe != null && synthData.isSynthActive && synthData.synthRecipe.workload > 0)
             {
-                percentageFill = CalculatePercentage();
-                UpdateFillBarPosition();
+                progressBar.value = CalculatePercentage();
+                currentMana.text = $"{TransientDataCalls.transientData.currentMana} / {TransientDataCalls.transientData.manapool}";
             }
-            else if (synthData != null && !synthData.isSynthActive)
+            else if (synthData == null || !synthData.isSynthActive)
             {
-                percentageFill = 0;
-                UpdateFillBarPosition();
+                progressBar.value = 0;
             }
         }
     }
@@ -103,19 +123,23 @@ public class AlchemyMiniSynth : MonoBehaviour
             if (synthData.isSynthPaused)
             {
                 statusText.text = "Synthesis has been paused.";
+                manaDrainRate.text = $"({synthData.synthRecipe.manaDrainRate})";
             }
             else if (synthData.progressSynth < synthData.synthRecipe.workload)
             {
                 statusText.text = "Synthesis in progress. Consuming mana.";
+                manaDrainRate.text = $"- {synthData.synthRecipe.manaDrainRate}/tick";
             }
             else
             {
                 statusText.text = "Synthesis complete!";
+                manaDrainRate.text = $"";
             }
         }
         else
         {
             statusText.text = "Examine synthesiser to perform alchemy.";
+            manaDrainRate.text = $"";
         }
     }
 
@@ -132,22 +156,5 @@ public class AlchemyMiniSynth : MonoBehaviour
         // Calculate the percentage completion
         float percentage = Mathf.Clamp01((currentValue - minValue) / (maxValue - minValue));
         return percentage;
-    }
-
-    void UpdateFillBarPosition()
-    {
-        float smoothness = 2;
-        // Calculate the new x-coordinate of the fill bar based on the percentage completion
-        float targetXCoordinate = Mathf.Lerp(emptyCoordinate, fullCoordinate, percentageFill);
-
-        if (targetXCoordinate > -1000 && targetXCoordinate < 1000)
-        {
-            // Smoothly move the fill bar to the target position
-            fillBar.transform.position = Vector3.Lerp(fillBar.transform.position, new Vector3(targetXCoordinate, fillBar.transform.position.y, fillBar.transform.position.z), Time.deltaTime * smoothness);
-        }
-        else
-        {
-            Debug.Log("Progress bar tried to update to strange position.");
-        }
     }
 }
