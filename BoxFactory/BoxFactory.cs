@@ -49,7 +49,7 @@ public class BoxFactory : MonoBehaviour
         return newBodyText;
     }
 
-    GameObject InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32)
+    GameObject InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14)
     {
         GameObject newIcon = Instantiate(iconPrefab);
 
@@ -71,6 +71,7 @@ public class BoxFactory : MonoBehaviour
         {
             TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
             text.text = $"{Player.GetCount(item.objectID, name)}";
+            text.fontSize = fontSize;
         }
 
         RectTransform transform = newIcon.GetComponent<RectTransform>();
@@ -212,8 +213,8 @@ public class BoxFactory : MonoBehaviour
         return boxFactory.InstantiateIconRowPlainTextPrefab(item, amount,  displayAmount);
     }
 
-    public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32)
+    public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14)
     {
-        return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size);
+        return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size, fontSize);
     }
 }
