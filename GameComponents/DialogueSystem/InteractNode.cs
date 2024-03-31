@@ -42,12 +42,12 @@ public class InteractNode : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log($"Removing {character} from activeWalkingNpcs.");
+        Debug.Log($"Removing {character.name} from activeWalkingNpcs.");
         TransientDataCalls.activeWalkingNpcs.Remove(character);
 
         foreach (var walker in TransientDataCalls.activeWalkingNpcs)
         {
-            Debug.Log($"{walker} is still in activeWalkingNpcs list");
+            Debug.Log($"{walker.name} is still in activeWalkingNpcs list");
         }
     }
 
