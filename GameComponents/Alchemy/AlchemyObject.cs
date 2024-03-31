@@ -66,7 +66,7 @@ public class AlchemyObject
 
     public void CreateInventoryPrefab()
     {
-        var prefab = BoxFactory.CreateItemIcon(itemEntry.item, true, 64);
+        var prefab = BoxFactory.CreateItemIcon(itemEntry.item, true, 64, 18);
         prefab.name = itemEntry.item.name;
         prefab.transform.SetParent(inventoryContainer.transform, false);
         prefab.AddComponent<AlchemyInventoryItem>();
