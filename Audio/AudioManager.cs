@@ -82,19 +82,17 @@ public class AudioManager : MonoBehaviour
 
     void PlaySoundEffect(string soundName, string type)
     {
-        var clipList = FindObjectOfType<AudioManager>().soundEffects;
-
-        if (clipList != null)
+        if (soundEffects != null)
         {
             AudioClip sound;
 
             if (soundName.ToLower() == "debug")
             {
-                sound = clipList[Random.Range(1, clipList.Count)];
+                sound = soundEffects[Random.Range(1, soundEffects.Count)];
             }
             else
             {
-                sound = clipList.FirstOrDefault(x => x.name == soundName);
+                sound = soundEffects.FirstOrDefault(x => x.name == soundName);
             }
 
 
