@@ -59,11 +59,25 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static void SkipNow()
+    public static void FadeToStop()
     {
         if (instance != null)
         {
-            instance.musicPlayer.Stop();
+            instance.FadeVolume();
+        }
+    }
+
+    IEnumerator FadeVolume()
+    {
+        while (musicPlayer.isPlaying)
+        {
+            yield return new WaitForSeconds(0.2f);
+            musicPlayer.volume -= 0.1f;
+
+            if (musicPlayer.volume <= 0)
+            {
+                instance.musicPlayer.Stop();
+            }
         }
     }
 
