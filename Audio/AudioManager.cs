@@ -20,6 +20,13 @@ public class AudioManager : MonoBehaviour
     {
         musicPlayer.Stop();
     }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        musicPlayer.Stop();
+    }
+
     void Update()
     {
         if (TransientDataScript.GameState != GameState.MainMenu)
