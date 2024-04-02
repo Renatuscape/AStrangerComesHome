@@ -21,7 +21,7 @@ public class ParallaxCluster : MonoBehaviour
             script.offsetMultiplier = 1.05f + layerAdjustment;
             script.parallaxFacade = parallaxFacade;
 
-            layerAdjustment += 0.05f;
+            layerAdjustment += 0.02f;
         }
     }
 }
@@ -42,29 +42,30 @@ public class ParallaxLayer : MonoBehaviour
     {
         var newX = (parallaxFacade.transform.position.x * offsetMultiplier) + originalX;
 
-        if (parallaxFacade.transform.position.x >= 0)
+        if (transform.position.x >= 0)
         {
             if (newX < parallaxFacade.transform.position.x + maxOffsetX)
             {
-                transform.position = new Vector3(newX + originalX, originalY, 0);
+                //transform.position = new Vector3(newX + originalX, originalY, 0);
             }
             else
             {
                 newX = parallaxFacade.transform.position.x + maxOffsetX;
-                transform.position = new Vector3(newX + originalX, originalY, 0);
+                //transform.position = new Vector3(newX + originalX, originalY, 0);
             }
         }
-        else if (parallaxFacade.transform.position.x < 0)
+        else if (transform.position.x < 0)
         {
             if (newX > parallaxFacade.transform.position.x - maxOffsetX)
             {
-                transform.position = new Vector3(newX + originalX, originalY, 0);
+                //transform.position = new Vector3(newX + originalX, originalY, 0);
             }
             else
             {
                 newX = parallaxFacade.transform.position.x - maxOffsetX;
-                transform.position = new Vector3(newX + originalX, originalY, 0);
             }
         }
+
+        transform.position = new Vector3(newX + originalX, originalY, 0);
     }
 }
