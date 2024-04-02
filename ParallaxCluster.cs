@@ -42,17 +42,29 @@ public class ParallaxLayer : MonoBehaviour
     {
         var newX = (parallaxFacade.transform.position.x * offsetMultiplier) + originalX;
 
-        if (parallaxFacade.transform.localPosition.x > 0 && newX > maxOffsetX)
+        if (parallaxFacade.transform.position.x >= 0)
         {
-            Debug.Log($"New position was {newX}. Changing to {maxOffsetX}, the max offset.");
-            newX = maxOffsetX;
+            if (newX < parallaxFacade.transform.position.x + maxOffsetX)
+            {
+                transform.position = new Vector3(newX + originalX, originalY, 0);
+            }
+            else
+            {
+                newX = parallaxFacade.transform.position.x + maxOffsetX;
+                transform.position = new Vector3(newX + originalX, originalY, 0);
+            }
         }
-        else if (parallaxFacade.transform.localPosition.x < 0 && newX < maxOffsetX)
+        else if (parallaxFacade.transform.position.x < 0)
         {
-            Debug.Log($"New position was {newX}. Changing to {0 - maxOffsetX}, the max offset.");
-            newX = 0 - maxOffsetX;
+            if (newX > parallaxFacade.transform.position.x - maxOffsetX)
+            {
+                transform.position = new Vector3(newX + originalX, originalY, 0);
+            }
+            else
+            {
+                newX = parallaxFacade.transform.position.x - maxOffsetX;
+                transform.position = new Vector3(newX + originalX, originalY, 0);
+            }
         }
-
-        transform.position = new Vector3(newX + originalX, originalY, 0);
     }
 }
