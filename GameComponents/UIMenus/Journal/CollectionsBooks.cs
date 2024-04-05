@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CollectionsBooks : MonoBehaviour
 {
@@ -61,13 +63,13 @@ public class CollectionsBooks : MonoBehaviour
     }
 }
 
-public class ShelvedBook : MonoBehaviour
+public class ShelvedBook : MonoBehaviour, IPointerClickHandler
 {
     public CollectionsBooks collectionsPage;
     public Item bookItem;
     public Book bookContent;
 
-    public void SelectBook()
+    public void OnPointerClick(PointerEventData eventData)
     {
         collectionsPage.SelectBook(this);
     }
