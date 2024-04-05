@@ -6,7 +6,8 @@ public enum CollectionPage
     Recipes,
     Treasures,
     Cards,
-    People
+    People,
+    Books
 }
 
 public class JournalCollectionsPage : MonoBehaviour
@@ -17,6 +18,7 @@ public class JournalCollectionsPage : MonoBehaviour
     public GameObject people;
     public GameObject cards;
     public GameObject treasures;
+    public GameObject books;
 
     public void EnableRecipes()
     {
@@ -38,11 +40,17 @@ public class JournalCollectionsPage : MonoBehaviour
         ChangePage(CollectionPage.Treasures);
     }
 
+    public void EnableBooks()
+    {
+        ChangePage(CollectionPage.Books);
+    }
+
     void ChangePage(CollectionPage page)
     {
         recipes.SetActive(page == CollectionPage.Recipes);
         people.SetActive(page == CollectionPage.People);
         cards.SetActive(page == CollectionPage.Cards);
         treasures.SetActive(page == CollectionPage.Treasures);
+        books.SetActive(page == CollectionPage.Books);
     }
 }
