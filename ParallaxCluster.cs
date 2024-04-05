@@ -21,7 +21,7 @@ public class ParallaxCluster : MonoBehaviour
             script.offsetMultiplier = 1.05f + layerAdjustment;
             script.parallaxFacade = parallaxFacade;
 
-            layerAdjustment += 0.02f;
+            layerAdjustment += 0.05f;
         }
     }
 }
