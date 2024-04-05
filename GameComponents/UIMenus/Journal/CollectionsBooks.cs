@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class CollectionsBooks : MonoBehaviour
@@ -7,11 +8,15 @@ public class CollectionsBooks : MonoBehaviour
     public GameObject reader;
     public GameObject bookContainer;
     public GameObject bookDetails;
-    public List<GameObject> prefabs;
+    public TextMeshProUGUI detailTitle;
+    public TextMeshProUGUI detailDescription;
 
+    public List<GameObject> prefabs;
+    public Item selectedBook;
     void Start()
     {
         reader.SetActive(false);
+        bookDetails.SetActive(false);
     }
 
     void Update()
@@ -28,8 +33,20 @@ public class CollectionsBooks : MonoBehaviour
                 var newBook = BoxFactory.CreateItemIcon(item, true, 64, 18);
                 prefabs.Add(newBook);
                 newBook.transform.SetParent(bookContainer.transform, false);
+
+                newBook.AddComponent<ShelvedBook>();
+                var script = newBook.GetComponent<ShelvedBook>();
+                script.bookItem = item;
+                script.bookContent = Books.FindByItemID(item.objectID);
+                script.collectionsPage = this;
             }
         }
+    }
+
+    public void SelectBook(ShelvedBook shelvedBook)
+    {
+        detailTitle.text = shelvedBook.bookItem.name;
+        detailDescription.text = shelvedBook.bookItem.description;
     }
 
     private void OnDisable()
@@ -41,5 +58,17 @@ public class CollectionsBooks : MonoBehaviour
         prefabs.Clear();
 
         reader.SetActive(false);
+    }
+}
+
+public class ShelvedBook : MonoBehaviour
+{
+    public CollectionsBooks collectionsPage;
+    public Item bookItem;
+    public Book bookContent;
+
+    public void SelectBook()
+    {
+        collectionsPage.SelectBook(this);
     }
 }
