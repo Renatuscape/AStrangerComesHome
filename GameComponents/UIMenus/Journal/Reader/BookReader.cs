@@ -20,16 +20,19 @@ public class BookReader : MonoBehaviour
     public GameObject vDivPrefab;
     public GameObject hDivPrefab;
 
-    public List<GameObject> printedPrefabs;
+    public List<GameObject> printedPrefabs = new();
 
     public void Initialise(Book bookToRead)
     {
+        CleanReader();
+
         book = bookToRead;
 
         if (book.autoPages)
         {
             PrintAutoPageBook();
         }
+        gameObject.SetActive(true);
     }
 
     void PrintAutoPageBook()
@@ -89,12 +92,14 @@ public class BookReader : MonoBehaviour
                 parsedText = parsedText.Replace("#H ", "");
                 textMesh.font = fontManager.header.font;
                 textMesh.fontSize = fontManager.header.fontSize;
+                textMesh.margin = new Vector4(textMesh.margin.x, textMesh.margin.y + 10, textMesh.margin.z, textMesh.margin.w + 5);
             }
             else if (text.Contains("#S "))
             {
                 parsedText = parsedText.Replace("#S ", "");
                 textMesh.font = fontManager.subtitle.font;
                 textMesh.fontSize= fontManager.subtitle.fontSize;
+                textMesh.margin = new Vector4(textMesh.margin.x, textMesh.margin.y + 5, textMesh.margin.z, textMesh.margin.w);
             }
             else
             {
@@ -126,6 +131,10 @@ public class BookReader : MonoBehaviour
 
     private void OnDisable()
     {
-        CleanReader();
+        if (!gameObject.scene.isLoaded) return;
+        else
+        {
+            CleanReader();
+        }
     }
 }
