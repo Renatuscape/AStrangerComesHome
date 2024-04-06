@@ -72,17 +72,6 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-            //ITEM DISPLAY TEST
-            public GameObject itemDisplayer;
-            public Transform canvasTransform;
-            public void DisplayItemSprite(Item item, GameObject prefab, Transform parentTransform)
-            {
-                GameObject newItem = Instantiate(prefab, parentTransform);
-                newItem.name = item.name;
-                Image imageComponent = newItem.GetComponent<Image>();
-                imageComponent.sprite = item.sprite;
-            }
-
     public static void InitialiseItem(Item item, List<Item> itemList)
     {
         ItemIDReader(ref item);
