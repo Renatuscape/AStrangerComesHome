@@ -90,7 +90,10 @@ public class AudioManager : MonoBehaviour
 
     public static void PlayUISound(string soundName)
     {
-        instance.PlaySoundEffect(soundName, "ui");
+        if (instance != null)
+        {
+            instance.PlaySoundEffect(soundName, "ui");
+        }
     }
 
     public static void PlayAmbientSound(string soundName)
@@ -103,6 +106,8 @@ public class AudioManager : MonoBehaviour
 
     void PlaySoundEffect(string soundName, string type)
     {
+        if (!gameObject.scene.isLoaded) return;
+
         if (soundEffects != null)
         {
             AudioClip sound;
