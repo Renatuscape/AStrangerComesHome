@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class BookReader : MonoBehaviour
@@ -21,18 +22,50 @@ public class BookReader : MonoBehaviour
     public GameObject hDivPrefab;
 
     public List<GameObject> printedPrefabs = new();
+    public Page activePage;
+    public int paragraphIndex;
+    public int pageIndex;
+
+    public AutoPageinator autoPageinator;
 
     public void Initialise(Book bookToRead)
     {
         CleanReader();
 
         book = bookToRead;
+        gameObject.SetActive(true);
 
         if (book.autoPages)
         {
             PrintAutoPageBook();
         }
-        gameObject.SetActive(true);
+    }
+
+    public void BtnForward()
+    {
+        if (book.autoPages)
+        {
+            pageIndex += 2;
+
+            if (pageIndex >= autoPageinator.pages.Count)
+            {
+                pageIndex = 0;
+            }
+
+            PrintAutoBookPage();
+        }
+    }
+
+    public void BtnBack()
+    {
+        pageIndex -= 2;
+
+        if (pageIndex < 0)
+        {
+            pageIndex = 0;
+        }
+
+        PrintAutoBookPage(true);
     }
 
     void PrintAutoPageBook()
@@ -43,20 +76,64 @@ public class BookReader : MonoBehaviour
         }
         else
         {
-            // Print everything to test
-            foreach (string text in book.pages[0].text)
-            {
-                var prefab = PrintLine(text);
+            activePage = book.pages[0];
+            pageIndex = 0;
+            BuildAutoBook();
+            PrintAutoBookPage();
+        }
+    }
 
-                if (book.horizontalLayout)
+    void PrintAutoBookPage(bool goingBack = false)
+    {
+        CleanReader();
+
+        foreach (var text in autoPageinator.pages[pageIndex].text)
+        {
+            var prefab = PrintLine(text);
+            prefab.transform.SetParent(pageA.transform, false);
+        }
+
+        if (autoPageinator.pages.Count > pageIndex + 1)
+        {
+            if (autoPageinator.pages[pageIndex + 1].text != null && autoPageinator.pages[pageIndex + 1].text.Count > 0)
+            {
+                foreach (var text in autoPageinator.pages[pageIndex + 1].text)
                 {
-                    prefab.transform.SetParent(pageH.transform, false);
-                }
-                else
-                {
-                    prefab.transform.SetParent(pageA.transform, false);
+                    var prefab = PrintLine(text);
+                    prefab.transform.SetParent(pageB.transform, false);
                 }
             }
+        }
+    }
+
+    void BuildAutoBook()
+    {
+        autoPageinator = new();
+        autoPageinator.pages = new() { new() };
+        autoPageinator.pages[0].text = new();
+        var autoPageIndex = 0;
+
+        for (int i = 0; i < activePage.text.Count; i++)
+        {
+            Canvas.ForceUpdateCanvases();
+
+            var prefab = PrintLine(activePage.text[i]);
+
+            prefab.transform.SetParent(pageA.transform, false);
+
+            if (!CheckOverflow(pageA.GetComponent<RectTransform>()) ||
+                (i != 0 && activePage.text[i].Contains("#H ")) ||
+                activePage.text[i].Contains("#S "))
+            {
+                autoPageinator.pages.Add(new());
+                autoPageIndex++;
+                autoPageinator.pages[autoPageIndex].text = new();
+                CleanReader();
+            }
+
+            autoPageinator.pages[autoPageIndex].text.Add(activePage.text[i]);
+
+            Canvas.ForceUpdateCanvases();
         }
     }
 
@@ -98,7 +175,7 @@ public class BookReader : MonoBehaviour
             {
                 parsedText = parsedText.Replace("#S ", "");
                 textMesh.font = fontManager.subtitle.font;
-                textMesh.fontSize= fontManager.subtitle.fontSize;
+                textMesh.fontSize = fontManager.subtitle.fontSize;
                 textMesh.margin = new Vector4(textMesh.margin.x, textMesh.margin.y + 5, textMesh.margin.z, textMesh.margin.w);
             }
             else
@@ -106,7 +183,7 @@ public class BookReader : MonoBehaviour
                 textMesh.font = fontManager.body.font;
                 textMesh.fontSize = fontManager.body.fontSize;
             }
-            
+
             if (text.Contains("#I "))
             {
                 parsedText = parsedText.Replace("#I ", "");
@@ -129,6 +206,47 @@ public class BookReader : MonoBehaviour
         printedPrefabs.Clear();
     }
 
+    bool CheckOverflow(RectTransform parentRect)
+    {
+        float parentHeight = parentRect.rect.height;
+        float childrenHeight = 0f;
+
+        // Ensure layout update before calculating preferred height
+        LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
+
+        // Calculate the combined height of all child objects
+        foreach (Transform child in parentRect)
+        {
+            RectTransform childRect = child.GetComponent<RectTransform>();
+            if (child.gameObject.activeSelf && childRect != null)
+            {
+                // If the child has a TextMeshProUGUI component, calculate its height based on content
+                TMP_Text textComponent = child.GetComponentInChildren<TMP_Text>();
+                if (textComponent != null)
+                {
+                    // Adjust the height calculation based on the text content and other properties
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(textComponent.rectTransform);
+                    float textHeight = LayoutUtility.GetPreferredHeight(textComponent.rectTransform);
+                    childrenHeight += textHeight;
+                }
+                else
+                {
+                    // For regular RectTransforms, just add their height
+                    childrenHeight += childRect.rect.height;
+                }
+            }
+        }
+
+        Debug.Log($"Parent height was {parentHeight}. Children height was {childrenHeight}. Should return {childrenHeight > parentHeight}");
+
+        if (childrenHeight > parentHeight)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private void OnDisable()
     {
         if (!gameObject.scene.isLoaded) return;
@@ -137,4 +255,16 @@ public class BookReader : MonoBehaviour
             CleanReader();
         }
     }
+}
+
+[System.Serializable]
+public class AutoPageinator
+{
+    public List<AutoPageObject> pages;
+}
+
+[System.Serializable]
+public class AutoPageObject
+{
+    public List<string> text;
 }
