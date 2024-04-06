@@ -19,6 +19,7 @@ public class GameManagerScript : MonoBehaviour
     public GameObject locationManager;
     public GameObject regionManager;
     public GameObject recipeManager;
+    public GameObject bookManager;
 
     public GameObject gameComponentMaster;
     public GameObject mainMenuComponent;
@@ -85,6 +86,7 @@ public class GameManagerScript : MonoBehaviour
         dialogueManager.SetActive(true);
         questManager.SetActive(true);
         recipeManager.SetActive(true);
+        bookManager.SetActive(true);
     }
 
     public void CreateGameController()
