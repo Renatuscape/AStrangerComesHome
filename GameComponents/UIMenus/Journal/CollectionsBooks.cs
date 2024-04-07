@@ -1,9 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class CollectionsBooks : MonoBehaviour
 {
@@ -23,7 +23,7 @@ public class CollectionsBooks : MonoBehaviour
 
     private void OnEnable()
     {
-        if (prefabs.Count  > 0)
+        if (prefabs.Count > 0)
         {
             foreach (var prefab in prefabs)
             {
@@ -37,7 +37,7 @@ public class CollectionsBooks : MonoBehaviour
 
         var bookList = Books.GetBookItems();
 
-        if (bookList != null )
+        if (bookList != null)
         {
             bookList = bookList.OrderBy(i => i.name).ToList();
 
@@ -51,9 +51,7 @@ public class CollectionsBooks : MonoBehaviour
 
                     newBook.AddComponent<ShelvedBook>();
                     var script = newBook.GetComponent<ShelvedBook>();
-                    script.bookItem = item;
-                    script.bookContent = Books.FindByItemID(item.objectID);
-                    script.collectionsPage = this;
+                    script.Initialise(this, item);
                 }
             }
         }
@@ -68,44 +66,5 @@ public class CollectionsBooks : MonoBehaviour
         detailTitle.text = shelvedBook.bookItem.name;
         detailDescription.text = shelvedBook.bookItem.description;
         bookDetails.SetActive(true);
-    }
-}
-
-public class ShelvedBook : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
-{
-    public CollectionsBooks collectionsPage;
-    public Item bookItem;
-    public Book bookContent;
-    public bool isSelected;
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (isSelected)
-        {
-            if (bookContent != null)
-            {
-            collectionsPage.reader.Initialise(bookContent);
-            }
-            else
-            {
-                TransientDataCalls.PushAlert("Nothing interesting in here.");
-            }
-        }
-        else
-        {
-            collectionsPage.SelectBook(this);
-            isSelected = true;
-        }
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        TransientDataCalls.PrintFloatText($"{bookItem.name}");
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        TransientDataCalls.DisableFloatText();
-        isSelected = false;
     }
 }
