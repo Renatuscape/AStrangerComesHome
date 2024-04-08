@@ -45,7 +45,10 @@ public class CameraController : MonoBehaviour
         if (TransientDataScript.CameraView == CameraView.Normal && (vCam.m_Lens.OrthographicSize != 7 || camTransform.position.x != 0))
             CameraNormal();
 
-        if (TransientDataScript.GameState != GameState.Overworld && TransientDataScript.GameState != GameState.JournalMenu) //CAMERA ALWAYS SNAPS BACK TO NORMAL WHEN LEAVING OVERWORLD
+        // Snap camera back to normal if the state is anything but these exceptions
+        if (TransientDataScript.GameState != GameState.Overworld &&
+            TransientDataScript.GameState != GameState.JournalMenu &&
+            TransientDataScript.GameState != GameState.AlchemyMenu)
         {
             TransientDataScript.SetCameraView(CameraView.Normal);
         }
@@ -111,14 +114,6 @@ public class CameraController : MonoBehaviour
                     camIndex = 0;
                     targetTransform = camTargetX.transform;
                 }
-
-                /*if (vCam.gameObject.transform.position != camTargetsList[camIndex].transform.position)
-                {
-                    var camPosition = camTransform.position;
-                    var targetPosition = targetTransform.transform.position;
-                    var step = cameraMovementSpeed * Vector3.Distance(camPosition, targetPosition); //cushions movement
-                    camTransform.position = Vector3.MoveTowards(camPosition, new Vector3(targetPosition.x, targetPosition.y, camPosition.z), step);
-                }*/
             }
         }
     }
