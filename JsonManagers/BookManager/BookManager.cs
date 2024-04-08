@@ -103,13 +103,6 @@ public class BookManager : MonoBehaviour
         Debug.Log($"Looking for book item with ID {bookID}");
 
         book.inventoryItem = bookItems.FirstOrDefault(i => i.objectID.Contains(bookID));
-        if (book.inventoryItem != null)
-        {
-            Debug.Log($"Found {book.inventoryItem.name}");
-        }
-        else
-        {
-            Debug.Log($"{bookID} yielded no results.");
-        }
+        book.name = book.inventoryItem.name;
     }
 }
