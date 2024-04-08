@@ -78,7 +78,7 @@ public class ReaderAutoPageLayout : MonoBehaviour
         {
             Canvas.ForceUpdateCanvases();
 
-            var prefab = reader.PrintLine(activePage.text[i], pageA);
+            reader.PrintLine(activePage.text[i], pageA);
 
             if (!CheckOverflow(pageA.GetComponent<RectTransform>()) ||
                 (i != 0 && activePage.text[i].Contains("#B ")))
@@ -120,7 +120,7 @@ public class ReaderAutoPageLayout : MonoBehaviour
 
     bool CheckOverflow(RectTransform parentRect)
     {
-        float parentHeight = parentRect.rect.height;
+        float parentHeight = parentRect.rect.height - 30;
         float childrenHeight = 0f;
 
         // Ensure layout update before calculating preferred height
@@ -136,7 +136,7 @@ public class ReaderAutoPageLayout : MonoBehaviour
                 TMP_Text textComponent = child.GetComponentInChildren<TMP_Text>();
                 if (textComponent != null)
                 {
-                    // Adjust the height calculation based on the text content and other properties
+                    // Ensure layout update before calculating preferred height
                     LayoutRebuilder.ForceRebuildLayoutImmediate(textComponent.rectTransform);
                     float textHeight = LayoutUtility.GetPreferredHeight(textComponent.rectTransform);
                     childrenHeight += textHeight;
@@ -149,10 +149,12 @@ public class ReaderAutoPageLayout : MonoBehaviour
             }
         }
 
-        // Debug.Log($"Parent height was {parentHeight}. Children height was {childrenHeight}. Should return {childrenHeight > parentHeight}");
+        Debug.Log($"Parent height was {parentHeight}. Children height was {childrenHeight}. Should return {childrenHeight > parentHeight}");
 
         if (childrenHeight > parentHeight)
         {
+            // Overflow detected
+            Debug.Log("Overflow detected!");
             return false;
         }
 
