@@ -22,15 +22,20 @@ public class CoachCabinetMenu : MonoBehaviour
 
     private void OnMouseDown()
     {
-        coachSynthesisersUnlocked = Player.GetCount("SCR004-SCR-NN", name);
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView != CameraView.Normal)
+        {
+            TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
 
-        if (coachSynthesisersUnlocked > 0)
-        {
-            OpenCabinet();
-        }
-        else
-        {
-            TransientDataCalls.PushAlert("Nothing in here yet.");
+            coachSynthesisersUnlocked = Player.GetCount("SCR004-SCR-NN", name);
+
+            if (coachSynthesisersUnlocked > 0 && !cabinetCanvas.gameObject.activeInHierarchy)
+            {
+                OpenCabinet();
+            }
+            else
+            {
+                TransientDataCalls.PushAlert("Nothing in here yet.");
+            }
         }
     }
 
@@ -87,7 +92,7 @@ public class CoachCabinetMenu : MonoBehaviour
         }
     }
 
-    public void CloseCabinet()
+    public void CloseCabinet(bool returnToOverworld = true)
     {
         foreach (GameObject prefab in miniSynthInstances)
         {
@@ -96,6 +101,11 @@ public class CoachCabinetMenu : MonoBehaviour
 
         miniSynthInstances.Clear();
         cabinetCanvas.gameObject.SetActive(false);
+
+        if (returnToOverworld)
+        {
+            TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
+        }
     }
 
     void PrintSynthesisers(List<SynthesiserData> synthesisers)
