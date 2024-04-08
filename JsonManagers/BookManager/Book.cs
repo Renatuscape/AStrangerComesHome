@@ -11,6 +11,7 @@ public class Book
     public string name;
 
     public bool horizontalLayout = false;
+    public bool scrolling = false;
     public bool autoPages;
     public List<Page> pages;
 }
