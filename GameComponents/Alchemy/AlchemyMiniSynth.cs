@@ -69,7 +69,7 @@ public class AlchemyMiniSynth : MonoBehaviour
     {
         Debug.Log($"Sending {synthData.synthesiserID} to alchemy menu.");
         TransientDataCalls.gameManager.menuSystem.alchemyMenu.InitialiseBySynthesiser(synthData);
-        cabinetMenu.CloseCabinet();
+        cabinetMenu.CloseCabinet(false);
     }
 
     public void PauseSynth()
@@ -182,7 +182,7 @@ public class AlchemyMiniSynth : MonoBehaviour
         float percentage = Mathf.Clamp01((currentValue - minValue) / (maxValue - minValue));
 
         // Calculate the target value for the slider
-        float targetValue = Mathf.Lerp(0, 1, percentage); // Assuming the slider's range is from 0 to 1
+        float targetValue = Mathf.Lerp(0, 1, percentage);
 
         // Smoothly move the slider to the target value
         progressBar.value = Mathf.Lerp(progressBar.value, targetValue, Time.deltaTime * 2);
