@@ -38,7 +38,7 @@ public class AdvancementCheck
         }
         else
         {
-            Debug.Log($"Requirement count was {requirements.Count}. Null or 0 check not passed. Check not run.");
+            Debug.Log($"Requirement count was {(requirements != null ? requirements.Count : 0 )}. Null or 0 check not passed. Check not run.");
         }
 
         if (restrictions != null && restrictions.Count > 0)
