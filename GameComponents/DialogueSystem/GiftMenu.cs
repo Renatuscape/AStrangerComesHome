@@ -16,9 +16,10 @@ public class GiftMenu : MonoBehaviour
     public GameObject selectedGiftContainer;
     public GameObject selectedGiftInfo;
     public Item selectedGift;
-    public List<Item> availableInventory;
+    public List<Item> availableInventory = new();
     public List<Button> buttons;
     public List<ItemType> displayTypes;
+    public List<GiftItem> spawnedItems = new();
 
     private void Start()
     {
@@ -33,7 +34,7 @@ public class GiftMenu : MonoBehaviour
                 ItemType buttonType = allItemTypes.FirstOrDefault(t => capturedButton.gameObject.name.Contains(t.ToString()));
 
                 // Add listener with local copy of buttonType
-                button.onClick.AddListener(() => ToggleType(buttonType));
+                button.onClick.AddListener(() => ToggleType(button, buttonType));
 
                 Debug.Log($"{capturedButton.gameObject.name} button was assigned type {buttonType}");
             }
@@ -42,20 +43,35 @@ public class GiftMenu : MonoBehaviour
                 button.onClick.AddListener(() => BtnShowAll());
             }
         }
+
+        BtnShowAll();
     }
     public void Setup(Character character)
     {
+        foreach (var giftItem in spawnedItems)
+        {
+            Destroy(giftItem.gameObject);
+        }
+
+        spawnedItems.Clear();
+        availableInventory.Clear();
+
         this.character = character;
         portraitRenderer.EnableForGifting(character);
         selectedGiftInfo.SetActive(false);
         selectedGift = null;
         gameObject.SetActive(true);
-        TransientDataCalls.SetGameState(GameState.Dialogue, name, gameObject);
+        inventoryContainer.SetActive(true);
+        TransientDataCalls.SetGameState(GameState.AlchemyMenu, name, gameObject);
         GetInventory();
+        PrintInventory();
+
+        giftingText.text = $"Choose a gift for {character.NamePlate()}";
     }
 
     void GetInventory()
     {
+
         foreach (Item item in Items.all)
         {
             if (item.type != ItemType.Script &&
@@ -69,16 +85,93 @@ public class GiftMenu : MonoBehaviour
                 }
             }
         }
+
+        availableInventory = availableInventory.OrderBy(i => i.type)
+                                               .ThenBy(i => i.basePrice)
+                                               .ThenBy(i => i.name)
+                                               .ToList();
     }
 
     void PrintInventory()
     {
+        foreach (Item item in  availableInventory)
+        {
+            var newItem = BoxFactory.CreateItemIcon(item, true, 64, 18);
+            newItem.transform.SetParent(inventoryContainer.transform, false);
 
+            var giftItem = newItem.AddComponent<GiftItem>();
+            spawnedItems.Add(giftItem);
+            giftItem.item = item;
+            giftItem.giftMenu = this;
+        }
+        ApplyFilter();
     }
 
     void ApplyFilter()
     {
+        foreach (var giftItem in spawnedItems)
+        {
+            if (displayTypes.Contains(giftItem.item.type))
+            {
+                giftItem.gameObject.SetActive(true);
+            }
+            else
+            {
+                giftItem.gameObject.SetActive(false);
+            }
+        }
+    }
 
+    public void SelectGift(Item item)
+    {
+        selectedGift = item;
+        selectedGiftInfo.SetActive(true);
+
+        foreach (Transform child in selectedGiftContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        var newChoice = BoxFactory.CreateItemIcon(item, false, 64);
+        newChoice.transform.SetParent(selectedGiftContainer.transform, false);
+
+        giftingText.text =$"Give {selectedGift.name} to {character.NamePlate()}?";
+    }
+
+    public void Gift()
+    {
+        selectedGiftInfo.SetActive(false);
+
+        foreach (var giftItem in spawnedItems)
+        {
+            giftItem.disabled = true;
+        }
+
+        int appreciation = 1;
+
+        if (character.giftsDislike.FirstOrDefault(i => i.objectID == selectedGift.objectID) != null)
+        {
+            appreciation = 0;
+        }
+        else if (character.giftsLove.FirstOrDefault(i => i.objectID == selectedGift.objectID) != null)
+        {
+            appreciation += 2;
+        }
+        else if (character.giftsLike.FirstOrDefault(i => i.objectID == selectedGift.objectID) != null || selectedGift.type == ItemType.Treasure)
+        {
+            appreciation += 1;
+        }
+
+        appreciation += (int)selectedGift.rarity;
+
+        int current = Player.GetCount(character.objectID, name);
+
+        if (current + appreciation > 0)
+        {
+            Player.Add(character.objectID, appreciation);
+        }
+
+        Player.Remove(selectedGift.objectID);
     }
 
     public void BtnShowAll()
@@ -96,20 +189,28 @@ public class GiftMenu : MonoBehaviour
             }
         }
 
+        foreach (Button button in buttons)
+        {
+            button.gameObject.GetComponent<Image>().color = new Color(1, 1, 1);
+        }
+
         ApplyFilter();
     }
 
-    public void ToggleType(ItemType type)
+    public void ToggleType(Button button, ItemType type)
     {
         if (displayTypes.Contains(type))
         {
+            button.gameObject.GetComponent<Image>().color = new Color(0.6f, 0.6f, 0.6f);
             displayTypes.RemoveAt(displayTypes.IndexOf(type));
         }
         else
         {
+            button.gameObject.GetComponent<Image>().color = new Color(1, 1, 1);
             displayTypes.Add(type);
         }
 
+        Canvas.ForceUpdateCanvases();
         ApplyFilter();
     }
 
@@ -122,16 +223,25 @@ public class GiftMenu : MonoBehaviour
 
 public class GiftItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    public GiftMenu giftMenu;
     public Item item;
+    public bool disabled;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        throw new NotImplementedException();
+        if (!disabled)
+        {
+            giftMenu.SelectGift(item);
+        }
+        else
+        {
+            TransientDataCalls.PushAlert("It's unseemely to give another gift so soon.");
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        TransientDataCalls.PrintFloatText($"{item.name}");
+        TransientDataCalls.PrintFloatEmbellishedItem(item, true, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
