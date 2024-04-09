@@ -47,7 +47,7 @@ public class DynamicItemPrefab : MonoBehaviour
     {
         if (isReady)
         {
-            //some kind of text that displays the object's name ($"{itemSource.printName}");
+            TransientDataCalls.PrintFloatEmbellishedItem(itemSource, true, true);
         }
     }
 
@@ -55,7 +55,7 @@ public class DynamicItemPrefab : MonoBehaviour
     {
         if (isReady)
         {
-            //clear whatever text you figured out;
+            TransientDataCalls.DisableFloatText();
         }
     }
 }
