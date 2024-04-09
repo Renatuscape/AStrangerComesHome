@@ -141,6 +141,7 @@ public class GiftMenu : MonoBehaviour
     public void Gift()
     {
         selectedGiftInfo.SetActive(false);
+        TransientDataCalls.SetAsGifted(character);
 
         foreach (var giftItem in spawnedItems)
         {
@@ -175,6 +176,7 @@ public class GiftMenu : MonoBehaviour
         }
 
         Player.Remove(selectedGift.objectID);
+        giftingText.text = "";
     }
 
     public void BtnShowAll()
