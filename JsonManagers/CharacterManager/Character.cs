@@ -33,6 +33,9 @@ public class Character
     public string namePlate;
     public string trueNamePlate;
 
+    public List<IdIntPair> giftsDislike;
+    public List<IdIntPair> giftsLike;
+    public List<IdIntPair> giftsLove;
     public List<Shop> shops = new();
 
     public void NameSetup()
