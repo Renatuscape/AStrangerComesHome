@@ -347,6 +347,11 @@ public static class TransientDataCalls
         return gameManager.dataManager.giftedThisWeek.Contains(character.objectID);
     }
 
+    public static void SetAsGifted(Character character)
+    {
+        gameManager.dataManager.giftedThisWeek.Add(character.objectID);
+    }
+
     public static int GetDaysPassed()
     {
         return gameManager.dataManager.totalGameDays;
