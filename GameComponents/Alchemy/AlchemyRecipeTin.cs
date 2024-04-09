@@ -50,6 +50,7 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
 
         foreach (Recipe rx in recipes)
         {
+            UpdateIndex();
             StartCoroutine(InstantiateRecipePrefab(rx, spawnDelay));
             spawnDelay += 0.2f;
 
@@ -98,7 +99,6 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
 
         rxScript.recipe = rx;
         rxScript.pinnedRecipeCard = pinnedRecipeCard;
-        recipeIndex++;
 
         rxPrefab.name = rx.name;
         AudioManager.PlayUISound("draw");
@@ -145,6 +145,16 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
             recipeIndex = 0;
         }
 
-        InstantiateRecipePrefab(recipes[recipeIndex], 0);
+        UpdateIndex();
+        StartCoroutine(InstantiateRecipePrefab(recipes[recipeIndex], 0));
+    }
+
+    void UpdateIndex()
+    {
+        recipeIndex++;
+        if (recipeIndex >= recipes.Count)
+        {
+            recipeIndex = 0;
+        }
     }
 }
