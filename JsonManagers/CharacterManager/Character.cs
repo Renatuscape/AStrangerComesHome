@@ -33,10 +33,10 @@ public class Character
     public string namePlate;
     public string trueNamePlate;
 
-    public List<IdIntPair> giftsDislike;
-    public List<IdIntPair> giftsLike;
-    public List<IdIntPair> giftsLove;
     public List<Shop> shops = new();
+    public List<string> giftsDislike;
+    public List<string> giftsLike;
+    public List<string> giftsLove;
 
     public void NameSetup()
     {
