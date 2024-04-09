@@ -149,16 +149,19 @@ public class GiftMenu : MonoBehaviour
 
         int appreciation = 1;
 
-        if (character.giftsDislike.FirstOrDefault(i => i.objectID == selectedGift.objectID) != null)
+        if (character.giftsDislike.FirstOrDefault(i => i == selectedGift.objectID) != null)
         {
+            TransientDataCalls.PushAlert($"{character.NamePlate()}\'Oh...\'");
             appreciation = 0;
         }
-        else if (character.giftsLove.FirstOrDefault(i => i.objectID == selectedGift.objectID) != null)
+        else if (character.giftsLove.FirstOrDefault(i => i == selectedGift.objectID) != null)
         {
+            TransientDataCalls.PushAlert($"{character.NamePlate()}\'I love this!\'");
             appreciation += 2;
         }
-        else if (character.giftsLike.FirstOrDefault(i => i.objectID == selectedGift.objectID) != null || selectedGift.type == ItemType.Treasure)
+        else if (character.giftsLike.FirstOrDefault(i => i == selectedGift.objectID) != null || selectedGift.type == ItemType.Treasure)
         {
+            TransientDataCalls.PushAlert($"{character.NamePlate()}\'Thank you!\'");
             appreciation += 1;
         }
 
