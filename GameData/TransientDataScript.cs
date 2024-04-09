@@ -166,6 +166,48 @@ public static class TransientDataCalls
         }
     }
 
+    public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity)
+    {
+        string hexColour = "635550";
+        if (item.rarity == ItemRarity.Common)
+        {
+            hexColour = "63411b";
+        }
+        else if (item.rarity == ItemRarity.Uncommon)
+        {
+            hexColour = "00766a";
+        }
+        else if (item.rarity == ItemRarity.Rare)
+        {
+            hexColour = "2551a9";
+        }
+        else if (item.rarity == ItemRarity.Extraordinary)
+        {
+            hexColour = "772084";
+        }
+        else if (item.rarity == ItemRarity.Mythical)
+        {
+            hexColour = "b72b66";
+        }
+        else if (item.rarity == ItemRarity.Unique)
+        {
+            hexColour = "7d9c00";
+        }
+
+        string value = printPrice ? $"\nValue: {MoneyExchange.CalculateSellPrice(item)}" : "";
+        string rarity = printRarity ? $"\nRarity: {item.rarity}" : "";
+        string content = $"<color=#{hexColour}>{item.name}{value}{rarity}</color>";
+
+        if (NullCheck())
+        {
+            transientData.PrintFloatText(content);
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+        }
+    }
+
     public static void DisableFloatText()
     {
         if (NullCheck())
