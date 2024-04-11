@@ -6,8 +6,8 @@ public class ReaderHorizontalLayout : MonoBehaviour
 {
     public BookReader reader;
 
-    List<Page> pages;
-    int pageIndex;
+    public List<Page> pages;
+    public int pageIndex;
     Book prevBook;
 
     internal void Initialise(Book book)
