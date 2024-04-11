@@ -5,8 +5,11 @@ using UnityEngine;
 public class GarageMenu : MonoBehaviour
 {
     public Character character;
-    public GameObject prefabContainer;
-    public List<GameObject> prefabList;
+    public GameObject mechUpContainer;
+    public GameObject magicUpContainer;
+    public List<UpgradeIcon> prefabList;
+    bool upgradesLoaded = false;
+
     void Start()
     {
         gameObject.SetActive(false);
@@ -16,11 +19,32 @@ public class GarageMenu : MonoBehaviour
     {
         this.character = character;
 
-        foreach (Upgrade upgrade in Upgrades.all)
+        if (!upgradesLoaded)
         {
-            var prefab = BoxFactory.CreateUpgradeIcon(upgrade, true, true);
-            prefab.transform.SetParent(prefabContainer.transform, false);
-            prefabList.Add(prefab);
+            foreach (Upgrade upgrade in Upgrades.all)
+            {
+                var prefab = BoxFactory.CreateUpgradeIcon(upgrade, true, true);
+
+                if (upgrade.type == UpgradeType.Magical)
+                {
+                    prefab.transform.SetParent(magicUpContainer.transform, false);
+                }
+                else
+                {
+                    prefab.transform.SetParent(mechUpContainer.transform, false);
+                }
+
+                prefabList.Add(prefab.GetComponent<UpgradeIcon>());
+            }
+
+            upgradesLoaded = true;
+        }
+        else
+        {
+            foreach (var upgrade in prefabList)
+            {
+                upgrade.UpdateText();
+            }
         }
     }
 }
