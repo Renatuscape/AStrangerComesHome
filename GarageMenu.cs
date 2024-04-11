@@ -11,22 +11,28 @@ public class GarageMenu : MonoBehaviour
     public List<UpgradeIcon> prefabList;
     bool upgradesLoaded = false;
 
-    void Start()
+    void Awake()
     {
-        gameObject.SetActive(false);
+        if (TransientDataScript.GameState == GameState.MainMenu)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public void Initialise(Character character)
     {
+        Debug.Log("Initialising garage menu.");
         this.character = character;
         TransientDataCalls.SetGameState(GameState.ShopMenu, name, gameObject);
         portraitRenderer.EnableForGarage(character.objectID);
+        gameObject.SetActive(true);
+        Debug.Log(gameObject);
 
         if (!upgradesLoaded)
         {
             foreach (Upgrade upgrade in Upgrades.all)
             {
-                var prefab = BoxFactory.CreateUpgradeIcon(upgrade, true, true);
+                var prefab = BoxFactory.CreateUpgradeIcon(upgrade, true, true, true);
 
                 if (upgrade.type == UpgradeType.Magical)
                 {
@@ -49,8 +55,6 @@ public class GarageMenu : MonoBehaviour
                 upgrade.UpdateText();
             }
         }
-
-        gameObject.SetActive(true);
     }
 
     public void Close()
