@@ -52,16 +52,18 @@ public class UpgradeIcon : MonoBehaviour
         {
             SetPriceTag();
         }
+
+        Canvas.ForceUpdateCanvases();
     }
 
     public void SetLevelText()
     {
-        levelText.text = level.ToString();
+        levelText.text = "Lv. " + level.ToString();
     }
     public void SetPriceTag()
     {
         price = upgrade.basePrice + (level * upgrade.basePrice * 5);
 
-        priceText.text = price.ToString();
+        priceText.text = "Price: " + price.ToString();
     }
 }
