@@ -40,6 +40,11 @@ public class InteractMenu : MonoBehaviour
             {
                 PrintGiftButton(character);
             }
+
+            if (character.runsGarage)
+            {
+                PrintGarageButton(character);
+            }
         }
 
         gameObject.SetActive(true);
@@ -72,13 +77,13 @@ public class InteractMenu : MonoBehaviour
     {
         if (character.type == CharacterType.Arcana && Player.GetCount(character.objectID, name) < 1)
         {
-            var shopButton = GetButton($"Speak with your old friend before shopping.");
+            var shopButton = GetButton($"I should speak with my old friend before shopping.");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
         else if (character.type == CharacterType.Unique && Player.GetCount(character.objectID, name) < 1)
         {
-            var shopButton = GetButton($"Introduce yourself before shopping.");
+            var shopButton = GetButton($"I should introduce myself before shopping.");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
@@ -89,6 +94,31 @@ public class InteractMenu : MonoBehaviour
             return true;
         }
 
+    }
+
+    bool PrintGarageButton(Character character)
+    {
+        string machinistID = "ARC002";
+        int machinistAffectio = Player.GetCount(machinistID, name);
+        
+        if (machinistAffectio < 1 && character.objectID == machinistID)
+        {
+            var shopButton = GetButton($"I should speak with my old friend before entering the garage.");
+            shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
+            return false;
+        }
+        else if (machinistAffectio < 1 && character.objectID != machinistID)
+        {
+            var shopButton = GetButton($"I should visit |the Machinist| before entering the garage.");
+            shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
+            return false;
+        }
+        else
+        {
+            var shopButton = GetButton($"Enter garage");
+            shopButton.GetComponent<Button>().onClick.AddListener(() => menuSystem.garageMenu.Initialise(character));
+            return true;
+        }
     }
 
     void PrintGiftButton(Character character)
@@ -116,7 +146,8 @@ public class InteractMenu : MonoBehaviour
 
     GameObject GetButton(string buttonText)
     {
-        var button = BoxFactory.CreateButton(buttonText);
+        var parsedText = DialogueTagParser.ParseText(buttonText);
+        var button = BoxFactory.CreateButton(parsedText);
         button.transform.SetParent(prefabContainer.transform);
         buttons.Add(button);
         button.GetComponent<Button>().onClick.AddListener(() => CloseInteractMenu());
