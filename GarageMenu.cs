@@ -18,6 +18,7 @@ public class GarageMenu : MonoBehaviour
     public void Initialise(Character character)
     {
         this.character = character;
+        TransientDataCalls.SetGameState(GameState.ShopMenu, name, gameObject);
 
         if (!upgradesLoaded)
         {
@@ -46,5 +47,13 @@ public class GarageMenu : MonoBehaviour
                 upgrade.UpdateText();
             }
         }
+
+        gameObject.SetActive(true);
+    }
+
+    public void Close()
+    {
+        gameObject.SetActive(false);
+        TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
     }
 }
