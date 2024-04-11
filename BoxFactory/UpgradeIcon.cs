@@ -1,8 +1,9 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UpgradeIcon : MonoBehaviour
+public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Upgrade upgrade;
     public TextMeshProUGUI priceText;
@@ -13,12 +14,14 @@ public class UpgradeIcon : MonoBehaviour
 
     bool showPrice = false;
     bool showLevel = false;
+    bool showFloatName = false;
 
-    public void Setup(Upgrade upgrade, bool showLevel, bool showPrice)
+    public void Setup(Upgrade upgrade, bool showLevel, bool showPrice, bool showFloatName)
     {
         this.upgrade = upgrade;
         this.showLevel = showLevel;
         this.showPrice = showPrice;
+        this.showFloatName = showFloatName;
 
         var imageComponent = gameObject.GetComponent<Image>();
         imageComponent.sprite = upgrade.sprite;
@@ -65,5 +68,21 @@ public class UpgradeIcon : MonoBehaviour
         price = upgrade.basePrice + (level * upgrade.basePrice * 5);
 
         priceText.text = "Price: " + price.ToString();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (showFloatName)
+        {
+            TransientDataCalls.PrintFloatText(upgrade.name);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (showFloatName)
+        {
+            TransientDataCalls.DisableFloatText();
+        }
     }
 }
