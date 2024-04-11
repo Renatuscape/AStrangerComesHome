@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PulsingAnimation : MonoBehaviour
+public class Anim_PulseLoop : MonoBehaviour
 {
     public float pulseFrequency = 0.05f;
     public float pulseFactor = 0.004f;
