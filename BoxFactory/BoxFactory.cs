@@ -69,12 +69,12 @@ public class BoxFactory : MonoBehaviour
         return newBodyText;
     }
 
-    GameObject InstantiateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice)
+    GameObject InstantiateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice, bool showFloatName)
     {
         var prefab = Instantiate(upgradePrefab);
         var script = prefab.GetComponent<UpgradeIcon>();
 
-        script.Setup(upgrade, true, true);
+        script.Setup(upgrade, displayLevel, displayPrice, showFloatName);
 
         return prefab;
     }
@@ -248,9 +248,9 @@ public class BoxFactory : MonoBehaviour
         return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size, fontSize);
     }
 
-    public static GameObject CreateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice)
+    public static GameObject CreateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice, bool showFloatName)
     {
-        return boxFactory.InstantiateUpgradeIcon(upgrade, displayLevel, displayPrice);
+        return boxFactory.InstantiateUpgradeIcon(upgrade, displayLevel, displayPrice, showFloatName);
     }
 
     public static GameObject CreateMarkerQuadratic(bool animatePulse, bool animateRotate, int size = 32)
