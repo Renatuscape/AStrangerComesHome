@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GarageMenu : MonoBehaviour
 {
+    public PortraitRenderer portraitRenderer;
     public Character character;
     public GameObject mechUpContainer;
     public GameObject magicUpContainer;
@@ -19,6 +20,7 @@ public class GarageMenu : MonoBehaviour
     {
         this.character = character;
         TransientDataCalls.SetGameState(GameState.ShopMenu, name, gameObject);
+        portraitRenderer.EnableForGarage(character.objectID);
 
         if (!upgradesLoaded)
         {
