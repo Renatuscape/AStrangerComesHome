@@ -72,6 +72,18 @@ public class PortraitRenderer : MonoBehaviour
         }
     }
 
+    public void EnableForGarage(string characterID)
+    {
+        rightFrame.enabled = false;
+        playerFrame.enabled = false;
+        SetSprite(characterID);
+        EnablePlayer();
+
+        gameObject.SetActive(true);
+
+        MoveSprite(playerSprite, -340f);
+        MoveSprite(rightPortraitContainer, 340f);
+    }
     public void EnableForShop(string characterID)
     {
         //SET SPRITE
@@ -160,11 +172,13 @@ public class PortraitRenderer : MonoBehaviour
 
         if (isRight)
         {
+            rightPortraitContainer.SetActive(true);
             characterImage = rightCharacterImage;
             frameImage = rightFrame;
         }
         else
         {
+            leftPortraitContainer.SetActive(true);
             characterImage = leftCharacterImage;
             frameImage = leftFrame;
         }
@@ -253,6 +267,9 @@ public class PortraitRenderer : MonoBehaviour
 
     void ResetValues()
     {
+        leftFrame.enabled = true;
+        rightFrame.enabled = true;
+        playerFrame.enabled = true;
         playerSprite.SetActive(false);
         MoveSprite(playerSprite, playerDefaultX, false);
         rightPortraitContainer.SetActive(false);
