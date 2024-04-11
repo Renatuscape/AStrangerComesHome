@@ -12,6 +12,7 @@ public class MenuSystem : MonoBehaviour
     public InteractMenu interactMenu;
     public GameObject journalMenu;
     public AlchemyMenu alchemyMenu;
+    public GarageMenu garageMenu;
 
     void Awake()
     {
