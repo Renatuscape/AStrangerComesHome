@@ -21,11 +21,31 @@ public class BoxFactory : MonoBehaviour
     [SerializeField]
     GameObject iconRowPlainTextPrefab;
     [SerializeField]
+    GameObject upgradePrefab;
+    [SerializeField]
     FontManager fontManager;
+    [SerializeField]
+    GameObject quadraticMarker;
+    [SerializeField]
+    GameObject rectangularMarker;
 
     void Start()
     {
         boxFactory = GetComponent<BoxFactory>();
+    }
+
+    GameObject InstantiateMarkerQuadratic(bool animatePulse, bool animateRotate, int size = 32)
+    {
+        GameObject marker = Instantiate(quadraticMarker);
+        marker.AddComponent<Anim_PulseLoop>();
+        return marker;
+    }
+
+    GameObject InstantiateMarkerRectangular(bool animatePulse, int height = 32, int width = 64)
+    {
+        GameObject marker = Instantiate(rectangularMarker);
+
+        return marker;
     }
 
     GameObject InstantiateButton(string inputText, float width, TextAlignmentOptions textAlignment)
@@ -47,6 +67,16 @@ public class BoxFactory : MonoBehaviour
         newBodyText.GetComponent<Image>().color = new Color(1, 1, 1, 0);
 
         return newBodyText;
+    }
+
+    GameObject InstantiateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice)
+    {
+        var prefab = Instantiate(upgradePrefab);
+        var script = prefab.GetComponent<UpgradeIcon>();
+
+        script.Setup(upgrade, true, true);
+
+        return prefab;
     }
 
     GameObject InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14)
@@ -216,5 +246,20 @@ public class BoxFactory : MonoBehaviour
     public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14)
     {
         return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size, fontSize);
+    }
+
+    public static GameObject CreateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice)
+    {
+        return boxFactory.InstantiateUpgradeIcon(upgrade, displayLevel, displayPrice);
+    }
+
+    public static GameObject CreateMarkerQuadratic(bool animatePulse, bool animateRotate, int size = 32)
+    {
+        return boxFactory.InstantiateMarkerQuadratic(animatePulse, animateRotate, size);
+    }
+
+    public static GameObject CreateMarkerRectangular(bool animatePulse, int height = 32, int width = 64)
+    {
+        return boxFactory.InstantiateMarkerRectangular(animatePulse, height, width);
     }
 }
