@@ -34,6 +34,7 @@ public class Character
     public string trueNamePlate;
 
     public List<Shop> shops = new();
+    public bool runsGarage;
     public List<string> giftsDislike;
     public List<string> giftsLike;
     public List<string> giftsLove;
