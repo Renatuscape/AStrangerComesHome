@@ -27,9 +27,9 @@ public class Item
     public int health; //Adds to price and growth time
     public int yield; //Adds to price and growth time
 
-    public void AddToPlayer(int amount = 1)
+    public void AddToPlayer(int amount = 1, bool doNotLog = false)
     {
-        Player.AddDynamicObject(this, amount, "Item");
+        Player.AddDynamicObject(this, amount, doNotLog, "Item");
     }
     public int GetCountPlayer()
     {
