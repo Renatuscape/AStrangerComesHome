@@ -71,7 +71,7 @@ public class QuestTracker : MonoBehaviour
                 }
                 else
                 {
-                    Player.AddDynamicObject(quest, 1, "Quest Tracker: quest auto-progressed one step after pop-up because no choice was found");
+                    Player.AddDynamicObject(quest, 1, false, "Quest Tracker: quest auto-progressed one step after pop-up because no choice was found");
                 }
 
                 foreach (string content in dialogue.content)
