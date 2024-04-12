@@ -23,9 +23,9 @@ public class Skill
     public Sprite sprite;
     public string description;
 
-    public void AddToPlayer(int amount = 1)
+    public void AddToPlayer(int amount = 1, bool doNotLog = false)
     {
-        Player.AddDynamicObject(this, amount, "Skill");
+        Player.AddDynamicObject(this, amount, doNotLog, "Skill");
     }
     public int GetCountPlayer()
     {
