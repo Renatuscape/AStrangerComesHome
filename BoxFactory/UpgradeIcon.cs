@@ -65,7 +65,7 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
     public void SetPriceTag()
     {
-        price = upgrade.basePrice + (level * upgrade.basePrice * 5);
+        price = upgrade.GetPrice();
 
         priceText.text = "Price: " + price.ToString();
     }
