@@ -16,11 +16,11 @@ public static class Player
         return false;
     }
 
-    public static void Remove(IdIntPair entry)
+    public static void Remove(IdIntPair entry, bool doNotLog = false)
     {
-        Remove(entry.objectID, entry.amount);
+        Remove(entry.objectID, entry.amount, doNotLog);
     }
-    public static void Remove(string objectID, int amount = 1)
+    public static void Remove(string objectID, int amount = 1, bool doNotLog = false)
     {
         int removeAmount = amount;
 
@@ -29,10 +29,10 @@ public static class Player
             removeAmount = removeAmount * -1;
         }
 
-        Add(objectID, removeAmount);
+        Add(objectID, removeAmount, doNotLog);
     }
 
-    public static void Set(string objectID, int amount)
+    public static void Set(string objectID, int amount, bool doNotLog = false)
     {
         var foundObject = inventoryList.FirstOrDefault(o => o.objectID == objectID);
         if (foundObject != null)
@@ -41,15 +41,15 @@ public static class Player
         }
         else
         {
-            Add(objectID, amount);
+            Add(objectID, amount, doNotLog);
         }
     }
 
-    public static int Add(string objectID, int amount = 1)
+    public static int Add(string objectID, int amount = 1, bool doNotLog = false)
     {
         if (GameCodex.ParseID(objectID) != null)
         {
-            return AddDynamicObject(GameCodex.ParseID(objectID), amount);
+            return AddDynamicObject(GameCodex.ParseID(objectID), amount, doNotLog);
         }
         else
         {
@@ -57,12 +57,12 @@ public static class Player
         }
     }
 
-    public static int Add(IdIntPair entry)
+    public static int Add(IdIntPair entry, bool doNotLog = false)
     {
-        return Add(entry.objectID, entry.amount);
+        return Add(entry.objectID, entry.amount, doNotLog);
     }
 
-    public static int AddDynamicObject(dynamic dynamicObject, int amount, string caller = "")
+    public static int AddDynamicObject(dynamic dynamicObject, int amount, bool doNotLog = false, string caller = "")
     {
         Debug.Log($"Attempting to add dynamic object {dynamicObject.name} ({amount})");
         int max = 0;
@@ -118,7 +118,10 @@ public static class Player
                     {
                         entry.amount += amount;
 
-                        AttemptToLog(dynamicObject, amount);
+                        if (!doNotLog)
+                        {
+                            AttemptToLog(dynamicObject, amount);
+                        }
                         return amount;
                     }
                     else
@@ -126,7 +129,10 @@ public static class Player
                         int reduced = max - entry.amount;
                         entry.amount += reduced;
 
-                        AttemptToLog(dynamicObject, reduced);
+                        if (!doNotLog)
+                        {
+                            AttemptToLog(dynamicObject, reduced);
+                        }
                         return reduced;
                     }
                 }
@@ -141,7 +147,10 @@ public static class Player
                 {
                     newEntry.amount += amount;
 
-                    AttemptToLog(dynamicObject, amount);
+                    if (!doNotLog)
+                    {
+                        AttemptToLog(dynamicObject, amount);
+                    }
                     return amount;
                 }
                 else
@@ -149,7 +158,10 @@ public static class Player
                     int reduced = max - newEntry.amount;
                     newEntry.amount += reduced;
 
-                    AttemptToLog(dynamicObject, reduced);
+                    if (!doNotLog)
+                    {
+                        AttemptToLog(dynamicObject, reduced);
+                    }
                     return reduced;
                 }
             }
