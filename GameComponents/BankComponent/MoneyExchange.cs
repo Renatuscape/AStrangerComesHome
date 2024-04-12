@@ -77,7 +77,7 @@ public static class MoneyExchange
 
                 if (shillingsInInventory >= costInShillings - totalPaid)
                 {
-                    Player.Remove("MIS001-COM-NN", costInShillings - totalPaid);
+                    Player.Remove("MIS001-COM-NN", costInShillings - totalPaid, true);
                     totalPaid += costInShillings - totalPaid;
                 }
                 else // Exchange higher denominations
@@ -107,12 +107,12 @@ public static class MoneyExchange
 
                     if (shillingsInInventory >= costInShillings - totalPaid)
                     {
-                        Player.Remove("MIS001-COM-NN", costInShillings - totalPaid);
+                        Player.Remove("MIS001-COM-NN", costInShillings - totalPaid, true);
                         totalPaid += costInShillings - totalPaid;
                     }
                     else
                     {
-                        Player.Remove("MIS001-COM-NN", shillingsInInventory);
+                        Player.Remove("MIS001-COM-NN", shillingsInInventory, true);
                         totalPaid += shillingsInInventory;
                     }
                 }
@@ -198,9 +198,9 @@ public static class MoneyExchange
             }
         }
 
-        var guildersAdded = Player.Add("MIS003-RAR-NN", guilders);
-        var crownsAdded = Player.Add("MIS002-UNC-NN", crowns);
-        var shillingsAdded = Player.Add("MIS001-COM-NN", shillings);
+        var guildersAdded = Player.Add("MIS003-RAR-NN", guilders, true);
+        var crownsAdded = Player.Add("MIS002-UNC-NN", crowns, true);
+        var shillingsAdded = Player.Add("MIS001-COM-NN", shillings, true);
         var totalAdded = (guildersAdded * 10000) + (crownsAdded * 100) + shillingsAdded;
         Debug.Log($"Attempted to add {valueToAddInShillings} using highest denomination. The equivalent of {totalAdded} shillings was added total.");
         return totalAdded;
@@ -241,9 +241,9 @@ public static class MoneyExchange
         }
 
         // Add coins to player's inventory
-        Player.Add("MIS003-RAR-NN", guilder);
-        Player.Add("MIS002-UNC-NN", crown);
-        Player.Add("MIS001-COM-NN", shilling);
+        Player.Add("MIS003-RAR-NN", guilder, true);
+        Player.Add("MIS002-UNC-NN", crown, true);
+        Player.Add("MIS001-COM-NN", shilling, true);
     }
 
     #endregion
@@ -258,9 +258,9 @@ public static class MoneyExchange
             return false;
         }
 
-        Player.Remove("MIS002-UNC-NN", crowns);
+        Player.Remove("MIS002-UNC-NN", crowns, true);
         shillings = crowns * 100;
-        Player.Add("MIS001-COM-NN", shillings);
+        Player.Add("MIS001-COM-NN", shillings, true);
         Debug.Log($"Exchanged {crowns} crowns for {shillings} shillings.");
         return true;
     }
@@ -275,9 +275,9 @@ public static class MoneyExchange
 
         Debug.Log($"Attempting to exchange {guilders} guilders for crowns. Current total: {GetPlayerMoney()}");
 
-        Player.Remove("MIS003-RAR-NN", guilders);
+        Player.Remove("MIS003-RAR-NN", guilders, true);
         crowns = guilders * 100;
-        Player.Add("MIS002-UNC-NN", crowns);
+        Player.Add("MIS002-UNC-NN", crowns, true);
         Debug.Log($"Exchanged {guilders} guilders for {crowns} crowns. Current total: {GetPlayerMoney()}");
         return true;
     }
@@ -301,8 +301,8 @@ public static class MoneyExchange
 
             if (shillingsInventory + shillings < maxShillings)
             {
-                Player.Remove("MIS000-JUN-NN", hellers);
-                Player.Add("MIS001-COM-NN", shillings);
+                Player.Remove("MIS000-JUN-NN", hellers, true);
+                Player.Add("MIS001-COM-NN", shillings, true);
 
                 Debug.Log($"{hellers} hellers exchanged for {shillings} shillings.");
                 return true;
@@ -330,8 +330,8 @@ public static class MoneyExchange
 
             if (crowns + crownsInventory < maxCrowns)
             {
-                Player.Remove("MIS001-COM-NN", shillings);
-                Player.Add("MIS002-UNC-NN", crowns);
+                Player.Remove("MIS001-COM-NN", shillings, true);
+                Player.Add("MIS002-UNC-NN", crowns, true);
 
                 Debug.Log($"{shillings} shillings exchanged for {crowns} crowns.");
                 return true;
@@ -360,8 +360,8 @@ public static class MoneyExchange
 
             if (guildersInventory + guilders < maxGuilders)
             {
-                Player.Remove("MIS002-UNC-NN", crowns);
-                Player.Add("MIS003-RAR-NN", guilders);
+                Player.Remove("MIS002-UNC-NN", crowns, true);
+                Player.Add("MIS003-RAR-NN", guilders, true);
                 return true;
             }
         }
