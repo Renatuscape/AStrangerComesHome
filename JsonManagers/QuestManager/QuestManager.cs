@@ -1,34 +1,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Threading.Tasks;
 using System.Linq;
 
 public class QuestManager : MonoBehaviour
 {
-    public List<Quest> debugCharacterList = Quests.all;
+    public List<Quest> questList = Quests.all;
     public bool allObjecctsLoaded = false;
-    public int filesLoaded = 0;
-    public int numberOfFilesToLoad = 1;
+    public int filesLoaded;
+    public int numberOfFilesToLoad;
 
-    void Start()
+    public Task StartLoading()
     {
-        //LoadFromJson("Quests.json");
+        List<Task> loadingTasks = new List<Task>();
+
+        gameObject.SetActive(true);
+        filesLoaded = 0;
+        numberOfFilesToLoad = 0;
 
         var info = new DirectoryInfo(Application.streamingAssetsPath + "/JsonData/Quests/");
         var fileInfo = info.GetFiles();
-        numberOfFilesToLoad = fileInfo.Count();
 
         foreach (var file in fileInfo)
         {
-            if (file.Extension != ".json")
+            if (file.Extension == ".json")
             {
-                numberOfFilesToLoad -= 1;
-            }
-            else
-            {
-                LoadFromJson(Path.GetFileName(file.FullName)); // Pass only the file name
+                numberOfFilesToLoad++;
+                Task loadingTask = LoadFromJsonAsync(Path.GetFileName(file.FullName)); // Pass only the file name
+                loadingTasks.Add(loadingTask);
             }
         }
+
+        return Task.WhenAll(loadingTasks);
     }
 
     [System.Serializable]
@@ -36,13 +40,14 @@ public class QuestManager : MonoBehaviour
     {
         public Quest[] quests;
     }
-    public void LoadFromJson(string fileName)
+
+    public async Task LoadFromJsonAsync(string fileName)
     {
         string jsonPath = Application.streamingAssetsPath + "/JsonData/Quests/" + fileName;
 
         if (File.Exists(jsonPath))
         {
-            string jsonData = File.ReadAllText(jsonPath);
+            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
             QuestWrapper dataWrapper = JsonUtility.FromJson<QuestWrapper>(jsonData);
 
             if (dataWrapper != null)
@@ -53,12 +58,8 @@ public class QuestManager : MonoBehaviour
                     {
                         InitialiseQuest(character, Quests.all);
                     }
+
                     filesLoaded++;
-                    if (filesLoaded == numberOfFilesToLoad)
-                    {
-                        allObjecctsLoaded = true;
-                        Debug.Log("All QUESTS successfully loaded from Json.");
-                    }
                 }
                 else
                 {
@@ -75,6 +76,12 @@ public class QuestManager : MonoBehaviour
         {
             Debug.LogError("JSON file not found: " + jsonPath);
         }
+
+        if (filesLoaded == numberOfFilesToLoad)
+        {
+            allObjecctsLoaded = true;
+            Debug.Log("All QUESTS successfully loaded from Json.");
+        }
     }
 
     public static void InitialiseQuest(Quest quest, List<Quest> questList)
@@ -88,20 +95,7 @@ public class QuestManager : MonoBehaviour
         {
             foreach (Dialogue dialogue in quest.dialogues)
             {
-                //SET STAGE TYPE
-                if (dialogue.objectID.Substring(14, 1) == "M")
-                {
-                    dialogue.stageType = StageType.Memory;
-                }
-                else if (dialogue.objectID.Substring(14, 1) == "P")
-                {
-                    dialogue.stageType = StageType.PopUp;
-                }
-                else if (dialogue.objectID.Substring(14, 1) == "N")
-                {
-                    dialogue.stageType = StageType.Node;
-                }
-
+                DialogueSetup.InitialiseDialogue(dialogue);
                 Dialogues.all.Add(dialogue);
             }
         }
