@@ -67,7 +67,7 @@ public class TopicMenu : MonoBehaviour
 
                     if (passedChecks)
                     {
-                        passedChecks = activeDialogue.CheckRequirements(out var hasTimer, out var hasLocation);
+                        passedChecks = activeDialogue.CheckRequirements();
 
                         if (passedChecks)
                         {
