@@ -7,7 +7,7 @@ public static class RequirementChecker
     public static bool CheckDialogueRequirements(Dialogue dialogue)
     {
         bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
-        bool locationCheck = CheckLocation(dialogue.location);
+        bool locationCheck = CheckLocation(dialogue.locationID);
         bool requirementCheck = CheckRequirements(dialogue.requirements);
         bool restrictionCheck = CheckRestrictions(dialogue.restrictions);
 
