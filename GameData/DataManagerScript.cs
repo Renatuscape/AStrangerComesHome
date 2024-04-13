@@ -40,6 +40,7 @@ public class DataManagerScript : MonoBehaviour
     public float timeOfDay;
     public int totalGameDays;
     public List<string> giftedThisWeek;
+    public List<string> unlockedNames;
 
     //PASSENGER DATA - A
     public bool passengerIsActiveA;
