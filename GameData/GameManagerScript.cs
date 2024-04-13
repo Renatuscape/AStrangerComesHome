@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -9,17 +10,18 @@ public class GameManagerScript : MonoBehaviour
 {
     //ALL GAME COMPONENTS
     public DataManagerScript dataManager;
+    public Canvas loadingCanvas;
 
-    public GameObject itemManager;
-    public GameObject skillManager;
-    public GameObject upgradeManager;
-    public GameObject characterManager;
-    public GameObject questManager;
-    public GameObject dialogueManager;
-    public GameObject locationManager;
-    public GameObject regionManager;
-    public GameObject recipeManager;
-    public GameObject bookManager;
+    public ItemManager itemManager;
+    public SkillManager skillManager;
+    public UpgradeManager upgradeManager;
+    public CharacterManager characterManager;
+    public QuestManager questManager;
+    public DialogueManager dialogueManager;
+    public LocationManager locationManager;
+    public RegionManager regionManager;
+    public RecipeManager recipeManager;
+    public BookManager bookManager;
 
     public GameObject gameComponentMaster;
     public GameObject mainMenuComponent;
@@ -51,12 +53,13 @@ public class GameManagerScript : MonoBehaviour
         StartUpRoutine();
     }
 
-    void StartUpRoutine()
+    async void StartUpRoutine()
     {
+        loadingCanvas.gameObject.SetActive(true);
 
-        InitiateJsonManagers();
+        await InitiateJsonManagers(); // Ensure all json files are loaded before doing anything else
 
-        gameComponentParent.SetActive(true); //if the game starts with this disabled, you can assure loading objects first
+        gameComponentParent.SetActive(true); // Enable game components
 
         foreach (Transform child in gameComponentParent.transform)
         {
@@ -72,21 +75,38 @@ public class GameManagerScript : MonoBehaviour
             NewGameRoutine();
         }
 
-        Invoke("CreateGameController", 1f);
+        CreateGameController();
+        loadingCanvas.gameObject.SetActive(false);
     }
 
-    void InitiateJsonManagers()
+    async Task InitiateJsonManagers()
     {
-        regionManager.SetActive(true);
-        locationManager.SetActive(true);
-        itemManager.SetActive(true);
-        skillManager.SetActive(true);
-        upgradeManager.SetActive(true);
-        characterManager.SetActive(true);
-        dialogueManager.SetActive(true);
-        questManager.SetActive(true);
-        recipeManager.SetActive(true);
-        bookManager.SetActive(true);
+        regionManager.StartLoading();
+        locationManager.StartLoading();
+        upgradeManager.StartLoading();
+
+        await itemManager.StartLoading();
+        Debug.Log("STARTUP: Loading items async completed");
+
+        await skillManager.StartLoading();
+        Debug.Log("STARTUP: Loading skills async completed");
+
+        await characterManager.StartLoading();
+        Debug.Log("STARTUP: Loading characters async completed");
+
+        await dialogueManager.StartLoading();
+        Debug.Log("STARTUP: Loading dialogue async completed");
+
+        await recipeManager.StartLoading();
+        Debug.Log("STARTUP: Loading recipes async completed");
+
+        await bookManager.StartLoading();
+        Debug.Log("STARTUP: Loading books async completed");
+
+        await questManager.StartLoading();
+        Debug.Log("STARTUP: Loading quests async completed");
+
+        DialogueTagParser.UpdateTags(dataManager);
     }
 
     public void CreateGameController()
