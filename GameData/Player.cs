@@ -35,6 +35,7 @@ public static class Player
     public static void Set(string objectID, int amount, bool doNotLog = false)
     {
         var foundObject = inventoryList.FirstOrDefault(o => o.objectID == objectID);
+
         if (foundObject != null)
         {
             inventoryList.FirstOrDefault(o => o.objectID == objectID).amount = amount;
@@ -47,14 +48,16 @@ public static class Player
 
     public static int Add(string objectID, int amount = 1, bool doNotLog = false)
     {
-        if (GameCodex.ParseID(objectID) != null)
+        if (objectID.Contains("-NAME"))
+        {
+            Debug.Log($"Detected -NAME tag. Adding {objectID} to list.");
+            TransientDataCalls.gameManager.dataManager.unlockedNames.Add(objectID);
+        }
+        else if (GameCodex.ParseID(objectID) != null)
         {
             return AddDynamicObject(GameCodex.ParseID(objectID), amount, doNotLog);
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 
     public static int Add(IdIntPair entry, bool doNotLog = false)
@@ -97,14 +100,12 @@ public static class Player
             var character = (Character)dynamicObject;
             max = character.maxValue;
             id = character.objectID;
-            //Debug.Log($"Character found. MaxValue is {max}");
         }
         else if (dynamicObject is Recipe)
         {
             var recipe = (Recipe)dynamicObject;
             max = recipe.maxStack;
             id = recipe.objectID;
-            //Debug.Log($"Character found. MaxValue is {max}");
         }
         if (id != "")
         {
@@ -184,7 +185,7 @@ public static class Player
             var skill = (Skill)dynamicObject;
             LogAlert.QueueTextAlert($"{skill.name} increased by {value}");
         }
-        else if ( dynamicObject is Recipe)
+        else if (dynamicObject is Recipe)
         {
             var recipe = (Recipe)dynamicObject;
             LogAlert.QueueTextAlert($"Obtained {recipe.name}!");
