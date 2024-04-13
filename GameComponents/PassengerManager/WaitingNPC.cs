@@ -90,21 +90,32 @@ public class WaitingNPC : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+        if (Player.GetCount("SCR013-SCR-NN", name) > 0)
         {
-            passengerManager.ActivateWaitingPassenger(gameObject);
+            if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+            {
+                passengerManager.ActivateWaitingPassenger(gameObject);
+            }
+        }
+        else
+        {
+            TransientDataCalls.PushAlert("What's all this talk about a guild license? I should ask around.");
         }
     }
 
     public void OnMouseOver()
     {
-        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+        if (Player.GetCount("SCR013-SCR-NN", name) > 0)
         {
-            //var locationToString = destination.ToString();
-            //var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
-            transientData.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
+            if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+            {
+                transientData.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
+            }
         }
-
+        else
+        {
+            transientData.PrintFloatText("\'Isn't there a guild licensed coach arriving soon?\'");
+        }
     }
 
     public void OnMouseExit()
