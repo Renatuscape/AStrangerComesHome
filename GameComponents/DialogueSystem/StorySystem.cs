@@ -32,9 +32,10 @@ public class StorySystem : MonoBehaviour
 
     public void StartDialogue(Quest quest) //called primarily from topic manager
     {
+        Debug.Log($"Attempting to start dialogue {quest.objectID}");
+
         button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
 
-        DialogueTagParser.UpdateTags(dataManager);
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(true);
         dialogueMenu.GetComponent<DialogueMenu>().StartDialogueStage(quest);
