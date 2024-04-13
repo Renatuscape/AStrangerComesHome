@@ -45,8 +45,7 @@ public class DialogueButtonFactory
 
     public GameObject PrintNamePlate(Character character)
     {
-        character.NameSetup();
-        GameObject button = PrintText(character.namePlate);
+        GameObject button = PrintText(character.NamePlate());
         var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         textMesh.fontSize += 6;
         textMesh.fontSizeMax += 6;
