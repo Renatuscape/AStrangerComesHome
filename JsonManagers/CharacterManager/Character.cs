@@ -20,7 +20,7 @@ public class Character
     public string trueName;
     public string hexColour;
     public string description;
-    public int maxValue = 99;
+    public int maxValue = 200;
     public bool excludeFromPrint = false;
 
     public CharacterType type;
@@ -46,14 +46,9 @@ public class Character
     }
     public string NamePlate()
     {
-        var affection = Player.GetCount(objectID, objectID + " NamePlate()");
+        var nameUnlocked = TransientDataCalls.gameManager.dataManager.unlockedNames.FirstOrDefault(n => n == objectID + "-NAME");
 
-        if (type == CharacterType.Arcana && affection >= 50)
-        {
-            return trueNamePlate;
-        }
-
-        else if (type != CharacterType.Arcana && affection >= 20)
+        if (nameUnlocked != null)
         {
             return trueNamePlate;
         }
@@ -76,7 +71,9 @@ public class Character
 
     public string GetNameOnly()
     {
-        if (Player.GetCount($"{objectID}-QTN", objectID + " NamePlate()") >= 50)
+        var nameUnlocked = TransientDataCalls.gameManager.dataManager.unlockedNames.FirstOrDefault(n => n == objectID + "-NAME");
+
+        if (nameUnlocked != null)
         {
             return trueName;
         }
@@ -122,7 +119,7 @@ public static class Characters
 
     public static List<Character> FindAllWalkers()
     {
-        var walkingNpcs = all.Where((c)=> c.walkingLocations != null && c.walkingLocations.Count > 1).ToList();
+        var walkingNpcs = all.Where((c) => c.walkingLocations != null && c.walkingLocations.Count > 1).ToList();
 
         return walkingNpcs;
     }
@@ -225,7 +222,7 @@ public class WalkingLocation
         }
 
         // CHECK REQUIREMENTS
-        if (requirements != null  && requirements.Count > 0)
+        if (requirements != null && requirements.Count > 0)
         {
             foreach (var requirement in requirements)
             {
@@ -237,11 +234,11 @@ public class WalkingLocation
         }
 
         // CHECK RESTRICTIONS
-        if (restrictions != null  && restrictions.Count > 0)
+        if (restrictions != null && restrictions.Count > 0)
         {
             foreach (var restriction in restrictions)
             {
-                if (Player.GetCount(restriction.objectID, "Walking Location Check")  > restriction.amount)
+                if (Player.GetCount(restriction.objectID, "Walking Location Check") > restriction.amount)
                 {
                     return false;
                 }
