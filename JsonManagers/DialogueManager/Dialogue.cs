@@ -28,27 +28,37 @@ public class Dialogue
     public List<DialogueStep> dialogueSteps = new(); //a step is one line of dialogue from one speaker
     public List<IdIntPair> requirements = new();
     public List<IdIntPair> restrictions = new();
+    public string locationID;
     public List<Choice> choices = new(); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
     public List<IdIntPair> displayProgress = new(); // For quests with multiple, non-chronological requirements that should be tracked in the journal. More responsive and situational than hints.
     public bool autoProgressStage = false; //automatically go to next stage when step is completed
     public bool noLeaveButton = true; //if this is enabled, it is impossible to leave dialogue until you reach a choice
 
-    //MEMORY SPECIFIC
-    public string location;
-
-    public bool CheckRequirements(out bool hasTimer, out bool hasLocation)
+    public bool CheckRequirements()
     {
-        hasTimer = false;
-        hasLocation = false;
-
-        if ((startTime != 0 && endTime != 0) || minimumDaysPassed > 0)
+        if (startTime != 0 && endTime != 0)
         {
-            hasTimer = true;
+            float currentTime = TransientDataCalls.GetTimeOfDay();
+
+            if (currentTime < startTime || currentTime > endTime)
+            {
+                Debug.Log($"Time of day {currentTime} was not between {startTime} and {endTime}");
+                return false;
+            }
         }
 
-        if (!string.IsNullOrEmpty(location))
+        if (TransientDataCalls.GetDaysPassed() < minimumDaysPassed)
         {
-            hasLocation = true;
+            return false;
+        }
+
+        if (!string.IsNullOrEmpty(locationID))
+        {
+            if (TransientDataCalls.GetCurrentLocation().objectID != locationID)
+            {
+                Debug.Log("Quest tracker returned false on locationID " + locationID);
+                return false;
+            }
         }
 
         if (requirements != null && requirements.Count > 0)
