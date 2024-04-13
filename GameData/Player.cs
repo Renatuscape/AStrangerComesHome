@@ -50,8 +50,12 @@ public static class Player
     {
         if (objectID.Contains("-NAME"))
         {
+            var dataManager = TransientDataCalls.gameManager.dataManager;
+
             Debug.Log($"Detected -NAME tag. Adding {objectID} to list.");
-            TransientDataCalls.gameManager.dataManager.unlockedNames.Add(objectID);
+            dataManager.unlockedNames.Add(objectID);
+            DialogueTagParser.UpdateTags(dataManager);
+            Debug.Log("Name unlocked. Updating tags.");
         }
         else if (GameCodex.ParseID(objectID) != null)
         {
