@@ -123,16 +123,19 @@ public class InteractMenu : MonoBehaviour
 
     void PrintGiftButton(Character character)
     {
-        if (TransientDataCalls.GiftCheck(character))
+        if (Player.GetCount(character.objectID, name) > 0)
         {
-            var giftButton = GetButton($"Gift already given");
-            giftButton.GetComponent<Button>().enabled = false;
-        }
+            if (TransientDataCalls.GiftCheck(character))
+            {
+                var giftButton = GetButton($"Gift already given");
+                giftButton.GetComponent<Button>().enabled = false;
+            }
 
-        else
-        {
-            var giftButton = GetButton($"Gift");
-            giftButton.GetComponent<Button>().onClick.AddListener(() => menuSystem.giftMenu.Setup(character));
+            else
+            {
+                var giftButton = GetButton($"Gift");
+                giftButton.GetComponent<Button>().onClick.AddListener(() => menuSystem.giftMenu.Setup(character));
+            }
         }
     }
 
