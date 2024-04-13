@@ -9,8 +9,9 @@ public class UpgradeManager : MonoBehaviour
     public bool allObjecctsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 1;
-    void Start()
+    public void StartLoading()
     {
+        gameObject.SetActive(true);
         LoadFromJson("Upgrades.json");
     }
 

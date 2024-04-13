@@ -11,8 +11,9 @@ public class LocationManager : MonoBehaviour
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 1;
 
-    void Start()
+    public void StartLoading()
     {
+        gameObject.SetActive(true);
         LoadFromJson("Locations.json");
         //Remember to update numberOfFilesToLoad if more files are added
     }
