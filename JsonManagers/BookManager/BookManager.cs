@@ -4,15 +4,23 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
 using System.Linq;
+using System.Threading.Tasks;
 public class BookManager : MonoBehaviour
 {
     public List<Book> debugItemList = Books.all;
-    public bool allObjecctsLoaded = false;
-    public int filesLoaded = 0;
-    public int numberOfFilesToLoad;
     public List<Item> bookItems;
-    void Start()
+
+    public bool allObjecctsLoaded = false;
+    public int filesLoaded;
+    public int numberOfFilesToLoad;
+    public Task StartLoading()
     {
+        List<Task> loadingTasks = new List<Task>();
+
+        gameObject.SetActive(true);
+        filesLoaded = 0;
+        numberOfFilesToLoad = 0;
+
         if (Items.all == null || Items.all.Count == 0)
         {
             Debug.Log("No items loaded. Aborting book load.");
@@ -21,20 +29,19 @@ public class BookManager : MonoBehaviour
         {
             var info = new DirectoryInfo(Application.streamingAssetsPath + "/JsonData/Items/Books/");
             var fileInfo = info.GetFiles();
-            numberOfFilesToLoad = fileInfo.Count();
 
             foreach (var file in fileInfo)
             {
-                if (file.Extension != ".json")
+                if (file.Extension == ".json")
                 {
-                    numberOfFilesToLoad -= 1;
-                }
-                else
-                {
-                    LoadFromJson(Path.GetFileName(file.FullName)); // Pass only the file name
+                    numberOfFilesToLoad++;
+                    Task loadingTask = LoadFromJsonAsync(Path.GetFileName(file.FullName)); // Pass only the file name
+                    loadingTasks.Add(loadingTask);
                 }
             }
         }
+
+        return Task.WhenAll(loadingTasks);
     }
 
     [System.Serializable]
@@ -43,13 +50,13 @@ public class BookManager : MonoBehaviour
         public Book[] books;
     }
 
-    public void LoadFromJson(string fileName)
+    public async Task LoadFromJsonAsync(string fileName)
     {
         string jsonPath = Application.streamingAssetsPath + "/JsonData/Items/Books/" + fileName;
 
         if (File.Exists(jsonPath))
         {
-            string jsonData = File.ReadAllText(jsonPath);
+            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
             BookWrapper dataWrapper = JsonUtility.FromJson<BookWrapper>(jsonData);
 
             if (dataWrapper != null)
@@ -100,7 +107,7 @@ public class BookManager : MonoBehaviour
         }
 
         string bookID = book.objectID.Split("-")[0];
-        Debug.Log($"Looking for book item with ID {bookID}");
+        // Debug.Log($"Looking for book item with ID {bookID}");
 
         book.inventoryItem = bookItems.FirstOrDefault(i => i.objectID.Contains(bookID));
         book.name = book.inventoryItem.name;

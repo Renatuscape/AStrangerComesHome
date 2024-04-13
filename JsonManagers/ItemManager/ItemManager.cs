@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public class ItemManager : MonoBehaviour
 {
@@ -11,18 +12,28 @@ public class ItemManager : MonoBehaviour
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 8;
 
-    void Start()
+    public Task StartLoading()
     {
-        LoadFromJson("Seeds.json");
-        LoadFromJson("Plants.json");
-        LoadFromJson("Materials.json");
-        LoadFromJson("Treasures.json");
-        LoadFromJson("Catalysts.json");
-        LoadFromJson("Books.json");
-        LoadFromJson("Trade.json");
-        LoadFromJson("Misc.json");
-        //Remember to update numberOfFilesToLoad if more files are added
-        //Items.DebugList();
+        List<Task> loadingTasks = new List<Task>();
+
+        gameObject.SetActive(true);
+        filesLoaded = 0;
+        numberOfFilesToLoad = 0;
+
+        var info = new DirectoryInfo(Application.streamingAssetsPath + "/JsonData/Items/");
+        var fileInfo = info.GetFiles();
+
+        foreach (var file in fileInfo)
+        {
+            if (file.Extension == ".json")
+            {
+                numberOfFilesToLoad++;
+                Task loadingTask = LoadFromJsonAsync(Path.GetFileName(file.FullName)); // Pass only the file name
+                loadingTasks.Add(loadingTask);
+            }
+        }
+
+        return Task.WhenAll(loadingTasks);
     }
 
     [System.Serializable]
@@ -31,13 +42,13 @@ public class ItemManager : MonoBehaviour
         public Item[] items;
     }
 
-    public void LoadFromJson(string fileName)
+    public async Task LoadFromJsonAsync(string fileName)
     {
         string jsonPath = Application.streamingAssetsPath + "/JsonData/Items/" + fileName;
 
         if (File.Exists(jsonPath))
         {
-            string jsonData = File.ReadAllText(jsonPath);
+            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
             ItemsWrapper dataWrapper = JsonUtility.FromJson<ItemsWrapper>(jsonData);
 
             if (dataWrapper != null)

@@ -3,18 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public class CharacterManager : MonoBehaviour
 {
     public List<Character> debugCharacterList = Characters.all;
     public bool allObjecctsLoaded = false;
-    public int filesLoaded = 0;
-    public int numberOfFilesToLoad = 1;
+    public int filesLoaded;
+    public int numberOfFilesToLoad;
 
-    void Start()
+    public Task StartLoading()
     {
-        LoadFromJson("Characters.json");
-        //Remember to update numberOfFilesToLoad if more files are added
+        List<Task> loadingTasks = new List<Task>();
+
+        gameObject.SetActive(true);
+        filesLoaded = 0;
+        numberOfFilesToLoad = 1;
+
+        Task loadingTask = LoadFromJsonAsync("Characters.json");
+
+        return Task.WhenAll(loadingTasks);
     }
 
     [System.Serializable]
@@ -23,13 +31,13 @@ public class CharacterManager : MonoBehaviour
         public Character[] characters;
     }
 
-    public void LoadFromJson(string fileName)
+    public async Task LoadFromJsonAsync(string fileName)
     {
         string jsonPath = Application.streamingAssetsPath + "/JsonData/Characters/" + fileName;
 
         if (File.Exists(jsonPath))
         {
-            string jsonData = File.ReadAllText(jsonPath);
+            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
             CharactersWrapper dataWrapper = JsonUtility.FromJson<CharactersWrapper>(jsonData);
 
             if (dataWrapper != null)

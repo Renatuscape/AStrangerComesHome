@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.IO.Ports;
+using System.Threading.Tasks;
 
 public class RecipeManager : MonoBehaviour
 {
@@ -11,9 +12,10 @@ public class RecipeManager : MonoBehaviour
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 1;
 
-    void Start()
+    public Task StartLoading()
     {
-        LoadFromJson();
+        gameObject.SetActive(true);
+        return LoadFromJsonAsync();
     }
 
     [System.Serializable]
@@ -22,13 +24,13 @@ public class RecipeManager : MonoBehaviour
         public Recipe[] recipes;
     }
 
-    public void LoadFromJson()
+    public async Task LoadFromJsonAsync()
     {
         string jsonPath = Application.streamingAssetsPath + "/JsonData/Recipes/Recipes.json";
 
         if (File.Exists(jsonPath))
         {
-            string jsonData = File.ReadAllText(jsonPath);
+            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
             ItemsWrapper dataWrapper = JsonUtility.FromJson<ItemsWrapper>(jsonData);
 
             if (dataWrapper != null)
@@ -43,7 +45,7 @@ public class RecipeManager : MonoBehaviour
                     if (filesLoaded == numberOfFilesToLoad)
                     {
                         allObjecctsLoaded = true;
-                        Debug.Log("All ITEMS successfully loaded from Json.");
+                        Debug.Log("All RECIPES successfully loaded from Json.");
                     }
                 }
                 else

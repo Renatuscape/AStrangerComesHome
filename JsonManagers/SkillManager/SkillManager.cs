@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 public class SkillManager : MonoBehaviour
 {
     public List<Skill> debugSkillList = Skills.all;
     public bool allObjecctsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 1;
-    void Start()
+
+    public Task StartLoading()
     {
-        LoadFromJson("Skills.json");
+        gameObject.SetActive(true);
+        return LoadFromJsonAsync("Skills.json");
     }
 
     [System.Serializable]
@@ -20,13 +23,13 @@ public class SkillManager : MonoBehaviour
         public Skill[] skills;
     }
 
-    public void LoadFromJson(string fileName)
+    public async Task LoadFromJsonAsync(string fileName)
     {
         string jsonPath = Application.streamingAssetsPath + "/JsonData/Skills/" + fileName;
 
         if (File.Exists(jsonPath))
         {
-            string jsonData = File.ReadAllText(jsonPath);
+            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
             SkillWrapper dataWrapper = JsonUtility.FromJson<SkillWrapper>(jsonData);
 
             if (dataWrapper != null)
