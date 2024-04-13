@@ -101,6 +101,8 @@ public class PassengerPrefabScript : MonoBehaviour
             if (destination == transientData.currentLocation)
             {
                 int fortune = Player.GetCount("ATT000", "PassengerPrefabScript");
+
+                // Actual fare is added by highest denomination
                 int added = MoneyExchange.AddHighestDenomination(fare);
 
                 AudioManager.PlayAmbientSound("handleCoins");
@@ -115,11 +117,12 @@ public class PassengerPrefabScript : MonoBehaviour
                     transientData.PushAlert($"{passengerName} paid {fare} shillings.");
                 }
 
-                Player.Add("MIS000-JUN-NN", Random.Range(0, fare));
+                // Tip is paid out in hellers and scripted items are updated to track
+                Player.Add("MIS000-JUN-NN", Random.Range(0, fare), true);
                 Player.Add("SCR000-SCR-NN");
                 Player.Add("SCR001-SCR-NN", fare);
 
-                //Spirit Essence drop
+                // Spirit Essence drop
                 if (Random.Range(0, 100) > 80 - (fortune * 4))
                 {
                     Player.Add(spiritEssence.objectID);
