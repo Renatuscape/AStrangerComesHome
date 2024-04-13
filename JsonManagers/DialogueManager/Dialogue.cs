@@ -54,9 +54,10 @@ public class Dialogue
 
         if (!string.IsNullOrEmpty(locationID))
         {
-            if (TransientDataCalls.GetCurrentLocation().objectID != locationID)
+            var location = TransientDataCalls.GetCurrentLocation();
+            if (location != null && location.objectID != locationID)
             {
-                Debug.Log("Quest tracker returned false on locationID " + locationID);
+                // Debug.Log("Quest tracker returned false on locationID " + locationID);
                 return false;
             }
         }
@@ -69,14 +70,14 @@ public class Dialogue
             {
                 int amount = Player.GetCount(requirement.objectID, "Choice Requirement Check");
 
-                Debug.Log($"{requirement.amount} {requirement.objectID} is required. Player has {amount}");
+                // Debug.Log($"{requirement.amount} {requirement.objectID} is required. Player has {amount}");
 
                 if (amount < requirement.amount)
                 {
                     return false;
                 }
 
-                Debug.Log("Returned true.");
+                // Debug.Log("Returned true.");
             }
         }
 
@@ -118,8 +119,7 @@ public static class Dialogues
     {
         foreach (Dialogue dialogue in all)
         {
-            Debug.Log($"{dialogue}" +
-                $"\n{dialogue.dialogueSteps.Count}");
+            Debug.Log($"{dialogue}" + $"\n{dialogue.dialogueSteps.Count}");
         }
     }
 
