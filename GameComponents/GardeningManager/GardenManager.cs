@@ -30,6 +30,8 @@ public class GardenManager : MonoBehaviour
     public int cultivation; //improves yield rate for multi-yield plants
     public int nurturing; //creates a small chance that plant health does not decrease
     public int earthsoul; //at level 5, this mysterious skill grants all plants an extra life. At level 10, two extra lives.
+    public int unlockedPlanters;
+    bool plantersChecked;
 
     public float growthTimer;
     public float growthTick = 1;
@@ -40,6 +42,7 @@ public class GardenManager : MonoBehaviour
     {
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+        CheckPlanters();
         confirmPlantingMenu.SetActive(false);
     }
 
@@ -59,6 +62,33 @@ public class GardenManager : MonoBehaviour
         cultivation = Player.GetCount("GAR001", "GardenManager");
         nurturing = Player.GetCount("GAR002", "GardenManager");
         earthsoul = Player.GetCount("GAR003", "GardenManager");
+
+        CheckPlanters();
+    }
+
+    void CheckPlanters()
+    {
+        unlockedPlanters = Player.GetCount("SCR004-SCR-NN", name);
+
+        if (unlockedPlanters >= 1)
+        {
+            planterA.gameObject.SetActive(true);
+        }
+        if (unlockedPlanters >= 2)
+        {
+            planterB.gameObject.SetActive(true);
+        }
+        if (unlockedPlanters >= 3)
+        {
+            planterC.gameObject.SetActive(true);
+        }
+        if (unlockedPlanters < 1)
+        {
+            planterA.gameObject.SetActive(false);
+            planterB.gameObject.SetActive(false);
+            planterC.gameObject.SetActive(false);
+        }
+        plantersChecked = true;
     }
     public void UpdatePlanterSprite()
     {
@@ -72,44 +102,53 @@ public class GardenManager : MonoBehaviour
 
     private void Update()
     {
+        if (TransientDataScript.IsTimeFlowing())
+        {
+            growthTimer += Time.fixedDeltaTime; //add skill adjustments
 
-        if (!dataManager.planterIsActiveA || dataManager.seedA == null)
-        {
-            plantSpriteA.sprite = null;
-        }
-        if (!dataManager.planterIsActiveB || dataManager.seedB == null)
-        {
-            plantSpriteB.sprite = null;
-        }
-        if (!dataManager.planterIsActiveC || dataManager.seedC == null)
-        {
-            plantSpriteC.sprite = null;
-        }
-    }
+            if (growthTimer >= growthTick)
+            {
+                GrowthTick();
+                growthTimer = 0;
+            }
 
-    void FixedUpdate()
-    {
-        growthTimer += Time.fixedDeltaTime; //add skill adjustments
-
-        if (growthTimer >= growthTick)
-        {
-            GrowthTick();
-            growthTimer = 0;
+            if (!dataManager.planterIsActiveA || dataManager.seedA == null)
+            {
+                plantSpriteA.sprite = null;
+            }
+            if (!dataManager.planterIsActiveB || dataManager.seedB == null)
+            {
+                plantSpriteB.sprite = null;
+            }
+            if (!dataManager.planterIsActiveC || dataManager.seedC == null)
+            {
+                plantSpriteC.sprite = null;
+            }
         }
     }
 
     void GrowthTick()
     {
+        if (!plantersChecked)
+        {
+            SyncSkills();
+        }
+        else
+        {
+            plantersChecked = false;
+        }
 
-        if (dataManager.planterIsActiveA && !string.IsNullOrEmpty(dataManager.seedA))
-            UpdatePlanterData(ref plantSpriteA, ref dataManager.seedA, ref dataManager.progressSeedA);
+        if (unlockedPlanters > 0)
+        {
+            if (dataManager.planterIsActiveA && !string.IsNullOrEmpty(dataManager.seedA))
+                UpdatePlanterData(ref plantSpriteA, ref dataManager.seedA, ref dataManager.progressSeedA);
 
-        if (dataManager.planterIsActiveB && !string.IsNullOrEmpty(dataManager.seedB))
-            UpdatePlanterData(ref plantSpriteB, ref dataManager.seedB, ref dataManager.progressSeedB);
+            if (unlockedPlanters > 1 && dataManager.planterIsActiveB && !string.IsNullOrEmpty(dataManager.seedB))
+                UpdatePlanterData(ref plantSpriteB, ref dataManager.seedB, ref dataManager.progressSeedB);
 
-        if (dataManager.planterIsActiveC && !string.IsNullOrEmpty(dataManager.seedC))
-            UpdatePlanterData(ref plantSpriteC, ref dataManager.seedC, ref dataManager.progressSeedC);
-
+            if (unlockedPlanters > 2 && dataManager.planterIsActiveC && !string.IsNullOrEmpty(dataManager.seedC))
+                UpdatePlanterData(ref plantSpriteC, ref dataManager.seedC, ref dataManager.progressSeedC);
+        }
     }
 
     void UpdatePlanterData(ref SpriteRenderer plantSprite, ref string seedID, ref float progressSeed)
@@ -234,49 +273,59 @@ public class GardenManager : MonoBehaviour
             //IF THE PLANTER IS READY TO BE HARVESTED
             if (growthProgress >= maxGrowth)
             {
-                Debug.Log($"{seed.name} is ready! {growthProgress}/{maxGrowth}");
+                var plantInInventory = Player.GetCount(outputPlant.objectID, name);
 
-                //PLANT YIELD
-                var yield = seed.yield;
-
-                if (seed.yield > 1) //Plants with only one yield by default can only get a higher yield through the Earthsoul skill
+                if (plantInInventory + seed.yield <= outputPlant.maxStack)
                 {
-                    yield = Random.Range(0, seed.yield);
+                    Debug.Log($"{seed.name} is ready! {growthProgress}/{maxGrowth}");
 
-                    if (yield < seed.yield)
+                    //PLANT YIELD
+                    var yield = seed.yield;
+
+                    if (seed.yield > 1) //Plants with only one yield by default can only get a higher yield through the Earthsoul skill
                     {
-                        yield += (int)Mathf.Floor(cultivation * 0.5f); //Cultivation used here. Every two levels guarantees one drop
+                        yield = Random.Range(0, seed.yield);
 
-                        if (yield > seed.yield)
-                            yield = seed.yield + 1; //with high enough cultivation, you can get an additional drop!
+                        if (yield < seed.yield)
+                        {
+                            yield += (int)Mathf.Floor(cultivation * 0.5f); //Cultivation used here. Every two levels guarantees one drop
+
+                            if (yield > seed.yield)
+                                yield = seed.yield + 1; //with high enough cultivation, you can get an additional drop!
+                        }
                     }
-                }
-                outputPlant.AddToPlayer(yield + (int)Mathf.Floor(earthsoul * 0.2f)); //Bonus 1 or 2 yield from Earthsoul mythical skill
+                    outputPlant.AddToPlayer(yield + (int)Mathf.Floor(earthsoul * 0.2f)); //Bonus 1 or 2 yield from Earthsoul mythical skill
 
-                //PLANT HEALTH
-                var rollForHealth = Random.Range(0, 100);
+                    //PLANT HEALTH
+                    var rollForHealth = Random.Range(0, 100);
 
-                if (rollForHealth > nurturing * 3)
-                {
-                    seedHealth--;
-                    Debug.Log("The plant has lost health at a roll of " + rollForHealth + " against " + nurturing * 3 + ".");
+                    if (rollForHealth > nurturing * 3)
+                    {
+                        seedHealth--;
+                        Debug.Log("The plant has lost health at a roll of " + rollForHealth + " against " + nurturing * 3 + ".");
+                    }
+                    else
+                    {
+                        TransientDataCalls.PushAlert($"This plant is extra resilient!");
+                        Debug.Log("Plant miraculously retains its health at a roll of " + rollForHealth + " against " + nurturing * 5 + ". Add some effect or notice to the game.");
+                    }
+
+                    //CHECK IF PLANT IS DEAD
+                    if (seedHealth > 0)
+                    {
+                        growthProgress = maxGrowth / 3; //skill could help here?
+                    }
+
+                    else if (seedHealth <= 0)
+                    {
+                        growthProgress = 0;
+                        planterIsActive = false;
+                        plantRenderer.sprite = null;
+                    }
                 }
                 else
                 {
-                    Debug.Log("Plant miraculously retains its health at a roll of " + rollForHealth + " against " + nurturing * 5 + ". Add some effect or notice to the game.");
-                }
-
-                //CHECK IF PLANT IS DEAD
-                if (seedHealth > 0)
-                {
-                    growthProgress = maxGrowth / 3; //skill could help here?
-                }
-
-                else if (seedHealth <= 0)
-                {
-                    growthProgress = 0;
-                    planterIsActive = false;
-                    plantRenderer.sprite = null;
+                    TransientDataCalls.PushAlert($"I don't have space for {outputPlant.name}.");
                 }
             }
         }
