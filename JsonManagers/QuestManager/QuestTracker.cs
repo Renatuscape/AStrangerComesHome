@@ -11,8 +11,8 @@ public class QuestTracker : MonoBehaviour
 
     private void Awake()
     {
-        timer = 0;
         questTick = 2;
+        timer = questTick;
     }
     void Update()
     {
@@ -74,11 +74,6 @@ public class QuestTracker : MonoBehaviour
                     Player.AddDynamicObject(quest, 1, false, "Quest Tracker: quest auto-progressed one step after pop-up because no choice was found");
                 }
 
-                foreach (string content in dialogue.content)
-                {
-                    //Debug.Log(content);
-                }
-
                 return true;
             }
         }
@@ -88,7 +83,7 @@ public class QuestTracker : MonoBehaviour
 
     bool CheckRequirements(Dialogue dialogue)
     {
-        return dialogue.CheckRequirements(out var hasTimer, out var hasLocation);
+        return dialogue.CheckRequirements();
     }
 }
 
@@ -99,27 +94,32 @@ public static class QuestResetter
     public static List<Quest> questsAdvancingMonthly;
     public static List<Quest> questsAdvancingYearly;
     public static List<Quest> questsResettingOnComplete;
-
+    static bool questsFound = false;
     public static void Tick()
     {
-        FindQuests();
+        if (!questsFound)
+        {
+            FindQuests();
+            questsFound = true;
+        }
 
         int daysPassed = TransientDataCalls.GetDaysPassed();
+
         foreach (Quest quest in questsAdvancingDaily)
         {
             Player.Add(quest.objectID);
         }
         if (daysPassed % 7 == 0)
         {
-            // reset weekly quests
+            Debug.Log("QuestTracker registered weekly advance but is not implemented.");
         }
         if (daysPassed % 28 == 0)
         {
-
+            Debug.Log("QuestTracker registered monthly advance but is not implemented.");
         }
         if (daysPassed % 336 == 0)
         {
-
+            Debug.Log("QuestTracker registered yearly advance but is not implemented.");
         }
 
         foreach (Quest quest in questsResettingOnComplete)
@@ -140,7 +140,6 @@ public static class QuestResetter
                     }
                 }
             }
-
         }
     }
 

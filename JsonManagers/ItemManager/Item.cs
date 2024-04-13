@@ -60,7 +60,7 @@ public static class Items
     {
         foreach (Item item in all)
         {
-            item.AddToPlayer(100);
+            item.AddToPlayer(100, true);
         }
     }
 

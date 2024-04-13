@@ -54,9 +54,7 @@ public static class Upgrades
     {
         foreach (Upgrade skill in all)
         {
-            skill.AddToPlayer(10);
-            skill.AddToPlayer(25);
-            skill.AddToPlayer(100);
+            skill.AddToPlayer(10, true);
         }
     }
 
