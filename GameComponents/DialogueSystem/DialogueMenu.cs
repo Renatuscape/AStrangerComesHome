@@ -63,6 +63,8 @@ public class DialogueMenu : MonoBehaviour
         portraitRenderer.EnableForDialogue();
         Dialogue dialogue = GetDialogueStage(quest);
 
+        Debug.Log($"Attempting to start dialogue stage {dialogue.objectID}");
+
         PrintStep(dialogue);
 
         skip.onClick.AddListener(()=> Skip(dialogue));
@@ -84,72 +86,79 @@ public class DialogueMenu : MonoBehaviour
     //PRINT NEXT STEP
     public void PrintStep(Dialogue dialogue, bool hasContinueButton = true)
     {
-        foreach (DialogueStep step in dialogue.dialogueSteps)
+        if (dialogue.dialogueSteps.Count == 0 )
         {
-            step.text = DialogueTagParser.ParseText(step.text);
-        }
-
-        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-
-        if (stepIndex < dialogue.dialogueSteps.Count)
-        {
-            DialogueStep step = dialogue.dialogueSteps[stepIndex];
-
-            //MANAGE TEXT
-            if (step.speaker.dialogueTag != "Narration")
-            {
-                portraitRenderer.SetRightSprite(step.speaker, true);
-                buttonFactory.PrintNamePlate(step.speaker);
-                buttonFactory.PrintText(step.text);
-            }
-            else
-            {
-                buttonFactory.PrintNarration(step.text);
-            }
-
-
-            //MANAGE CONTINUE BUTTON
-            if (stepIndex + 1 < dialogue.dialogueSteps.Count && hasContinueButton)
-            {
-                GameObject button = buttonFactory.PrintContinue(dialogue);
-                continueButtons.Add(button);
-            }
-
-            //MANAGE CHOICES AND LEAVE BUTTON
-            if (stepIndex + 1 == dialogue.dialogueSteps.Count)
-            {
-                if (dialogue.choices is not null && dialogue.choices.Count > 0)
-                {
-                    choiceHandler.PrintChoices(dialogue);
-                }
-                else if (dialogue.choices is null || dialogue.choices.Count == 0 || !dialogue.noLeaveButton)
-                {
-                    buttonFactory.PrintLeaveButton();
-                }
-            }
-        }
-        else if (stepIndex == dialogue.dialogueSteps.Count)
-        {
-            //Forcibly end dialogue if step-index exceeds dialogueSteps
-            dialogueSystem.CloseDialogueMenu();
+            Debug.LogWarning($"No steps were found for {dialogue.objectID}. Could not initiate dialogue.");
         }
         else
         {
-            Debug.Log("Error with PrintStep index or choices");
+            foreach (DialogueStep step in dialogue.dialogueSteps)
+            {
+                step.text = DialogueTagParser.ParseText(step.text);
+            }
+
+            dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+
+            if (stepIndex < dialogue.dialogueSteps.Count)
+            {
+                DialogueStep step = dialogue.dialogueSteps[stepIndex];
+
+                //MANAGE TEXT
+                if (step.speaker.dialogueTag != "Narration")
+                {
+                    portraitRenderer.SetRightSprite(step.speaker, true);
+                    buttonFactory.PrintNamePlate(step.speaker);
+                    buttonFactory.PrintText(step.text);
+                }
+                else
+                {
+                    buttonFactory.PrintNarration(step.text);
+                }
+
+
+                //MANAGE CONTINUE BUTTON
+                if (stepIndex + 1 < dialogue.dialogueSteps.Count && hasContinueButton)
+                {
+                    GameObject button = buttonFactory.PrintContinue(dialogue);
+                    continueButtons.Add(button);
+                }
+
+                //MANAGE CHOICES AND LEAVE BUTTON
+                if (stepIndex + 1 == dialogue.dialogueSteps.Count)
+                {
+                    if (dialogue.choices is not null && dialogue.choices.Count > 0)
+                    {
+                        choiceHandler.PrintChoices(dialogue);
+                    }
+                    else if (dialogue.choices is null || dialogue.choices.Count == 0 || !dialogue.noLeaveButton)
+                    {
+                        buttonFactory.PrintLeaveButton();
+                    }
+                }
+            }
+            else if (stepIndex == dialogue.dialogueSteps.Count)
+            {
+                //Forcibly end dialogue if step-index exceeds dialogueSteps
+                dialogueSystem.CloseDialogueMenu();
+            }
+            else
+            {
+                Debug.Log("Error with PrintStep index or choices");
+            }
+
+            dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+            Canvas.ForceUpdateCanvases();
+            dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+            dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+            Canvas.ForceUpdateCanvases();
+
+
+            //Ensure buttons use latest dialogue stage
+            skip.onClick.RemoveAllListeners();
+            autoPlay.onClick.RemoveAllListeners();
+            skip.onClick.AddListener(() => Skip(dialogue));
+            autoPlay.onClick.AddListener(() => AutoPlay(dialogue));
         }
-
-        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-        Canvas.ForceUpdateCanvases();
-        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-        dialogueContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-        Canvas.ForceUpdateCanvases();
-
-
-        //Ensure buttons use latest dialogue stage
-        skip.onClick.RemoveAllListeners();
-        autoPlay.onClick.RemoveAllListeners();
-        skip.onClick.AddListener(() => Skip(dialogue));
-        autoPlay.onClick.AddListener(() => AutoPlay(dialogue));
     }
 
     public void ContinueToNextStep(Dialogue dialogue, GameObject button)
