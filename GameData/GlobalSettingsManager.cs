@@ -32,6 +32,8 @@ public static class GlobalSettingsManager
         PlayerPrefs.SetFloat("uiVolume", GlobalSettings.uiVolume);
         PlayerPrefs.SetInt("uiWalletLarge", GlobalSettings.uiWalletLarge ? 1 : 0);
         PlayerPrefs.SetInt("uiGearboxLarge", GlobalSettings.uiGearboxLarge ? 1 : 0);
+        PlayerPrefs.SetInt("darkTheme", GlobalSettings.darkTheme ? 1 : 0);
+        PlayerPrefs.SetFloat("dialogueTransparency", GlobalSettings.dialogueTransparency);
         PlayerPrefs.Save();
 
         Debug.Log("Saved global settings");
@@ -57,16 +59,8 @@ public static class GlobalSettingsManager
         GlobalSettings.uiWalletLarge = PlayerPrefs.GetInt("uiWalletLarge", 1) == 1;
         GlobalSettings.uiGearboxLarge = PlayerPrefs.GetInt("uiGearboxLarge", 1) == 1;
 
-        //Debug.Log("Loaded global settings" +
-        //    $"\nTrueName {PlayerPrefs.GetInt(AlwaysTrueNamePlateKey, 0)}" +
-        //    $"\nTrueNameEverywhere {PlayerPrefs.GetInt(AlwaysTrueNameEverywhereKey, 0)}" +
-        //    $"\nAlwaysHideCoachExterior {PlayerPrefs.GetInt(AlwaysHideCoachExteriorKey, 0)}" +
-        //    $"\nIsScriptEnabled {PlayerPrefs.GetInt(IsScriptEnabledKey, 1)}" +
-        //    $"\nTextSize {PlayerPrefs.GetInt(TextSizeKey, 0)}" +
-        //    $"\nHeaderFont {PlayerPrefs.GetString(HeaderFontKey, "")}" +
-        //    $"\nSubtitleFont {PlayerPrefs.GetString(SubtitleFontKey, "")}" +
-        //    $"\nBodyFont {PlayerPrefs.GetString(BodyFontKey, "")}" +
-        //    $"\nScriptFont {PlayerPrefs.GetString(ScriptFontKey, "")}");
+        GlobalSettings.darkTheme = PlayerPrefs.GetInt("darkTheme", 1) == 1;
+        GlobalSettings.dialogueTransparency = PlayerPrefs.GetFloat("dialogueTransparency", 0.8f);
     }
 }
 
@@ -88,4 +82,7 @@ public static class GlobalSettings
 
     public static bool uiWalletLarge = true;
     public static bool uiGearboxLarge = true;
+
+    public static bool darkTheme = false;
+    public static float dialogueTransparency = 0.8f;
 }
