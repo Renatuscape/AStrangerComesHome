@@ -38,7 +38,7 @@ public class StorySystem : MonoBehaviour
 
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(true);
-        dialogueMenu.GetComponent<DialogueMenu>().StartDialogueStage(quest);
+        dialogueMenu.GetComponent<DialogueMenu>().StartDialogue(quest);
     }
 
     public void CloseTopicMenuAndLeave()
