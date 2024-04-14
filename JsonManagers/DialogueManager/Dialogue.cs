@@ -26,6 +26,7 @@ public class Dialogue
 
     public List<string> content;
     public List<DialogueStep> dialogueSteps = new(); //a step is one line of dialogue from one speaker
+    public List<DialogueEvent> dialogueEvents = new(); // new version of step with more data
     public List<IdIntPair> requirements = new();
     public List<IdIntPair> restrictions = new();
     public string locationID;
@@ -64,7 +65,7 @@ public class Dialogue
 
         if (requirements != null && requirements.Count > 0)
         {
-            Debug.Log($"Checking requirements for {objectID}.");
+            // Debug.Log($"Checking requirements for {objectID}.");
 
             foreach (IdIntPair requirement in requirements)
             {
