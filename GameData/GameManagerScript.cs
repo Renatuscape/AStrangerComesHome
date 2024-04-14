@@ -44,6 +44,7 @@ public class GameManagerScript : MonoBehaviour
     public StorySystem storySystem;
     public MenuSystem menuSystem;
     public AlchemyTracker alchemyTracker;
+    public QuestTracker questTracker;
 
     void Awake()
     {
@@ -56,6 +57,8 @@ public class GameManagerScript : MonoBehaviour
     async void StartUpRoutine()
     {
         loadingCanvas.gameObject.SetActive(true);
+
+        GlobalSettingsManager.LoadSettings();
 
         await InitiateJsonManagers(); // Ensure all json files are loaded before doing anything else
 
@@ -76,6 +79,10 @@ public class GameManagerScript : MonoBehaviour
         }
 
         CreateGameController();
+
+        questTracker.StartTracking();
+        alchemyTracker.StartTracking();
+
         loadingCanvas.gameObject.SetActive(false);
     }
 
