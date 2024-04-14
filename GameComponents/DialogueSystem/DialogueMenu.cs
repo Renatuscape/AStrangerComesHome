@@ -8,6 +8,7 @@ public class DialogueMenu : MonoBehaviour
 {  
     public StorySystem dialogueSystem;
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
+    public DialogueDisplay dialogueDisplay;
 
     public GameObject dialogueContainer;
     public Button autoPlay;
@@ -56,19 +57,23 @@ public class DialogueMenu : MonoBehaviour
     }
 
 
-    public void StartDialogueStage(Quest quest)
+    public void StartDialogue(Quest quest)
     {
-        leavePrinted = false;
-        stepIndex = 0;
-        portraitRenderer.EnableForDialogue();
+        portraitRenderer.gameObject.SetActive(false);
         Dialogue dialogue = GetDialogueStage(quest);
+        dialogueDisplay.StartDialogue(dialogue);
 
-        Debug.Log($"Attempting to start dialogue stage {dialogue.objectID}");
+        //leavePrinted = false;
+        //stepIndex = 0;
+        //portraitRenderer.EnableForDialogue();
+        //Dialogue dialogue = GetDialogueStage(quest);
 
-        PrintStep(dialogue);
+        //Debug.Log($"Attempting to start dialogue stage {dialogue.objectID}");
 
-        skip.onClick.AddListener(()=> Skip(dialogue));
-        autoPlay.onClick.AddListener(() => AutoPlay(dialogue));
+        //PrintStep(dialogue);
+
+        //skip.onClick.AddListener(()=> Skip(dialogue));
+        //autoPlay.onClick.AddListener(() => AutoPlay(dialogue));
     }
 
     Dialogue GetDialogueStage(Quest quest)
@@ -170,8 +175,8 @@ public class DialogueMenu : MonoBehaviour
 
     void SetValuesToDefault()
     {
-        skip.onClick.RemoveAllListeners();
-        autoPlay.onClick.RemoveAllListeners();
+        //skip.onClick.RemoveAllListeners();
+        //autoPlay.onClick.RemoveAllListeners();
     }
 
     //Speed controls
