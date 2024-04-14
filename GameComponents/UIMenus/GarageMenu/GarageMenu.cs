@@ -40,7 +40,7 @@ public class GarageMenu : MonoBehaviour
         {
             foreach (Upgrade upgrade in Upgrades.all)
             {
-                var prefab = BoxFactory.CreateUpgradeIcon(upgrade, true, true, true);
+                var prefab = BoxFactory.CreateUpgradeIcon(upgrade, true, false, true);
 
                 if (upgrade.type == UpgradeType.Magical)
                 {
