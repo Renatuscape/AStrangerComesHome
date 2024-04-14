@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public static class DialogueSetup
 {
@@ -49,21 +50,128 @@ public static class DialogueSetup
 
         for (int i = 0; i < dialogue.content.Count; i = i + 2)
         {
-            string speakerTag = dialogue.content[i];
-            Character foundSpeaker = Characters.all.Find((s) => s.dialogueTag.ToLower() == speakerTag.ToLower());
-            if (foundSpeaker is not null)
+            // PARSE SPEAKER TAG
+            var speakerLine = dialogue.content[i];
+
+            if (!speakerLine.Contains("-")) // Treat as old step
             {
-                DialogueStep step = new() { name = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
-                step.speaker = foundSpeaker;
-                step.text = dialogue.content[i + 1];
-                //Debug.Log($"New step {i} - {i + 1}| {step.speaker}: {step.text}");
-                dialogue.dialogueSteps.Add(step);
+                string speakerTag = dialogue.content[i];
+                Character foundSpeaker = Characters.all.Find((s) => s.dialogueTag.ToLower() == speakerTag.ToLower());
+                if (foundSpeaker != null)
+                {
+                    // PARSE CONTENT AND ADD STEP
+                    DialogueStep step = new() { name = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
+                    step.speaker = foundSpeaker;
+                    step.text = dialogue.content[i + 1];
+                    dialogue.dialogueSteps.Add(step);
+
+                    // PARSE CONTENT AND ADD EVENT
+                    DialogueEvent dEvent = new () { speaker = foundSpeaker, eventName = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
+                    dEvent.content = dialogue.content[i + 1];
+                    dialogue.dialogueEvents.Add(dEvent);
+                }
+                else
+                {
+                    Debug.LogWarning($"Could not parse dialogue content for {dialogue.questID} stage {dialogue.questStage} because speaker tag \"{speakerTag}\" return null.");
+                }
             }
             else
             {
-                Debug.LogWarning($"Could not parse dialogue content for {dialogue.questID} stage {dialogue.questStage} because speaker tag \"{speakerTag}\" return null.");
+                DialogueEvent dEvent = ParseDialogueEventID(speakerLine);
+                dEvent.content = dialogue.content[i + 1];
+                dialogue.dialogueEvents.Add(dEvent);
             }
-
         }
     }
+
+    static DialogueEvent ParseDialogueEventID(string eventID)
+    {
+        // Example ID: Arcanist-S#SAD-SP#MID-TP#FAR-E#SHAKE-MAS#SLO-L#TRUE-HO#TRUE
+        // = show sad arcanist sprite, start mid and move slowly to far position, shaking effect, left position portrait and hide other
+
+        // Example ID: Gardener-S#HAPPY-OPO#Arcanist
+        // = show happy gardener and override other portrait with alchemist. Other portrait override will also be parsed if it exists.
+
+        string[] eventTags = eventID.Split('-');
+        Character speaker = Characters.FindByTag(eventTags[0], "ParseDialogueEvent");
+
+        if (speaker != null)
+        {
+            DialogueEvent dEvent = new();
+            dEvent.speaker = speaker;
+
+            if (eventID.Contains("L#TRUE"))
+            {
+                dEvent.isLeft = true;
+            }
+
+            if (eventID.Contains("HO#TRUE"))
+            {
+                dEvent.isLeft = true;
+            }
+
+            foreach (string tag in eventTags)
+            {
+                if (tag.Contains("S#"))
+                {
+                    // Format in a way that a future SpriteManager can handle.
+
+                    var spriteTag = dEvent.speaker.objectID + "-" + tag.Replace("S#", "");
+                    Debug.Log("Parsed sprite tag: " + spriteTag);
+
+                    dEvent.spriteID = spriteTag;
+                }
+                else if (tag.Contains("SP#"))
+                {
+                    dEvent.startingPlacement = tag.Replace("SP#", "");
+                }
+                else if (tag.Contains("TP#"))
+                {
+                    dEvent.targetPlacement = tag.Replace("TP#", "");
+                }
+                else if (tag.Contains("E#"))
+                {
+                    dEvent.effect = tag.Replace("E#", "");
+                }
+                else if (tag.Contains("MAS#"))
+                {
+                    dEvent.moveAnimationSpeed = tag.Replace("MAS#", "");
+                }
+                else if (tag.Contains("OPO#"))
+                {
+                    dEvent.otherPortraitOverride.Add(tag.Replace("OPO#", ""));
+                    // Add override parse call here
+                }
+            }
+
+            return dEvent;
+        }
+        else
+        {
+            Debug.LogWarning("Could not find speaker object for event ID " + eventID);
+            return null;
+        }
+    }
+
+    static DialogueEvent ParseOverrideEventID(string eventID)
+    {
+        return new();
+    }
+}
+
+[System.Serializable]
+public class DialogueEvent
+{
+    public string eventName;
+    public Character speaker;
+    public string spriteID;
+    public string content;
+    public string startingPlacement; //OFF-FAR-NOR-CLO-MID
+    public string targetPlacement; //OFF-FAR-NOR-CLO-MID
+    public string effect;
+    public string moveAnimationSpeed; // NON-SLO-MED-FAS
+    public bool isLeft = false;
+    public bool hideOtherPortrait = false;
+
+    public List<string> otherPortraitOverride; // characterID + spriteID
 }
