@@ -9,20 +9,36 @@ public class QuestTracker : MonoBehaviour
     public float timer;
     public float questTick;
 
+    bool isEnabled = false;
+
     private void Awake()
     {
-        questTick = 2;
-        timer = questTick;
+        if (!isEnabled)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+    public void StartTracking()
+    {
+        Debug.Log("Enabling Quest Tracker.");
+
+        questTick = 3;
+        timer = 0;
+        isEnabled = true;
+        gameObject.SetActive(true);
     }
     void Update()
     {
-        if (TransientDataScript.GameState == GameState.Overworld)
+        if (isEnabled)
         {
-            timer += 1f * Time.deltaTime;
-
-            if (timer >= questTick)
+            if (TransientDataScript.GameState == GameState.Overworld)
             {
-                CheckActiveQuests();
+                timer += 1f * Time.deltaTime;
+
+                if (timer >= questTick)
+                {
+                    CheckActiveQuests();
+                }
             }
         }
     }
