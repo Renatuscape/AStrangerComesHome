@@ -29,7 +29,7 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
-        if (TransientDataScript.GameState != GameState.MainMenu)
+        if (TransientDataScript.GameState != GameState.MainMenu && TransientDataScript.GameState != GameState.Loading)
         {
             musicPlayer.volume = GlobalSettings.musicVolume;
 
