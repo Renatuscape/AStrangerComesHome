@@ -10,31 +10,46 @@ public class AlchemyTracker : MonoBehaviour
     public float progressAmount;
     public int baseManaConsumption;
 
-    private void OnEnable()
+    bool isEnabled = false;
+
+    private void Awake()
+    {
+        if (!isEnabled)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void StartTracking()
     {
         Debug.Log("Enabling Alchemy Tracker.");
         dataManager = TransientDataCalls.gameManager.dataManager;
+
         UpdateValues();
+        isEnabled = true;
     }
 
     private void Update()
     {
-        if (dataManager.alchemySynthesisers != null && dataManager.alchemySynthesisers.Count > 0)
+        if (isEnabled)
         {
-            if (TransientDataScript.IsTimeFlowing())
+            if (dataManager.alchemySynthesisers != null && dataManager.alchemySynthesisers.Count > 0)
             {
-                timer += Time.deltaTime;
-
-                if (timer > tick)
+                if (TransientDataScript.IsTimeFlowing())
                 {
-                    Progress();
+                    timer += Time.deltaTime;
+
+                    if (timer > tick)
+                    {
+                        Progress();
+                    }
                 }
             }
+            //else
+            //{
+            //    gameObject.SetActive(false); // Don't use this resource unless it's actually necessary
+            //}   
         }
-        //else
-        //{
-        //    gameObject.SetActive(false); // Don't use this resource unless it's actually necessary
-        //}
     }
 
     void Progress()
