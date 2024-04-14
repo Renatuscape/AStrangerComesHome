@@ -1,7 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static Cinemachine.DocumentationSortingAttribute;
 
 public class GarageConfirmMenu : MonoBehaviour
 {
@@ -34,7 +33,7 @@ public class GarageConfirmMenu : MonoBehaviour
             if (garageMenu.AttemptUpgrade(upgrade))
             {
                 level++;
-                upgradePrice.text = "Price: " + upgrade.GetPrice();
+                upgradePrice.text = upgrade.GetPrice().ToString();
                 upgradeTitle.text = upgrade.name + $" Lv. {level}";
             }
             else
@@ -54,7 +53,7 @@ public class GarageConfirmMenu : MonoBehaviour
         level = Player.GetCount(upgrade.objectID, name);
         upgradeTitle.text = upgrade.name + $" Lv. {level}";
         upgradeDescription.text = upgrade.description;
-        upgradePrice.text = "Price: " + upgrade.GetPrice();
+        upgradePrice.text = upgrade.GetPrice().ToString();
         gameObject.SetActive(true);
 
         foreach (Transform child in upgradeContainer.transform)
