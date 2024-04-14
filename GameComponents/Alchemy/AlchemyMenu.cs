@@ -83,10 +83,9 @@ public class AlchemyMenu : MonoBehaviour
         if (synthData != null && synthData.synthRecipe != null)
         {
             synthData.synthRecipe.SetWorkload(); // In case the formula has been changed, update workload
-
+            gameObject.SetActive(true);
             alchemyObjects = SetUpAlchemyObjects(isDebugging);
             inventory.RenderInventory(ItemType.Catalyst, false);
-            gameObject.SetActive(true);
             TransientDataCalls.SetGameState(GameState.AlchemyMenu, name, gameObject);
             progressBar.alchemyMenu = this;
             progressBar.Initialise(synthData);
