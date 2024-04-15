@@ -63,7 +63,7 @@ public class MenuFloatTextScript : MonoBehaviour
     public void DisableFloatText()
     {
         disableTimer = 0;
-        disableTick = 0.2f;
+        disableTick = 0.1f;
         disable = true;
     }
 
