@@ -82,11 +82,11 @@ public class CharacterManager : MonoBehaviour
     public static void objectIDReader(ref Character character)
     {
         character.type = TypeFinder(ref character);
-        character.image = ImageFinder(ref character.objectID);
+        character.spriteCollection = SpriteFactory.GetCollectionOrDefaultCharacter(character.objectID);
 
-        if (character.image != null)
+        if (character.spriteCollection != null)
         {
-            character.sprite = SpriteCreator(ref character.image);
+            character.sprite = character.spriteCollection.GetDefaultFrame();
         }
         else
         {
@@ -116,38 +116,38 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    public static Texture2D ImageFinder(ref string objectID)
-    {
-        if (objectID == "DEBUG")
-        {
-            objectID = "ARC001";
-        }
+    //public static Texture2D ImageFinder(ref string objectID)
+    //{
+    //    if (objectID == "DEBUG")
+    //    {
+    //        objectID = "ARC001";
+    //    }
 
-        string fileDirectory = Application.streamingAssetsPath + "/Sprites/Characters/";
-        string filePath = fileDirectory + objectID.Substring(0, 6) + ".png";
-        Texture2D imageTexture;
+    //    string fileDirectory = Application.streamingAssetsPath + "/Sprites/Characters/";
+    //    string filePath = fileDirectory + objectID.Substring(0, 6) + ".png";
+    //    Texture2D imageTexture;
 
-        if (!File.Exists(filePath))
-        {
-            filePath = fileDirectory + objectID.Substring(0, 3) + "000.png";
+    //    if (!File.Exists(filePath))
+    //    {
+    //        filePath = fileDirectory + objectID.Substring(0, 3) + "000.png";
 
-            if (!File.Exists(filePath))
-            {
-                Debug.LogError($"Default image not found for type {objectID.Substring(0, 3)}! No image set for {objectID}");
-                return null;
-            }
-        }
+    //        if (!File.Exists(filePath))
+    //        {
+    //            Debug.LogError($"Default image not found for type {objectID.Substring(0, 3)}! No image set for {objectID}");
+    //            return null;
+    //        }
+    //    }
 
-        byte[] imageBytes = File.ReadAllBytes(filePath);
-        imageTexture = new Texture2D(2, 2); // Create an empty texture
-        //imageTexture.filterMode = FilterMode.Point; // Set filter mode to Point for pixel-perfect clarity. PREVENTS BLURRINESS FOR PIXEL ART
-        imageTexture.LoadImage(imageBytes); // Load the image bytes
+    //    byte[] imageBytes = File.ReadAllBytes(filePath);
+    //    imageTexture = new Texture2D(2, 2); // Create an empty texture
+    //    //imageTexture.filterMode = FilterMode.Point; // Set filter mode to Point for pixel-perfect clarity. PREVENTS BLURRINESS FOR PIXEL ART
+    //    imageTexture.LoadImage(imageBytes); // Load the image bytes
 
-        return imageTexture;
-    }
+    //    return imageTexture;
+    //}
 
-    public static Sprite SpriteCreator(ref Texture2D texture)
-    {
-        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-    }
+    //public static Sprite SpriteCreator(ref Texture2D texture)
+    //{
+    //    return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+    //}
 }
