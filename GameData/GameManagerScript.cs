@@ -45,6 +45,7 @@ public class GameManagerScript : MonoBehaviour
     public MenuSystem menuSystem;
     public AlchemyTracker alchemyTracker;
     public QuestTracker questTracker;
+    public SpriteFactory spriteFactory;
 
     void Awake()
     {
@@ -88,6 +89,9 @@ public class GameManagerScript : MonoBehaviour
 
     async Task InitiateJsonManagers()
     {
+        await spriteFactory.WaitForBuildCompletionAsync();
+        Debug.Log("Sprite Factory finished building.");
+
         regionManager.StartLoading();
         locationManager.StartLoading();
         upgradeManager.StartLoading();
