@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class FontManager : MonoBehaviour
 {
+    public static FontManager instance;
     public List<TMP_FontAsset> headerFonts;
     public List<TMP_FontAsset> subtitleFonts;
     public List<TMP_FontAsset> bodyFonts;
@@ -38,6 +39,7 @@ public class FontManager : MonoBehaviour
         bodyFontDropDown.onValueChanged.AddListener(OnSelectBody);
         scriptFontDropDown.onValueChanged.AddListener(OnSelectScript);
         fontSizeSlider.onValueChanged.AddListener(OnFontSizeChange);
+        instance = this;
     }
 
     private void OnEnable()
