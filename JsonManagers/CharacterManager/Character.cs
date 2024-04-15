@@ -24,9 +24,8 @@ public class Character
     public bool excludeFromPrint = false;
 
     public CharacterType type;
-    public Texture2D image;
-    public List<Texture2D> imageAnimation;
     public Sprite sprite;
+    public SpriteCollection spriteCollection;
     public List<Sprite> spriteAnimation;
     public List<WalkingLocation> walkingLocations;
 
