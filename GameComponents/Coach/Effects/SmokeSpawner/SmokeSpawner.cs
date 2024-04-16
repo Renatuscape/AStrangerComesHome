@@ -47,11 +47,13 @@ public class SmokeSpawner : MonoBehaviour
             chimneySmokePrefab.name = "Smoke";
         }
 
-        for (int i = 0; i < randomNum; i++)
+        if (groundTarget != null)
         {
-            Instantiate(groundDustPrefab, groundTarget.position, Quaternion.identity);
-            groundDustPrefab.name = "Dust";
+            for (int i = 0; i < randomNum; i++)
+            {
+                Instantiate(groundDustPrefab, groundTarget.position, Quaternion.identity);
+                groundDustPrefab.name = "Dust";
+            }
         }
-
     }
 }
