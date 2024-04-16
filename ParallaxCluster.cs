@@ -6,6 +6,9 @@ public class ParallaxCluster : MonoBehaviour
 {
     public List<GameObject> parallaxLayer = new();
     public GameObject parallaxFacade;
+    public float customOffsetMultiplier;
+    public float customMaxOffset;
+    public bool hasNoMaxOffset;
     void Start()
     {
         float layerAdjustment = 0;
@@ -17,9 +20,24 @@ public class ParallaxCluster : MonoBehaviour
 
             script.originalY = layer.transform.position.y;
             script.originalX = layer.transform.localPosition.x;
-            script.maxOffsetX = 0.5f;
+
+            if (customMaxOffset != 0)
+            {
+                script.maxOffsetX = 0.5f;
+            }
+            else
+            {
+                script.maxOffsetX = customMaxOffset;
+            }
+
             script.offsetMultiplier = 1.05f + layerAdjustment;
             script.parallaxFacade = parallaxFacade;
+            script.hasNoMaxOffset = hasNoMaxOffset;
+
+            if (customOffsetMultiplier != 0)
+            {
+                script.offsetMultiplier = customOffsetMultiplier + layerAdjustment;
+            }
 
             layerAdjustment += 0.05f;
         }
@@ -37,32 +55,36 @@ public class ParallaxLayer : MonoBehaviour
 
     public GameObject parallaxFacade;
 
+    public bool hasNoMaxOffset;
 
     private void Update()
     {
         var newX = (parallaxFacade.transform.position.x * offsetMultiplier) + originalX;
 
-        if (transform.position.x >= 0)
+        if (!hasNoMaxOffset)
         {
-            if (newX < parallaxFacade.transform.position.x + maxOffsetX)
+            if (transform.position.x >= 0)
             {
-                //transform.position = new Vector3(newX + originalX, originalY, 0);
+                if (newX < parallaxFacade.transform.position.x + maxOffsetX)
+                {
+                    //transform.position = new Vector3(newX + originalX, originalY, 0);
+                }
+                else
+                {
+                    newX = parallaxFacade.transform.position.x + maxOffsetX;
+                    //transform.position = new Vector3(newX + originalX, originalY, 0);
+                }
             }
-            else
+            else if (transform.position.x < 0)
             {
-                newX = parallaxFacade.transform.position.x + maxOffsetX;
-                //transform.position = new Vector3(newX + originalX, originalY, 0);
-            }
-        }
-        else if (transform.position.x < 0)
-        {
-            if (newX > parallaxFacade.transform.position.x - maxOffsetX)
-            {
-                //transform.position = new Vector3(newX + originalX, originalY, 0);
-            }
-            else
-            {
-                newX = parallaxFacade.transform.position.x - maxOffsetX;
+                if (newX > parallaxFacade.transform.position.x - maxOffsetX)
+                {
+                    //transform.position = new Vector3(newX + originalX, originalY, 0);
+                }
+                else
+                {
+                    newX = parallaxFacade.transform.position.x - maxOffsetX;
+                }
             }
         }
 
