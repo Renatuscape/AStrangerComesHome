@@ -115,6 +115,8 @@ public static class Characters
         {
             Debug.Log($"Find by tag returned no known character with name {searchWord}. Caller was {caller}. Check if you are passing an objectID or dialogueTag.");
         }
+
+        Debug.Log("Found: " + searchWord);
         return found;
     }
 
