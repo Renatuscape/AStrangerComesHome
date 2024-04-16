@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class DialogueMenu : MonoBehaviour
 {  
@@ -23,7 +21,9 @@ public class DialogueMenu : MonoBehaviour
         choiceManager.gameObject.SetActive(false);
         initiatingNPC = speakerID;
         activeQuest = quest;
+
         Dialogue dialogue = GetDialogueStage(activeQuest);
+
         dialogueDisplay.StartDialogue(dialogue);
     }
 
