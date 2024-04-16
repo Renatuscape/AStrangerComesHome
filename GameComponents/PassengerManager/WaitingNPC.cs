@@ -105,16 +105,16 @@ public class WaitingNPC : MonoBehaviour
 
     public void OnMouseOver()
     {
-        if (Player.GetCount("SCR013-SCR-NN", name) > 0)
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
-            if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+            if (Player.GetCount("SCR013-SCR-NN", name) > 0)
             {
                 transientData.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
             }
-        }
-        else
-        {
-            transientData.PrintFloatText("\'Isn't there a guild licensed coach arriving soon?\'");
+            else
+            {
+                transientData.PrintFloatText("\'Isn't there a guild licensed coach arriving soon?\'");
+            }
         }
     }
 
