@@ -38,9 +38,6 @@ public class DialogueInterfaceOptions : MonoBehaviour
         historyDisplay.SetActive(false);
         GlobalSettingsManager.LoadSettings();
 
-        Debug.Log(GlobalSettings.dialogueTransparency);
-        Debug.Log(opacitySlider);
-
         if (backgroundImages != null && backgroundImages.Count > 0)
         {
             opacitySlider.value = GlobalSettings.dialogueTransparency;
