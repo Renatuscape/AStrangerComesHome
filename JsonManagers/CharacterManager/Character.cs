@@ -107,6 +107,8 @@ public static class Characters
 
     public static Character FindByTag(string searchWord, string caller)
     {
+        Debug.Log("Attempting to find tag: " + searchWord);
+
         Character found = all.Find((s) => s.dialogueTag.ToLower() == searchWord.ToLower());
 
         if (found is null)
