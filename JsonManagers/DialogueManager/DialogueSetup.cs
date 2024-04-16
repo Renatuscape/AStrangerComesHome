@@ -59,16 +59,21 @@ public static class DialogueSetup
                 Character foundSpeaker = Characters.all.Find((s) => s.dialogueTag.ToLower() == speakerTag.ToLower());
                 if (foundSpeaker != null)
                 {
-                    // PARSE CONTENT AND ADD STEP
-                    DialogueStep step = new() { name = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
-                    step.speaker = foundSpeaker;
-                    step.text = dialogue.content[i + 1];
-                    dialogue.dialogueSteps.Add(step);
+                    //// PARSE CONTENT AND ADD STEP
+                    //DialogueStep step = new() { name = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
+                    //step.speaker = foundSpeaker;
+                    //step.text = dialogue.content[i + 1];
+                    //dialogue.dialogueSteps.Add(step);
 
                     // PARSE CONTENT AND ADD EVENT
                     DialogueEvent dEvent = new () { speaker = foundSpeaker, eventName = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
                     dEvent.content = dialogue.content[i + 1];
                     dialogue.dialogueEvents.Add(dEvent);
+
+                    if (string.IsNullOrEmpty(dEvent.startingPlacement) && string.IsNullOrEmpty(dEvent.targetPlacement))
+                    {
+                        dEvent.targetPlacement = "NOR";
+                    }
                 }
                 else
                 {
@@ -80,6 +85,11 @@ public static class DialogueSetup
                 DialogueEvent dEvent = ParseDialogueEventID(speakerLine);
                 dEvent.content = dialogue.content[i + 1];
                 dialogue.dialogueEvents.Add(dEvent);
+
+                if (string.IsNullOrEmpty(dEvent.startingPlacement) && string.IsNullOrEmpty(dEvent.targetPlacement))
+                {
+                    dEvent.targetPlacement = "NOR";
+                }
             }
         }
     }
@@ -112,26 +122,13 @@ public static class DialogueSetup
 
             foreach (string tag in eventTags)
             {
-                if (tag.Contains("S#"))
-                {
-                    // Format in a way that a future SpriteManager can handle.
-
-                    var spriteTag = dEvent.speaker.objectID + "-" + tag.Replace("S#", "");
-                    Debug.Log("Parsed sprite tag: " + spriteTag);
-
-                    dEvent.spriteID = spriteTag;
-                }
-                else if (tag.Contains("SP#"))
+                if (tag.Contains("SP#"))
                 {
                     dEvent.startingPlacement = tag.Replace("SP#", "");
                 }
                 else if (tag.Contains("TP#"))
                 {
                     dEvent.targetPlacement = tag.Replace("TP#", "");
-                }
-                else if (tag.Contains("E#"))
-                {
-                    dEvent.effect = tag.Replace("E#", "");
                 }
                 else if (tag.Contains("MAS#"))
                 {
@@ -142,6 +139,24 @@ public static class DialogueSetup
                     dEvent.otherPortraitOverride.Add(tag.Replace("OPO#", ""));
                     // Add override parse call here
                 }
+                else if (tag.Contains("E#"))
+                {
+                    dEvent.effect = tag.Replace("E#", "");
+                }
+                else if (tag.Contains("S#"))
+                {
+                    // Format in a way that a future SpriteManager can handle.
+
+                    var spriteTag = dEvent.speaker.objectID + "-" + tag.Replace("S#", "");
+                    Debug.Log("Parsed sprite tag: " + spriteTag);
+
+                    dEvent.spriteID = spriteTag;
+                }
+            }
+
+            if (string.IsNullOrEmpty(dEvent.spriteID))
+            {
+                dEvent.spriteID = "DEFAULT";
             }
 
             return dEvent;
@@ -164,14 +179,14 @@ public class DialogueEvent
 {
     public string eventName;
     public Character speaker;
-    public string spriteID;
+    public string spriteID; // S# any tag that corresponds to a sprite event
     public string content;
-    public string startingPlacement; //OFF-FAR-NOR-CLO-MID
-    public string targetPlacement; //OFF-FAR-NOR-CLO-MID
+    public string startingPlacement; //SP# OFF-FAR-NOR-CLO-MID
+    public string targetPlacement; //TP# OFF-FAR-NOR-CLO-MID
     public string effect;
-    public string moveAnimationSpeed; // NON-SLO-MED-FAS
+    public string moveAnimationSpeed; //MAS# NON-SLO-MED-FAS
     public bool isLeft = false;
     public bool hideOtherPortrait = false;
 
-    public List<string> otherPortraitOverride; // characterID + spriteID
+    public List<string> otherPortraitOverride; // characterID + any data besides isleft, hide, content
 }
