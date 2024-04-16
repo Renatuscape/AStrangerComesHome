@@ -22,17 +22,19 @@ public class AlchemySet : MonoBehaviour
     private void OnMouseDown()
     {
         // Add check to ensure that the corresponding synthesiser is actually unlocked
-
-        if (alchemyMenu == null)
+        if (TransientDataScript.GameState == GameState.Overworld)
         {
-            alchemyMenu = TransientDataCalls.gameManager.menuSystem.alchemyMenu;
-        }
+            if (alchemyMenu == null)
+            {
+                alchemyMenu = TransientDataCalls.gameManager.menuSystem.alchemyMenu;
+            }
 
 
-        if (alchemyMenu != null )
-        {
-            alchemyMenu.isDebugging = false;
-            alchemyMenu.Initialise(synthesiser);
+            if (alchemyMenu != null)
+            {
+                alchemyMenu.isDebugging = false;
+                alchemyMenu.Initialise(synthesiser);
+            }
         }
     }
 }
