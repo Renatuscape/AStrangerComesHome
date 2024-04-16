@@ -82,13 +82,20 @@ public static class DialogueSetup
             }
             else
             {
-                DialogueEvent dEvent = ParseDialogueEventID(speakerLine);
-                dEvent.content = dialogue.content[i + 1];
-                dialogue.dialogueEvents.Add(dEvent);
-
-                if (string.IsNullOrEmpty(dEvent.startingPlacement) && string.IsNullOrEmpty(dEvent.targetPlacement))
+                try
                 {
-                    dEvent.targetPlacement = "NOR";
+                    DialogueEvent dEvent = ParseDialogueEventID(speakerLine);
+                    dEvent.content = dialogue.content[i + 1];
+                    dialogue.dialogueEvents.Add(dEvent);
+
+                    if (string.IsNullOrEmpty(dEvent.startingPlacement) && string.IsNullOrEmpty(dEvent.targetPlacement))
+                    {
+                        dEvent.targetPlacement = "NOR";
+                    }
+                }
+                catch
+                {
+                    Debug.LogError($"Something went wrong when attempting to parse content for {dialogue.objectID} step {i}.");
                 }
             }
         }
