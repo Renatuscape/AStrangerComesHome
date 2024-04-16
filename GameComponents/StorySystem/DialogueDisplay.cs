@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,6 +44,7 @@ public class DialogueDisplay : MonoBehaviour
     {
         gameObject.SetActive(false);
         btnAutoPlay.onClick.AddListener(() => ToggleAuto());
+        chatHistory.text = "<b>Conversation History</b>\n";
     }
 
     private void Update()
@@ -85,7 +87,6 @@ public class DialogueDisplay : MonoBehaviour
 
         activeDialogue = dialogue;
         eventIndex = 0;
-        chatHistory.text = "";
 
         PrintEvent();
     }
@@ -129,20 +130,37 @@ public class DialogueDisplay : MonoBehaviour
     {
         string speakerTag = isSuccess ? choice.successSpeaker : choice.failureSpeaker;
 
-        DialogueEvent resultEvent = new();
-        resultEvent.speaker = Characters.FindByTag(speakerTag, name);
-
-        if (resultEvent.speaker == null)
+        if (!string.IsNullOrEmpty(speakerTag)) // if there is no speaker, skip the print
         {
-            Debug.LogWarning("Something was wrong with speaker ID for choice in " + activeDialogue.objectID);
+            DialogueEvent resultEvent = new();
+
+            resultEvent.speaker = Characters.FindByTag(speakerTag, name);
+
+            if (resultEvent.speaker == null)
+            {
+                Debug.LogWarning("Something was wrong with speaker ID for choice in " + activeDialogue.objectID);
+            }
+            else
+            {
+                string content = isSuccess ? choice.successText : choice.failureText;
+
+                SetDisplayNames(resultEvent);
+                var parsedText = DialogueTagParser.ParseText(content);
+                StartCoroutine(PrintContent(parsedText));
+
+                PrintToChatLog("Choice: " + choice.optionText, true, true);
+                PrintToChatLog(resultEvent.speaker.NamePlate(), true, false);
+                PrintToChatLog(parsedText, false, false);
+            }
         }
-        else
+        else if (choice.endConversation)
         {
-            string content = isSuccess ? choice.successText : choice.failureText;
+            endConversation = true;
 
-            SetDisplayNames(resultEvent);
-            var parsedText = DialogueTagParser.ParseText(content);
-            StartCoroutine(PrintContent(parsedText));
+            if (missingItems == null || missingItems.Count == 0)
+            {
+                dialogueMenu.EndDialogue();
+            }
         }
 
         if (missingItems != null && missingItems.Count > 0)
@@ -202,7 +220,7 @@ public class DialogueDisplay : MonoBehaviour
                 leftNameDisplay.gameObject.SetActive(false);
             }
 
-            chatHistory.text += "\n" + dEvent.speaker.NamePlate() + "\n";
+            PrintToChatLog(dEvent.speaker.NamePlate(), true, false);
         }
     }
 
@@ -230,5 +248,42 @@ public class DialogueDisplay : MonoBehaviour
     public void ToggleAuto()
     {
         autoEnabled = !autoEnabled;
+    }
+
+    public void PrintToChatLog(string text, bool spaceBefore, bool italics = false)
+    {
+        chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+        if (spaceBefore)
+        {
+            chatHistory.text += "\n";
+        }
+
+        Canvas.ForceUpdateCanvases();
+
+        if (italics)
+        {
+            chatHistory.text += "<i>";
+        }
+
+        Canvas.ForceUpdateCanvases();
+
+        chatHistory.text += text;
+        chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+
+        Canvas.ForceUpdateCanvases();
+
+        if (italics)
+        {
+            chatHistory.text += "</i>";
+        }
+
+        Canvas.ForceUpdateCanvases();
+
+        chatHistory.text += "\n";
+
+        Canvas.ForceUpdateCanvases();
+        chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+        chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+        Canvas.ForceUpdateCanvases();
     }
 }
