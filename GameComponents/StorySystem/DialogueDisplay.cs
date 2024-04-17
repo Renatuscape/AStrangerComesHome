@@ -42,7 +42,6 @@ public class DialogueDisplay : MonoBehaviour
     public float autoTimer;
     private void Start()
     {
-        gameObject.SetActive(false);
         btnAutoPlay.onClick.AddListener(() => ToggleAuto());
         chatHistory.text = "<b>Conversation History</b>\n";
     }
