@@ -7,6 +7,7 @@ public class DialogueInterfaceOptions : MonoBehaviour
 {
     public GameObject buttonContainer;
     public GameObject historyDisplay;
+    public TextMeshProUGUI chatHistory;
 
     public TextMeshProUGUI contentText;
 
@@ -22,6 +23,8 @@ public class DialogueInterfaceOptions : MonoBehaviour
 
     public Button btnToggleSettings;
     public Button btnToggleTheme;
+    public Button btnCloseHistory;
+    public Button btnOpenHistory;
 
     private void Start()
     {
@@ -32,10 +35,15 @@ public class DialogueInterfaceOptions : MonoBehaviour
 
         btnToggleSettings.onClick.AddListener(() => ToggleSettings());
         btnToggleTheme.onClick.AddListener(() => ToggleTheme());
+
+        btnCloseHistory.onClick.AddListener(() => CloseHistory());
+        btnOpenHistory.onClick.AddListener(() => OpenHistory());
     }
     private void OnEnable()
     {
-        historyDisplay.SetActive(false);
+        historyDisplay.SetActive(true);
+        CloseHistory();
+
         GlobalSettingsManager.LoadSettings();
 
         if (backgroundImages != null && backgroundImages.Count > 0)
@@ -117,5 +125,37 @@ public class DialogueInterfaceOptions : MonoBehaviour
         {
             SetLightTheme();
         }
+    }
+
+    public void CloseHistory()
+    {
+        var sizeFitter = chatHistory.gameObject.GetComponent<ContentSizeFitter>();
+        var rect = historyDisplay.GetComponent<RectTransform>();
+
+        sizeFitter.enabled = false;
+        sizeFitter.enabled = true;
+        Canvas.ForceUpdateCanvases();
+
+        rect.anchoredPosition = new Vector3 (0, -2000, 0);
+
+        sizeFitter.enabled = false;
+        sizeFitter.enabled = true;
+        Canvas.ForceUpdateCanvases();
+    }
+
+    public void OpenHistory()
+    {
+        var sizeFitter = chatHistory.gameObject.GetComponent<ContentSizeFitter>();
+        var rect = historyDisplay.GetComponent<RectTransform>();
+
+        sizeFitter.enabled = false;
+        sizeFitter.enabled = true;
+        Canvas.ForceUpdateCanvases();
+
+        rect.anchoredPosition = new Vector3(0, 0, 0);
+
+        sizeFitter.enabled = false;
+        sizeFitter.enabled = true;
+        Canvas.ForceUpdateCanvases();
     }
 }
