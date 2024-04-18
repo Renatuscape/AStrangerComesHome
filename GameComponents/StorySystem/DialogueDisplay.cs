@@ -252,7 +252,6 @@ public class DialogueDisplay : MonoBehaviour
 
     public void PrintToChatLog(string text, bool spaceBefore, bool italics = false)
     {
-        chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
         if (spaceBefore)
         {
             chatHistory.text += "\n";
@@ -268,20 +267,15 @@ public class DialogueDisplay : MonoBehaviour
         Canvas.ForceUpdateCanvases();
 
         chatHistory.text += text;
-        chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
 
-        Canvas.ForceUpdateCanvases();
 
         if (italics)
         {
             chatHistory.text += "</i>";
         }
 
-        Canvas.ForceUpdateCanvases();
-
         chatHistory.text += "\n";
 
-        Canvas.ForceUpdateCanvases();
         chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
         chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
         Canvas.ForceUpdateCanvases();
