@@ -37,7 +37,7 @@ public class ManaConverter : MonoBehaviour
     {
         transientData.manapool = 100 + (manapool * 30);
     }
-    
+
     void PassiveManaRegeneration()
     {
         //SyncUpgrades();

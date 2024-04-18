@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -38,12 +37,18 @@ public class GardenManager : MonoBehaviour
 
     public List<Sprite> planterSprites;
 
+    public int gardeningLevel; //improves growth for all plants
+    public int nurturingLevel; //improves yield rate for multi-yield plants
+    public int cultivationLevel; //creates a small chance that plant health does not decrease
+    public int earthsoulLevel; //at level 5, this mysterious skill grants all plants an extra life. At level 10, two extra lives.
+
     private void Awake()
     {
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         CheckPlanters();
         confirmPlantingMenu.SetActive(false);
+        SyncSkills();
     }
 
     private void OnEnable()

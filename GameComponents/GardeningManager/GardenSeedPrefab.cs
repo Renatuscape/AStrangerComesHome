@@ -24,6 +24,8 @@ public class GardenSeedPrefab : MonoBehaviour
         valueText.text = $"{itemSource.GetCountPlayer()}";
 
         isReady = true;
+
+        SyncItemCount();
     }
 
     private void Update()
@@ -34,15 +36,22 @@ public class GardenSeedPrefab : MonoBehaviour
         }
     }
 
+    int SyncItemCount()
+    {
+        return itemSource.GetCountPlayer();
+    }
     public void MouseDownItem()
     {
         if (isReady)
         {
             plantManager.SelectSeed(gameObject);
         }
+        SyncItemCount();
     }
     public void MouseOverItem()
     {
+        SyncItemCount();
+
         if (isReady)
         {
             //some kind of text that displays the object's name ($"{itemSource.printName}");

@@ -192,6 +192,8 @@ public class Engine : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.E))
             {
+                SyncUpgrades();
+
                 if (transientData.engineState != EngineState.Off)
                     transientData.engineState = EngineState.Off;
                 else

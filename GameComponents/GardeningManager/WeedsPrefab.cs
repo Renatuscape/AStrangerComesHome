@@ -25,6 +25,12 @@ public class WeedsPrefab : MonoBehaviour
 
             planterParent.currentWeeds--;
             Destroy(gameObject);
+            int rollForBonus = Random.Range(0, 100);
+
+            if (rollForBonus > 85)
+            {
+                Player.Add(weedsObject.objectID, 1);
+            }
         }
     }
 }
