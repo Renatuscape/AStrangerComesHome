@@ -88,23 +88,23 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static void PlayUISound(string soundName)
+    public static void PlayUISound(string soundName, float volumeAdjustment = 0)
     {
         if (instance != null)
         {
-            instance.PlaySoundEffect(soundName, "ui");
+            instance.PlaySoundEffect(soundName, "ui", volumeAdjustment);
         }
     }
 
-    public static void PlayAmbientSound(string soundName)
+    public static void PlayAmbientSound(string soundName, float volumeAdjustment = 0)
     {
         if (instance != null)
         {
-            instance.PlaySoundEffect(soundName, "ambient");
+            instance.PlaySoundEffect(soundName, "ambient", volumeAdjustment);
         }
     }
 
-    void PlaySoundEffect(string soundName, string type)
+    void PlaySoundEffect(string soundName, string type, float volumeAdjustment)
     {
         if (!gameObject.scene.isLoaded) return;
 
@@ -126,16 +126,18 @@ public class AudioManager : MonoBehaviour
             {
                 var audioSource = new GameObject().AddComponent<AudioSource>();
                 audioSource.clip = sound;
-                audioSource.Play();
 
                 if (type == "ambient")
                 {
-                    audioSource.volume = GlobalSettings.ambientVolume;
+                    audioSource.volume = GlobalSettings.ambientVolume + volumeAdjustment;
                 }
                 else
                 {
-                    audioSource.volume = GlobalSettings.uiVolume;
+                    audioSource.volume = GlobalSettings.uiVolume + volumeAdjustment;
                 }
+
+                audioSource.Play();
+
                 Destroy(audioSource.gameObject, sound.length);
             }
         }
