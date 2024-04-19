@@ -190,6 +190,10 @@ public class DialogueDisplay : MonoBehaviour
 
         foreach (var text in textArray)
         {
+            if (printSpeed > 0)
+            {
+                AudioManager.PlayAmbientSound("knockSmall", -0.1f);
+            }
             yield return new WaitForSeconds(printSpeed);
             contentText.text += text + " ";
         }
@@ -231,6 +235,7 @@ public class DialogueDisplay : MonoBehaviour
         }
         else if (isPrinting)
         {
+            //AudioManager.PlayAmbientSound("smallSnap");
             printSpeed = 0;
         }
         else if (endConversation)
