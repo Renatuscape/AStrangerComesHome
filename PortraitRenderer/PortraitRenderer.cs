@@ -59,7 +59,7 @@ public class PortraitRenderer : MonoBehaviour
             return defaultFrame;
         }
 
-        string frameID = TransientDataCalls.gameManager.dataManager.frameID;
+        string frameID = TransientDataScript.gameManager.dataManager.frameID;
         Sprite frame = playerFrames.FirstOrDefault(f => f.name.Contains(frameID));
         
         if (frame == null)

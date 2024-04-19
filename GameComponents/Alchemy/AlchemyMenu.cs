@@ -40,7 +40,7 @@ public class AlchemyMenu : MonoBehaviour
 
     private void Start()
     {
-        dataManager = TransientDataCalls.gameManager.dataManager;
+        dataManager = TransientDataScript.gameManager.dataManager;
         SetUpContainers();
     }
 
@@ -52,7 +52,7 @@ public class AlchemyMenu : MonoBehaviour
 
         if (dataManager == null)
         {
-            dataManager = TransientDataCalls.gameManager.dataManager;
+            dataManager = TransientDataScript.gameManager.dataManager;
         }
 
         var foundSynth = dataManager.alchemySynthesisers.FirstOrDefault(s => s.synthesiserID == synthName);
@@ -86,7 +86,7 @@ public class AlchemyMenu : MonoBehaviour
             gameObject.SetActive(true);
             alchemyObjects = SetUpAlchemyObjects(isDebugging);
             inventory.RenderInventory(ItemType.Catalyst, false);
-            TransientDataCalls.SetGameState(GameState.AlchemyMenu, name, gameObject);
+            TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
             progressBar.alchemyMenu = this;
             progressBar.Initialise(synthData);
             yieldManager.Setup(synthData);
@@ -177,7 +177,7 @@ public class AlchemyMenu : MonoBehaviour
 
         if (foundCatalyst == null || foundPlant == null)
         {
-            TransientDataCalls.PushAlert("I need a catalyst and a type of plant for the infusion.");
+            TransientDataScript.PushAlert("I need a catalyst and a type of plant for the infusion.");
         }
         else
         {
@@ -187,8 +187,8 @@ public class AlchemyMenu : MonoBehaviour
             if (infusions.Count != 2)
             {
                 //Debug.Log($"Infusions list count was {infusions.Count}");
-                TransientDataCalls.PushAlert("The infusion isn't correctly balanced.");
-                TransientDataCalls.PushAlert("There should be one type of catalyst and one type of plant in the bowl.");
+                TransientDataScript.PushAlert("The infusion isn't correctly balanced.");
+                TransientDataScript.PushAlert("There should be one type of catalyst and one type of plant in the bowl.");
             }
             else
             {
@@ -256,7 +256,7 @@ public class AlchemyMenu : MonoBehaviour
 
     void CreateFailure()
     {
-        TransientDataCalls.PushAlert("I think something went wrong...");
+        TransientDataScript.PushAlert("I think something went wrong...");
     }
 
     private void OnDisable()

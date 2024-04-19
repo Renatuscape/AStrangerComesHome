@@ -169,7 +169,7 @@ public class AlchemyButtonManager : MonoBehaviour
     public void Leave()
     {
         alchemyMenu.gameObject.SetActive(false);
-        TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
+        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 
     public void Claim()

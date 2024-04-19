@@ -110,11 +110,11 @@ public class PassengerPrefabScript : MonoBehaviour
                 // Ensure the player had inventory space for full fare
                 if (added < fare)
                 {
-                    transientData.PushAlert("I was unable to accept the total fare. Better go to the bank!");
+                    TransientDataScript.PushAlert("I was unable to accept the total fare. Better go to the bank!");
                 }
                 else
                 {
-                    transientData.PushAlert($"{passengerName} paid {fare} shillings.");
+                    TransientDataScript.PushAlert($"{passengerName} paid {fare} shillings.");
                 }
 
                 // Tip is paid out in hellers and scripted items are updated to track
@@ -126,7 +126,7 @@ public class PassengerPrefabScript : MonoBehaviour
                 if (Random.Range(0, 100) > 80 - (fortune * 4))
                 {
                     Player.Add(spiritEssence.objectID);
-                    transientData.PushAlert($"{passengerName} dropped some Spirit Essence.");
+                    TransientDataScript.PushAlert($"{passengerName} dropped some Spirit Essence.");
                     AudioManager.PlayAmbientSound("cloth3");
                 }
 
@@ -147,12 +147,12 @@ public class PassengerPrefabScript : MonoBehaviour
             //var locationToString = destination.ToString();
             //var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
 
-            transientData.PrintFloatText(passengerName + "\n" + destination.name);
+            TransientDataScript.PrintFloatText(passengerName + "\n" + destination.name);
         }
     }
 
     public void OnMouseExit()
     {
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 }

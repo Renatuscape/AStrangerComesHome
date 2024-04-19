@@ -28,7 +28,7 @@ public class GarageMenu : MonoBehaviour
     public void Initialise(Character character)
     {
         this.character = character;
-        TransientDataCalls.SetGameState(GameState.ShopMenu, name, gameObject);
+        TransientDataScript.SetGameState(GameState.ShopMenu, name, gameObject);
         portraitRenderer.EnableForGarage(character.objectID);
 
         confirmMenu.gameObject.SetActive(false);
@@ -95,6 +95,6 @@ public class GarageMenu : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
-        TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
+        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 }

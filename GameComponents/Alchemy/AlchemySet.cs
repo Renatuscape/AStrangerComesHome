@@ -26,7 +26,7 @@ public class AlchemySet : MonoBehaviour
         {
             if (alchemyMenu == null)
             {
-                alchemyMenu = TransientDataCalls.gameManager.menuSystem.alchemyMenu;
+                alchemyMenu = TransientDataScript.gameManager.menuSystem.alchemyMenu;
             }
 
 

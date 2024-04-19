@@ -54,10 +54,10 @@ public class PassengerManager : MonoBehaviour
             Destroy(potentialPassenger);
             waitingCurrent -= 1;
 
-            transientData.PushAlert("I picked up " + generatedName + ", who is going to " + destination.name + ".");
+            TransientDataScript.PushAlert("I picked up " + generatedName + ", who is going to " + destination.name + ".");
         }
         else
-            transientData.PushAlert("There are no available seats.");
+            TransientDataScript.PushAlert("There are no available seats.");
     }
 
     public void BoardPassenger(string passengerName, Sprite passengerSprite, Location origin, Location destination, List<string> dialogueList)

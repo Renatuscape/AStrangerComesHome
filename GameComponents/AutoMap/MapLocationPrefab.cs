@@ -5,7 +5,6 @@ using UnityEngine;
 public class MapLocationPrefab : MonoBehaviour
 {
     public AutoMap autoMap;
-    public TransientDataScript transientData;
     public Location location;
 
     public bool doubleCLickReady;
@@ -33,11 +32,11 @@ public class MapLocationPrefab : MonoBehaviour
 
     private void OnMouseOver()
     {
-        transientData.PrintFloatText($"{location.name}");
+        TransientDataScript.PrintFloatText($"{location.name}");
     }
 
     private void OnMouseExit()
     {
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 }

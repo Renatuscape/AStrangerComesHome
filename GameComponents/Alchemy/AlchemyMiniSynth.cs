@@ -68,7 +68,7 @@ public class AlchemyMiniSynth : MonoBehaviour
     public void Examine()
     {
         Debug.Log($"Sending {synthData.synthesiserID} to alchemy menu.");
-        TransientDataCalls.gameManager.menuSystem.alchemyMenu.InitialiseBySynthesiser(synthData);
+        TransientDataScript.gameManager.menuSystem.alchemyMenu.InitialiseBySynthesiser(synthData);
         cabinetMenu.CloseCabinet(false);
     }
 
@@ -117,7 +117,7 @@ public class AlchemyMiniSynth : MonoBehaviour
             if (synthData != null && synthData.synthRecipe != null && synthData.isSynthActive && synthData.synthRecipe.workload > 0)
             {
                 UpdateSliderValue(synthData.progressSynth);
-                currentMana.text = $"{(int)TransientDataCalls.transientData.currentMana}/{(int)TransientDataCalls.transientData.manapool}";
+                currentMana.text = $"{(int)TransientDataScript.transientData.currentMana}/{(int)TransientDataScript.transientData.manapool}";
             }
             else if (synthData == null || !synthData.isSynthActive)
             {
@@ -133,7 +133,7 @@ public class AlchemyMiniSynth : MonoBehaviour
             ToggleButtons();
         }
 
-        currentMana.text = $"{(int)TransientDataCalls.transientData.currentMana}/{(int)TransientDataCalls.transientData.manapool}";
+        currentMana.text = $"{(int)TransientDataScript.transientData.currentMana}/{(int)TransientDataScript.transientData.manapool}";
     }
 
     void SetStatusText()

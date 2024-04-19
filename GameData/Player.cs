@@ -50,7 +50,7 @@ public static class Player
     {
         if (objectID.Contains("-NAME"))
         {
-            var dataManager = TransientDataCalls.gameManager.dataManager;
+            var dataManager = TransientDataScript.gameManager.dataManager;
 
             Debug.Log($"Detected -NAME tag. Adding {objectID} to list.");
             dataManager.unlockedNames.Add(objectID);

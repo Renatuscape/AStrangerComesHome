@@ -34,7 +34,7 @@ public class CoachCabinetMenu : MonoBehaviour
             }
             else
             {
-                TransientDataCalls.PushAlert("Nothing in here yet.");
+                TransientDataScript.PushAlert("Nothing in here yet.");
             }
         }
     }
@@ -45,7 +45,7 @@ public class CoachCabinetMenu : MonoBehaviour
 
         if (coachSynthesisersUnlocked > 0)
         {
-            var synthesisers = TransientDataCalls.gameManager.dataManager.alchemySynthesisers;
+            var synthesisers = TransientDataScript.gameManager.dataManager.alchemySynthesisers;
             var coachSynthesisers = synthesisers.Where(s => s.synthesiserID.ToLower().Contains("coach")).ToList();
 
             if (coachSynthesisers != null && coachSynthesisers.Count == coachSynthesisersUnlocked)
@@ -104,7 +104,7 @@ public class CoachCabinetMenu : MonoBehaviour
 
         if (returnToOverworld)
         {
-            TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
+            TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
         }
     }
 

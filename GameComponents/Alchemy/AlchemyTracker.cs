@@ -23,7 +23,7 @@ public class AlchemyTracker : MonoBehaviour
     public void StartTracking()
     {
         Debug.Log("Enabling Alchemy Tracker.");
-        dataManager = TransientDataCalls.gameManager.dataManager;
+        dataManager = TransientDataScript.gameManager.dataManager;
 
         UpdateValues();
         isEnabled = true;
@@ -86,17 +86,17 @@ public class AlchemyTracker : MonoBehaviour
     {
         int manaCost = baseManaConsumption * synth.synthRecipe.manaDrainRate;
 
-        if (TransientDataCalls.transientData.currentMana >= manaCost + 5)
+        if (TransientDataScript.transientData.currentMana >= manaCost + 5)
         {
-            TransientDataCalls.transientData.currentMana -= manaCost;
+            TransientDataScript.transientData.currentMana -= manaCost;
             synth.progressSynth += progressAmount;
         }
         else
         {
-            TransientDataCalls.transientData.currentMana = 0;
+            TransientDataScript.transientData.currentMana = 0;
             synth.progressSynth += 1;
             synth.isSynthPaused = true;
-            TransientDataCalls.PushAlert($"Alchemy synthesis was paused due to low mana.");
+            TransientDataScript.PushAlert($"Alchemy synthesis was paused due to low mana.");
         }
     }
 

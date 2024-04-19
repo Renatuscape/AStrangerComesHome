@@ -19,7 +19,7 @@ public class ShelvedBook : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
             }
             else
             {
-                TransientDataCalls.PushAlert("Nothing interesting in here.");
+                TransientDataScript.PushAlert("Nothing interesting in here.");
             }
         }
         else
@@ -31,12 +31,12 @@ public class ShelvedBook : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        TransientDataCalls.PrintFloatText($"{bookItem.name}");
+        TransientDataScript.PrintFloatText($"{bookItem.name}");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        TransientDataCalls.DisableFloatText();
+        TransientDataScript.DisableFloatText();
         isSelected = false;
     }
 

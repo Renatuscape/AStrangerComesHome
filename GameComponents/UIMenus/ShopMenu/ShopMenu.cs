@@ -14,7 +14,6 @@ public class ShopMenu : MonoBehaviour
     public Character shopkeeper;
     public Shop activeShop;
     public int judgement;
-    public TransientDataScript transientData;
     public DataManagerScript dataManager;
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
     public float profitMargin;
@@ -38,7 +37,6 @@ public class ShopMenu : MonoBehaviour
     void Awake()
     {
         profitMargin = 2f;
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
     }
 
@@ -56,7 +54,7 @@ public class ShopMenu : MonoBehaviour
             Destroy(item);
         }
 
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 
     public void SetUpShop(Character shopkeeper, Shop shop)
@@ -69,7 +67,7 @@ public class ShopMenu : MonoBehaviour
         activeShop = shop;
 
         EnablePortraits();
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
         pageIndex = 0;
 
         shelf.GetComponent<GridLayoutGroup>().enabled = false;
@@ -79,7 +77,7 @@ public class ShopMenu : MonoBehaviour
         if (activeShop != null)
         {
             //CALCULATE SHOP RATE
-            if (activeShop.saleDay == transientData.weekDay)
+            if (activeShop.saleDay == TransientDataScript.GetWeekDay())
             {
                 clearanceNotice.SetActive(true);
                 profitMargin = activeShop.clearanceMargin - (judgement * 0.5f);
@@ -232,19 +230,19 @@ public class ShopMenu : MonoBehaviour
                 Player.Add(item.objectID);
                 AudioManager.PlayUISound("handleCoins");
                 Debug.Log($"{activeShop.sucessfulPurchaseText} You purchased {item.name} for {itemCost}.");
-                TransientDataCalls.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
+                TransientDataScript.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
             }
             else
             {
                 Debug.Log("Exchange returned false.");
-                TransientDataCalls.PushAlert("I don't have enough money.");
+                TransientDataScript.PushAlert("I don't have enough money.");
             }
 
         }
         else
         {
             Debug.Log("I already have the maximum amount of this item.");
-            TransientDataCalls.PushAlert("I don't have enough space for more of this.");
+            TransientDataScript.PushAlert("I don't have enough space for more of this.");
         }
 
     }
@@ -278,12 +276,12 @@ public class ShopMenu : MonoBehaviour
 
     public void PrintFloatText(string text)
     {
-        transientData.PrintFloatText(text);
+        TransientDataScript.PrintFloatText(text);
     }
 
     public void DisableFloatText()
     {
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 
     public void ChatButton()

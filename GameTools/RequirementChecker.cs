@@ -23,7 +23,7 @@ public static class RequirementChecker
 
     public static bool CheckWalkingRequirements(Character character)
     {
-        var currentLocation = TransientDataCalls.GetCurrentLocation();
+        var currentLocation = TransientDataScript.GetCurrentLocation();
         bool validLocation = false;
         bool validTime = false;
         bool validDay = false;
@@ -72,7 +72,7 @@ public static class RequirementChecker
     {
         if (startTime != endTime)
         {
-            float currentTime = TransientDataCalls.GetTimeOfDay();
+            float currentTime = TransientDataScript.GetTimeOfDay();
 
             if (currentTime > endTime)
             {
@@ -96,7 +96,7 @@ public static class RequirementChecker
 
     public static bool CheckWeekDay(int weekDay)
     {
-        DayOfWeek currentWeekday = TransientDataCalls.GetWeekDay();
+        DayOfWeek currentWeekday = TransientDataScript.GetWeekDay();
 
         if ((int) currentWeekday == weekDay)
         {
@@ -118,7 +118,7 @@ public static class RequirementChecker
         }
         else
         {
-            if (TransientDataCalls.GetCurrentLocation() == requiredLocation)
+            if (TransientDataScript.GetCurrentLocation() == requiredLocation)
             {
                 return true;
             }

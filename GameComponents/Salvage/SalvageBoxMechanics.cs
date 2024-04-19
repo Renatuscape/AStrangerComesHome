@@ -236,7 +236,7 @@ public class SalvageBoxMechanics : MonoBehaviour
                 {
                     pair.item.AddToPlayer(pair.amount);
 
-                    transientData.PushAlert($"Found {pair.item.name} ({pair.amount})!");
+                    TransientDataScript.PushAlert($"Found {pair.item.name} ({pair.amount})!");
                 }
             }
 

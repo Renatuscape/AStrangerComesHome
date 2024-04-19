@@ -39,7 +39,7 @@ public class Dialogue
     {
         if (startTime != 0 && endTime != 0)
         {
-            float currentTime = TransientDataCalls.GetTimeOfDay();
+            float currentTime = TransientDataScript.GetTimeOfDay();
 
             if (currentTime < startTime || currentTime > endTime)
             {
@@ -48,14 +48,14 @@ public class Dialogue
             }
         }
 
-        if (TransientDataCalls.GetDaysPassed() < minimumDaysPassed)
+        if (TransientDataScript.GetDaysPassed() < minimumDaysPassed)
         {
             return false;
         }
 
         if (!string.IsNullOrEmpty(locationID))
         {
-            var location = TransientDataCalls.GetCurrentLocation();
+            var location = TransientDataScript.GetCurrentLocation();
             if (location != null && location.objectID != locationID)
             {
                 // Debug.Log("Quest tracker returned false on locationID " + locationID);

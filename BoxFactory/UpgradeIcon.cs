@@ -74,7 +74,7 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         if (showFloatName)
         {
-            TransientDataCalls.PrintFloatText(upgrade.name);
+            TransientDataScript.PrintFloatText(upgrade.name);
         }
     }
 
@@ -82,7 +82,7 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         if (showFloatName)
         {
-            TransientDataCalls.DisableFloatText();
+            TransientDataScript.DisableFloatText();
         }
     }
 }

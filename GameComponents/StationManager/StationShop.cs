@@ -12,13 +12,11 @@ public class StationShop : MonoBehaviour
     public ShopMenu shopMenu;
     public string shopkeeperID;
     public string shopID;
-    public TransientDataScript transientData;
     public BoxCollider2D col;
 
     void Start()
     {
-        shopMenu = TransientDataCalls.GetMenuSystem().shopMenu;
-        transientData = TransientDataCalls.GetTransientData();
+        shopMenu = TransientDataScript.GetMenuSystem().shopMenu;
         col = GetComponent<BoxCollider2D>();
         Debug.Log($"Station spawned with shopkeeperID {shopkeeperID} and shopID {shopID}.");
     }
@@ -27,21 +25,14 @@ public class StationShop : MonoBehaviour
     {
         if (TransientDataScript.CameraView == CameraView.Normal)
         {
-            if (transientData != null)
+            if (TransientDataScript.CameraView == CameraView.Normal)
             {
-                if (TransientDataScript.CameraView == CameraView.Normal)
-                {
-                    col.enabled = true;
-                }
-
-                else
-                {
-                    col.enabled = false;
-                }
+                col.enabled = true;
             }
+
             else
             {
-                transientData = TransientDataCalls.GetTransientData();
+                col.enabled = false;
             }
         }
     }
@@ -63,14 +54,14 @@ public class StationShop : MonoBehaviour
         {
             if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
             {
-                transientData.PrintFloatText($"{shop.name}");
+                TransientDataScript.PrintFloatText($"{shop.name}");
             }
         }
     }
 
     public void OnMouseExit()
     {
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 
     private bool NullCheck()
@@ -88,7 +79,7 @@ public class StationShop : MonoBehaviour
         }
         if (shopMenu == null)
         {
-            shopMenu = TransientDataCalls.GetMenuSystem().shopMenu;
+            shopMenu = TransientDataScript.GetMenuSystem().shopMenu;
         }
 
         return shopkeeper != null && shop != null;

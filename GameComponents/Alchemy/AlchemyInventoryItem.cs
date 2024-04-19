@@ -27,11 +27,11 @@ public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandl
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        TransientDataCalls.PrintFloatText($"{item.name}");
+        TransientDataScript.PrintFloatText($"{item.name}");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        TransientDataCalls.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 }

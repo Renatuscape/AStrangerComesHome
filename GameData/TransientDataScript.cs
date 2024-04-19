@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 public class TransientDataScript : MonoBehaviour
 {
+    public static TransientDataScript transientData;
+    public static GameManagerScript gameManager;
+    public static List<Character> activeWalkingNpcs = new();
     public static GameState GameState { get; private set; }
 
     public Language language;
@@ -42,30 +46,15 @@ public class TransientDataScript : MonoBehaviour
     public string mouseToolTip;
     public string infoBox;
 
-    //*** CONTROLLER LISTENER ***
 
-
+    private void Awake()
+    {
+        transientData = this;
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManagerScript>();
+    }
 
     //*** PUBLIC METHODS ***
     //UI TEXT
-    //Eventually these methods should take text IDs that refer to a .json file
-    public void PushAlert(string alert)
-    {
-        pushAlertManager.QueueAlert(alert);
-    }
-    public void PrintFloatText(string content)
-    {
-        if (GameState != GameState.MainMenu && GameState != GameState.Loading && GameState != GameState.Dialogue)
-        {
-            floatText.PrintFloatText(content);
-        }
-        else
-            DisableFloatText();
-    }
-    public void DisableFloatText()
-    {
-        floatText.DisableFloatText();
-    }
 
     public void SpawnLocation(Location location)
     {
@@ -93,12 +82,6 @@ public class TransientDataScript : MonoBehaviour
         CameraView = view;
     }
 
-    public static void SetGameState(GameState newState, string callerScript, GameObject callerObject)
-    {
-        LogStateChange(callerScript, callerObject, newState);
-        GameState = newState;
-        GameObject.Find("TransientData").GetComponent<TransientDataScript>().DisableFloatText();
-    }
     public static void ReturnToOverWorld(string name, GameObject gameObject)
     {
         SetGameState(GameState.Overworld, name, gameObject);
@@ -131,20 +114,14 @@ public class TransientDataScript : MonoBehaviour
 
     static void LogStateChange(string callerScript, GameObject callerObject, GameState newState)
     {
-        GameObject.Find("TransientData").GetComponent<TransientDataScript>().gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + GameState + " to " + newState + ".";
+        transientData.gameStateLog += "\n" + Time.realtimeSinceStartup + ": " + callerScript + "(script) on " + callerObject.name + "(game object) changed the game state from " + GameState + " to " + newState + ".";
     }
-}
 
-public static class TransientDataCalls
-{
-    public static TransientDataScript transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-    public static GameManagerScript gameManager = GameObject.Find("GameManager").GetComponent<GameManagerScript>();
-    public static List<Character> activeWalkingNpcs = new();
     public static void PushAlert(string alert)
     {
         if (NullCheck())
         {
-            transientData.PushAlert(alert);
+            transientData.pushAlertManager.QueueAlert(alert);
         }
         else
         {
@@ -156,7 +133,10 @@ public static class TransientDataCalls
     {
         if (NullCheck())
         {
-            transientData.PrintFloatText(content);
+            if (GameState != GameState.MainMenu && GameState != GameState.Loading && GameState != GameState.Dialogue)
+            {
+                transientData.floatText.PrintFloatText(content);
+            }
         }
         else
         {
@@ -198,7 +178,7 @@ public static class TransientDataCalls
 
         if (NullCheck())
         {
-            transientData.PrintFloatText(content);
+            PrintFloatText(content);
         }
         else
         {
@@ -210,7 +190,7 @@ public static class TransientDataCalls
     {
         if (NullCheck())
         {
-            transientData.DisableFloatText();
+            transientData.floatText.DisableFloatText();
         }
         else
         {
@@ -248,7 +228,9 @@ public static class TransientDataCalls
     {
         if (NullCheck())
         {
-            TransientDataScript.SetGameState(newState, callerScript, callerObject);
+            LogStateChange(callerScript, callerObject, newState);
+            GameState = newState;
+            DisableFloatText();
         }
         else
         {

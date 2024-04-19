@@ -52,13 +52,13 @@ public class BankManager : MonoBehaviour
 
     public void OpenBankMenu()
     {
-        TransientDataCalls.SetGameState(GameState.BankMenu, name, gameObject);
+        TransientDataScript.SetGameState(GameState.BankMenu, name, gameObject);
 
         bankMenu.SetActive(true);
         exchangeMenu.SetActive(false);
         accountMenu.SetActive(false);
 
-        if (TransientDataCalls.GetWeekDay() == DayOfWeek.Lunden)
+        if (TransientDataScript.GetWeekDay() == DayOfWeek.Lunden)
         {
             leaveButton.SetActive(true);
             exchangeButton.SetActive(false);

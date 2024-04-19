@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class ProfileScript : MonoBehaviour
 {
-    public TransientDataScript transientData;
     public DataManagerScript dataManager;
     public GameObject profileSkillPrefab;
     public GameObject skillPrefabContainer;
@@ -16,7 +15,6 @@ public class ProfileScript : MonoBehaviour
 
     void Awake()
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
     }
 
@@ -48,17 +46,17 @@ public class ProfileScript : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 
     public void PrintFloatText(string text)
     {
-        transientData.PrintFloatText(text);
+        TransientDataScript.PrintFloatText(text);
     }
 
     public void DisableFloatText()
     {
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 
     public void SkillClick(Skill skill)

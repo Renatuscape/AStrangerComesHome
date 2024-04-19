@@ -18,7 +18,7 @@ public class InteractMenu : MonoBehaviour
     }
     public void Initialise(Character character, Shop shop = null)
     {
-        TransientDataCalls.SetGameState(GameState.Dialogue, name, gameObject);
+        TransientDataScript.SetGameState(GameState.Dialogue, name, gameObject);
         Debug.Log($"Initialising interact menu with {character.name}");
 
         buttons = new();
@@ -125,7 +125,7 @@ public class InteractMenu : MonoBehaviour
     {
         if (Player.GetCount(character.objectID, name) > 0)
         {
-            if (TransientDataCalls.GiftCheck(character))
+            if (TransientDataScript.GiftCheck(character))
             {
                 var giftButton = GetButton($"Gift already given");
                 giftButton.GetComponent<Button>().enabled = false;
@@ -144,7 +144,7 @@ public class InteractMenu : MonoBehaviour
         var leaveButton = GetButton($"Leave");
         buttons.Add(leaveButton);
 
-        leaveButton.GetComponent<Button>().onClick.AddListener(() => TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject));
+        leaveButton.GetComponent<Button>().onClick.AddListener(() => TransientDataScript.SetGameState(GameState.Overworld, name, gameObject));
     }
 
     GameObject GetButton(string buttonText)

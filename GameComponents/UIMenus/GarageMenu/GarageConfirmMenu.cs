@@ -38,12 +38,12 @@ public class GarageConfirmMenu : MonoBehaviour
             }
             else
             {
-                TransientDataCalls.PushAlert("Not enough money!");
+                TransientDataScript.PushAlert("Not enough money!");
             }
         }
         else
         {
-            TransientDataCalls.PushAlert("There is no room for further improvement.");
+            TransientDataScript.PushAlert("There is no room for further improvement.");
         }
     }
 

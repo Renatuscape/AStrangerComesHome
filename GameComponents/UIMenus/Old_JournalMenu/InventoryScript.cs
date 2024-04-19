@@ -56,7 +56,7 @@ public class InventoryScript : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 
     public void DisplayItemInfo(string name, string description)
@@ -81,11 +81,11 @@ public class InventoryScript : MonoBehaviour
 
     public void PrintFloatText(string text)
     {
-        transientData.PrintFloatText(text);
+        TransientDataScript.PrintFloatText(text);
     }
 
     public void DisableFloatText()
     {
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 }

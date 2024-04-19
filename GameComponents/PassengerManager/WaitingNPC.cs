@@ -99,7 +99,7 @@ public class WaitingNPC : MonoBehaviour
         }
         else
         {
-            TransientDataCalls.PushAlert("What's all this talk about a guild license? I should ask around.");
+            TransientDataScript.PushAlert("What's all this talk about a guild license? I should ask around.");
         }
     }
 
@@ -109,17 +109,17 @@ public class WaitingNPC : MonoBehaviour
         {
             if (Player.GetCount("SCR013-SCR-NN", name) > 0)
             {
-                transientData.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
+                TransientDataScript.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
             }
             else
             {
-                transientData.PrintFloatText("\'Isn't there a guild licensed coach arriving soon?\'");
+                TransientDataScript.PrintFloatText("\'Isn't there a guild licensed coach arriving soon?\'");
             }
         }
     }
 
     public void OnMouseExit()
     {
-        transientData.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 }

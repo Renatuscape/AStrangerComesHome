@@ -49,9 +49,9 @@ public class AutoMapTravelManager
                         {
                             if (location.type is not LocationType.Crossing)
                             {
-                                autoMap.transientData.PushAlert("I have arrived at " + location.name);
-                                autoMap.transientData.currentLocation = location;
-                                autoMap.transientData.SpawnLocation(location);
+                                TransientDataScript.PushAlert("I have arrived at " + location.name);
+                                TransientDataScript.transientData.currentLocation = location;
+                                TransientDataScript.transientData.SpawnLocation(location);
                             }
                             else
                             {
@@ -68,18 +68,18 @@ public class AutoMapTravelManager
                                     }
                                     else
                                     {
-                                        autoMap.transientData.PushAlert($"{gate.failText}");
+                                        TransientDataScript.PushAlert($"{gate.failText}");
                                         autoMap.transientData.currentLocation = null;
                                     }
                                 }
 
-                                autoMap.transientData.PushAlert($"I have arrived at {autoMap.transientData.currentRegion.name}.");
+                                TransientDataScript.PushAlert($"I have arrived at {autoMap.transientData.currentRegion.name}.");
                             }
                         }
                         else
                         {
                             autoMap.transientData.currentLocation = null;
-                            autoMap.transientData.PushAlert("I have arrived at my destination.");
+                            TransientDataScript.PushAlert("I have arrived at my destination.");
                         }
                     }
                     else
@@ -91,7 +91,7 @@ public class AutoMapTravelManager
             }
             else
             {
-                autoMap.transientData.PushAlert("The road ahead is obstructed. I should check my map.");
+                TransientDataScript.PushAlert("The road ahead is obstructed. I should check my map.");
                 autoMap.transientData.engineState = EngineState.Off; // STOP WHEN REACHING DESTINATION
             }
             // If not over a basic tile, you might want to handle it differently (e.g., stop movement or perform some other action)
@@ -99,7 +99,7 @@ public class AutoMapTravelManager
         else if (autoMap.transientData.engineState != EngineState.Off)
         {
             autoMap.transientData.engineState = EngineState.Off; // STOP WHEN REACHING DESTINATION
-            autoMap.transientData.PushAlert("I need to choose a destination.");
+            TransientDataScript.PushAlert("I need to choose a destination.");
         }
     }
 

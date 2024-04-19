@@ -272,7 +272,7 @@ public class GardenManager : MonoBehaviour
                     growthRate = "great";
 
                 // Display info for the plant currently growing in this planter
-                TransientDataCalls.PushAlert($"This {outputPlant.name} is growing at a {growthRate} pace.");
+                TransientDataScript.PushAlert($"This {outputPlant.name} is growing at a {growthRate} pace.");
             }
 
             //IF THE PLANTER IS READY TO BE HARVESTED
@@ -311,7 +311,7 @@ public class GardenManager : MonoBehaviour
                     }
                     else
                     {
-                        TransientDataCalls.PushAlert($"This plant is extra resilient!");
+                        TransientDataScript.PushAlert($"This plant is extra resilient!");
                         Debug.Log("Plant miraculously retains its health at a roll of " + rollForHealth + " against " + nurturing * 5 + ". Add some effect or notice to the game.");
                     }
 
@@ -330,7 +330,7 @@ public class GardenManager : MonoBehaviour
                 }
                 else
                 {
-                    TransientDataCalls.PushAlert($"I don't have space for {outputPlant.name}.");
+                    TransientDataScript.PushAlert($"I don't have space for {outputPlant.name}.");
                 }
             }
         }

@@ -383,7 +383,7 @@ public static class MoneyExchange
             int affection = Player.GetCount(teller.objectID, "Money Manager, CalculateCommission()");
             float rate;
 
-            if (TransientDataCalls.GetWeekDay() == freeExchangeDay && affection < 90)
+            if (TransientDataScript.GetWeekDay() == freeExchangeDay && affection < 90)
             {
                 return 1.5f;
             }
@@ -394,19 +394,19 @@ public static class MoneyExchange
             }
             else if (affection >= 70)
             {
-                rate = 0.3f * (1 + (float)TransientDataCalls.GetWeekDay() * 0.2f);
+                rate = 0.3f * (1 + (float)TransientDataScript.GetWeekDay() * 0.2f);
             }
             else if (affection >= 50)
             {
-                rate = 0.7f * (1 + (float)TransientDataCalls.GetWeekDay() * 0.2f);
+                rate = 0.7f * (1 + (float)TransientDataScript.GetWeekDay() * 0.2f);
             }
             else if (affection >= 30)
             {
-                rate = 1.0f * (1 + (float)TransientDataCalls.GetWeekDay() * 0.3f);
+                rate = 1.0f * (1 + (float)TransientDataScript.GetWeekDay() * 0.3f);
             }
             else
             {
-                rate = 1.5f * (1 + (float)TransientDataCalls.GetWeekDay() * 0.4f);
+                rate = 1.5f * (1 + (float)TransientDataScript.GetWeekDay() * 0.4f);
             }
 
             rate = Mathf.Ceil(rate * rate);

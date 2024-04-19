@@ -43,9 +43,9 @@ public class InteractNode : MonoBehaviour
     private void OnDestroy()
     {
         Debug.Log($"Removing {character.name} from activeWalkingNpcs.");
-        TransientDataCalls.activeWalkingNpcs.Remove(character);
+        TransientDataScript.activeWalkingNpcs.Remove(character);
 
-        foreach (var walker in TransientDataCalls.activeWalkingNpcs)
+        foreach (var walker in TransientDataScript.activeWalkingNpcs)
         {
             Debug.Log($"{walker.name} is still in activeWalkingNpcs list");
         }
@@ -77,17 +77,17 @@ public class InteractNode : MonoBehaviour
     {
         if (isSpawningNpc && character != null)
         {
-            TransientDataCalls.PrintFloatText(character.NamePlate());
+            TransientDataScript.PrintFloatText(character.NamePlate());
         }
         else if (isSpawningMemory)
         {
-            TransientDataCalls.PrintFloatText("A Memory");
+            TransientDataScript.PrintFloatText("A Memory");
         }
     }
 
     private void OnMouseExit()
     {
-        TransientDataCalls.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 
     private void OnMouseDown()
@@ -137,7 +137,7 @@ public class InteractNode : MonoBehaviour
         if (memoryMenu == null)
         {
             Debug.Log("Getting memory menu");
-            memoryMenu = TransientDataCalls.GetStorySystem().memoryMenu;
+            memoryMenu = TransientDataScript.GetStorySystem().memoryMenu;
         }
         if (memoryMenu != null)
         {
@@ -185,7 +185,7 @@ public class InteractNode : MonoBehaviour
                 foreach (var possibleWalker in possibleWalkers)
                 {
                     if (RequirementChecker.CheckWalkingRequirements(possibleWalker)
-                        && !TransientDataCalls.activeWalkingNpcs.Contains(possibleWalker))
+                        && !TransientDataScript.activeWalkingNpcs.Contains(possibleWalker))
                     {
                         Debug.Log($"{possibleWalker.name} was valid walking NPC and not yet spawned.");
                         viableWalkers.Add(possibleWalker);
@@ -297,7 +297,7 @@ public class InteractNode : MonoBehaviour
     {
         if (walker != null)
         {
-            TransientDataCalls.activeWalkingNpcs.Add(walker);
+            TransientDataScript.activeWalkingNpcs.Add(walker);
             isSpawningNpc = true;
             character = walker;
             nodeSprite.sprite = placeholderNpc.still;

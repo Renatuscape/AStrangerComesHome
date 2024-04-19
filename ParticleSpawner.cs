@@ -37,7 +37,7 @@ public class ParticleSpawner : MonoBehaviour
 
         if (affectedByPlayerSpeed)
         {
-            calculatedSpawnTime = calculatedSpawnTime - TransientDataCalls.transientData.currentSpeed;
+            calculatedSpawnTime = calculatedSpawnTime - TransientDataScript.transientData.currentSpeed;
         }
 
         if (calculatedSpawnTime < 0.2f) //LIMIT MAX SPAWN
@@ -75,7 +75,7 @@ public class ParticleSpawner : MonoBehaviour
 
         if (affectedByPlayerSpeed)
         {
-            randomParticles = randomParticles * TransientDataCalls.transientData.currentSpeed;
+            randomParticles = randomParticles * TransientDataScript.transientData.currentSpeed;
         }
 
         for (int i = 0; i < (randomParticles + 1); i++)

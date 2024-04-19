@@ -44,7 +44,7 @@ public class MapManager : MonoBehaviour
 
         if (playerToken.transform.localPosition == mapMarker.transform.localPosition && positionSet == false && transientData.engineState != EngineState.Off)
         {
-            transientData.PushAlert("Driving in circles. Choose destination (M).");
+            TransientDataScript.PushAlert("Driving in circles. Choose destination (M).");
         }
     }
     void Update()
@@ -100,9 +100,9 @@ public class MapManager : MonoBehaviour
                     var locationName = Regex.Replace(locationToString, "(\\B[A-Z])", " $1");
                     positionSet = false;
                     if (transientData.currentLocation is null)
-                        transientData.PushAlert("You have arrived at " + locationName);
+                        TransientDataScript.PushAlert("You have arrived at " + locationName);
                     else
-                        transientData.PushAlert("You have arrived at your destination.");
+                        TransientDataScript.PushAlert("You have arrived at your destination.");
                 }
                 else if (playerToken.transform.localPosition == mapMarker.transform.localPosition && positionSet == false)
                 {

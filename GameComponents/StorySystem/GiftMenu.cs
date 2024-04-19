@@ -62,7 +62,7 @@ public class GiftMenu : MonoBehaviour
         selectedGift = null;
         gameObject.SetActive(true);
         inventoryContainer.SetActive(true);
-        TransientDataCalls.SetGameState(GameState.AlchemyMenu, name, gameObject);
+        TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
         GetInventory();
         PrintInventory();
 
@@ -141,7 +141,7 @@ public class GiftMenu : MonoBehaviour
     public void Gift()
     {
         selectedGiftInfo.SetActive(false);
-        TransientDataCalls.SetAsGifted(character);
+        TransientDataScript.SetAsGifted(character);
 
         foreach (var giftItem in spawnedItems)
         {
@@ -152,17 +152,17 @@ public class GiftMenu : MonoBehaviour
 
         if (character.giftsDislike.FirstOrDefault(i => i == selectedGift.objectID) != null)
         {
-            TransientDataCalls.PushAlert($"{character.NamePlate()}\'Oh...\'");
+            TransientDataScript.PushAlert($"{character.NamePlate()}\'Oh...\'");
             appreciation = 0;
         }
         else if (character.giftsLove.FirstOrDefault(i => i == selectedGift.objectID) != null)
         {
-            TransientDataCalls.PushAlert($"{character.NamePlate()}\'I love this!\'");
+            TransientDataScript.PushAlert($"{character.NamePlate()}\'I love this!\'");
             appreciation += 2;
         }
         else if (character.giftsLike.FirstOrDefault(i => i == selectedGift.objectID) != null || selectedGift.type == ItemType.Treasure)
         {
-            TransientDataCalls.PushAlert($"{character.NamePlate()}\'Thank you!\'");
+            TransientDataScript.PushAlert($"{character.NamePlate()}\'Thank you!\'");
             appreciation += 1;
         }
 
@@ -222,7 +222,7 @@ public class GiftMenu : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
-        TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
+        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 }
 
@@ -240,17 +240,17 @@ public class GiftItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         }
         else
         {
-            TransientDataCalls.PushAlert("It's unseemely to give another gift so soon.");
+            TransientDataScript.PushAlert("It's unseemely to give another gift so soon.");
         }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        TransientDataCalls.PrintFloatEmbellishedItem(item, true, true);
+        TransientDataScript.PrintFloatEmbellishedItem(item, true, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        TransientDataCalls.DisableFloatText();
+        TransientDataScript.DisableFloatText();
     }
 }

@@ -79,7 +79,7 @@ public class MemoryMenu : MonoBehaviour
             }
 
             memoryTitle.text = activeMemory.topicName ?? "A Stray Memory";
-            TransientDataCalls.SetGameState(GameState.Dialogue, name, gameObject);
+            TransientDataScript.SetGameState(GameState.Dialogue, name, gameObject);
             gameObject.SetActive(true);
             StartCoroutine(FadeInShadowBox());
             StartDialogue();
@@ -174,6 +174,6 @@ public class MemoryMenu : MonoBehaviour
     {
         gameObject.SetActive(false);
         Player.Set(activeMemory.questID, activeMemory.choices[0].advanceTo);
-        TransientDataCalls.SetGameState(GameState.Overworld, name, gameObject);
+        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 }

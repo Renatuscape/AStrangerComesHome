@@ -45,7 +45,7 @@ public class Character
     }
     public string NamePlate()
     {
-        var nameUnlocked = TransientDataCalls.gameManager.dataManager.unlockedNames.FirstOrDefault(n => n == objectID + "-NAME");
+        var nameUnlocked = TransientDataScript.gameManager.dataManager.unlockedNames.FirstOrDefault(n => n == objectID + "-NAME");
 
         if (nameUnlocked != null)
         {
@@ -70,7 +70,7 @@ public class Character
 
     public string GetNameOnly()
     {
-        var nameUnlocked = TransientDataCalls.gameManager.dataManager.unlockedNames.FirstOrDefault(n => n == objectID + "-NAME");
+        var nameUnlocked = TransientDataScript.gameManager.dataManager.unlockedNames.FirstOrDefault(n => n == objectID + "-NAME");
 
         if (nameUnlocked != null)
         {
@@ -179,7 +179,7 @@ public class WalkingLocation
             bool hasFoundLocation = false;
             foreach (string location in locations)
             {
-                if (location == TransientDataCalls.transientData.currentLocation.objectID)
+                if (location == TransientDataScript.transientData.currentLocation.objectID)
                 {
                     hasFoundLocation = true;
                 }
@@ -197,7 +197,7 @@ public class WalkingLocation
         // CHECK TIME OF DAY
         if (timeStart != timeEnd) // Skip if start and end time is identical, i. e. not set to any meaningful value
         {
-            var timeOfDay = TransientDataCalls.GetTimeOfDay();
+            var timeOfDay = TransientDataScript.GetTimeOfDay();
 
             if (timeOfDay < timeStart || timeOfDay > timeEnd)
             {
@@ -209,7 +209,7 @@ public class WalkingLocation
         if (daysOfWeek != null && daysOfWeek.Count > 0) //if no days are listed, spawn any day
         {
             bool isValidDay = false;
-            int dayOfWeek = (int)TransientDataCalls.GetWeekDay();
+            int dayOfWeek = (int)TransientDataScript.GetWeekDay();
             foreach (int day in daysOfWeek)
             {
                 if (day == dayOfWeek)

@@ -119,7 +119,7 @@ public static class QuestResetter
             questsFound = true;
         }
 
-        int daysPassed = TransientDataCalls.GetDaysPassed();
+        int daysPassed = TransientDataScript.GetDaysPassed();
 
         foreach (Quest quest in questsAdvancingDaily)
         {
