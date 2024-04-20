@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 public static class Player
 {
@@ -16,6 +17,7 @@ public static class Player
         return false;
     }
 
+    // REMOVING - makes sure a positive number is flipped to negative
     public static void Remove(IdIntPair entry, bool doNotLog = false)
     {
         Remove(entry.objectID, entry.amount, doNotLog);
@@ -32,6 +34,7 @@ public static class Player
         Add(objectID, removeAmount, doNotLog);
     }
 
+    // SET - forcibly sets object to specified value in player inventory
     public static void Set(string objectID, int amount, bool doNotLog = false)
     {
         var foundObject = inventoryList.FirstOrDefault(o => o.objectID == objectID);
@@ -46,6 +49,12 @@ public static class Player
         }
     }
 
+    // ADDING METHODS - positve numbers are added from inventory, negative numbers are removed
+    public static int Add(IdIntPair entry, bool doNotLog = false)
+    {
+        return Add(entry.objectID, entry.amount, doNotLog);
+    }
+
     public static int Add(string objectID, int amount = 1, bool doNotLog = false)
     {
         if (objectID.Contains("-NAME"))
@@ -56,148 +65,93 @@ public static class Player
             dataManager.unlockedNames.Add(objectID);
             DialogueTagParser.UpdateTags(dataManager);
             Debug.Log("Name unlocked. Updating tags.");
+
+            return 1;
         }
-        else if (GameCodex.ParseID(objectID) != null)
-        {
-            return AddDynamicObject(GameCodex.ParseID(objectID), amount, doNotLog);
-        }
-        return 0;
+
+        return FindObjectAndAddUpToMax(objectID, amount, doNotLog);
     }
 
-    public static int Add(IdIntPair entry, bool doNotLog = false)
+    static int FindObjectAndAddUpToMax(string objectID, int amount, bool doNotLog = false)
     {
-        return Add(entry.objectID, entry.amount, doNotLog);
-    }
+        int amountAdded = 0;
 
-    public static int AddDynamicObject(dynamic dynamicObject, int amount, bool doNotLog = false, string caller = "")
-    {
-        Debug.Log($"Attempting to add dynamic object {dynamicObject.name} ({amount})");
-        int max = 0;
-        string id = string.Empty;
+        // Check whether object exists and get its base data
+        var foundObject = GameCodex.GetBaseObject(objectID);
 
-        if (dynamicObject is Item)
+        if (foundObject != null)
         {
-            var item = (Item)dynamicObject;
-            max = item.maxValue;
-            id = item.objectID;
-        }
-        else if (dynamicObject is Skill)
-        {
-            var skill = (Skill)dynamicObject;
-            max = skill.maxValue;
-            id = skill.objectID;
-        }
-        else if (dynamicObject is Upgrade)
-        {
-            var upgrade = (Upgrade)dynamicObject;
-            max = upgrade.maxValue;
-            id = upgrade.objectID;
-        }
-        else if (dynamicObject is Quest)
-        {
-            var quest = (Quest)dynamicObject;
-            max = quest.maxValue;
-            id = quest.objectID;
-        }
-        else if (dynamicObject is Character)
-        {
-            var character = (Character)dynamicObject;
-            max = character.maxValue;
-            id = character.objectID;
-        }
-        else if (dynamicObject is Recipe)
-        {
-            var recipe = (Recipe)dynamicObject;
-            max = recipe.maxValue;
-            id = recipe.objectID;
-        }
-        if (id != "")
-        {
-            bool itemExists = false;
-            foreach (IdIntPair entry in inventoryList)
+            // Check whether object already exists in inventory. GetCount is not sufficient here
+            var entry = inventoryList.FirstOrDefault(e => e.objectID == objectID);
+
+            // Create new entry if one does not exist
+            if (entry == null)
             {
-                if (entry.objectID == id)
-                {
-                    itemExists = true;
-                    if (entry.amount + amount <= max && entry.amount + amount >= 0)
-                    {
-                        entry.amount += amount;
-
-                        if (!doNotLog)
-                        {
-                            AttemptToLog(dynamicObject, amount);
-                        }
-                        return amount;
-                    }
-                    else
-                    {
-                        int reduced = max - entry.amount;
-                        entry.amount += reduced;
-
-                        if (!doNotLog)
-                        {
-                            AttemptToLog(dynamicObject, reduced);
-                        }
-                        return reduced;
-                    }
-                }
+                entry = new() { objectID = objectID, amount = 0 };
+                inventoryList.Add(entry);
             }
-            if (!itemExists)
+
+            if (entry.amount + amount <= foundObject.maxValue)
             {
-                IdIntPair newEntry = new() { objectID = id, amount = 0 };
-                inventoryList.Add(newEntry);
-                Debug.Log($"Caller {caller} created new entry for {id} in player inventory.");
-
-                if (amount >= 0 && amount <= max)
-                {
-                    newEntry.amount += amount;
-
-                    if (!doNotLog)
-                    {
-                        AttemptToLog(dynamicObject, amount);
-                    }
-                    return amount;
-                }
-                else
-                {
-                    int reduced = max - newEntry.amount;
-                    newEntry.amount += reduced;
-
-                    if (!doNotLog)
-                    {
-                        AttemptToLog(dynamicObject, reduced);
-                    }
-                    return reduced;
-                }
+                entry.amount += amount;
+                amountAdded = amount;
             }
+            else
+            {
+                entry.amount = foundObject.maxValue;
+                amountAdded = foundObject.maxValue - entry.amount;
+            }
+
         }
-        return 0;
+
+        if (!doNotLog)
+        {
+            AttemptToLog(foundObject, amountAdded);
+        }
+
+        return amountAdded;
     }
 
-    static void AttemptToLog(dynamic dynamicObject, int value)
+    static void AttemptToLog(BaseObject baseObject, int value)
     {
-        if (dynamicObject is Item)
+        if (baseObject.objectType == ObjectType.Item)
         {
-            LogAlert.QueueItemAlert((Item)dynamicObject, value);
+            LogAlert.QueueItemAlert((Item)baseObject, value);
         }
-        else if (dynamicObject is Character)
+        else if (baseObject.objectType == ObjectType.Character)
         {
-            LogAlert.QueueAffectionAlert((Character)dynamicObject, value);
+            LogAlert.QueueAffectionAlert((Character)baseObject, value);
         }
-        else if (dynamicObject is Skill)
+        else if (baseObject.objectType == ObjectType.Skill)
         {
-            var skill = (Skill)dynamicObject;
+            var skill = (Skill)baseObject;
             LogAlert.QueueTextAlert($"{skill.name} increased by {value}");
         }
-        else if (dynamicObject is Recipe)
+        else if (baseObject.objectType == ObjectType.Recipe)
         {
-            var recipe = (Recipe)dynamicObject;
-            LogAlert.QueueTextAlert($"Obtained {recipe.name}!");
+            var recipe = (Recipe)baseObject;
+
+            if (value < 0)
+            {
+                LogAlert.QueueTextAlert($"Removed {recipe.name} from recipe tin.");
+            }
+            else
+            {
+                LogAlert.QueueTextAlert($"Obtained {recipe.name}!");
+            }
         }
-        else if (dynamicObject is Upgrade)
+        else if (baseObject is Upgrade)
         {
-            var upgrade = (Upgrade)dynamicObject;
-            LogAlert.QueueTextAlert($"{upgrade.name} upgraded!");
+            var upgrade = (Upgrade)baseObject;
+
+            if (value < 0)
+            {
+                LogAlert.QueueTextAlert($"{upgrade.name} wore down.");
+            }
+            else
+            {
+                LogAlert.QueueTextAlert($"{upgrade.name} upgraded!");
+            }
         }
     }
 
