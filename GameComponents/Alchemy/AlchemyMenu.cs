@@ -38,14 +38,13 @@ public class AlchemyMenu : MonoBehaviour
     public bool isDebugging = false;
     bool containersEnabled;
 
-    private void Start()
-    {
-        dataManager = TransientDataScript.gameManager.dataManager;
-        SetUpContainers();
-    }
-
     public void Initialise(SynthesiserType synthesiserType)
     {
+        if (!containersEnabled)
+        {
+            dataManager = TransientDataScript.gameManager.dataManager;
+            SetUpContainers();
+        }
         this.synthesiserType = synthesiserType;
 
         string synthName = synthesiserType.ToString();
@@ -76,13 +75,22 @@ public class AlchemyMenu : MonoBehaviour
 
     public void InitialiseBySynthesiser(SynthesiserData incomingSynthesiser, bool isDebugging = false)
     {
+        if (!containersEnabled)
+        {
+            dataManager = TransientDataScript.gameManager.dataManager;
+            SetUpContainers();
+        }
+
         Debug.Log($"Received {incomingSynthesiser.synthesiserID} at alchemy menu.");
 
         synthData = incomingSynthesiser;
 
-        if (synthData != null && synthData.synthRecipe != null)
+        if (synthData != null)
         {
-            synthData.synthRecipe.SetWorkload(); // In case the formula has been changed, update workload
+            if (synthData.synthRecipe != null)
+            {
+                synthData.synthRecipe.SetWorkload(); // In case the formula has been changed, update workload
+            }
             gameObject.SetActive(true);
             alchemyObjects = SetUpAlchemyObjects(isDebugging);
             inventory.RenderInventory(ItemType.Catalyst, false);
@@ -90,6 +98,10 @@ public class AlchemyMenu : MonoBehaviour
             progressBar.alchemyMenu = this;
             progressBar.Initialise(synthData);
             yieldManager.Setup(synthData);
+        }
+        else
+        {
+            Debug.Log("Synthdata was somehow null when opening alchemy menu.");
         }
     }
     void SetUpContainers()
