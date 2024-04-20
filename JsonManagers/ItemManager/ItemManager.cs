@@ -87,10 +87,6 @@ public class ItemManager : MonoBehaviour
     {
         // Set base object values
         item.objectType = BaseObjectType.Item;
-        if (item.maxValue == 0)
-        {
-            item.maxValue = StaticGameValues.maxItemValue;
-        }
 
         // Set item-specific values
         ItemIDReader(ref item);
@@ -98,6 +94,22 @@ public class ItemManager : MonoBehaviour
         if (item.type != ItemType.Misc)
         {
             item.basePrice = CalculatePrice(ref item);
+        }
+
+        if (item.maxValue == 0)
+        {
+            if (item.rarity == ItemRarity.Unique)
+            {
+                item.maxValue = 1;
+            }
+            else if (item.type == ItemType.Book)
+            {
+                item.maxValue = StaticGameValues.maxBookValue;
+            }
+            else
+            {
+                item.maxValue = StaticGameValues.maxItemValue;
+            }
         }
 
         itemList.Add(item);
@@ -153,7 +165,6 @@ public class ItemManager : MonoBehaviour
         }
         else if (objectID.Contains("BOO"))
         {
-            item.maxValue = 9;
             return ItemType.Book;
         }
         else if (objectID.Contains("MAT"))
@@ -198,7 +209,6 @@ public class ItemManager : MonoBehaviour
         }
         else if (item.objectID.Contains("UNI"))
         {
-            item.maxValue = 1;
             return ItemRarity.Unique;
         }
         else if (item.objectID.Contains("JUN"))
