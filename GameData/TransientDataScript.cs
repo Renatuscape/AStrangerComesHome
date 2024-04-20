@@ -56,9 +56,14 @@ public class TransientDataScript : MonoBehaviour
     //*** PUBLIC METHODS ***
     //UI TEXT
 
-    public void SpawnLocation(Location location)
+    public void OnLocationSpawn(Location location)
     {
         Debug.Log($"Ready to spawn {location.name} {location.objectID} when logic is implemented.");
+
+        if (GameState == GameState.Overworld)
+        {
+            gameManager.questTracker.RunCheck();
+        }
     }
 
     //SYSTEM METHODS
@@ -231,6 +236,11 @@ public class TransientDataScript : MonoBehaviour
             LogStateChange(callerScript, callerObject, newState);
             GameState = newState;
             DisableFloatText();
+
+            if (newState == GameState.Overworld)
+            {
+                gameManager.questTracker.RunCheck();
+            }
         }
         else
         {
