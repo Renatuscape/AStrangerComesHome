@@ -4,6 +4,7 @@ using UnityEngine;
 public class AutoMapBuilder
 {
     public AutoMap autoMap;
+    public List<MapLocationPrefab> lockedLocations = new();
 
     float spacing = 1;
     GameObject mapContainer;
@@ -35,12 +36,8 @@ public class AutoMapBuilder
                 if (autoMap.tilePainter.FlipTile(region, rowCounter, j, out var tile))
                 {
                     var renderer = newTile.GetComponent<SpriteRenderer>();
-                    renderer.sprite = tile.sprite;
-                    newTile.name = $"{ tile.TileID} ({rowCounter}, {j})";
-                    if (!tile.isUnobstructive)
-                    {
-                        newTile.tag = "Untagged";
-                    }
+                    renderer.sprite = tile;
+                    newTile.name = $"{tile.name} ({rowCounter}, {j})";
                 }
             }
             rowCounter--;
@@ -49,16 +46,54 @@ public class AutoMapBuilder
 
     void GenerateLocationMarkers(Region region)
     {
+        lockedLocations.Clear();
+
         foreach (Location location in region.locations)
         {
             Vector3 localPosition = new Vector3(location.mapX, location.mapY, 0);
             var newMarker = Object.Instantiate(autoMap.locationMarker, localPosition, Quaternion.identity);
             newMarker.transform.SetParent(mapContainer.transform);
             newMarker.transform.localPosition = localPosition;  // Set local position relative to mapContainer
-            newMarker.GetComponent<MapLocationPrefab>().location = location;
-            newMarker.GetComponent<MapLocationPrefab>().autoMap = autoMap;
-            newMarker.GetComponent<SpriteRenderer>().sprite = autoMap.tilePainter.FlipMarker(location);
+            newMarker.name = location.name;
             autoMap.mapMarkers.Add(newMarker);
+
+
+            var script = newMarker.GetComponent<MapLocationPrefab>();
+            script.location = location;
+            script.autoMap = autoMap;
+
+            if (location.isHidden)
+            {
+                newMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+                lockedLocations.Add(script);
+            }
+            else
+            {
+                newMarker.GetComponent<SpriteRenderer>().sprite = autoMap.tilePainter.FlipMarker(location);
+            }
+
+            if (location.requirements.Count > 0 || location.restrictions.Count > 0)
+            {
+                newMarker.SetActive(false);
+                lockedLocations.Add(script);
+            }
+        }
+
+        CheckLockedLocations();
+    }
+
+    public void CheckLockedLocations()
+    {
+        var locationsToCheck = new List<MapLocationPrefab>(lockedLocations);
+
+        foreach (var mapMarker in locationsToCheck)
+        {
+            if (mapMarker.location.CheckIfUnlocked())
+            {
+                mapMarker.gameObject.SetActive(true);
+                Debug.Log($"Location {mapMarker.location.name} was unlocked after passing requirement checks.");
+                lockedLocations.Remove(mapMarker);
+            }
         }
     }
     public void ChangeMap(Region region)
