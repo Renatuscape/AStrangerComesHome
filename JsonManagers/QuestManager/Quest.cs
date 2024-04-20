@@ -3,13 +3,11 @@ using UnityEngine;
 using System.Linq;
 
 [System.Serializable]
-public class Quest
+public class Quest : BaseObject
 {
-    public string objectID;
     public string name;
     public string description;
     public bool excludeFromJournal;
-    public int maxValue = 100;
     public Character questGiver; //Set from objectID by QuestManager
     public AdvancementCheck unlockRequirements;
     public List<IdIntPair> rewards;

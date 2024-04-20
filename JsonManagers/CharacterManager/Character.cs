@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.FilePathAttribute;
 
 public enum CharacterType
 {
@@ -12,15 +11,13 @@ public enum CharacterType
 }
 
 [System.Serializable]
-public class Character
+public class Character : BaseObject
 {
-    public string objectID;
     public string dialogueTag;
     public string name;
     public string trueName;
     public string hexColour;
     public string description;
-    public int maxValue = 200;
     public bool excludeFromPrint = false;
 
     public CharacterType type;

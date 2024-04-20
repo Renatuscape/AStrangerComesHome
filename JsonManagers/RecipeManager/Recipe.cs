@@ -5,15 +5,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
-public class Recipe
+public class Recipe : BaseObject
 {
-    public string objectID;
     public string name; // custom or set by yield item
     public string description;
     public ItemRarity rarity; //set by yield item
     public int baseWorkload = 10; // 10 is default. This is multiplied by type and rarity. Reduce or increase in JSON only when an item deviates from standard.
 
-    public int maxStack = 1;
     public int workload;
     public int manaDrainRate = 1;
     public int basePrice;

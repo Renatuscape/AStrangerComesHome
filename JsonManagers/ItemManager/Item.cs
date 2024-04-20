@@ -4,12 +4,10 @@ using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
-public class Item
+public class Item : BaseObject
 {
-    public string objectID;
     public string name;
     public int basePrice; //automatically calculated from type, rarity and ID
-    public int maxStack = 99;
     public ItemType type; //retrieve from ID
     public ItemRarity rarity; //retrieve from ID
     public Texture2D image; //retrieve from ID + folder
@@ -75,7 +73,7 @@ public static class Items
         {
             if (item.objectID.Contains(searchWord))
             {
-                return item.maxStack;
+                return item.maxValue;
             }
         }
         return 99;

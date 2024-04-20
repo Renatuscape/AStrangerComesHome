@@ -12,12 +12,10 @@ public enum SkillType
 }
 
 [System.Serializable]
-public class Skill
+public class Skill : BaseObject
 {
-    public string objectID;
     public string name;
     public int basePrice; //automatically calculated from type, rarity and ID
-    public int maxLevel = 10;
     public SkillType type; //retrieve from ID
     public Texture2D image; //retrieve from ID + folder
     public Sprite sprite;
@@ -67,7 +65,7 @@ public static class Skills
         {
             if (skill.objectID == searchWord)
             {
-                return skill.maxLevel;
+                return skill.maxValue;
             }
         }
         return 10;
