@@ -190,10 +190,17 @@ public class DialogueDisplay : MonoBehaviour
 
         foreach (var text in textArray)
         {
-            if (printSpeed > 0)
+            //if (printSpeed > 0)
+            //{
+            //    AudioManager.PlayAmbientSound("knockSmall", -0.1f);
+            //}
+
+            if (printSpeed == 0)
             {
-                AudioManager.PlayAmbientSound("knockSmall", -0.1f);
+                contentText.text = textToPrint;
+                break;
             }
+
             yield return new WaitForSeconds(printSpeed);
             contentText.text += text + " ";
         }
