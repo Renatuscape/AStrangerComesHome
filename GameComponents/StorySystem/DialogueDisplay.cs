@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +21,8 @@ public class DialogueDisplay : MonoBehaviour
     public TextMeshProUGUI leftNameText;
     public TextMeshProUGUI rightNameText;
 
+    public Anim_BobLoop continueBobber;
+
     public Button btnSpeed;
     public Button btnAutoPlay;
 
@@ -33,7 +34,7 @@ public class DialogueDisplay : MonoBehaviour
     public bool autoEnabled;
     public bool endConversation;
     public bool readyToPrintChoices;
-    public bool readyToContinue;
+    public bool continueAfterChoice;
     public int eventIndex;
 
     public float printSpeed = 0.05f;
@@ -68,7 +69,16 @@ public class DialogueDisplay : MonoBehaviour
 
             readyToPrintChoices = false;
             continueEnabled = false;
-            readyToContinue = false;
+            continueAfterChoice = false;
+        }
+
+        if (continueEnabled && continueBobber.paused)
+        {
+            continueBobber.paused = false;
+        }
+        else if (!continueEnabled && !continueBobber.paused)
+        {
+            continueBobber.PauseAtOrigin();
         }
     }
 
@@ -79,7 +89,7 @@ public class DialogueDisplay : MonoBehaviour
         continueEnabled = false;
         endConversation = false;
         readyToPrintChoices = false;
-        readyToContinue = false;
+        continueAfterChoice = false;
         isPrinting = false;
 
         gameObject.SetActive(true);
@@ -128,10 +138,14 @@ public class DialogueDisplay : MonoBehaviour
     public void PrintChoiceResult(Choice choice, bool isSuccess, List<IdIntPair> missingItems)
     {
         string speakerTag = isSuccess ? choice.successSpeaker : choice.failureSpeaker;
+        bool hasResultText = !string.IsNullOrEmpty(speakerTag);
+        bool hasMissingItemsToPrint = missingItems != null && missingItems.Count > 0;
 
-        if (!string.IsNullOrEmpty(speakerTag)) // if there is no speaker, skip the print
+        if (hasResultText) // if there is no speaker, skip the print
         {
             DialogueEvent resultEvent = new();
+
+            // Parse speaker event data here if it exists
 
             resultEvent.speaker = Characters.FindByTag(speakerTag, name);
 
@@ -152,32 +166,37 @@ public class DialogueDisplay : MonoBehaviour
                 PrintToChatLog(parsedText, false, false);
             }
         }
-        else if (choice.endConversation)
-        {
-            endConversation = true;
 
-            if (missingItems == null || missingItems.Count == 0)
-            {
-                dialogueMenu.EndDialogue();
-            }
-        }
-
-        if (missingItems != null && missingItems.Count > 0)
+        if (hasMissingItemsToPrint)
         {
             foreach (var entry in missingItems)
             {
                 Debug.Log($"Missing {entry.amount} {entry.objectID}. Print this for the player somehow.");
             }
+
+            endConversation = true;
         }
 
         if (!isSuccess || choice.endConversation)
         {
             endConversation = true;
+
+            if (!hasResultText)
+            {
+                dialogueMenu.EndDialogue();
+            }
         }
         else
         {
-            readyToContinue = true;
+            continueAfterChoice = true;
         }
+
+        if (continueAfterChoice && !hasResultText)
+        {
+            dialogueMenu.ContinueAfterChoice();
+        }
+
+        Debug.Log($"Speaker was {speakerTag} and whether it has text returned {hasResultText}.");
     }
 
     IEnumerator PrintContent(string textToPrint)
@@ -247,10 +266,9 @@ public class DialogueDisplay : MonoBehaviour
         }
         else if (endConversation)
         {
-            portraitManager.gameObject.SetActive(false);
             dialogueMenu.EndDialogue();
         }
-        else if (readyToContinue && !isPrinting)
+        else if (continueAfterChoice && !isPrinting)
         {
             dialogueMenu.ContinueAfterChoice();
         }
