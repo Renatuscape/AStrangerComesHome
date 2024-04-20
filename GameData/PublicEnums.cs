@@ -69,15 +69,6 @@ public enum ItemType
     Script = 8      //only for data used by scripts
 }
 
-public enum ObjectType
-{
-    Item,
-    EngineUpgrade,
-    ManaUpgrade,
-    Skill,
-    Quest
-}
-
 public enum ItemRarity
 {
     Junk = -1,

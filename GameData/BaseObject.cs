@@ -2,10 +2,10 @@
 {
     public string objectID;
     public int maxValue;
-    public BaseObjectType objectType;
+    public ObjectType objectType;
 }
 
-public enum BaseObjectType
+public enum ObjectType
 {
     Item,
     Upgrade,
