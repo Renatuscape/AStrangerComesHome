@@ -56,7 +56,8 @@ public class Dialogue
         if (!string.IsNullOrEmpty(locationID))
         {
             var location = TransientDataScript.GetCurrentLocation();
-            if (location != null && location.objectID != locationID)
+
+            if (location == null || location.objectID != locationID)
             {
                 // Debug.Log("Quest tracker returned false on locationID " + locationID);
                 return false;
