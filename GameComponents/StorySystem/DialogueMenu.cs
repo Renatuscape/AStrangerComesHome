@@ -35,7 +35,14 @@ public class DialogueMenu : MonoBehaviour
 
     public void HandleChoiceResult(Choice choice, bool isSuccess, List<IdIntPair> missingItems)
     {
-        Player.Set(activeQuest.objectID, choice.advanceTo);
+        if (isSuccess)
+        {
+            Player.Set(activeQuest.objectID, choice.advanceTo);
+        }
+        if (!isSuccess && choice.advanceToOnFailure > -1)
+        {
+            Player.Set(activeQuest.objectID, choice.advanceToOnFailure);
+        }
 
         choiceManager.gameObject.SetActive(false);
         dialogueDisplay.PrintChoiceResult(choice, isSuccess, missingItems);
