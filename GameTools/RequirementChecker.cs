@@ -7,7 +7,7 @@ public static class RequirementChecker
     public static bool CheckDialogueRequirements(Dialogue dialogue)
     {
         bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
-        bool locationCheck = CheckLocation(dialogue.locationID);
+        bool locationCheck = CheckAgainstCurrentLocation(dialogue.locationID);
         bool requirementCheck = CheckRequirements(dialogue.requirements);
         bool restrictionCheck = CheckRestrictions(dialogue.restrictions);
 
@@ -107,10 +107,15 @@ public static class RequirementChecker
             return false;
         }
     }
-    public static bool CheckLocation(string objectID)
+
+    public static bool CheckAgainstCurrentLocation(string objectID)
     {
         Location requiredLocation = Locations.FindByID(objectID);
 
+        return CheckAgainstCurrentLocation(requiredLocation);
+    }
+    public static bool CheckAgainstCurrentLocation(Location requiredLocation)
+    {
         if (requiredLocation == null)
         {
             Debug.LogWarning("Location check returned true because required location returned null.");
