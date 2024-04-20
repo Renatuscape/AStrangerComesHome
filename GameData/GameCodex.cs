@@ -1,87 +1,51 @@
-﻿using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
-
+﻿
 public static class GameCodex
 {
-    public static string GetNameFromID(string objectID)
+    public static BaseObject GetBaseObject(string objectID)
     {
-        return ParseID(objectID).name;
-    }
-    public static bool ParseDynamicValues(dynamic dynamicObject, out int max, out string id)
-    {
-        if (dynamicObject is Item)
-        {
-            var item = (Item)dynamicObject;
-            max = item.maxValue;
-            id = item.objectID;
-            return true;
-        }
-        else if (dynamicObject is Skill)
-        {
-            var skill = (Skill)dynamicObject;
-            max = skill.maxValue;
-            id = skill.objectID;
-            return true;
-        }
-        else if (dynamicObject is Upgrade)
-        {
-            var upgrade = (Upgrade)dynamicObject;
-            max = upgrade.maxValue;
-            id = upgrade.objectID;
-            return true;
-        }
-        else if (dynamicObject is Quest)
-        {
-            var quest = (Quest)dynamicObject;
-            max = quest.maxValue;
-            id = quest.objectID;
-            return true;
-        }
-        else if (dynamicObject is Character)
-        {
-            var character = (Character)dynamicObject;
-            max = character.maxValue;
-            id = character.objectID;
-            return true;
-        }
-        max = 0;
-        id = string.Empty;
-        return false;
-    }
-    public static dynamic ParseID(string searchID)
-    {
-        Item foundItem = Items.FindByID(searchID);
-        if (foundItem != null)
-        {
-            return foundItem;
-        }
+        var identifier = objectID.Substring(0, 3);
 
-        Skill foundSkill = Skills.FindByID(searchID);
-        if (foundSkill != null)
+        if (identifier == "REC")
         {
-            return foundSkill;
+            return Recipes.FindByID(objectID);
         }
-
-        Upgrade foundUpgrade = Upgrades.FindByID(searchID);
-        if (foundUpgrade != null)
+        else if (identifier == "ARC" ||
+            identifier == "UNI" ||
+            identifier == "GEN")
         {
-            return foundUpgrade;
+            if (objectID.Length > 6 && objectID.Substring(6, 2) == "-Q")
+            {
+                return Quests.FindByID(objectID);
+            }
+            else
+            {
+                return Characters.FindByID(objectID);
+            }
         }
-
-        Quest foundQuest = Quests.FindByID(searchID);
-        if (foundQuest != null)
+        else if (identifier == "CAT" ||
+            identifier == "MAT" ||
+            identifier == "TRA" ||
+            identifier == "PLA" ||
+            identifier == "SEE" ||
+            identifier == "BOO" ||
+            identifier == "SCR" ||
+            identifier == "MIS" ||
+            identifier == "TRE")
         {
-            return foundQuest;
+            return Items.FindByID(objectID);
         }
-
-        Character foundCharacter = Characters.FindByID(searchID);
-        if (foundCharacter != null)
+        else if (identifier == "ALC" ||
+            identifier == "GAR" ||
+            identifier == "MAG" ||
+            identifier == "ATT")
         {
-            return foundCharacter;
+            return Skills.FindByID(objectID);
         }
-
-        Debug.Log($"Could not identify object {searchID}");
+        else if (identifier == "MEC" ||
+            identifier == "MAU")
+        {
+            return Upgrades.FindByID(objectID);
+        }
         return null;
     }
 }
