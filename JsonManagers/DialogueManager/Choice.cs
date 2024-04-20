@@ -4,9 +4,10 @@ using UnityEngine;
 [System.Serializable]
 public class Choice
 {
-    public bool endConversation = true;
+    public bool endConversation = false;
     public bool doesNotAdvance = false;
     public int advanceTo; //set to 100 to complete quest
+    public int advanceToOnFailure = -1;
     public string optionText;
     public string successSpeaker;
     public string successText;
