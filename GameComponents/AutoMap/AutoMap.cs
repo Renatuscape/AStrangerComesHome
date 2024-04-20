@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.Rendering;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 public class AutoMap : MonoBehaviour
 {
@@ -55,6 +52,7 @@ public class AutoMap : MonoBehaviour
         {
             transform.position = enabledPosition;
             GoToPlayerToken();
+            mapBuilder.CheckLockedLocations();
         }
 
         else
