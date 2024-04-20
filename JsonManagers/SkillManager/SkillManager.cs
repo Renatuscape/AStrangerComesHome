@@ -66,8 +66,22 @@ public class SkillManager : MonoBehaviour
 
     public static void InitialiseSkill(Skill skill, List<Skill> skillList)
     {
+        skill.objectType = BaseObjectType.Skill;
+
         SkillIDReader(ref skill);
         skillList.Add(skill);
+
+        if (skill.maxValue == 0)
+        {
+            if (skill.type == SkillType.Attribute)
+            {
+                skill.maxValue = StaticGameValues.maxAttributeValue;
+            }
+            else
+            {
+                skill.maxValue = StaticGameValues.maxSkillValue;
+            }
+        }
     }
 
     public static void SkillIDReader(ref Skill skill)

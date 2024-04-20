@@ -36,7 +36,7 @@ public class UpgradeManager : MonoBehaviour
                 {
                     foreach (Upgrade skill in dataWrapper.upgrades)
                     {
-                        InitialiseSkill(skill, Upgrades.all);
+                        InitialiseUpgrade(skill, Upgrades.all);
                     }
                     filesLoaded++;
                     if (filesLoaded == numberOfFilesToLoad)
@@ -73,10 +73,13 @@ public class UpgradeManager : MonoBehaviour
         imageComponent.sprite = item.sprite;
     }
 
-    public static void InitialiseSkill(Upgrade skill, List<Upgrade> skillList)
+    public static void InitialiseUpgrade(Upgrade upgrade, List<Upgrade> upgradeList)
     {
-        ItemIDReader(ref skill);
-        skillList.Add(skill);
+        upgrade.objectType = BaseObjectType.Upgrade;
+        upgrade.maxValue = StaticGameValues.maxUpgradeValue;
+
+        ItemIDReader(ref upgrade);
+        upgradeList.Add(upgrade);
     }
 
     public static void ItemIDReader(ref Upgrade upgrade)
