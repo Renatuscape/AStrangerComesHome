@@ -20,31 +20,56 @@ public class Location
     public string objectID;
     public string name;
     public string otherName;
+    public string customSpriteID;
     public LocationType type = LocationType.Stop;
-    public bool isHidden = false;
+    public bool isHidden = false; // use this for locations without icons, but which can still be visited. Can combine with unlockables.
     public bool noPassengers = false;
     public string description;
     public int mapX;
     public int mapY;
-    public List<IdIntPair> requirements = new();
-    public List<IdIntPair> restrictions = new();
-    public Texture2D backgroundTexture = null;
-    public Sprite backgroundSprite = null;
-    public List<PointOfInterest> pointsOfInterest = new();
+    public List<IdIntPair> requirements = new(); //use this for unlockable locations
+    public List<IdIntPair> restrictions = new(); //use this for unlockable locations
     public List<Gate> gates = new();
+
+    public bool CheckIfUnlocked()
+    {
+        bool passedRequirements = RequirementChecker.CheckRequirements(requirements);
+        bool passedRestrictions = RequirementChecker.CheckRestrictions(restrictions);
+
+        if (passedRequirements && passedRestrictions)
+        {
+            return true;
+        }
+        return false;
+    }
 }
 public static class Locations
 {
     public static List<Location> all = new();
 
-    public static Location FindByCoordinates(int mapX, int mapY)
+    public static Location FindByCoordinates(int mapX, int mapY, bool excludeLocked)
     {
-        return all.Where(l => l.mapX == mapX && l.mapY == mapY).FirstOrDefault();
+        var match = all.FirstOrDefault(l => l.mapX == mapX && l.mapY == mapY);
+
+        if (excludeLocked && match != null)
+        {
+            if (match.CheckIfUnlocked())
+            {
+                Debug.Log("Station passed unlock check.");
+            }
+            else
+            {
+                Debug.Log("Station failed unlock check and returned null.");
+                return null;
+            }
+        }
+
+        return match;
     }
 
     public static Location FindByID(string objectID)
     {
-        return all.Where(l => l.objectID == objectID).FirstOrDefault();
+        return all.FirstOrDefault(l => l.objectID == objectID);
     }
 }
 
