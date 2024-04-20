@@ -66,7 +66,7 @@ public class SkillManager : MonoBehaviour
 
     public static void InitialiseSkill(Skill skill, List<Skill> skillList)
     {
-        skill.objectType = BaseObjectType.Skill;
+        skill.objectType = ObjectType.Skill;
 
         SkillIDReader(ref skill);
         skillList.Add(skill);

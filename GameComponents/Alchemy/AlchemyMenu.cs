@@ -138,7 +138,7 @@ public class AlchemyMenu : MonoBehaviour
                     }
                     else
                     {
-                        int amount = item.GetCountPlayer();
+                        int amount = Player.GetCount(item.objectID, name);
 
                         if (amount > 0)
                         {

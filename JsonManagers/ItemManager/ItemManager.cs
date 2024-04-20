@@ -86,7 +86,7 @@ public class ItemManager : MonoBehaviour
     public static void InitialiseItem(Item item, List<Item> itemList)
     {
         // Set base object values
-        item.objectType = BaseObjectType.Item;
+        item.objectType = ObjectType.Item;
 
         // Set item-specific values
         ItemIDReader(ref item);

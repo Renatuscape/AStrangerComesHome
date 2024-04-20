@@ -21,7 +21,7 @@ public class WeedsPrefab : MonoBehaviour
     {
         if (TransientDataScript.CameraView == CameraView.Garden)
         {
-            weedsObject.AddToPlayer();
+            Player.Add(weedsObject.objectID);
 
             planterParent.currentWeeds--;
             Destroy(gameObject);

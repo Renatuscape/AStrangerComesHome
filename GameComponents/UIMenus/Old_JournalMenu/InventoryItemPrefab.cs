@@ -25,8 +25,8 @@ public class InventoryItemPrefab : MonoBehaviour
         inventoryScript = script;
         itemSource = item;
 
-        if (itemSource.GetCountPlayer() > 1)
-            valueText.text = $"{itemSource.GetCountPlayer()}";
+        if (Player.GetCount(itemSource.objectID, name) > 1)
+            valueText.text = $"{Player.GetCount(itemSource.objectID, name)}";
         else
             valueText.text = $"";
 

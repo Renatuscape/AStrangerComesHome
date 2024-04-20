@@ -75,7 +75,7 @@ public class UpgradeManager : MonoBehaviour
 
     public static void InitialiseUpgrade(Upgrade upgrade, List<Upgrade> upgradeList)
     {
-        upgrade.objectType = BaseObjectType.Upgrade;
+        upgrade.objectType = ObjectType.Upgrade;
         upgrade.maxValue = StaticGameValues.maxUpgradeValue;
 
         ItemIDReader(ref upgrade);

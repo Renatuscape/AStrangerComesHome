@@ -74,7 +74,7 @@ public class CharacterManager : MonoBehaviour
 
     public static void InitialiseCharacter(Character character, List<Character> characterList)
     {
-        character.objectType = BaseObjectType.Character;
+        character.objectType = ObjectType.Character;
         character.maxValue = StaticGameValues.maxCharacterValue;
 
         character.NameSetup();

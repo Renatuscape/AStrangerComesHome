@@ -20,16 +20,6 @@ public class Skill : BaseObject
     public Texture2D image; //retrieve from ID + folder
     public Sprite sprite;
     public string description;
-
-    public void AddToPlayer(int amount = 1, bool doNotLog = false)
-    {
-        Player.AddDynamicObject(this, amount, doNotLog, "Skill");
-    }
-    public int GetCountPlayer()
-    {
-        return Player.GetCount(objectID, "Skill");
-    }
-
 }
 
 public static class Skills
@@ -50,7 +40,7 @@ public static class Skills
     {
         foreach (Skill skill in all)
         {
-            skill.AddToPlayer(25, true);
+            Player.Add(skill.objectID, 25, true);
         }
     }
 

@@ -67,7 +67,7 @@ public class RecipeManager : MonoBehaviour
 
     public static void InitialiseRecipe(Recipe recipe, List<Recipe> recipeList)
     {
-        recipe.objectType = BaseObjectType.Recipe;
+        recipe.objectType = ObjectType.Recipe;
         recipe.maxValue = StaticGameValues.maxRecipeValue;
 
         List<Item> yieldItems = new();

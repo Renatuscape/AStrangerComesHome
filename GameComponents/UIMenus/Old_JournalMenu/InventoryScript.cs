@@ -35,7 +35,7 @@ public class InventoryScript : MonoBehaviour
         foreach (Item item in Items.all)
         {
 
-            if (item.GetCountPlayer() > 0) //filter out objects that the player does not own
+            if (Player.GetCount(item.objectID, name) > 0) //filter out objects that the player does not own
             {
                 var prefab = Instantiate(inventoryItemPrefab);
                 prefab.name = item.name;

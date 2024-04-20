@@ -86,7 +86,7 @@ public class QuestManager : MonoBehaviour
 
     public static void InitialiseQuest(Quest quest, List<Quest> questList)
     {
-        quest.objectType = BaseObjectType.Quest;
+        quest.objectType = ObjectType.Quest;
         quest.maxValue = StaticGameValues.maxQuestValue;
         objectIDReader(ref quest);
         if (quest.dialogues == null || quest.dialogues.Count == 0)

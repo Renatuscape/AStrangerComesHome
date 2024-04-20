@@ -230,13 +230,13 @@ public class SalvageBoxMechanics : MonoBehaviour
             anim.SetTrigger("Active");
 
 
-            foreach (ItemIntPair pair in loot)
+            foreach (ItemIntPair entry in loot)
             {
-                if (pair.item != null && pair.amount > 0)
+                if (entry.item != null && entry.amount > 0)
                 {
-                    pair.item.AddToPlayer(pair.amount);
+                    Player.Add(entry.item.objectID, entry.amount);
 
-                    TransientDataScript.PushAlert($"Found {pair.item.name} ({pair.amount})!");
+                    TransientDataScript.PushAlert($"Found {entry.item.name} ({entry.amount})!");
                 }
             }
 

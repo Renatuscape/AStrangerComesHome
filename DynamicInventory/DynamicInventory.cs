@@ -106,7 +106,7 @@ public class DynamicInventory : MonoBehaviour
 
         foreach (Item item in Items.all)
         {
-            if (item.GetCountPlayer() > 0)
+            if (Player.GetCount(item.objectID, name) > 0)
             {
                 if (inventoryPage == DynamicInventoryPage.Catalysts)
                 {

@@ -21,7 +21,7 @@ public class GardenSeedPrefab : MonoBehaviour
         displayImage.sprite = itemSource.sprite;
         displayShadow.sprite = itemSource.sprite;
 
-        valueText.text = $"{itemSource.GetCountPlayer()}";
+        valueText.text = $"{Player.GetCount(itemSource.objectID, name)}";
 
         isReady = true;
 
@@ -30,15 +30,15 @@ public class GardenSeedPrefab : MonoBehaviour
 
     private void Update()
     {
-        if (valueText.text != $"{itemSource.GetCountPlayer()}")
+        if (valueText.text != $"{Player.GetCount(itemSource.objectID, name)}")
         {
-            valueText.text = $"{itemSource.GetCountPlayer()}";
+            valueText.text = $"{Player.GetCount(itemSource.objectID, name)}";
         }
     }
 
     int SyncItemCount()
     {
-        return itemSource.GetCountPlayer();
+        return Player.GetCount(itemSource.objectID, name);
     }
     public void MouseDownItem()
     {

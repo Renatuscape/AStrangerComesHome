@@ -22,7 +22,7 @@ public class DynamicItemPrefab : MonoBehaviour
         displayImage.sprite = itemSource.sprite;
         displayShadow.sprite = itemSource.sprite;
 
-        itemCount.text = $"{itemSource.GetCountPlayer()}";
+        itemCount.text = $"{Player.GetCount(itemSource.objectID, name)}";
 
         isReady = true;
     }

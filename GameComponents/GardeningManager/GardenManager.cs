@@ -299,7 +299,8 @@ public class GardenManager : MonoBehaviour
                                 yield = seed.yield + 1; //with high enough cultivation, you can get an additional drop!
                         }
                     }
-                    outputPlant.AddToPlayer(yield + (int)Mathf.Floor(earthsoul * 0.2f)); //Bonus 1 or 2 yield from Earthsoul mythical skill
+                    var toAdd = yield + (int)Mathf.Floor(earthsoul * 0.2f);
+                    Player.Add(outputPlant.objectID, toAdd); //Bonus 1 or 2 yield from Earthsoul mythical skill
 
                     //PLANT HEALTH
                     var rollForHealth = Random.Range(0, 100);

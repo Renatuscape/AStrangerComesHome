@@ -21,7 +21,7 @@ public class Upgrade : BaseObject
 
     public void AddToPlayer(int amount = 1, bool doNotLog = false)
     {
-        Player.AddDynamicObject(this, amount, doNotLog, "Upgrade");
+        Player.Add(objectID, amount, doNotLog);
     }
     public int GetCountPlayer()
     {

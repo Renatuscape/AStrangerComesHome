@@ -88,7 +88,7 @@ public class PlantingManager : MonoBehaviour
             if (item.type == ItemType.Seed)
             {
 
-                if (item.GetCountPlayer() > 0)
+                if (Player.GetCount(item.objectID, name) > 0)
                 {
                     var prefab = Instantiate(gardenSeedPrefab);
                     prefab.name = item.name;
@@ -273,7 +273,8 @@ public class PlantingManager : MonoBehaviour
     {
         if (activeSeed != null)
         {
-            activeSeed.AddToPlayer(-1);
+            Player.Remove(activeSeed.objectID);
+
             storedSeed = activeSeed.objectID;
             storedHealth = activeSeed.health;
             planterIsActive = true;
