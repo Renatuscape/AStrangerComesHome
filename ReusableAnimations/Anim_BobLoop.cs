@@ -5,54 +5,74 @@ using UnityEngine;
 public class Anim_BobLoop : MonoBehaviour
 {
     public GameObject shadow;
-    public int positionIndex;
-    public float startPosition;
-    public float bobTarget = 6;
+    public float bobRange = 6;
     public float bobMagnitude = 1f;
-    public float tickMultiplier = 1f;
-    public bool isGoingDown = false;
-    public float timer = 0;
+    public float animationTick = 0.12f;
+    public bool bobUpwards = false;
+    public bool paused = false;
+    float currentBob = 0;
+    bool isGoingDown = false;
+    float timer = 0;
 
-    void Start()
+    Vector3 origin;
+
+    private void Awake()
     {
-        startPosition = transform.localPosition.y;
-        bobTarget = startPosition + bobTarget;
-        transform.localPosition = new Vector3(transform.localPosition.x, startPosition, 0);
+        origin = transform.localPosition;
     }
+
+    public void PauseAtOrigin()
+    {
+        paused = true;
+        transform.localPosition = origin;
+    }
+
     void Update()
     {
-        timer += tickMultiplier * Time.deltaTime;
-
-        if (timer >= 0.12f)
+        if (!paused)
         {
-            timer = 0;
-            Animate();
+            timer += Time.deltaTime;
+
+            if (timer >= animationTick)
+            {
+                timer = 0;
+
+                if (isGoingDown)
+                {
+                    AnimateDown();
+                }
+                else
+                {
+                    AnimateUp();
+                }
+
+                if (shadow != null)
+                {
+                    shadow.transform.position = new Vector3(transform.position.x + 15, transform.position.y - 15, 0);
+                }
+            }
         }
     }
 
-    void Animate()
+    void AnimateUp()
     {
-        if (isGoingDown && transform.localPosition.y > startPosition)
-        {
-            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y - bobMagnitude, 0);
-        }
-        else if (!isGoingDown && transform.localPosition.y < bobTarget)
-        {
-            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y + bobMagnitude, 0);
-        }
-        if (transform.localPosition.y >= bobTarget)
+        transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y + bobMagnitude, 0);
+        currentBob += bobMagnitude;
+
+        if (currentBob >= bobRange)
         {
             isGoingDown = true;
         }
-        else if (transform.localPosition.y <= startPosition)
+    }
+
+    void AnimateDown()
+    {
+        transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y - bobMagnitude, 0);
+        currentBob -= bobMagnitude;
+
+        if (currentBob <= 0)
         {
             isGoingDown = false;
         }
-
-        if (shadow != null)
-        {
-            shadow.transform.position = new Vector3(transform.position.x + 15, transform.position.y - 15, 0);
-        }
-
     }
 }
