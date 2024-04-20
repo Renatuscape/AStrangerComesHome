@@ -10,12 +10,10 @@ public enum UpgradeType
 }
 
 [System.Serializable]
-public class Upgrade
+public class Upgrade : BaseObject
 {
-    public string objectID;
     public string name;
     public int basePrice = 350;
-    public int maxLevel = 10;
     public UpgradeType type; //automatically from ID
     public Texture2D image; //retrieve from ID + folder
     public Sprite sprite;
@@ -82,7 +80,7 @@ public static class Upgrades
         {
             if (upgrade.objectID.Contains(searchWord))
             {
-                return upgrade.maxLevel;
+                return upgrade.maxValue;
             }
         }
         return 10;
