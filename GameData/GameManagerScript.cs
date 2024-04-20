@@ -81,9 +81,6 @@ public class GameManagerScript : MonoBehaviour
 
         CreateGameController();
 
-        questTracker.StartTracking();
-        alchemyTracker.StartTracking();
-
         loadingCanvas.gameObject.SetActive(false);
     }
 
@@ -135,12 +132,15 @@ public class GameManagerScript : MonoBehaviour
     }
     public void ActivateMainMenu()
     {
+        questTracker.StopTracking();
+
         foreach (GameObject component in listOfGameComponents)
         {
             component.SetActive(false);
         }
 
         TransientDataScript.SetGameState(GameState.MainMenu, name, gameObject);
+        TransientDataScript.transientData.currentMana = 50;
         menuUIManagerComponent.SetActive(true);
         mainMenuComponent.SetActive(true);
     }
@@ -174,12 +174,15 @@ public class GameManagerScript : MonoBehaviour
 
 
         //Add skills to the player inventory from the start
-        Player.Add("ATT000", 10); // Wandering
-        Player.Add("ATT001", 8); // Fate
+        Player.Add("ATT000", 10, true); // Wandering
+        Player.Add("ATT001", 8, true); // Fate
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
         InitialiseMap();
+
+        questTracker.StartTracking();
+        alchemyTracker.StartTracking();
     }
 
     public void LoadRoutine()
@@ -187,7 +190,9 @@ public class GameManagerScript : MonoBehaviour
         ResetGameComponents();
         DialogueTagParser.UpdateTags(dataManager);
         InitialiseMap();
-        alchemyTracker.gameObject.SetActive(true); // Ensure that alchemyTracker is enabled after loading from JSON in case of any running synthesisers.
+
+        questTracker.StartTracking();
+        alchemyTracker.StartTracking();
     }
 
     public void ResetGameComponents()
