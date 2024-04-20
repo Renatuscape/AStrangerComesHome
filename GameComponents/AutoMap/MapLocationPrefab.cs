@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MapLocationPrefab : MonoBehaviour
@@ -32,11 +31,17 @@ public class MapLocationPrefab : MonoBehaviour
 
     private void OnMouseOver()
     {
-        TransientDataScript.PrintFloatText($"{location.name}");
+        if (!location.isHidden)
+        {
+            TransientDataScript.PrintFloatText($"{location.name}");
+        }
     }
 
     private void OnMouseExit()
     {
-        TransientDataScript.DisableFloatText();
+        if (!location.isHidden)
+        {
+            TransientDataScript.DisableFloatText();
+        }
     }
 }
