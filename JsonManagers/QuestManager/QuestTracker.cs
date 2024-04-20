@@ -6,8 +6,6 @@ using UnityEngine;
 public class QuestTracker : MonoBehaviour
 {
     public PopUpMenu popUpMenu;
-    public float timer;
-    public float questTick;
 
     bool isEnabled = false;
 
@@ -21,80 +19,83 @@ public class QuestTracker : MonoBehaviour
     public void StartTracking()
     {
         Debug.Log("Enabling Quest Tracker.");
-
-        questTick = 3;
-        timer = 0;
         isEnabled = true;
         gameObject.SetActive(true);
     }
-    void Update()
+
+    public void StopTracking()
     {
+        isEnabled = false;
+    }
+    public void RunCheck()
+    {
+        Debug.Log("QuestTracker running checks.");
+
         if (isEnabled)
         {
             if (TransientDataScript.GameState == GameState.Overworld)
             {
-                timer += 1f * Time.deltaTime;
-
-                if (timer >= questTick)
-                {
-                    CheckActiveQuests();
-                }
+                SearchForPopUps();
             }
         }
     }
-    void CheckActiveQuests()
+    void SearchForPopUps()
     {
+        List<Dialogue> relevantDialogues = new();
+
         foreach (Quest quest in Quests.all)
         {
-            if (quest.dialogues != null && quest.dialogues.Count > 0) //ensure that at least one dialogue entry exists
+            int stage = Player.GetCount(quest.objectID, name);
+
+            if (quest.dialogues != null &&
+                quest.dialogues.Count > 0
+                && quest.dialogues.Count >= stage
+                && stage < 100)
             {
-                if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
+                Dialogue dialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
+
+                if (dialogue != null && dialogue.stageType == StageType.PopUp)
                 {
-                    if (entry.amount < quest.dialogues.Count) //make sure to exclude quests with no remaining steps
-                    {
-                        if (CheckQuestStage(quest, quest.dialogues[entry.amount]))
-                        {
-                            break;
-                        }
-                    }
-                }
-                else //if quest is not already active and found in player journal
-                {
-                    if (CheckQuestStage(quest, quest.dialogues[0]))
-                    {
-                        break;
-                    }
+                    Debug.Log($"Added {quest.objectID} at stage {stage} to relevant dialogue list for pop-ups.");
+                    relevantDialogues.Add(dialogue);
                 }
             }
         }
-        timer = 0;
+
+        foreach (Dialogue dialogue in relevantDialogues)
+        {
+            CheckQuestStage(dialogue);
+        }
     }
 
-    bool CheckQuestStage(Quest quest, Dialogue dialogue)
+    void CheckQuestStage(Dialogue dialogue)
     {
-        if (dialogue.stageType == StageType.PopUp)
+        if (CheckRequirements(dialogue))
         {
-            if (CheckRequirements(dialogue))
+            StartCoroutine(InitiatePop(dialogue));
+        }
+    }
+
+    IEnumerator InitiatePop(Dialogue dialogue)
+    {
+        yield return new WaitForSeconds(1);
+
+        if (TransientDataScript.GameState == GameState.Overworld)
+        {
+            TransientDataScript.SetGameState(GameState.Dialogue, "QuestTracker", gameObject);
+
+            popUpMenu.StartPopUp(dialogue);
+
+            //Assuming pop-ups only have one choice for now:
+            if (dialogue.choices != null && dialogue.choices.Count > 0)
             {
-                TransientDataScript.SetGameState(GameState.Dialogue, "QuestTracker", gameObject);
-
-                popUpMenu.StartPopUp(dialogue);
-
-                //Assuming pop-ups only have one choice for now:
-                if (dialogue.choices != null && dialogue.choices.Count > 0)
-                {
-                    quest.SetQuestStage(dialogue.choices[0].advanceTo);
-                }
-                else
-                {
-                    Player.Add(quest.objectID, 1, false);
-                }
-
-                return true;
+                Player.Set(dialogue.questID, dialogue.choices[0].advanceTo);
+            }
+            else
+            {
+                Player.Add(dialogue.questID, 1, false);
             }
         }
-
-        return false;
     }
 
     bool CheckRequirements(Dialogue dialogue)
