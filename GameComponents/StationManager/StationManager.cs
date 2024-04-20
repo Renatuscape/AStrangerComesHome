@@ -2,13 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class StationManager : MonoBehaviour
 {
     public TransientDataScript transientData;
     public GameObject defaultStation;
-    //public GameObject stationCapitalCity;
     public GameObject spawnedStation;
     public float parallaxMultiplier;
     public List<GameObject> customStations;
@@ -20,7 +18,7 @@ public class StationManager : MonoBehaviour
 
     void Update()
     {
-        if (spawnedStation == null && transientData.currentLocation != null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
+        if (transientData.currentLocation != null && spawnedStation == null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
         {
             if (transientData.currentLocation.type == LocationType.Crossing && transientData.currentLocation.gates.Count == 1)
             {
@@ -51,7 +49,7 @@ public class StationManager : MonoBehaviour
 
     void SetUpStation()
     {
-        var foundStation = customStations.Where(s => s.name.Contains(transientData.currentLocation.objectID)).FirstOrDefault();
+        var foundStation = customStations.FirstOrDefault(s => s.name.Contains(transientData.currentLocation.objectID));
         if (foundStation != null)
         {
             spawnedStation = Instantiate(foundStation);
