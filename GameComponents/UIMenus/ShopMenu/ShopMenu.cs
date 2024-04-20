@@ -221,7 +221,7 @@ public class ShopMenu : MonoBehaviour
     {
         var inventoryAmount = Player.GetCount(item.objectID, name);
 
-        if (inventoryAmount < item.maxStack)
+        if (inventoryAmount < item.maxValue)
         {
             var purchase = MoneyExchange.Purchase(itemCost);
 

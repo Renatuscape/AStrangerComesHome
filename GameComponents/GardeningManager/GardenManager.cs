@@ -280,7 +280,7 @@ public class GardenManager : MonoBehaviour
             {
                 var plantInInventory = Player.GetCount(outputPlant.objectID, name);
 
-                if (plantInInventory + seed.yield <= outputPlant.maxStack)
+                if (plantInInventory + seed.yield <= outputPlant.maxValue)
                 {
                     Debug.Log($"{seed.name} is ready! {growthProgress}/{maxGrowth}");
 

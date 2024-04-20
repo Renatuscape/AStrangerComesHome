@@ -13,21 +13,21 @@ public static class GameCodex
         if (dynamicObject is Item)
         {
             var item = (Item)dynamicObject;
-            max = item.maxStack;
+            max = item.maxValue;
             id = item.objectID;
             return true;
         }
         else if (dynamicObject is Skill)
         {
             var skill = (Skill)dynamicObject;
-            max = skill.maxLevel;
+            max = skill.maxValue;
             id = skill.objectID;
             return true;
         }
         else if (dynamicObject is Upgrade)
         {
             var upgrade = (Upgrade)dynamicObject;
-            max = upgrade.maxLevel;
+            max = upgrade.maxValue;
             id = upgrade.objectID;
             return true;
         }

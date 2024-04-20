@@ -78,19 +78,19 @@ public static class Player
         if (dynamicObject is Item)
         {
             var item = (Item)dynamicObject;
-            max = item.maxStack;
+            max = item.maxValue;
             id = item.objectID;
         }
         else if (dynamicObject is Skill)
         {
             var skill = (Skill)dynamicObject;
-            max = skill.maxLevel;
+            max = skill.maxValue;
             id = skill.objectID;
         }
         else if (dynamicObject is Upgrade)
         {
             var upgrade = (Upgrade)dynamicObject;
-            max = upgrade.maxLevel;
+            max = upgrade.maxValue;
             id = upgrade.objectID;
         }
         else if (dynamicObject is Quest)
@@ -108,7 +108,7 @@ public static class Player
         else if (dynamicObject is Recipe)
         {
             var recipe = (Recipe)dynamicObject;
-            max = recipe.maxStack;
+            max = recipe.maxValue;
             id = recipe.objectID;
         }
         if (id != "")
