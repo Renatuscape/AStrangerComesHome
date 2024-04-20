@@ -1,26 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AutoMapPainter : MonoBehaviour
 {
-    public List<TileSprite> tilePalette;
+    public Sprite defaultSprite;
+    public List<Sprite> tileSprites;
     public List<Sprite> mapMarkers;
 
-    public bool FlipTile(Region region, int xCoordinate, int yCoordinate, out TileSprite tile)
+    public bool FlipTile(Region region, int xCoordinate, int yCoordinate, out Sprite tile)
     {
-        try {
+        try
+        {
             string tileID = region.mapLayout[xCoordinate].row[yCoordinate];
+            tile = tileSprites.FirstOrDefault((t) => t.name.Contains(tileID));
 
-            tile = tilePalette.FirstOrDefault((t) => t.TileID == tileID);
-
-            return tile is not null;
+            return tile != null;
         }
         catch
         {
             Debug.LogError($"Tile at {xCoordinate}, {yCoordinate} is out of bounds.");
-            tile = null; return false;
+            tile = null;
+            return false;
         }
     }
 
@@ -28,9 +31,14 @@ public class AutoMapPainter : MonoBehaviour
     {
         Sprite foundSprite = null;
 
-        if (location.type == LocationType.Crossing)
+        if (!string.IsNullOrEmpty(location.customSpriteID))
         {
-            foundSprite = mapMarkers.FirstOrDefault((m) => m.name == "Icon_Crossing");
+            foundSprite = mapMarkers.FirstOrDefault(m => m.name.Contains(location.customSpriteID));
+        }
+
+        if (foundSprite == null)
+        {
+            foundSprite = mapMarkers.FirstOrDefault((m) => m.name.Contains(location.type.ToString()));
         }
 
         if (foundSprite != null)
@@ -39,16 +47,7 @@ public class AutoMapPainter : MonoBehaviour
         }
         else
         {
-            return mapMarkers.FirstOrDefault((m) => m.name == "Icon_House");
+            return defaultSprite;
         }
-
-    }
-
-    [Serializable]
-    public class TileSprite
-    {
-        public string TileID;
-        public bool isUnobstructive;
-        public Sprite sprite;
     }
 }
