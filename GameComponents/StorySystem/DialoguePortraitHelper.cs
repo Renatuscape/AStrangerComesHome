@@ -18,6 +18,7 @@ public static class DialoguePortraitHelper
     static bool isAnimating = false;
 
     static SerializableDictionary<DialogueEvent, GameObject> currentlyAnimating = new();
+
     public static void FinishAnimationsNow()
     {
         portraitManager.StopAllCoroutines();
@@ -123,6 +124,18 @@ public static class DialoguePortraitHelper
 
             var time = ParseAnimationSpeed(dEvent.moveAnimationSpeed);
 
+            if (portraitManager == null)
+            {
+                Debug.LogError("Portrait manager was null. Make sure dialogueHelper has a monobehaviour to reference.");
+            }
+            if (dEvent == null)
+            {
+                Debug.Log("Event was null.");
+            }
+            if (spriteContainer == null)
+            {
+                Debug.Log("Sprite container was null.");
+            }
             portraitManager.StartCoroutine(TransitionToTarget(dEvent, position, time, spriteContainer));
 
             // check event for secondary character animation
