@@ -14,11 +14,13 @@ public class StorySystem : MonoBehaviour
     public MemoryMenu memoryMenu;
     public string activeSpeaker;
 
+    public DialoguePortraitManager portraitManager;
     private void Start()
     {
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(false);
         button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
+        DialoguePortraitHelper.portraitManager = portraitManager;
     }
     public void OpenTopicMenu(string speakerID)
     {
