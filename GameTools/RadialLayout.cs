@@ -45,17 +45,19 @@ public class RadialLayout : LayoutGroup
     {
         CalculateRadial();
     }
+
+    protected override void OnValidate()
+    {
 #if UNITY_EDITOR
-    //protected override void OnValidate()
-    //{
-    //    if (enabled)
-    //    {
-    //        base.OnValidate();
-    //        CalculateRadial();
-    //    }
-    //}
+        if (!Application.isPlaying)
+        {
+            base.OnValidate();
+            CalculateRadial(true);
+        }
 #endif
-    public void CalculateRadial()
+    }
+
+    public void CalculateRadial(bool isEditorCall = false)
     {
         m_Tracker.Clear();
         if (transform.childCount == 0)
@@ -76,8 +78,11 @@ public class RadialLayout : LayoutGroup
                 Vector3 vPos = new Vector3(Mathf.Cos(fAngle * Mathf.Deg2Rad), Mathf.Sin(fAngle * Mathf.Deg2Rad), 0);
                 child.localPosition = vPos * fDistance;
                 //Force objects to be center aligned, this can be changed however I'd suggest you keep all of the objects with the same anchor points.
-                child.anchorMin = child.anchorMax = child.pivot = new Vector2(0.5f, 0.5f);
-                fAngle += fOffsetAngle;
+                if (!isEditorCall)
+                {
+                    child.anchorMin = child.anchorMax = child.pivot = new Vector2(0.5f, 0.5f);
+                    fAngle += fOffsetAngle;
+                }
             }
         }
     }
