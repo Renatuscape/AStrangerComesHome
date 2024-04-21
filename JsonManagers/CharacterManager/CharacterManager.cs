@@ -85,7 +85,7 @@ public class CharacterManager : MonoBehaviour
     public static void objectIDReader(ref Character character)
     {
         character.type = TypeFinder(ref character);
-        character.spriteCollection = SpriteFactory.GetCollectionOrDefaultCharacter(character.objectID);
+        character.spriteCollection = SpriteFactory.GetUiSprite(character.objectID);
 
         if (character.spriteCollection != null)
         {
