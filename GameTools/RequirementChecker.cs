@@ -3,7 +3,6 @@ using UnityEngine;
 
 public static class RequirementChecker
 {
-
     public static bool CheckDialogueRequirements(Dialogue dialogue)
     {
         bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
@@ -98,7 +97,7 @@ public static class RequirementChecker
     {
         DayOfWeek currentWeekday = TransientDataScript.GetWeekDay();
 
-        if ((int) currentWeekday == weekDay)
+        if ((int)currentWeekday == weekDay)
         {
             return true;
         }
@@ -168,4 +167,55 @@ public static class RequirementChecker
 
         return true;
     }
+
+    public static bool CheckPackage(RequirementPackage package)
+    {
+        if (!CheckRequirements(package.requirements))
+        {
+            return false;
+        }
+        else if (!CheckRestrictions(package.requirements))
+        {
+            return false;
+        }
+        else if (!CheckTime(package.minTimeOfDay, package.maxTimeOfDay))
+        {
+            return false;
+        }
+        else if (!CheckAgainstCurrentLocation(package.requiredLocation))
+        {
+            return false;
+        }
+        else if (TransientDataScript.gameManager.dataManager.totalGameDays < package.requiredDaysPassed)
+        {
+            return false;
+        }
+        else
+        {
+            if (package.weekDay != null)
+            {
+                foreach (int day in package.weekDay)
+                {
+                    if (!CheckWeekDay(day))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+}
+
+[System.Serializable]
+public class RequirementPackage
+{
+    public float minTimeOfDay;
+    public float maxTimeOfDay;
+    public int requiredDaysPassed;
+    public List<int> weekDay;
+    public string requiredLocation;
+    public List<IdIntPair> restrictions;
+    public List<IdIntPair> requirements;
 }
