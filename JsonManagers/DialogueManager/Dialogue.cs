@@ -132,4 +132,9 @@ public static class Dialogues
             .OrderBy(d => d.questStage)
             .ToList();
     }
+
+    public static Dialogue FindByID(string dialogueID)
+    {
+        return all.FirstOrDefault(d => d.objectID == dialogueID);
+    }
 }
