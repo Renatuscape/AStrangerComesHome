@@ -85,18 +85,46 @@ public class TopicMenu : MonoBehaviour
 
     public void CreateTopicButtons()
     {
-        if (questList.Count > 0)
+        Debug.Log("Quest list contained " + questList.Count);
+
+        if (questList.Count > 1)
         {
             topicContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+
             foreach (Quest quest in questList)
             {
                 PrintTopicButton(quest);
             }
+
             topicContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
             Canvas.ForceUpdateCanvases();
             topicContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
             topicContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
             Canvas.ForceUpdateCanvases();
+        }
+        else if (questList.Count == 1)
+        {
+            Debug.Log("Only one relevant quest was found.");
+            var quest = questList[0];
+            Dialogue dialogue = GetRelevantDialogue(quest, out var topicName);
+
+            if (dialogue != null && dialogue.stageType == StageType.Dialogue)
+            {
+                Debug.Log("Attempting to start dialogue immediately.");
+                StartDialogue(questList[0], true);
+            }
+            else
+            {
+                var message = BoxFactory.CreateTextBox("Nothing to talk about right now.", topicContainer.GetComponent<RectTransform>().sizeDelta.x - 20);
+                message.transform.SetParent(topicContainer.transform, false);
+                buttonList.Add(message);
+            }
+        }
+        else
+        {
+            var message = BoxFactory.CreateTextBox("Nothing to talk about right now.", topicContainer.GetComponent<RectTransform>().sizeDelta.x - 20);
+            message.transform.SetParent(topicContainer.transform, false);
+            buttonList.Add(message);
         }
     }
 
@@ -118,7 +146,7 @@ public class TopicMenu : MonoBehaviour
                 text.GetComponent<TextMeshProUGUI>().text = topicName;
                 buttonList.Add(button);
 
-                button.GetComponent<Button>().onClick.AddListener(() => StartDialogue(quest));
+                button.GetComponent<Button>().onClick.AddListener(() => StartDialogue(quest, false));
             }
         }
     }
@@ -156,10 +184,10 @@ public class TopicMenu : MonoBehaviour
         }
     }
 
-    public void StartDialogue(Quest quest)
+    public void StartDialogue(Quest quest, bool doNotReopenTopic)
     {
         portraitRenderer.gameObject.SetActive(false);
-        dialogueSystem.StartDialogue(quest);
+        dialogueSystem.StartDialogue(quest, doNotReopenTopic);
     }
 
     private void OnDisable()
