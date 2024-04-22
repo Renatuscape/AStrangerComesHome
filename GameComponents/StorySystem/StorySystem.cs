@@ -17,22 +17,25 @@ public class StorySystem : MonoBehaviour
     public DialoguePortraitManager portraitManager;
     private void Start()
     {
-        topicMenu.SetActive(false);
-        dialogueMenu.SetActive(false);
+        if (TransientDataScript.GameState != GameState.Dialogue)
+        {
+            topicMenu.SetActive(false);
+            dialogueMenu.SetActive(false);
+        }
         button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
         DialoguePortraitHelper.portraitManager = portraitManager;
     }
     public void OpenTopicMenu(string speakerID)
     {
+        dialogueMenu.SetActive(false);
         activeSpeaker = speakerID;
         button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
         previousGameState = TransientDataScript.GetGameState();
         topicMenu.SetActive(true);
         topicMenu.GetComponent<TopicMenu>().OpenTopicsMenu(speakerID);
-        dialogueMenu.SetActive(false);
     }
 
-    public void StartDialogue(Quest quest) //called primarily from topic manager
+    public void StartDialogue(Quest quest, bool doNotReopenTopic) //called primarily from topic manager
     {
         Debug.Log($"Attempting to start dialogue {quest.objectID}");
 
@@ -40,9 +43,13 @@ public class StorySystem : MonoBehaviour
 
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(true);
-        dialogueMenu.GetComponent<DialogueMenu>().StartDialogue(quest, activeSpeaker);
+        dialogueMenu.GetComponent<DialogueMenu>().StartDialogue(quest, activeSpeaker, doNotReopenTopic);
         Debug.Log($"Starting dialogue for quest {quest.objectID} with speaker {activeSpeaker}.");
         // speaker may not correspond to quest giver. This will help track which NPC started the dialogue so that topic menu can be reopened properly.
+
+        if (!dialogueMenu.activeInHierarchy) {
+            Debug.Log("Something disabled the dialogue menu.");
+        }
     }
 
     public void CloseTopicMenuAndLeave()
