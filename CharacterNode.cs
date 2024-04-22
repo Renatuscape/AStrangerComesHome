@@ -54,8 +54,11 @@ public class CharacterNode : MonoBehaviour
     {
         if (!interactionDisabled && character != null)
         {
-            Debug.Log($"Opening interact menu with {character.name}");
-            InteractMenu.Open(character);
+            if (TransientDataScript.GameState == GameState.Overworld)
+            {
+                Debug.Log($"Opening interact menu with {character.name}");
+                InteractMenu.Open(character);
+            }
         }
     }
 
