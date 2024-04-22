@@ -137,17 +137,25 @@ public class LogAlert : MonoBehaviour
             {
                 QueueTextAlert($"{character.NamePlate()} disapproves.");
             }
-            else if (amount < 3)
+            else if (amount == 1)
             {
                 QueueTextAlert($"{character.NamePlate()} approves.");
             }
-            else if (amount < 5)
+            else if (amount == 2)
             {
                 QueueTextAlert($"{character.NamePlate()} likes that.");
             }
-            else if (amount >= 5)
+            else if (amount == 3)
+            {
+                QueueTextAlert($"{character.NamePlate()} appreciates that.");
+            }
+            else if (amount == 4)
             {
                 QueueTextAlert($"{character.NamePlate()} loves that.");
+            }
+            else if (amount >= 5)
+            {
+                QueueTextAlert($"{character.NamePlate()} is extatic.");
             }
         }
     }
