@@ -140,7 +140,7 @@ public class GameManagerScript : MonoBehaviour
         }
 
         TransientDataScript.SetGameState(GameState.MainMenu, name, gameObject);
-        TransientDataScript.transientData.currentMana = 50;
+        TransientDataScript.transientData.currentMana = 25;
         menuUIManagerComponent.SetActive(true);
         mainMenuComponent.SetActive(true);
     }
