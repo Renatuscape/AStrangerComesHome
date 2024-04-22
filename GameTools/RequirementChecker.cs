@@ -117,7 +117,7 @@ public static class RequirementChecker
     {
         if (requiredLocation == null)
         {
-            Debug.LogWarning("Location check returned true because required location returned null.");
+            //Debug.LogWarning("Location check returned true because required location returned null.");
             return true;
         }
         else
