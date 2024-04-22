@@ -166,6 +166,8 @@ public class GameManagerScript : MonoBehaviour
         dataManager.planterIsActiveB = false;
         dataManager.planterIsActiveC = false;
         dataManager.alchemySynthesisers = new();
+        dataManager.unlockedNames = new();
+        dataManager.giftedThisWeek = new();
 
         Player.inventoryList = new();
         dataManager.inventoryList = new();
