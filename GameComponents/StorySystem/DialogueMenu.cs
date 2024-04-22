@@ -10,14 +10,16 @@ public class DialogueMenu : MonoBehaviour
 
     public Quest activeQuest;
     public string initiatingNPC;
+    public bool doNotReopenTopic = false;
 
     private void OnEnable()
     {
         choiceManager.gameObject.SetActive(false);
     }
 
-    public void StartDialogue(Quest quest, string speakerID)
+    public void StartDialogue(Quest quest, string speakerID, bool doNotReopenTopic)
     {
+        this.doNotReopenTopic= doNotReopenTopic;
         choiceManager.gameObject.SetActive(false);
         initiatingNPC = speakerID;
         activeQuest = quest;
@@ -57,7 +59,16 @@ public class DialogueMenu : MonoBehaviour
     public void EndDialogue()
     {
         dialogueDisplay.gameObject.SetActive(false);
-        storySystem.OpenTopicMenu(initiatingNPC);
+
+        if (!doNotReopenTopic)
+        {
+            storySystem.OpenTopicMenu(initiatingNPC);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+            Invoke(nameof(ReturnToOverWorld), 1);
+        }
     }
 
     Dialogue GetDialogueStage(Quest quest)
@@ -70,5 +81,10 @@ public class DialogueMenu : MonoBehaviour
         {
             return quest.dialogues[0];
         }
+    }
+
+    void ReturnToOverWorld()
+    {
+        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 }
