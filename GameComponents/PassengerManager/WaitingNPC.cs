@@ -90,16 +90,16 @@ public class WaitingNPC : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (Player.GetCount("SCR013-SCR-NN", name) > 0)
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
-            if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+            if (Player.GetCount("SCR013-SCR-NN", name) > 0)
             {
                 passengerManager.ActivateWaitingPassenger(gameObject);
             }
-        }
-        else
-        {
-            TransientDataScript.PushAlert("What's all this talk about a guild license? I should ask around.");
+            else
+            {
+                TransientDataScript.PushAlert("Potential passengers are asking to see a license. What's that about?");
+            }
         }
     }
 
@@ -110,10 +110,6 @@ public class WaitingNPC : MonoBehaviour
             if (Player.GetCount("SCR013-SCR-NN", name) > 0)
             {
                 TransientDataScript.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
-            }
-            else
-            {
-                TransientDataScript.PrintFloatText("\'Isn't there a guild licensed coach arriving soon?\'");
             }
         }
     }
