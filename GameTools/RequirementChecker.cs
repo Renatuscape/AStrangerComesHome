@@ -202,9 +202,9 @@ public static class RequirementChecker
         {
             return false;
         }
-        else if (package.requiredQuestStages != null)
+        else if (package.minMaxRequirements != null)
         {
-            foreach (var entry in package.requiredQuestStages)
+            foreach (var entry in package.minMaxRequirements)
             {
                 if (!CheckMinMax(entry))
                 {
@@ -240,7 +240,7 @@ public class RequirementPackage
     public string requiredLocation;
     public List<IdIntPair> restrictions;
     public List<IdIntPair> requirements;
-    public List<ObjectMinMax> requiredQuestStages;
+    public List<ObjectMinMax> minMaxRequirements;
 }
 
 [System.Serializable]
