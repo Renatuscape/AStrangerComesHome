@@ -168,6 +168,18 @@ public static class RequirementChecker
         return true;
     }
 
+    public static bool CheckMinMax(ObjectMinMax objectCheck)
+    {
+        int inventoryAmount = Player.GetCount(objectCheck.objectID, "RequirementChecker");
+
+        if (inventoryAmount < objectCheck.minValue || inventoryAmount > objectCheck.maxValue)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public static bool CheckPackage(RequirementPackage package)
     {
         if (!CheckRequirements(package.requirements))
@@ -189,6 +201,16 @@ public static class RequirementChecker
         else if (TransientDataScript.gameManager.dataManager.totalGameDays < package.requiredDaysPassed)
         {
             return false;
+        }
+        else if (package.requiredQuestStages != null)
+        {
+            foreach (var entry in package.requiredQuestStages)
+            {
+                if (!CheckMinMax(entry))
+                {
+                    return false;
+                }
+            }
         }
         else
         {
@@ -218,4 +240,13 @@ public class RequirementPackage
     public string requiredLocation;
     public List<IdIntPair> restrictions;
     public List<IdIntPair> requirements;
+    public List<ObjectMinMax> requiredQuestStages;
+}
+
+[System.Serializable]
+public class ObjectMinMax
+{
+    public string objectID;
+    public int minValue;
+    public int maxValue;
 }
