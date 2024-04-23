@@ -10,9 +10,6 @@ public class CharacterNode : MonoBehaviour
     public string alternateFloatText; // Display this text instead of character name
     public string alternativeSpriteID;
     public string activeDialogueID; // Character only appears if all dialogue requirements are met
-    public string activeQuestID; // Character only appears during this quest. Stage must be > 0 and < 100
-    public int minQuestStage;
-    public int maxQuestStage;
     public int randomSpawnChance; // Leave at 0 to always spawn
     public bool interactionDisabled; // Interact-menu will only be available if this is false. Enforced if character is unlinked.
     public bool disableFloatText; // Will not display float text. Enforced if character is unlinked and there is no alternative.
@@ -95,24 +92,6 @@ public class CharacterNode : MonoBehaviour
         else
         {
             passedCustomRequirements = RequirementChecker.CheckPackage(customRequirements);
-        }
-
-        if (string.IsNullOrEmpty(activeQuestID))
-        {
-            passedQuestRequirements = true;
-        }
-        else
-        {
-            int questStage = Player.GetCount(activeQuestID, name);
-
-            if (questStage < maxQuestStage && questStage > minQuestStage)
-            {
-                passedQuestRequirements = true;
-            }
-            else
-            {
-                passedCustomRequirements = false;
-            }
         }
 
         if (string.IsNullOrEmpty(activeDialogueID))
