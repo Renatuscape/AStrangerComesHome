@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
 
 public class CharacterNode : MonoBehaviour
 {
+    public bool allowOverride = false; // replaces node with speaker from a viable dialogue where location is explicitly set.
     public Character character;
     public string characterID;
     public string alternateFloatText; // Display this text instead of character name
@@ -63,26 +64,45 @@ public class CharacterNode : MonoBehaviour
     {
         isReadyToRetest = false;
 
-        bool checksPassed = AttemptChecks();
-
-        if (checksPassed)
+        if (allowOverride)
         {
-            if (randomSpawnChance == 0 || Random.Range(0, 100) <= randomSpawnChance)
+            FindAnyViableSpeaker();
+        }
+        else if (!string.IsNullOrEmpty(characterID))
+        {
+            Debug.Log("Attempting to set up character " + characterID);
+            bool checksPassed = AttemptChecks();
+
+            if (checksPassed)
             {
-                EnableCharacter();
+                if (randomSpawnChance == 0 || Random.Range(0, 100) <= randomSpawnChance)
+                {
+                    EnableCharacter();
+                }
+            }
+            else
+            {
+                HideNode();
             }
         }
         else
         {
-            sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 0);
-            col.enabled = false;
+            HideNode();
         }
+    }
+
+    void HideNode()
+    {
+        Debug.Log("Hiding character " + characterID);
+        sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 0);
+        col.enabled = false;
     }
 
     bool AttemptChecks()
     {
         bool passedCustomRequirements;
         bool passedDialogueRequirements;
+        bool isAlreadySpawned = TransientDataScript.activeCharacterNodes.FirstOrDefault(c => c.objectID == characterID) != null;
 
         if (customRequirements == null)
         {
@@ -103,12 +123,13 @@ public class CharacterNode : MonoBehaviour
             passedDialogueRequirements = RequirementChecker.CheckDialogueRequirements(dialogue);
         }
 
-        Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}.");
-        return passedCustomRequirements && passedDialogueRequirements;
+        Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}. Is already spawned: {isAlreadySpawned}");
+        return passedCustomRequirements && passedDialogueRequirements && !isAlreadySpawned;
     }
 
     void EnableCharacter()
     {
+        Debug.Log("Attempting to enable character " + characterID);
         if (doNotLinkCharacterData)
         {
             NullCharacterConfiguration();
@@ -119,6 +140,8 @@ public class CharacterNode : MonoBehaviour
 
             if (character != null)
             {
+                TransientDataScript.activeCharacterNodes.Add(character);
+
                 ConfigureDisplayText();
                 FindSprite();
             }
@@ -173,6 +196,57 @@ public class CharacterNode : MonoBehaviour
         }
     }
 
+    void FindAnyViableSpeaker()
+    {
+        bool foundSpeaker = false;
+        foreach (Quest quest in Quests.all)
+        {
+            if (quest.dialogues != null && quest.dialogues.Count > 0)
+            {
+                int stage = Player.GetCount(quest.objectID, "Character node any speaker");
+
+                Dialogue dialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
+
+                if (dialogue != null && !string.IsNullOrEmpty(dialogue.locationID) && dialogue.stageType == StageType.Dialogue)
+                {
+                    if (RequirementChecker.CheckDialogueRequirements(dialogue))
+                    {
+                        string speaker;
+
+                        if (string.IsNullOrEmpty(dialogue.speakerID))
+                        {
+                            speaker = quest.questGiver.objectID;
+                        }
+                        else
+                        {
+                            speaker = dialogue.speakerID;
+                        }
+
+                        if (TransientDataScript.activeCharacterNodes.FirstOrDefault(c => c.objectID == characterID) == null)
+                        {
+                            characterID = speaker;
+                            Debug.Log("Found viable dialogue and speaker for location.");
+                            foundSpeaker = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!foundSpeaker)
+        {
+            Debug.Log("No viable speaker found for location. Disabling override and setting up with default ID.");
+
+            allowOverride = false;
+            SetupNode();
+        }
+        else
+        {
+            EnableCharacter();
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -194,5 +268,10 @@ public class CharacterNode : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        TransientDataScript.activeCharacterNodes.Remove(character);
     }
 }
