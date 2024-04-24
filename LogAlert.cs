@@ -155,7 +155,7 @@ public class LogAlert : MonoBehaviour
             }
             else if (amount >= 5)
             {
-                QueueTextAlert($"{character.NamePlate()} is extatic.");
+                QueueTextAlert($"{character.NamePlate()} is ecstatic.");
             }
         }
     }
