@@ -151,7 +151,7 @@ public class DialogueDisplay : MonoBehaviour
 
             if (resultEvent.speaker == null)
             {
-                Debug.LogWarning("Something was wrong with speaker ID for choice in " + activeDialogue.objectID);
+                Debug.LogWarning("Something was wrong with speaker ID for choice in " + activeDialogue.objectID + ". Did you use objectID instead of tag?");
             }
             else
             {
