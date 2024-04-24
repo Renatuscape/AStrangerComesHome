@@ -10,7 +10,7 @@ public class StationManager : MonoBehaviour
     public GameObject spawnedStation;
     public float parallaxMultiplier;
     public List<GameObject> customStations;
-
+    public List<GameObject> defaultStations;
     void Awake()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
@@ -50,18 +50,20 @@ public class StationManager : MonoBehaviour
     void SetUpStation()
     {
         var foundStation = customStations.FirstOrDefault(s => s.name.Contains(transientData.currentLocation.objectID));
-        if (foundStation != null)
+
+        if (foundStation == null)
         {
-            spawnedStation = Instantiate(foundStation);
-            spawnedStation.name = "spawnedStation";
-            transientData.activePrefabs.Add(spawnedStation);
+            foundStation = defaultStations.FirstOrDefault(s => s.name.ToLower().Contains(transientData.currentLocation.type.ToString().ToLower()));
+            
+            if (foundStation == null)
+            {
+                foundStation = defaultStation;
+            }
         }
-        else
-        {
-            spawnedStation = Instantiate(defaultStation);
-            spawnedStation.name = "spawnedStation";
-            transientData.activePrefabs.Add(spawnedStation);
-        }
+
+        spawnedStation = Instantiate(foundStation);
+        spawnedStation.name = "spawnedStation";
+        transientData.activePrefabs.Add(spawnedStation);
     }
 
     private void OnDisable()
