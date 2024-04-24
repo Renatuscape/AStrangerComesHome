@@ -96,13 +96,16 @@ public static class RequirementChecker
     public static bool CheckWeekDay(int weekDay)
     {
         DayOfWeek currentWeekday = TransientDataScript.GetWeekDay();
+        Debug.Log("Current day: " + (int)currentWeekday + " " + currentWeekday);
 
         if ((int)currentWeekday == weekDay)
         {
+            Debug.Log("Check against " + weekDay + " returned true.");
             return true;
         }
         else
         {
+            Debug.Log("Check against " + weekDay + " returned false.");
             return false;
         }
     }
@@ -222,21 +225,21 @@ public static class RequirementChecker
         {
             if (package.weekDay != null && package.weekDay.Count > 0)
             {
+                bool matchFound = false;
                 foreach (int day in package.weekDay)
                 {
-                    List<bool> checksPassed = new();
-
                     if (CheckWeekDay(day))
                     {
-                        checksPassed.Add(true);
+                        Debug.Log("Found matching day");
+                        matchFound = true;
                         break;
                     }
+                }
 
-                    if (checksPassed.Count == 0)
-                    {
-                        Debug.Log("Package failed at day of week.");
-                        return false;
-                    }
+                if (!matchFound)
+                {
+                    Debug.Log("Package failed at day of week.");
+                    return false;
                 }
             }
         }
