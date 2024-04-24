@@ -168,7 +168,7 @@ public static class RequirementChecker
         return true;
     }
 
-    public static bool CheckMinMax(ObjectMinMax objectCheck)
+    public static bool CheckMinMax(IdMinMax objectCheck)
     {
         int inventoryAmount = Player.GetCount(objectCheck.objectID, "RequirementChecker");
 
@@ -240,11 +240,11 @@ public class RequirementPackage
     public string requiredLocation;
     public List<IdIntPair> restrictions;
     public List<IdIntPair> requirements;
-    public List<ObjectMinMax> minMaxRequirements;
+    public List<IdMinMax> minMaxRequirements;
 }
 
 [System.Serializable]
-public class ObjectMinMax
+public class IdMinMax
 {
     public string objectID;
     public int minValue;
