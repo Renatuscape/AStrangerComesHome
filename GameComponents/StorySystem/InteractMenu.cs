@@ -123,7 +123,7 @@ public class InteractMenu : MonoBehaviour
 
     void PrintGiftButton(Character character)
     {
-        if (Player.GetCount(character.objectID, name) > 0)
+        if (Player.GetCount(character.objectID, name) >= 10)
         {
             if (TransientDataScript.GiftCheck(character))
             {
