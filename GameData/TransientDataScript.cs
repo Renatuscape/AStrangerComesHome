@@ -8,7 +8,7 @@ public class TransientDataScript : MonoBehaviour
 {
     public static TransientDataScript transientData;
     public static GameManagerScript gameManager;
-    public static List<Character> activeWalkingNpcs = new();
+    public static List<Character> activeCharacterNodes = new();
     public static GameState GameState { get; private set; }
 
     public Language language;
@@ -345,6 +345,11 @@ public class TransientDataScript : MonoBehaviour
     public static int GetDaysPassed()
     {
         return gameManager.dataManager.totalGameDays;
+    }
+
+    public static void ClearCharacterNodes()
+    {
+        activeCharacterNodes.Clear();
     }
 }
 
