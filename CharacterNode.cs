@@ -82,7 +82,6 @@ public class CharacterNode : MonoBehaviour
     bool AttemptChecks()
     {
         bool passedCustomRequirements;
-        bool passedQuestRequirements = false;
         bool passedDialogueRequirements;
 
         if (customRequirements == null)
@@ -104,7 +103,8 @@ public class CharacterNode : MonoBehaviour
             passedDialogueRequirements = RequirementChecker.CheckDialogueRequirements(dialogue);
         }
 
-        return passedCustomRequirements && passedQuestRequirements && passedDialogueRequirements;
+        Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}.");
+        return passedCustomRequirements && passedDialogueRequirements;
     }
 
     void EnableCharacter()
