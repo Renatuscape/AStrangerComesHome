@@ -184,42 +184,57 @@ public static class RequirementChecker
     {
         if (!CheckRequirements(package.requirements))
         {
+            Debug.Log("Package failed at requirements.");
             return false;
         }
         else if (!CheckRestrictions(package.requirements))
         {
+            Debug.Log("Package failed at restrictions.");
             return false;
         }
         else if (!CheckTime(package.minTimeOfDay, package.maxTimeOfDay))
         {
+            Debug.Log("Package failed at time of day.");
             return false;
         }
         else if (!CheckAgainstCurrentLocation(package.requiredLocation))
         {
+            Debug.Log("Package failed at location check.");
             return false;
         }
         else if (TransientDataScript.gameManager.dataManager.totalGameDays < package.requiredDaysPassed)
         {
+            Debug.Log("Package failed at required days passed.");
             return false;
         }
-        else if (package.minMaxRequirements != null)
+        else if (package.minMaxRequirements != null && package.minMaxRequirements.Count > 0)
         {
             foreach (var entry in package.minMaxRequirements)
             {
                 if (!CheckMinMax(entry))
                 {
+                    Debug.Log("Package failed at minMax check.");
                     return false;
                 }
             }
         }
         else
         {
-            if (package.weekDay != null)
+            if (package.weekDay != null && package.weekDay.Count > 0)
             {
                 foreach (int day in package.weekDay)
                 {
-                    if (!CheckWeekDay(day))
+                    List<bool> checksPassed = new();
+
+                    if (CheckWeekDay(day))
                     {
+                        checksPassed.Add(true);
+                        break;
+                    }
+
+                    if (checksPassed.Count == 0)
+                    {
+                        Debug.Log("Package failed at day of week.");
                         return false;
                     }
                 }
