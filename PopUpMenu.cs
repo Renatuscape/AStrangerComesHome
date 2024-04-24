@@ -22,6 +22,9 @@ public class PopUpMenu : MonoBehaviour
 
     public void UpdateText(Dialogue dialogue)
     {
+        container.GetComponent<VerticalLayoutGroup>().enabled = false;
+        container.GetComponent<ContentSizeFitter>().enabled = false;
+
         textMesh.font = dialogueSystem.fontManager.body.font;
 
         for (int i = 0; i < dialogue.content.Count;i++)
@@ -46,6 +49,10 @@ public class PopUpMenu : MonoBehaviour
             stepIndex = 0;
             dialogueSystem.ColosePopUpMenu();
         }
+
+        container.GetComponent<VerticalLayoutGroup>().enabled = true;
+        container.GetComponent<ContentSizeFitter>().enabled = true;
+        Canvas.ForceUpdateCanvases();
     }
 
     GameObject CreateButton()
@@ -62,6 +69,8 @@ public class PopUpMenu : MonoBehaviour
 
     GameObject PrintContinue(Dialogue dialogue)
     {
+        container.GetComponent<VerticalLayoutGroup>().enabled = false;
+        container.GetComponent<ContentSizeFitter>().enabled = false;
         GameObject button = CreateButton();
         button.name = "ContinueButton";
         button.GetComponent<Button>().onClick.AddListener(() => ContinueToNextStep(dialogue, button));
@@ -74,6 +83,10 @@ public class PopUpMenu : MonoBehaviour
         var textMesh = button.gameObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         textMesh.text = "Continue";
         textMesh.fontSizeMax = 24;
+
+        container.GetComponent<VerticalLayoutGroup>().enabled = true;
+        container.GetComponent<ContentSizeFitter>().enabled = true;
+        Canvas.ForceUpdateCanvases();
 
         return button;
     }
