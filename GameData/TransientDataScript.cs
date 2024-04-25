@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class TransientDataScript : MonoBehaviour
 {
     public static TransientDataScript transientData;
     public static GameManagerScript gameManager;
-    public static List<Character> activeCharacterNodes = new();
     public static GameState GameState { get; private set; }
 
+    public List<Character> characterNodes = new();
     public Language language;
     public List<GameObject> activePrefabs;
 
@@ -349,7 +351,33 @@ public class TransientDataScript : MonoBehaviour
 
     public static void ClearCharacterNodes()
     {
-        activeCharacterNodes.Clear();
+        transientData.characterNodes.Clear();
+    }
+
+    public static bool AddCharacterNode(Character character)
+    {
+        var foundCharacter = transientData.characterNodes.FirstOrDefault(c => c.objectID == character.objectID);
+
+        if (foundCharacter == null)
+        {
+            transientData.characterNodes.Add(character);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static bool CheckIfCharacterExistsInWorld(string charID)
+    {
+        return transientData.characterNodes.FirstOrDefault(c => c.objectID == charID) != null;
+    }
+
+    public static void RemoveWorldCharacterFromList(string charID)
+    {
+        var foundCharacter = transientData.characterNodes.FirstOrDefault(c => c.objectID == charID);
+        transientData.characterNodes.Remove(foundCharacter);
     }
 }
 
