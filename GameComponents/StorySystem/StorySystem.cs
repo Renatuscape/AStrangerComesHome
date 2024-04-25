@@ -32,7 +32,19 @@ public class StorySystem : MonoBehaviour
         button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
         previousGameState = TransientDataScript.GetGameState();
         topicMenu.SetActive(true);
+
         topicMenu.GetComponent<TopicMenu>().OpenTopicsMenu(speakerID);
+    }
+
+    public void ReopenTopicsAfterDialogue(string speakerID)
+    {
+        dialogueMenu.SetActive(false);
+        activeSpeaker = speakerID;
+        button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
+        previousGameState = TransientDataScript.GetGameState();
+        topicMenu.SetActive(true);
+
+        topicMenu.GetComponent<TopicMenu>().ReopenTopicsAfterDialogue(speakerID);
     }
 
     public void StartDialogue(Quest quest, bool doNotReopenTopic) //called primarily from topic manager
