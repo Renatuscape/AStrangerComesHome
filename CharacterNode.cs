@@ -6,6 +6,7 @@ using UnityEngine;
 public class CharacterNode : MonoBehaviour
 {
     public bool allowOverride = false; // replaces node with speaker from a viable dialogue where location is explicitly set.
+    public bool ignoreCustomReqOnOverride = false;
     public Character character;
     public string characterID;
     public string alternateFloatText; // Display this text instead of character name
@@ -66,7 +67,18 @@ public class CharacterNode : MonoBehaviour
 
         if (allowOverride)
         {
-            FindAnyViableSpeaker();
+            if (ignoreCustomReqOnOverride)
+            {
+                FindAnyViableSpeaker();
+            }
+            else if (AttemptChecks())
+            {
+                FindAnyViableSpeaker();
+            }
+            else
+            {
+                HideNode();
+            }
         }
         else if (!string.IsNullOrEmpty(characterID))
         {
@@ -94,6 +106,7 @@ public class CharacterNode : MonoBehaviour
     void HideNode()
     {
         Debug.Log("Hiding character " + characterID);
+        interactionDisabled = true;
         sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 0);
         col.enabled = false;
     }
@@ -102,7 +115,7 @@ public class CharacterNode : MonoBehaviour
     {
         bool passedCustomRequirements;
         bool passedDialogueRequirements;
-        bool isAlreadySpawned = TransientDataScript.activeCharacterNodes.FirstOrDefault(c => c.objectID == characterID) != null;
+        bool isAlreadySpawned = TransientDataScript.CheckIfCharacterExistsInWorld(characterID);
 
         if (customRequirements == null)
         {
@@ -140,23 +153,29 @@ public class CharacterNode : MonoBehaviour
 
             if (character != null)
             {
-                TransientDataScript.activeCharacterNodes.Add(character);
+                if (TransientDataScript.AddCharacterNode(character))
+                {
+                    ConfigureDisplayText();
+                    FindSprite();
 
-                ConfigureDisplayText();
-                FindSprite();
+                    sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 1);
+
+                    if (!interactionDisabled)
+                    {
+                        col.enabled = true;
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Attempted to spawn already existing character. Hiding node.");
+                    HideNode();
+                }
             }
             else
             {
                 Debug.LogWarning($"Character with ID {characterID} not found. Node is set to uninteractable.");
                 NullCharacterConfiguration();
             }
-        }
-
-        sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 1);
-
-        if (!interactionDisabled)
-        {
-            col.enabled = true;
         }
     }
 
@@ -222,12 +241,16 @@ public class CharacterNode : MonoBehaviour
                             speaker = dialogue.speakerID;
                         }
 
-                        if (TransientDataScript.activeCharacterNodes.FirstOrDefault(c => c.objectID == characterID) == null)
+                        if (!TransientDataScript.CheckIfCharacterExistsInWorld(speaker))
                         {
                             characterID = speaker;
                             Debug.Log("Found viable dialogue and speaker for location.");
                             foundSpeaker = true;
                             break;
+                        }
+                        else
+                        {
+                            Debug.Log("Viable speaker was found, but had already been spawned. Continuing search.");
                         }
                     }
                 }
@@ -272,6 +295,6 @@ public class CharacterNode : MonoBehaviour
 
     private void OnDestroy()
     {
-        TransientDataScript.activeCharacterNodes.Remove(character);
+        TransientDataScript.RemoveWorldCharacterFromList(character.objectID);
     }
 }
