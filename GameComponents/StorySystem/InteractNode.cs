@@ -43,12 +43,7 @@ public class InteractNode : MonoBehaviour
     private void OnDestroy()
     {
         Debug.Log($"Removing {character.name} from activeWalkingNpcs.");
-        TransientDataScript.activeCharacterNodes.Remove(character);
-
-        foreach (var walker in TransientDataScript.activeCharacterNodes)
-        {
-            Debug.Log($"{walker.name} is still in activeWalkingNpcs list");
-        }
+        TransientDataScript.RemoveWorldCharacterFromList(character.objectID);
     }
 
     private void Update()
@@ -185,7 +180,7 @@ public class InteractNode : MonoBehaviour
                 foreach (var possibleWalker in possibleWalkers)
                 {
                     if (RequirementChecker.CheckWalkingRequirements(possibleWalker)
-                        && !TransientDataScript.activeCharacterNodes.Contains(possibleWalker))
+                        && !TransientDataScript.CheckIfCharacterExistsInWorld(possibleWalker.objectID))
                     {
                         Debug.Log($"{possibleWalker.name} was valid walking NPC and not yet spawned.");
                         viableWalkers.Add(possibleWalker);
@@ -297,7 +292,7 @@ public class InteractNode : MonoBehaviour
     {
         if (walker != null)
         {
-            TransientDataScript.activeCharacterNodes.Add(walker);
+            TransientDataScript.AddCharacterNode(walker);
             isSpawningNpc = true;
             character = walker;
             nodeSprite.sprite = placeholderNpc.still;
