@@ -62,7 +62,7 @@ public class DialogueMenu : MonoBehaviour
 
         if (!doNotReopenTopic)
         {
-            storySystem.OpenTopicMenu(initiatingNPC);
+            storySystem.ReopenTopicsAfterDialogue(initiatingNPC);
         }
         else
         {
