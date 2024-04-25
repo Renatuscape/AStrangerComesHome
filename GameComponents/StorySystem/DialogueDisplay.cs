@@ -107,7 +107,7 @@ public class DialogueDisplay : MonoBehaviour
 
         // Parse tags here instead of at start to get latest tags
         var parsedText = DialogueTagParser.ParseText(activeEvent.content);
-        StartCoroutine(PrintContent(parsedText));
+        StartCoroutine(PrintContent(parsedText, activeEvent.speaker.objectID == "ARC999"));
         chatHistory.text += parsedText + "\n";
 
         eventIndex++;
@@ -159,7 +159,7 @@ public class DialogueDisplay : MonoBehaviour
 
                 SetDisplayNames(resultEvent);
                 var parsedText = DialogueTagParser.ParseText(content);
-                StartCoroutine(PrintContent(parsedText));
+                StartCoroutine(PrintContent(parsedText, speakerTag == "Narration"));
 
                 PrintToChatLog("Choice: " + choice.optionText, true, true);
                 PrintToChatLog(resultEvent.speaker.NamePlate(), true, false);
@@ -199,11 +199,22 @@ public class DialogueDisplay : MonoBehaviour
         Debug.Log($"Speaker was {speakerTag} and whether it has text returned {hasResultText}.");
     }
 
-    IEnumerator PrintContent(string textToPrint)
+    IEnumerator PrintContent(string textToPrint, bool isNarration)
     {
         printSpeed = 0.05f;
         isPrinting = true;
         contentText.text = "";
+
+        if (isNarration)
+        {
+            contentText.fontStyle = FontStyles.Italic;
+            contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 0.7f);
+        }
+        else
+        {
+            contentText.fontStyle = FontStyles.Normal;
+            contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 1);
+        }
 
         var textArray = textToPrint.Split(' ');
 
