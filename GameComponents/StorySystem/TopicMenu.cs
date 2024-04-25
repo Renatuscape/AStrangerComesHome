@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,9 +12,12 @@ public class TopicMenu : MonoBehaviour
     public PortraitRenderer portraitRenderer;
     public GameObject topicContainer;
     public List<GameObject> buttonList;
-    public void OpenTopicsMenu(string speakerID, bool noPortrait = false)
+    public bool allowAutoPlay;
+
+    public void OpenTopicsMenu(string speakerID, bool noPortrait = false, bool allowAutoPlay = true)
     {
         TransientDataScript.SetGameState(GameState.Dialogue, "TopicMenu", gameObject);
+        this.allowAutoPlay = allowAutoPlay;
 
         questList = new();
 
@@ -25,6 +29,11 @@ public class TopicMenu : MonoBehaviour
         questList = FilterBySpeaker(speakerID);
 
         CreateTopicButtons();
+    }
+
+    public void ReopenTopicsAfterDialogue(string speakerID, bool noPortrait = false)
+    {
+        OpenTopicsMenu(speakerID, noPortrait, false);
     }
 
     public List<Quest> FilterBySpeaker(string speakerID)
@@ -40,12 +49,12 @@ public class TopicMenu : MonoBehaviour
 
             if (stage < quest.dialogues.Count)
             {
-                Dialogue activeDialogue = quest.dialogues[stage];
+                Dialogue activeDialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
 
                 if (activeDialogue.stageType == StageType.Dialogue) // Make sure this stage is of type dialogue
                 {
                     speaker = activeDialogue.speakerID;
-                    //Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
+                    Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
                 }
 
                 if (string.IsNullOrEmpty(speaker)) // If there is no speaker assigned to this dialogue, default to quest giver ID.
@@ -87,7 +96,7 @@ public class TopicMenu : MonoBehaviour
     {
         Debug.Log("Quest list contained " + questList.Count);
 
-        if (questList.Count > 1)
+        if (questList.Count > 1 || (!allowAutoPlay && questList.Count > 0))
         {
             topicContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
 
@@ -153,7 +162,7 @@ public class TopicMenu : MonoBehaviour
 
     public Dialogue GetRelevantDialogue(Quest quest, out string topicName)
     {
-        if (quest.dialogues is not null && quest.dialogues.Count > 0)
+        if (quest.dialogues != null && quest.dialogues.Count > 0)
         {
             if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
             {
