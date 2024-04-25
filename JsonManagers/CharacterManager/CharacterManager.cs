@@ -77,6 +77,11 @@ public class CharacterManager : MonoBehaviour
         character.objectType = ObjectType.Character;
         character.maxValue = StaticGameValues.maxCharacterValue;
 
+        if (character.giftableLevel == 0)
+        {
+            character.giftableLevel = StaticGameValues.defaultGiftableLevel;
+        }
+
         character.NameSetup();
         objectIDReader(ref character);
         characterList.Add(character);
