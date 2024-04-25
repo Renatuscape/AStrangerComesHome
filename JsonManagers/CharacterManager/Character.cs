@@ -18,6 +18,7 @@ public class Character : BaseObject
     public string trueName;
     public string hexColour;
     public string description;
+    public int giftableLevel;
     public bool excludeFromPrint = false;
 
     public CharacterType type;
