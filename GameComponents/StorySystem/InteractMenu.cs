@@ -53,7 +53,7 @@ public class InteractMenu : MonoBehaviour
 
     void PrintChatButton(Character character)
     {
-        var chatButton = GetButton($"Chat with {character.name}");
+        var chatButton = GetButton($"Chat with {character.NamePlate()}");
         chatButton.GetComponent<Button>().onClick.AddListener(() => storySystem.OpenTopicMenu(character.objectID));
     }
 
@@ -123,7 +123,7 @@ public class InteractMenu : MonoBehaviour
 
     void PrintGiftButton(Character character)
     {
-        if (Player.GetCount(character.objectID, name) >= 10)
+        if (Player.GetCount(character.objectID, name) >= character.giftableLevel)
         {
             if (TransientDataScript.GiftCheck(character))
             {
