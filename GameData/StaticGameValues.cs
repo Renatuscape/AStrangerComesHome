@@ -9,4 +9,5 @@ public static class StaticGameValues
     public static int maxAttributeValue = 10;
     public static int maxSkillValue = 10;
     public static int maxUpgradeValue = 10;
+    public static int defaultGiftableLevel = 10;
 }
