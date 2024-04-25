@@ -49,6 +49,9 @@ public static class DialogueTagParser
         tags.Add("|his|", Uncapitalise(dataManager.pronounGen));
         tags.Add("|His|", Capitalise(dataManager.pronounGen));
 
+        string playerName = Characters.FindByID("ARC000").trueNamePlate ?? dataManager.playerName;
+        tags.Add("|Morgan|", Capitalise(playerName));
+
         //ADD CHARACTERS
 
         foreach (Character c in Characters.all)
