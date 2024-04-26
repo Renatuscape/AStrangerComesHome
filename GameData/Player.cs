@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Progress;
 public static class Player
 {
     public static List<IdIntPair> inventoryList = new();
@@ -52,6 +53,12 @@ public static class Player
     // ADDING METHODS - positve numbers are added from inventory, negative numbers are removed
     public static int Add(IdIntPair entry, bool doNotLog = false)
     {
+        if (!string.IsNullOrEmpty(entry.description)) // If the entry contains a description, override any other possible log.
+        {
+            LogAlert.QueueTextAlert(entry.description);
+            return Add(entry.objectID, entry.amount, true);
+        }
+
         return Add(entry.objectID, entry.amount, doNotLog);
     }
 
@@ -140,7 +147,7 @@ public static class Player
                 LogAlert.QueueTextAlert($"Obtained {recipe.name}!");
             }
         }
-        else if (baseObject is Upgrade)
+        else if (baseObject.objectType == ObjectType.Upgrade)
         {
             var upgrade = (Upgrade)baseObject;
 
