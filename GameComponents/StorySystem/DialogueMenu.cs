@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DialogueMenu : MonoBehaviour
@@ -24,7 +25,7 @@ public class DialogueMenu : MonoBehaviour
         initiatingNPC = speakerID;
         activeQuest = quest;
 
-        Dialogue dialogue = GetDialogueStage(activeQuest);
+        Dialogue dialogue = GetDialogue(activeQuest);
 
         dialogueDisplay.StartDialogue(dialogue);
     }
@@ -52,8 +53,17 @@ public class DialogueMenu : MonoBehaviour
 
     public void ContinueAfterChoice()
     {
-        Dialogue dialogue = GetDialogueStage(activeQuest);
-        dialogueDisplay.StartDialogue(dialogue);
+        Dialogue dialogue = GetDialogue(activeQuest);
+
+        if (dialogue != null)
+        {
+            dialogueDisplay.StartDialogue(dialogue);
+        }
+        else
+        {
+            Debug.Log("Attempted to continue after choice, but target stage does not exist. Ensure that dialogue is set to end conversation, or that next stage exists.");
+            EndDialogue();
+        }
     }
 
     public void EndDialogue()
@@ -71,16 +81,10 @@ public class DialogueMenu : MonoBehaviour
         }
     }
 
-    Dialogue GetDialogueStage(Quest quest)
+    Dialogue GetDialogue(Quest quest)
     {
-        if (Player.GetEntry(quest.objectID, "TopicMenu", out var entry))
-        {
-            return quest.dialogues[entry.amount];
-        }
-        else
-        {
-            return quest.dialogues[0];
-        }
+        int stage = Player.GetCount(quest.objectID, "DialogueMenu");
+        return quest.dialogues.FirstOrDefault(d => d.questStage == stage);
     }
 
     void ReturnToOverWorld()
