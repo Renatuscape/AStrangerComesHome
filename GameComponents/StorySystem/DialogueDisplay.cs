@@ -86,18 +86,27 @@ public class DialogueDisplay : MonoBehaviour
     // DialogueMenu handles the quest and quest progression
     public void StartDialogue(Dialogue dialogue)
     {
-        continueEnabled = false;
-        endConversation = false;
-        readyToPrintChoices = false;
-        continueAfterChoice = false;
-        isPrinting = false;
+        if (dialogue.stageType != StageType.Dialogue)
+        {
+            Debug.LogWarning("Attempted to start a non-dialogue event. Was the choice leading to " + dialogue.objectID + " missing endConversation: true?");
+            Debug.LogWarning("Ending dialogue early.");
+            dialogueMenu.EndDialogue();
+        }
+        else
+        {
+            continueEnabled = false;
+            endConversation = false;
+            readyToPrintChoices = false;
+            continueAfterChoice = false;
+            isPrinting = false;
 
-        gameObject.SetActive(true);
+            gameObject.SetActive(true);
 
-        activeDialogue = dialogue;
-        eventIndex = 0;
+            activeDialogue = dialogue;
+            eventIndex = 0;
 
-        PrintEvent();
+            PrintEvent();
+        }
     }
 
     public void PrintEvent()
