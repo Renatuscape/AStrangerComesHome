@@ -94,7 +94,8 @@ public class Choice
         foreach (IdIntPair entry in rewards)
         {
             Debug.Log($"Delivered {entry.objectID} ({entry.amount})");
-            Player.Add(entry.objectID, entry.amount);
+
+            Player.Add(new IdIntPair() { objectID = entry.objectID, amount = entry.amount, description = entry.description});
         }
     }
 }
