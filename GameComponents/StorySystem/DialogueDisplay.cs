@@ -207,12 +207,10 @@ public class DialogueDisplay : MonoBehaviour
 
         if (isNarration)
         {
-            contentText.fontStyle = FontStyles.Italic;
             contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 0.7f);
         }
         else
         {
-            contentText.fontStyle = FontStyles.Normal;
             contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 1);
         }
 
