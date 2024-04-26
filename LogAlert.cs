@@ -127,6 +127,10 @@ public class LogAlert : MonoBehaviour
         {
             logAlert.queuedItemAlerts.Add(new ItemIntPair() { item = item, amount = amount });
         }
+        else if (item.type == ItemType.Script && !string.IsNullOrEmpty(item.description))
+        {
+            QueueTextAlert(item.description);
+        }
     }
 
     public static void QueueAffectionAlert(Character character, int amount)
