@@ -75,8 +75,33 @@ public static class Player
 
             return 1;
         }
+        else if (objectID.Contains("-ROMANCE"))
+        {
+            AddRomance(objectID, amount);
+            return amount;
+        }
 
-        return FindObjectAndAddUpToMax(objectID, amount, doNotLog);
+            return FindObjectAndAddUpToMax(objectID, amount, doNotLog);
+    }
+
+    static void AddRomance(string objectID, int amount)
+    {
+        Debug.Log($"Detected -ROMANCE tag. Adding {objectID} to inventory.");
+
+        var searchID = objectID.Replace("-ROMANCE", "");
+        var foundEntry = inventoryList.FirstOrDefault(e => e.objectID == searchID);
+
+        if (foundEntry != null)
+        {
+            Debug.Log("Found existing romance entry. Adding amount.");
+            foundEntry.amount += amount; // allow negative numbers. No max needed.
+        }
+        else
+        {
+            Debug.Log("No existing romancce entry. Creating and adding new.");
+            foundEntry = new() {objectID = objectID, amount = amount};
+            inventoryList.Add(foundEntry);
+        }
     }
 
     static int FindObjectAndAddUpToMax(string objectID, int amount, bool doNotLog = false)
