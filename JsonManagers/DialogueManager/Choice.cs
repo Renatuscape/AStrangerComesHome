@@ -6,6 +6,7 @@ public class Choice
 {
     public bool endConversation = false;
     public bool doesNotAdvance = false;
+    public bool hiddenOnFail = false;
     public int advanceTo; //set to 100 to complete quest
     public int advanceToOnFailure = -1;
     public string optionText;
@@ -14,9 +15,10 @@ public class Choice
     public string failureSpeaker;
     public string failureText;
     public List<IdIntPair> deliveryRequirements;
-    public List<IdIntPair> checkRequirements;
-    public List<IdIntPair> checkRestrictions;
+    public List<IdIntPair> requirements;
+    public List<IdIntPair> restrictions;
     public List<IdIntPair> rewards;
+    public ChoiceNodeData nodeData;
 
     public bool AttemptAllChecks(bool grantRewards, out bool passedRequirements, out bool passedRestrictions, out List<IdIntPair> missingItems)
     {
@@ -32,33 +34,8 @@ public class Choice
 
     public bool AttemptChecks(out bool passedRequirements, out bool passedRestrictions)
     {
-        passedRequirements = true;
-        passedRestrictions = true;
-
-        if (checkRequirements is not null && checkRequirements.Count > 0)
-        {
-            foreach (IdIntPair entry in checkRequirements)
-            {
-                int amount = Player.GetCount(entry.objectID, "Choice Requirement Check");
-                if (amount < entry.amount)
-                {
-                    passedRequirements = false;
-                    break;
-                }
-            }
-        }
-        if (checkRestrictions is not null && checkRestrictions.Count > 0) //don't run if checks already failed
-        {
-            foreach (IdIntPair entry in checkRestrictions)
-            {
-                int amount = Player.GetCount(entry.objectID, "Choice Restriction Check");
-                if (amount >= entry.amount)
-                {
-                    passedRestrictions = false;
-                    break;
-                }
-            }
-        }
+        passedRequirements = RequirementChecker.CheckRequirements(requirements);
+        passedRestrictions = RequirementChecker.CheckRestrictions(restrictions);
         return passedRequirements == true && passedRestrictions == true;
     }
 
@@ -98,4 +75,11 @@ public class Choice
             Player.Add(new IdIntPair() { objectID = entry.objectID, amount = entry.amount, description = entry.description});
         }
     }
+}
+
+[System.Serializable]
+public class ChoiceNodeData
+{
+    public string nodeID;
+    public bool removeSpeakerNode;
 }
