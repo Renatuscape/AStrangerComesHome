@@ -124,7 +124,7 @@ public static class DialogueSetup
 
             if (eventID.Contains("HO#TRUE"))
             {
-                dEvent.isLeft = true;
+                dEvent.hideOtherPortrait = true;
             }
 
             foreach (string tag in eventTags)
