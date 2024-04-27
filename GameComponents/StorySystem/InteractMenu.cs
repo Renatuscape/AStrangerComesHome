@@ -89,7 +89,7 @@ public class InteractMenu : MonoBehaviour
         }
         else
         {
-            var shopButton = GetButton($"Shop at {shop.name}");
+            var shopButton = GetButton($"Browse {shop.name}");
             shopButton.GetComponent<Button>().onClick.AddListener(() => menuSystem.shopMenu.SetUpShop(character, shop));
             return true;
         }
