@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ public class CharacterNode : MonoBehaviour
 {
     public bool allowOverride = false; // replaces node with speaker from a viable dialogue where location is explicitly set.
     public bool ignoreCustomReqOnOverride = false;
-    public bool updateOnNewDay = false;
+    public bool updateAtMidnight = false;
     public Character character;
     public string characterID;
     public string alternateFloatText; // Display this text instead of character name
@@ -27,18 +26,9 @@ public class CharacterNode : MonoBehaviour
     float readyTimer = 0;
     float readyTick = 2;
 
-    public void UpdateOnNewDay()
-    {
-        SetupNode();
-    }
-
-    public void DisableWithFade()
-    {
-        // Implement enumeration
-        HideNode();
-    }
     void Start()
     {
+        CharacterNodeTracker.allExistingNodes.Add(this);
         sRender = GetComponent<SpriteRenderer>();
         col = GetComponent<CapsuleCollider2D>();
         SetupNode();
@@ -70,6 +60,34 @@ public class CharacterNode : MonoBehaviour
                 InteractMenu.Open(character);
             }
         }
+    }
+
+    public void UpdateAtMidnight()
+    {
+        SetupNode();
+    }
+
+    public void DisableWithFade()
+    {
+        col.enabled = false;
+        StartCoroutine(FadeNodeAndHide());
+    }
+
+    IEnumerator FadeNodeAndHide()
+    {
+        float alpha = sRender.color.a;
+        float fadeValue = 0.01f;
+
+        while (alpha > 0)
+        {
+            yield return new WaitForSeconds(0.05f);
+            alpha -= fadeValue;
+            fadeValue += 0.005f;
+
+            sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, alpha);
+        }
+
+        HideNode();
     }
 
     void SetupNode()
@@ -126,7 +144,7 @@ public class CharacterNode : MonoBehaviour
     {
         bool passedCustomRequirements;
         bool passedDialogueRequirements;
-        bool isAlreadySpawned = TransientDataScript.CheckIfCharacterExistsInWorld(characterID);
+        bool isAlreadySpawned = CharacterNodeTracker.CheckIfCharacterExistsInWorld(characterID);
 
         if (customRequirements == null)
         {
@@ -164,7 +182,7 @@ public class CharacterNode : MonoBehaviour
 
             if (character != null)
             {
-                if (TransientDataScript.AddCharacterNode(this))
+                if (CharacterNodeTracker.AddCharacterNode(this))
                 {
                     ConfigureDisplayText();
                     FindSprite();
@@ -255,7 +273,7 @@ public class CharacterNode : MonoBehaviour
                             speaker = dialogue.speakerID;
                         }
 
-                        if (!TransientDataScript.CheckIfCharacterExistsInWorld(speaker))
+                        if (!CharacterNodeTracker.CheckIfCharacterExistsInWorld(speaker))
                         {
                             characterID = speaker;
                             Debug.Log("Found viable dialogue and speaker for location.");
@@ -309,6 +327,7 @@ public class CharacterNode : MonoBehaviour
 
     private void OnDestroy()
     {
-        TransientDataScript.RemoveWorldCharacterFromList(character.objectID);
+        CharacterNodeTracker.allExistingNodes.Remove(this);
+        CharacterNodeTracker.RemoveWorldCharacterFromList(character.objectID);
     }
 }
