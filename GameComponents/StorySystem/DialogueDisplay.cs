@@ -63,7 +63,7 @@ public class DialogueDisplay : MonoBehaviour
             }
         }
 
-        if (readyToPrintChoices &&  !isPrinting)
+        if (readyToPrintChoices && !isPrinting)
         {
             dialogueMenu.PrintChoices(activeDialogue);
 
@@ -90,7 +90,7 @@ public class DialogueDisplay : MonoBehaviour
         {
             Debug.LogWarning("Attempted to start a non-dialogue event. Was the choice leading to " + dialogue.objectID + " missing endConversation: true?");
             Debug.LogWarning("Ending dialogue early.");
-            dialogueMenu.EndDialogue();
+            dialogueMenu.EndDialogue(null);
         }
         else
         {
@@ -150,6 +150,7 @@ public class DialogueDisplay : MonoBehaviour
         bool hasResultText = !string.IsNullOrEmpty(speakerTag);
         bool hasMissingItemsToPrint = missingItems != null && missingItems.Count > 0;
 
+        // HANDLE RESULT PRINT
         if (hasResultText) // if there is no speaker, skip the print
         {
             DialogueEvent resultEvent = new();
@@ -176,33 +177,66 @@ public class DialogueDisplay : MonoBehaviour
             }
         }
 
+        // HANDLE MISSING ITEM PRINT
         if (hasMissingItemsToPrint)
         {
             foreach (var entry in missingItems)
             {
                 Debug.Log($"Missing {entry.amount} {entry.objectID}. Print this for the player somehow.");
             }
-
-            endConversation = true;
         }
 
-        if (!isSuccess || choice.endConversation)
-        {
-            endConversation = true;
+        // HANDLE CLOSING OR CONTINUING
 
-            if (!hasResultText)
+        if (isSuccess)
+        {
+            if (choice.endConversation)
             {
-                dialogueMenu.EndDialogue();
+                endConversation = true;
+
+                if (!hasResultText && !hasMissingItemsToPrint)
+                {
+                    dialogueMenu.EndDialogue(choice);
+                }
+            }
+            else
+            {
+                endConversation = false;
+
+                if (!hasResultText && !hasMissingItemsToPrint)
+                {
+                    dialogueMenu.ContinueAfterChoice();
+                }
+                else
+                {
+                    continueAfterChoice = true;
+                }
             }
         }
         else
         {
-            continueAfterChoice = true;
-        }
+            if (choice.advanceToOnFailure >= 0)
+            {
+                endConversation = false;
 
-        if (continueAfterChoice && !hasResultText)
-        {
-            dialogueMenu.ContinueAfterChoice();
+                if (!hasResultText && !hasMissingItemsToPrint)
+                {
+                    dialogueMenu.ContinueAfterChoice();
+                }
+                else
+                {
+                    continueAfterChoice = true;
+                }
+            }
+            else
+            {
+                endConversation = true;
+                
+                if (!hasResultText && !hasMissingItemsToPrint)
+                {
+                    dialogueMenu.EndDialogue(choice);
+                }
+            }
         }
 
         Debug.Log($"Speaker was {speakerTag} and whether it has text returned {hasResultText}.");
@@ -284,7 +318,7 @@ public class DialogueDisplay : MonoBehaviour
         }
         else if (endConversation)
         {
-            dialogueMenu.EndDialogue();
+            dialogueMenu.EndDialogue(null);
         }
         else if (continueAfterChoice && !isPrinting)
         {
