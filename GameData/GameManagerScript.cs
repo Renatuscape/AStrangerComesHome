@@ -199,7 +199,7 @@ public class GameManagerScript : MonoBehaviour
 
     public void ResetGameComponents()
     {
-        TransientDataScript.ClearCharacterNodes();
+        CharacterNodeTracker.ClearCharacterNodes();
         foreach (GameObject component in listOfGameComponents)
         {
             component.SetActive(false);
