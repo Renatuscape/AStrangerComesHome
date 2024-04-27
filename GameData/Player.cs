@@ -80,16 +80,37 @@ public static class Player
             AddRomance(objectID, amount);
             return amount;
         }
+        else if (objectID.Contains("-SetTIMER"))
+        {
+            AddTimer(objectID);
+            return 0;
+        }
 
-            return FindObjectAndAddUpToMax(objectID, amount, doNotLog);
+        return FindObjectAndAddUpToMax(objectID, amount, doNotLog);
+    }
+
+    static void AddTimer(string objectID)
+    {
+        Debug.Log($"Detected -SetTIMER tag. Adding {objectID} to inventory.");
+        var foundEntry = inventoryList.FirstOrDefault(e => e.objectID == objectID);
+
+        if (foundEntry != null)
+        {
+            Debug.Log("Found existing timer entry. Resetting timer to 0.");
+            foundEntry.amount = 0;
+        }
+        else
+        {
+            Debug.Log("No existing timer entry. Creating and adding new.");
+            foundEntry = new() { objectID = objectID, amount = 0 };
+            inventoryList.Add(foundEntry);
+        }
     }
 
     static void AddRomance(string objectID, int amount)
     {
         Debug.Log($"Detected -ROMANCE tag. Adding {objectID} to inventory.");
-
-        var searchID = objectID.Replace("-ROMANCE", "");
-        var foundEntry = inventoryList.FirstOrDefault(e => e.objectID == searchID);
+        var foundEntry = inventoryList.FirstOrDefault(e => e.objectID == objectID);
 
         if (foundEntry != null)
         {
@@ -98,8 +119,8 @@ public static class Player
         }
         else
         {
-            Debug.Log("No existing romancce entry. Creating and adding new.");
-            foundEntry = new() {objectID = objectID, amount = amount};
+            Debug.Log("No existing romance entry. Creating and adding new.");
+            foundEntry = new() { objectID = objectID, amount = amount };
             inventoryList.Add(foundEntry);
         }
     }
@@ -197,6 +218,58 @@ public static class Player
         else
         {
             return 0;
+        }
+    }
+
+    public static void CheckTimers()
+    {
+        Debug.Log("Checking timers.");
+        List<IdIntPair> timersToRemove = new();
+        foreach (var entry in inventoryList)
+        {
+            if (entry.objectID.Contains("-SetTIMER"))
+            {
+                var timerData = entry.objectID.Split('-');
+
+                if (int.TryParse(timerData[4], out int timerMax))
+                {
+                    Debug.Log("This timer is set for " + timerMax);
+
+                    if (entry.amount < timerMax)
+                    {
+                        Debug.Log("Updated quest timer " + entry.objectID);
+                        entry.amount++;
+                    }
+                    else
+                    {
+                        Debug.Log("Quest timer has reached max. Checking for quest completion.");
+
+                        Quest relevantQuest = Quests.FindByID(timerData[0] + "-" + timerData[1]);
+                        if (relevantQuest == null)
+                        {
+                            Debug.LogWarning("Could not find relevant quest related to " + entry.objectID);
+                        }
+                        else
+                        {
+                            if (int.TryParse(timerData[2], out int timerStage))
+                            {
+                                int stage = GetCount(relevantQuest.objectID, "Player");
+
+                                if (stage > timerStage)
+                                {
+                                    Debug.Log("Timed quest completed. Removing timer.");
+                                    timersToRemove.Add(entry);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach (var entry in timersToRemove)
+        {
+            inventoryList.Remove(entry);
         }
     }
 }
