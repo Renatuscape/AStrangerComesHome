@@ -25,26 +25,43 @@ public class DialogueChoiceManager : MonoBehaviour
 
         foreach (Choice choice in dialogue.choices)
         {
-            choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-            Canvas.ForceUpdateCanvases();
+            bool allowPrint = true;
 
-            var newChoice = BoxFactory.CreateButton(choice.optionText);
-            newChoice.transform.SetParent(choiceContainer.transform, false);
+            if (choice.hiddenOnFail)
+            {
+                allowPrint = choice.AttemptAllChecks(false, out bool passedRequirements, out bool passedRestrictions, out var missingItems);
+                Debug.Log($"Attempted checks for hidden choice. No rewards should be granted." +
+                    $"\nRequirements: {passedRequirements}, restrictions: {passedRestrictions}, missingItems: {missingItems.Count}");
+                Debug.Log($"Option {choice.optionText} returned {allowPrint}.");
+            }
 
-            newChoice.GetComponent<Button>().onClick.AddListener(() => MakeChoice(choice));
+            if (allowPrint)
+            {
+                choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+                Canvas.ForceUpdateCanvases();
 
-            choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-            Canvas.ForceUpdateCanvases();
+                var newChoice = BoxFactory.CreateButton(choice.optionText);
+                newChoice.transform.SetParent(choiceContainer.transform, false);
+
+                newChoice.GetComponent<Button>().onClick.AddListener(() => MakeChoice(choice));
+
+                choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+                Canvas.ForceUpdateCanvases();
+            }
+        }
+
+        if (choiceContainer.transform.childCount == 0 && dialogue.choices.Count > 0)
+        {
+            Debug.LogWarning("No choices were available even though choices exist. Check " + dialogueMenu.activeQuest.objectID + " options and ensure that there is always a non-hidden option.");
+            PrintDummyButton();
         }
 
         choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
         choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
         Canvas.ForceUpdateCanvases();
     }
-
     public void MakeChoice(Choice choice)
     {
-
         bool choiceResult = choice.AttemptAllChecks(true, out bool passedRequirements, out bool passedRestrictions, out List<IdIntPair> missingItems);
         Debug.Log($"Choice resulted in {choiceResult}." +
             $"\nRequirements passed: {passedRequirements}." +
@@ -59,5 +76,20 @@ public class DialogueChoiceManager : MonoBehaviour
         }
 
         gameObject.SetActive(false);
+    }
+
+    void PrintDummyButton()
+    {
+        Choice leaveChoice = new() { optionText = "No options available. Leave conversation.", endConversation = true };
+        choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+        Canvas.ForceUpdateCanvases();
+
+        var newChoice = BoxFactory.CreateButton(leaveChoice.optionText);
+        newChoice.transform.SetParent(choiceContainer.transform, false);
+
+        newChoice.GetComponent<Button>().onClick.AddListener(() => MakeChoice(leaveChoice));
+
+        choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
     }
 }
