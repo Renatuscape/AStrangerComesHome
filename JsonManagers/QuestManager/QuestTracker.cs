@@ -159,7 +159,6 @@ public static class QuestResetter
             }
         }
     }
-
     public static void FindQuests()
     {
         questsAdvancingDaily = Quests.all.Where(q => q.advanceEveryDay).ToList();
