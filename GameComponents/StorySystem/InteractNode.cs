@@ -42,8 +42,8 @@ public class InteractNode : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log($"Removing {character.name} from activeWalkingNpcs.");
-        TransientDataScript.RemoveWorldCharacterFromList(character.objectID);
+        Debug.Log($"Removing {character.objectID} from activeWalkingNpcs.");
+        CharacterNodeTracker.RemoveWorldCharacterFromList(character.objectID);
     }
 
     private void Update()
@@ -168,76 +168,76 @@ public class InteractNode : MonoBehaviour
 
     private void SetUpNode()
     {
-        if (prioritiseAnyWalkingNPC)
-        {
-            var possibleWalkers = Characters.FindAllWalkers();
-            var viableWalkers = new List<Character>();
+        //if (prioritiseAnyWalkingNPC)
+        //{
+        //    var possibleWalkers = Characters.FindAllWalkers();
+        //    var viableWalkers = new List<Character>();
 
-            if (possibleWalkers.Count > 0)
-            {
-                Debug.Log($"Found {possibleWalkers.Count} walking NPCs.");
+        //    if (possibleWalkers.Count > 0)
+        //    {
+        //        Debug.Log($"Found {possibleWalkers.Count} walking NPCs.");
 
-                foreach (var possibleWalker in possibleWalkers)
-                {
-                    if (RequirementChecker.CheckWalkingRequirements(possibleWalker)
-                        && !TransientDataScript.CheckIfCharacterExistsInWorld(possibleWalker.objectID))
-                    {
-                        Debug.Log($"{possibleWalker.name} was valid walking NPC and not yet spawned.");
-                        viableWalkers.Add(possibleWalker);
-                    }
-                }
-            }
+        //        foreach (var possibleWalker in possibleWalkers)
+        //        {
+        //            if (RequirementChecker.CheckWalkingRequirements(possibleWalker)
+        //                && !TransientDataScript.CheckIfCharacterExistsInWorld(possibleWalker.objectID))
+        //            {
+        //                Debug.Log($"{possibleWalker.name} was valid walking NPC and not yet spawned.");
+        //                viableWalkers.Add(possibleWalker);
+        //            }
+        //        }
+        //    }
 
-            Debug.Log($"Found {viableWalkers.Count} viable walking NPCs for this location.");
-            if (viableWalkers.Count > 0)
-            {
-                SetUpWalkingNpc(viableWalkers[0]);
-            }
-        }
+        //    Debug.Log($"Found {viableWalkers.Count} viable walking NPCs for this location.");
+        //    if (viableWalkers.Count > 0)
+        //    {
+        //        SetUpWalkingNpc(viableWalkers[0]);
+        //    }
+        //}
 
-        if (!isSpawningNpc && !string.IsNullOrEmpty(memoryNode.objectID))
+        if (!string.IsNullOrEmpty(memoryNode.objectID))
         {
             if (Player.GetCount(memoryNode.objectID, name) == memoryNode.amount)
             {
                 SetUpMemory();
             }
         }
-        if (!isSpawningMemory && !string.IsNullOrEmpty(walkingNpcId))
-        {
-            Character foundCharacter = Characters.FindByID(walkingNpcId);
+        //if (!isSpawningMemory && !string.IsNullOrEmpty(walkingNpcId))
+        //{
+        //    Character foundCharacter = Characters.FindByID(walkingNpcId);
 
-            if (foundCharacter == null)
-            {
-                //Debug.LogWarning($"Walking NPC ID {walkingNpcId} was not found in Characters.all.");
-            }
-            else if (foundCharacter.walkingLocations == null || foundCharacter.walkingLocations.Count == 0)
-            {
-                //Debug.LogWarning($"Attempting to walk NPC without walking locations {walkingNpcId}.");
+        //    if (foundCharacter == null)
+        //    {
+        //        //Debug.LogWarning($"Walking NPC ID {walkingNpcId} was not found in Characters.all.");
+        //    }
+        //    else if (foundCharacter.walkingLocations == null || foundCharacter.walkingLocations.Count == 0)
+        //    {
+        //        //Debug.LogWarning($"Attempting to walk NPC without walking locations {walkingNpcId}.");
 
-                if (ignoreWalkingConditions)
-                {
-                    //Debug.LogWarning("Ignoring walking conditions.");
-                    SetUpWalkingNpc(foundCharacter);
-                }
-            }
-            else
-            {
-                bool foundValidWalkingLocation = false;
-                foreach (var walkingLocation in foundCharacter.walkingLocations)
-                {
-                    if (walkingLocation.CheckRequirement())
-                    {
-                        Debug.Log("Found valid walking location for " + foundCharacter.objectID);
-                        foundValidWalkingLocation = true;
-                    }
-                }
-                if (foundValidWalkingLocation)
-                {
-                    SetUpWalkingNpc(foundCharacter);
-                }
+        //        if (ignoreWalkingConditions)
+        //        {
+        //            //Debug.LogWarning("Ignoring walking conditions.");
+        //            SetUpWalkingNpc(foundCharacter);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        bool foundValidWalkingLocation = false;
+        //        foreach (var walkingLocation in foundCharacter.walkingLocations)
+        //        {
+        //            if (walkingLocation.CheckRequirement())
+        //            {
+        //                Debug.Log("Found valid walking location for " + foundCharacter.objectID);
+        //                foundValidWalkingLocation = true;
+        //            }
+        //        }
+        //        if (foundValidWalkingLocation)
+        //        {
+        //            SetUpWalkingNpc(foundCharacter);
+        //        }
 
-            }
-        }
+        //    }
+        //}
         if (!string.IsNullOrEmpty(repeatingItemQuest))
         {
             Quest quest = Quests.FindByID(repeatingItemQuest);
@@ -288,13 +288,13 @@ public class InteractNode : MonoBehaviour
         }
     }
 
-    private void SetUpWalkingNpc(Character walker)
+    private void SetUpWalkingNpc(CharacterNode cNode)
     {
-        if (walker != null)
+        if (cNode != null)
         {
-            TransientDataScript.AddCharacterNode(walker);
+            CharacterNodeTracker.AddCharacterNode(cNode);
             isSpawningNpc = true;
-            character = walker;
+            character = cNode.character;
             nodeSprite.sprite = placeholderNpc.still;
         }
         else
