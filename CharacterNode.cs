@@ -13,10 +13,10 @@ public class CharacterNode : MonoBehaviour
     public string alternativeSpriteID;
     public string activeDialogueID; // Character only appears if all dialogue requirements are met
     public int randomSpawnChance; // Leave at 0 to always spawn
-    public bool interactionDisabled; // Interact-menu will only be available if this is false. Enforced if character is unlinked.
+    public bool ornamentalOnly; // Will not be changed by checks. Prevents any re-enabling. Never applied to overrides.
     public bool disableFloatText; // Will not display float text. Enforced if character is unlinked and there is no alternative.
     public bool doNotLinkCharacterData; // Node is not linked to an actual character object. Interaction disabled
-    public bool continuouslyCheckRequirements; // If false, checks will not be reevaluated until 
+    public bool continuouslyCheckRequirements; // If false, checks will not be reevaluated until destroyed
     public RequirementPackage customRequirements;
 
     SpriteRenderer sRender;
@@ -25,6 +25,7 @@ public class CharacterNode : MonoBehaviour
     bool isReadyToRetest;
     float readyTimer = 0;
     float readyTick = 2;
+    bool fadeIn = false;
 
     void Start()
     {
@@ -32,6 +33,7 @@ public class CharacterNode : MonoBehaviour
         sRender = GetComponent<SpriteRenderer>();
         col = GetComponent<CapsuleCollider2D>();
         SetupNode();
+        fadeIn = true;
     }
 
     private void OnMouseOver()
@@ -52,7 +54,7 @@ public class CharacterNode : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!interactionDisabled && character != null)
+        if (character != null)
         {
             if (TransientDataScript.GameState == GameState.Overworld)
             {
@@ -90,6 +92,26 @@ public class CharacterNode : MonoBehaviour
         HideNode();
     }
 
+    IEnumerator FadeInAndEnable()
+    {
+        float alpha = 0;
+        float fadeValue = 0.01f;
+
+        while (alpha < 1)
+        {
+            yield return new WaitForSeconds(0.05f);
+            alpha += fadeValue;
+            fadeValue += 0.005f;
+
+            sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, alpha);
+        }
+
+        if (!ornamentalOnly)
+        {
+            col.enabled = true;
+        }
+    }
+
     void SetupNode()
     {
         isReadyToRetest = false;
@@ -118,6 +140,7 @@ public class CharacterNode : MonoBehaviour
             {
                 if (randomSpawnChance == 0 || Random.Range(0, 100) <= randomSpawnChance)
                 {
+                    col.enabled = false;
                     EnableCharacter();
                 }
             }
@@ -135,7 +158,6 @@ public class CharacterNode : MonoBehaviour
     void HideNode()
     {
         Debug.Log("Hiding character " + characterID);
-        interactionDisabled = true;
         sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 0);
         col.enabled = false;
     }
@@ -186,12 +208,19 @@ public class CharacterNode : MonoBehaviour
                 {
                     ConfigureDisplayText();
                     FindSprite();
-
-                    sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 1);
-
-                    if (!interactionDisabled)
+                    
+                    if (fadeIn)
                     {
-                        col.enabled = true;
+                        StartCoroutine(FadeInAndEnable());
+                    }
+                    else
+                    {
+                        sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 1);
+
+                        if (!ornamentalOnly)
+                        {
+                            col.enabled = true;
+                        }
                     }
                 }
                 else
@@ -210,7 +239,7 @@ public class CharacterNode : MonoBehaviour
 
     void NullCharacterConfiguration()
     {
-        interactionDisabled = true;
+        col.enabled = false;
         ConfigureDisplayText();
         FindSprite();
     }
@@ -291,13 +320,12 @@ public class CharacterNode : MonoBehaviour
 
         if (!foundSpeaker)
         {
-            Debug.Log("No viable speaker found for location. Disabling override and setting up with default ID.");
-
-            allowOverride = false;
-            SetupNode();
+            Debug.Log("No viable speaker found for location. Hiding node.");
+            HideNode();
         }
         else
         {
+            ornamentalOnly = false;
             EnableCharacter();
         }
     }
