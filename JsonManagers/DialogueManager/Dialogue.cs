@@ -30,6 +30,7 @@ public class Dialogue
     public List<IdIntPair> requirements = new();
     public List<IdIntPair> restrictions = new();
     public string locationID;
+    public bool disableAutoNode = false;
     public List<Choice> choices = new(); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
     public List<IdIntPair> displayProgress = new(); // For quests with multiple, non-chronological requirements that should be tracked in the journal. More responsive and situational than hints.
     public bool autoProgressStage = false; //automatically go to next stage when step is completed
