@@ -7,6 +7,7 @@ public class CharacterNode : MonoBehaviour
 {
     public bool allowOverride = false; // replaces node with speaker from a viable dialogue where location is explicitly set.
     public bool ignoreCustomReqOnOverride = false;
+    public bool updateOnNewDay = false;
     public Character character;
     public string characterID;
     public string alternateFloatText; // Display this text instead of character name
@@ -26,6 +27,16 @@ public class CharacterNode : MonoBehaviour
     float readyTimer = 0;
     float readyTick = 2;
 
+    public void UpdateOnNewDay()
+    {
+        SetupNode();
+    }
+
+    public void DisableWithFade()
+    {
+        // Implement enumeration
+        HideNode();
+    }
     void Start()
     {
         sRender = GetComponent<SpriteRenderer>();
@@ -153,7 +164,7 @@ public class CharacterNode : MonoBehaviour
 
             if (character != null)
             {
-                if (TransientDataScript.AddCharacterNode(character))
+                if (TransientDataScript.AddCharacterNode(this))
                 {
                     ConfigureDisplayText();
                     FindSprite();
@@ -226,7 +237,10 @@ public class CharacterNode : MonoBehaviour
 
                 Dialogue dialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
 
-                if (dialogue != null && !string.IsNullOrEmpty(dialogue.locationID) && dialogue.stageType == StageType.Dialogue)
+                if (dialogue != null &&
+                    !dialogue.disableAutoNode &&
+                    !string.IsNullOrEmpty(dialogue.locationID) &&
+                    dialogue.stageType == StageType.Dialogue)
                 {
                     if (RequirementChecker.CheckDialogueRequirements(dialogue))
                     {
