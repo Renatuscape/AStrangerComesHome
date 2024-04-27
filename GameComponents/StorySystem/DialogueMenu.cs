@@ -42,8 +42,10 @@ public class DialogueMenu : MonoBehaviour
         {
             Player.Set(activeQuest.objectID, choice.advanceTo);
         }
+
         if (!isSuccess && choice.advanceToOnFailure > -1)
         {
+            Debug.Log("Choice failed, and choice had valid advanceToOnFailure value.");
             Player.Set(activeQuest.objectID, choice.advanceToOnFailure);
         }
 
@@ -62,12 +64,22 @@ public class DialogueMenu : MonoBehaviour
         else
         {
             Debug.Log("Attempted to continue after choice, but target stage does not exist. Ensure that dialogue is set to end conversation, or that next stage exists.");
-            EndDialogue();
+            EndDialogue(null);
         }
     }
 
-    public void EndDialogue()
+    public void EndDialogue(Choice choice)
     {
+        if (choice != null && choice.nodeData.removeSpeakerNode)
+        {
+            var speaker = choice.nodeData.nodeID;
+            if (string.IsNullOrEmpty(speaker))
+            {
+                Debug.LogWarning("Set speaker ID for " + choice.optionText + " to use removeSpeakerNode feature.");
+            }
+
+            TransientDataScript.DisableNodeWithFade(speaker);
+        }
         dialogueDisplay.gameObject.SetActive(false);
 
         if (!doNotReopenTopic)
