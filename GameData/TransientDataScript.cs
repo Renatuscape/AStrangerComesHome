@@ -12,7 +12,7 @@ public class TransientDataScript : MonoBehaviour
     public static GameManagerScript gameManager;
     public static GameState GameState { get; private set; }
 
-    public List<Character> characterNodes = new();
+    public List<CharacterNode> characterNodes = new();
     public Language language;
     public List<GameObject> activePrefabs;
 
@@ -321,15 +321,37 @@ public class TransientDataScript : MonoBehaviour
         }
     }
 
-    public static void DailyReset()
+    public static void DailyTick()
     {
         QuestResetter.Tick();
+        Player.CheckTimers();
 
         if (GetDaysPassed() % 7 == 0)
         {
             if (gameManager.dataManager.giftedThisWeek != null)
             {
                 gameManager.dataManager.giftedThisWeek.Clear();
+            }
+        }
+
+        foreach (var cNode in transientData.characterNodes)
+        {
+            if (cNode.updateOnNewDay)
+            {
+                cNode.UpdateOnNewDay();
+            }
+        }
+    }
+
+    public static void DisableNodeWithFade(string speakerID)
+    {
+        foreach (var cNode in transientData.characterNodes)
+        {
+            if (cNode.characterID == speakerID)
+            {
+                cNode.DisableWithFade();
+
+                break;
             }
         }
     }
@@ -354,13 +376,13 @@ public class TransientDataScript : MonoBehaviour
         transientData.characterNodes.Clear();
     }
 
-    public static bool AddCharacterNode(Character character)
+    public static bool AddCharacterNode(CharacterNode cNode)
     {
-        var foundCharacter = transientData.characterNodes.FirstOrDefault(c => c.objectID == character.objectID);
+        var foundCharacter = transientData.characterNodes.FirstOrDefault(c => c.characterID == cNode.characterID);
 
         if (foundCharacter == null)
         {
-            transientData.characterNodes.Add(character);
+            transientData.characterNodes.Add(cNode);
             return true;
         }
         else
@@ -371,12 +393,12 @@ public class TransientDataScript : MonoBehaviour
 
     public static bool CheckIfCharacterExistsInWorld(string charID)
     {
-        return transientData.characterNodes.FirstOrDefault(c => c.objectID == charID) != null;
+        return transientData.characterNodes.FirstOrDefault(c => c.characterID == charID) != null;
     }
 
     public static void RemoveWorldCharacterFromList(string charID)
     {
-        var foundCharacter = transientData.characterNodes.FirstOrDefault(c => c.objectID == charID);
+        var foundCharacter = transientData.characterNodes.FirstOrDefault(c => c.characterID == charID);
         transientData.characterNodes.Remove(foundCharacter);
     }
 }
