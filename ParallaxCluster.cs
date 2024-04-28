@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class ParallaxCluster : MonoBehaviour
 {
@@ -96,29 +97,47 @@ public class ParallaxCluster : MonoBehaviour
     }
     IEnumerator FadeIn(bool setReady)
     {
+        bool fadeComplete = false;
+        float alphaBack = 0;
+        float alphaMid = 0;
+        float alphaFront = 0;
 
-        float alpha = 0;
+        float fadeValueBack = 0.01f;
+        float fadeValueMid = 0.01f;
+        float fadeValueFront = 0.01f;
 
-        while (alpha < 1)
+        while (!fadeComplete)
         {
-            alpha += 0.01f;
 
             foreach (SpriteRenderer rend in frontLayerSprites)
             {
-                rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha + 0.3f);
+                rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alphaFront);
             }
 
             foreach (SpriteRenderer rend in midLayerSprites)
             {
-                rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha + 0.18f);
+                rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alphaMid);
             }
 
             foreach (SpriteRenderer rend in backLayerSprites)
             {
-                rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha);
+                rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alphaBack);
             }
 
-            yield return new WaitForSeconds(0.01f);
+            if (alphaBack > 1 && alphaMid > 1 && alphaFront > 1)
+            {
+                fadeComplete = true;
+            }
+
+            fadeValueBack += 0.005f;
+            fadeValueMid += 0.01f;
+            fadeValueFront += 0.03f;
+
+            alphaBack += fadeValueBack;
+            alphaMid += fadeValueMid;
+            alphaFront += fadeValueFront;
+
+            yield return new WaitForSeconds(0.05f);
         }
 
         if (setReady)
@@ -133,15 +152,24 @@ public class ParallaxCluster : MonoBehaviour
 
         foreach (SpriteRenderer child in transform.GetComponentsInChildren<SpriteRenderer>())
         {
-            allRenderersFound.Add(child);
+            if (child.gameObject.GetComponent<CharacterNode>() ==  null)
+            {
+                allRenderersFound.Add(child);
+            }
 
             foreach (SpriteRenderer grandChild in child.gameObject.transform.GetComponentsInChildren<SpriteRenderer>())
             {
-                allRenderersFound.Add(grandChild);
+                if (grandChild.gameObject.GetComponent<CharacterNode>() == null)
+                {
+                    allRenderersFound.Add(grandChild);
+                }
 
                 foreach (SpriteRenderer greatGrandChild in grandChild.gameObject.transform.GetComponentsInChildren<SpriteRenderer>())
                 {
-                    allRenderersFound.Add(greatGrandChild);
+                    if (greatGrandChild.gameObject.GetComponent<CharacterNode>() == null)
+                    {
+                        allRenderersFound.Add(greatGrandChild);
+                    }
                 }
             }
         }
