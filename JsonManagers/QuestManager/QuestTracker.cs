@@ -56,7 +56,7 @@ public class QuestTracker : MonoBehaviour
 
                 if (dialogue != null && dialogue.stageType == StageType.PopUp)
                 {
-                    Debug.Log($"Added {quest.objectID} at stage {stage} to relevant dialogue list for pop-ups.");
+                    //Debug.Log($"Added {quest.objectID} at stage {stage} to relevant dialogue list for pop-ups.");
                     relevantDialogues.Add(dialogue);
                 }
             }

@@ -54,7 +54,7 @@ public class TopicMenu : MonoBehaviour
                 if (activeDialogue.stageType == StageType.Dialogue) // Make sure this stage is of type dialogue
                 {
                     speaker = activeDialogue.speakerID;
-                    Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
+                    //Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
                 }
 
                 if (string.IsNullOrEmpty(speaker)) // If there is no speaker assigned to this dialogue, default to quest giver ID.
