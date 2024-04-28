@@ -18,6 +18,7 @@ public class CharacterNode : MonoBehaviour
     public bool doNotLinkCharacterData; // Node is not linked to an actual character object. Interaction disabled
     public bool continuouslyCheckRequirements; // If false, checks will not be reevaluated until destroyed
     public RequirementPackage customRequirements;
+    public bool isDormant = true;
 
     SpriteRenderer sRender;
     CapsuleCollider2D col;
@@ -25,7 +26,7 @@ public class CharacterNode : MonoBehaviour
     bool isReadyToRetest;
     float readyTimer = 0;
     float readyTick = 2;
-    bool fadeIn = false;
+    bool fadeIn = true;
 
     void Start()
     {
@@ -64,6 +65,11 @@ public class CharacterNode : MonoBehaviour
         }
     }
 
+    public bool AttemptFadeIn()
+    {
+        return isDormant;
+    }
+
     public void UpdateAtMidnight()
     {
         SetupNode();
@@ -99,11 +105,12 @@ public class CharacterNode : MonoBehaviour
 
         while (alpha < 1)
         {
-            yield return new WaitForSeconds(0.05f);
             alpha += fadeValue;
             fadeValue += 0.005f;
 
             sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, alpha);
+
+            yield return new WaitForSeconds(0.05f);
         }
 
         if (!ornamentalOnly)
@@ -157,6 +164,7 @@ public class CharacterNode : MonoBehaviour
 
     void HideNode()
     {
+        isDormant = true;
         Debug.Log("Hiding character " + characterID);
         sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 0);
         col.enabled = false;
@@ -194,6 +202,7 @@ public class CharacterNode : MonoBehaviour
     void EnableCharacter()
     {
         Debug.Log("Attempting to enable character " + characterID);
+
         if (doNotLinkCharacterData)
         {
             NullCharacterConfiguration();
@@ -206,11 +215,13 @@ public class CharacterNode : MonoBehaviour
             {
                 if (CharacterNodeTracker.AddCharacterNode(this))
                 {
+                    isDormant = false;
                     ConfigureDisplayText();
                     FindSprite();
                     
                     if (fadeIn)
                     {
+                        Debug.Log("Fading in node (" + characterID + "). Override is " + allowOverride);
                         StartCoroutine(FadeInAndEnable());
                     }
                     else
@@ -325,7 +336,6 @@ public class CharacterNode : MonoBehaviour
         }
         else
         {
-            ornamentalOnly = false;
             EnableCharacter();
         }
     }
