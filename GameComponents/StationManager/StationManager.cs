@@ -8,9 +8,11 @@ public class StationManager : MonoBehaviour
     public TransientDataScript transientData;
     public GameObject defaultStation;
     public GameObject spawnedStation;
+    public StationParallax spawnedStationScript;
     public float parallaxMultiplier;
     public List<GameObject> customStations;
     public List<GameObject> defaultStations;
+
     void Awake()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
@@ -24,26 +26,38 @@ public class StationManager : MonoBehaviour
             {
 
             }
-            else
+            else if (transientData.currentSpeed < 5)
             {
                 SetUpStation();
             }
         }
 
-        if (spawnedStation != null && transientData.currentLocation is null)
+        if (spawnedStation != null && spawnedStationScript != null && transientData.currentLocation == null)
         {
-            if (spawnedStation.transform.position.x < -25 || spawnedStation.transform.position.x > 25)
+            if (spawnedStation.transform.position.x < -20 || spawnedStation.transform.position.x > 20)
             {
                 transientData.activePrefabs.Remove(spawnedStation);
-                Destroy(spawnedStation);
+
+                if (spawnedStationScript != null && !spawnedStationScript.readyToDestroy)
+                {
+                    spawnedStationScript.RemoveStation();
+                    spawnedStationScript = null;
+                }
             }
         }
-        else if (spawnedStation != null && transientData.currentLocation is not null)
+        else if (spawnedStation != null && spawnedStationScript != null && transientData.currentLocation != null)
         {
-            if (spawnedStation.transform.position.x < -30)
-                spawnedStation.transform.position = new Vector3(25, 0, 0);
-            else if (spawnedStation.transform.position.x > 25)
-                spawnedStation.transform.position = new Vector3(-25, 0, 0);
+            if (spawnedStation.transform.position.x < -30 && !spawnedStationScript.movingRight)
+            {
+                spawnedStationScript.MoveRight();
+                // spawnedStation.transform.position = new Vector3(25, 0, 0);
+            }
+
+            else if (spawnedStation.transform.position.x > 30 && !spawnedStationScript.movingLeft)
+            {
+                spawnedStationScript.MoveLeft();
+                //spawnedStation.transform.position = new Vector3(-25, 0, 0);
+            }
         }
     }
 
@@ -54,7 +68,7 @@ public class StationManager : MonoBehaviour
         if (foundStation == null)
         {
             foundStation = defaultStations.FirstOrDefault(s => s.name.ToLower().Contains(transientData.currentLocation.type.ToString().ToLower()));
-            
+
             if (foundStation == null)
             {
                 foundStation = defaultStation;
@@ -64,6 +78,7 @@ public class StationManager : MonoBehaviour
         spawnedStation = Instantiate(foundStation);
         spawnedStation.name = "spawnedStation";
         transientData.activePrefabs.Add(spawnedStation);
+        spawnedStationScript = spawnedStation.GetComponent<StationParallax>();
     }
 
     private void OnDisable()
