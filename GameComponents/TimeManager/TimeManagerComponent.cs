@@ -21,7 +21,7 @@ public class TimeManagerComponent : MonoBehaviour
 
     private string years;
     private string ordinal;
-    public string[] weekdayArray = new string[] { "Lunden", "Martiden", "Mercuiden", "Ioviden", "Venerden", "Saturiden", "Solden" };
+    //public string[] weekdayArray = new string[] { "Lunden", "Martiden", "Mercuiden", "Ioviden", "Venerden", "Saturiden", "Solden" };
     public string calendarOutputText;
 
     void Start()
@@ -33,7 +33,7 @@ public class TimeManagerComponent : MonoBehaviour
     {
         if (TransientDataScript.GameState != GameState.BankMenu && TransientDataScript.GameState != GameState.Loading && TransientDataScript.GameState != GameState.CharacterCreation)
         {
-            dataManager.timeOfDay += (Time.deltaTime / 300 * transientData.timeFlowSpeed) * Time.timeScale;
+            dataManager.timeOfDay += (Time.deltaTime / 400 * transientData.timeFlowSpeed) * Time.timeScale;
 
             yearNumber = (int)Mathf.Round((int)dataManager.totalGameDays / 336);
 
