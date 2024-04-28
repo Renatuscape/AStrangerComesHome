@@ -85,12 +85,12 @@ public class PassengerPrefabScript : MonoBehaviour
     {
         float distance = CalculateDistance(origin, destination);
         Debug.Log("Distance between A and B: " + distance);
-        fare = (int) distance * 10;
+        fare = (int)(distance * distance) * (int)Mathf.Ceil(Player.GetCount("SCR012-SCR-NN", name) * 0.5f);
     }
 
     public static float CalculateDistance(Location pointA, Location pointB)
     {
-        float distance = Mathf.Sqrt(Mathf.Pow(pointB.mapX - pointA.mapY, 2) + Mathf.Pow(pointB.mapX - pointA.mapY, 2));
+        float distance = Mathf.Sqrt(Mathf.Pow(pointB.mapX - pointA.mapX, 2) + Mathf.Pow(pointB.mapY - pointA.mapY, 2));
         return distance;
     }
 
