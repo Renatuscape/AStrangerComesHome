@@ -8,6 +8,7 @@ public class TimeManagerComponent : MonoBehaviour
     public DataManagerScript dataManager;
     public TransientDataScript transientData;
 
+    public Canvas calendarCanvas;
     public TextMeshProUGUI dayText;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI dateText;
@@ -31,7 +32,7 @@ public class TimeManagerComponent : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (TransientDataScript.GameState != GameState.BankMenu && TransientDataScript.GameState != GameState.Loading && TransientDataScript.GameState != GameState.CharacterCreation)
+        if (TransientDataScript.IsTimeFlowing())
         {
             dataManager.timeOfDay += (Time.deltaTime / 400 * transientData.timeFlowSpeed) * Time.timeScale;
 
@@ -92,6 +93,21 @@ public class TimeManagerComponent : MonoBehaviour
 
             dayText.text = $"{(DayOfWeek)dayOfWeekNumber}";
             dateText.text = $"D{dayOfMonthNumber}M{monthNumber}Y{yearNumber}";
+        }
+
+        if (TransientDataScript.GameState == GameState.Overworld)
+        {
+            if (!calendarCanvas.gameObject.activeInHierarchy)
+            {
+                calendarCanvas.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            if (calendarCanvas.gameObject.activeInHierarchy)
+            {
+                calendarCanvas.gameObject.SetActive(false);
+            }
         }
     }
 }
