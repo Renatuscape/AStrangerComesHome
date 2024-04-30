@@ -58,6 +58,11 @@ public class MenuFloatTextScript : MonoBehaviour
 
         floatText.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = true;
         Canvas.ForceUpdateCanvases();
+
+        Canvas.ForceUpdateCanvases();
+        floatText.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = false;
+        floatText.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = true;
+        Canvas.ForceUpdateCanvases();
     }
 
     public void DisableFloatText()
