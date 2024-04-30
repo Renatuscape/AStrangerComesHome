@@ -18,6 +18,24 @@ public class TransientDataScript : MonoBehaviour
     [TextArea(20, 50)]
     public string gameStateLog = "Game State Changes";
 
+    //void Update() // For debugging collision
+    //{
+    //    // Cast a ray from the camera to the mouse position
+    //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //    RaycastHit hit;
+
+    //    // Perform the raycast
+    //    if (Physics.Raycast(ray, out hit))
+    //    {
+    //        // Check if the hit object has a collider
+    //        if (hit.collider != null)
+    //        {
+    //            // Log the name of the collided GameObject
+    //            Debug.Log("Mouse is hovering over: " + hit.collider.gameObject.name);
+    //        }
+    //    }
+    //}
+
     //CAMERA
     public static CameraView CameraView { get; private set; }
 
@@ -152,39 +170,9 @@ public class TransientDataScript : MonoBehaviour
 
     public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity)
     {
-        string hexColour = "635550";
-        if (item.rarity == ItemRarity.Common)
-        {
-            hexColour = "63411b";
-        }
-        else if (item.rarity == ItemRarity.Uncommon)
-        {
-            hexColour = "00766a";
-        }
-        else if (item.rarity == ItemRarity.Rare)
-        {
-            hexColour = "2551a9";
-        }
-        else if (item.rarity == ItemRarity.Extraordinary)
-        {
-            hexColour = "772084";
-        }
-        else if (item.rarity == ItemRarity.Mythical)
-        {
-            hexColour = "b72b66";
-        }
-        else if (item.rarity == ItemRarity.Unique)
-        {
-            hexColour = "7d9c00";
-        }
-
-        string value = printPrice ? $"\nValue: {MoneyExchange.CalculateSellPrice(item)}" : "";
-        string rarity = printRarity ? $"\nRarity: {item.rarity}" : "";
-        string content = $"<color=#{hexColour}>{item.name}{value}{rarity}</color>";
-
         if (NullCheck())
         {
-            PrintFloatText(content);
+            PrintFloatEmbellishedItem(item, printPrice, printRarity);
         }
         else
         {

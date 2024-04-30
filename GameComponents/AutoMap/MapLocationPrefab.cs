@@ -31,6 +31,8 @@ public class MapLocationPrefab : MonoBehaviour
 
     private void OnMouseOver()
     {
+        //Debug.Log("Mouse is hovering over: " + gameObject.name);
+
         if (!location.isHidden)
         {
             TransientDataScript.PrintFloatText($"{location.name}");
