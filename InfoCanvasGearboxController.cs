@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InfoCanvasGearboxController : MonoBehaviour
 {
@@ -9,16 +10,27 @@ public class InfoCanvasGearboxController : MonoBehaviour
     public GameObject gearStick;
     public TextMeshProUGUI smallGearboxText;
     public GameObject targetPosition;
-    public float stickPosition;
 
     public GameObject targetR;
     public GameObject targetOff;
     public GameObject target1;
     public GameObject target2;
     public GameObject target3;
+
+    public Button btnGear1;
+    public Button btnGear2;
+    public Button btnGear3;
+    public Button btnOff;
+    public Button btnGearR;
+
+    bool runningCoroutine = false;
     void Start()
     {
-        
+        btnGear1.onClick.AddListener(() => transientData.engineState = EngineState.FirstGear);
+        btnGear2.onClick.AddListener(() => transientData.engineState = EngineState.SecondGear);
+        btnGear3.onClick.AddListener(() => transientData.engineState = EngineState.ThirdGear);
+        btnGearR.onClick.AddListener(() => transientData.engineState = EngineState.Reverse);
+        btnOff.onClick.AddListener(() => transientData.engineState = EngineState.Off);
     }
 
     // Update is called once per frame
@@ -54,10 +66,10 @@ public class InfoCanvasGearboxController : MonoBehaviour
                 targetPosition = target3;
             }
 
-            while (stickPosition != targetPosition.transform.position.x)
+            if (!runningCoroutine && (gearStick.transform.localPosition.x > targetPosition.transform.localPosition.x + 0.2f || gearStick.transform.localPosition.x < targetPosition.transform.localPosition.x - 0.2f))
             {
-               StartCoroutine(UpdateStickPosition(targetPosition.transform.position));
-               stickPosition = targetPosition.transform.position.x;
+                runningCoroutine = true;
+                StartCoroutine(UpdateStickPosition(targetPosition.transform.localPosition));
             }
         }
         else
@@ -87,17 +99,21 @@ public class InfoCanvasGearboxController : MonoBehaviour
 
     IEnumerator UpdateStickPosition(Vector3 newPos)
     {
-        float adjustment = 0.5f;
-        while (gearStick.transform.position.x > newPos.x + 0.3f)
+        float duration = 0.2f; // Time taken to reach the target position
+        float elapsedTime = 0f;
+        Vector3 initialPos = gearStick.transform.localPosition;
+
+        while (elapsedTime < duration)
         {
-            gearStick.transform.position = new Vector3(gearStick.transform.position.x - adjustment, gearStick.transform.position.y, gearStick.transform.position.z);
-            yield return new WaitForSeconds(0.001f);
+            gearStick.transform.localPosition = Vector3.Lerp(initialPos, newPos, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null; // Wait for the next frame
         }
-        while (gearStick.transform.position.x < newPos.x + 0.3f)
-        {
-            gearStick.transform.position = new Vector3(gearStick.transform.position.x + adjustment, gearStick.transform.position.y, gearStick.transform.position.z);
-            yield return new WaitForSeconds(0.01f);
-        }
+
+        // Ensure the gear stick reaches exactly the target position
+        gearStick.transform.localPosition = newPos;
+
         AudioManager.PlayUISound("metalClick");
+        runningCoroutine = false;
     }
 }
