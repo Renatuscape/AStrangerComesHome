@@ -221,7 +221,7 @@ public class CharacterNode : MonoBehaviour
                     
                     if (fadeIn)
                     {
-                        Debug.Log("Fading in node (" + characterID + "). Override is " + allowOverride);
+                        // Debug.Log("Fading in node (" + characterID + "). Override is " + allowOverride);
                         StartCoroutine(FadeInAndEnable());
                     }
                     else
