@@ -165,7 +165,7 @@ public class CharacterNode : MonoBehaviour
     void HideNode()
     {
         isDormant = true;
-        Debug.Log("Hiding character " + characterID);
+        //Debug.Log("Hiding character " + characterID);
         sRender.color = new Color(sRender.color.r, sRender.color.g, sRender.color.b, 0);
         col.enabled = false;
     }
