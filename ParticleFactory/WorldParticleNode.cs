@@ -43,6 +43,7 @@ public class WorldParticleNode : MonoBehaviour
         foreach (string particle in particles)
         {
             int toSpawn = Random.Range(minParticles, maxParticles + 1);
+            // Debug.Log("Creating new particle of type " + particle + ". Attempting to spawn " + toSpawn);
             int spawned = 0;
 
             while (spawned < toSpawn)
