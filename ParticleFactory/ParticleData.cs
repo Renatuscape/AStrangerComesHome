@@ -10,6 +10,7 @@ public class ParticleData
     public float gravity;
     public float scatterRange;
     public bool adjustForCoachSpeed;
+    public bool disableWithoutSpeed;
     public bool isSpinning;
     public bool isSpinningLeft;
     public bool isGrowing;
