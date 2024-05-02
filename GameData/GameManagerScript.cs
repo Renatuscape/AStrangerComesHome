@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
@@ -49,7 +46,7 @@ public class GameManagerScript : MonoBehaviour
 
     void Awake()
     {
-        //Application.targetFrameRate = 60;
+        Application.targetFrameRate = 120;
 
         TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
         StartUpRoutine();
