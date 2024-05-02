@@ -11,9 +11,9 @@ public class ParticleData
     public float scatterRange;
     public bool adjustForCoachSpeed;
     public bool disableWithoutSpeed;
-    public bool isSpinning;
-    public bool isSpinningLeft;
+    public bool isFadeDisabled; // otherwise fade gradually over time
     public bool isGrowing;
     public bool isShrinking;
-    public bool isFadeDisabled; // otherwise fade gradually over time
+    public float minScale;
+    public float maxScale;
 }
