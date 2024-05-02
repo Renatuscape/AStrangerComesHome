@@ -31,7 +31,7 @@ public class ParticleFactory : MonoBehaviour
 
     public GameObject GetWorldParticle(string particleID)
     {
-        var prefab = particlePrefabs.FirstOrDefault(p => p.name.ToLower().Contains(particleID));
+        var prefab = particlePrefabs.FirstOrDefault(p => p.name.ToLower().Contains(particleID.ToLower()));
         return Instantiate(prefab);
     }
 
