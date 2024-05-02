@@ -11,8 +11,6 @@ public class ParticlePhysics : MonoBehaviour
     public float updateTimer = 0;
 
     float magnitudeAdjustment = 0.2f;
-    float scaleMin = 0.5f;
-    float scaleMax = 2f;
     void Start()
     {
 
@@ -25,8 +23,16 @@ public class ParticlePhysics : MonoBehaviour
 
         if (settings.isGrowing)
         {
-            scaleMin = Random.Range(0.5f, 1f);
-            scaleMax = Random.Range(1.5f, 2.5f);
+            if (settings.minScale == 0)
+            {
+                settings.minScale = Random.Range(0.5f, 1f); ;
+            }
+            if (settings.maxScale == 0)
+            {
+                settings.maxScale = Random.Range(1.5f, 2.5f);
+            }
+
+            rend.transform.localScale = new Vector3(settings.minScale, settings.minScale, 1);
         }
 
         if (settings.scatterRange != 0)
@@ -90,7 +96,7 @@ public class ParticlePhysics : MonoBehaviour
 
                     if (settings.isGrowing)
                     {
-                        float scale = Mathf.Lerp(scaleMax, scaleMin, lifeRatio);
+                        float scale = Mathf.Lerp(settings.maxScale, settings.minScale, lifeRatio);
                         transform.localScale = new Vector3(scale, scale, 1);
                     }
                 }
@@ -98,7 +104,7 @@ public class ParticlePhysics : MonoBehaviour
                 // CHECK FOR DEATH
                 if (currentParticleLife <= 0)
                 {
-                    Destroy(gameObject); // Destroy the particle object
+                    Destroy(gameObject);
                 }
             }
         }
