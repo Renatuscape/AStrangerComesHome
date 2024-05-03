@@ -9,11 +9,12 @@ public class ParticleData
     public float horizontalAcceleration;
     public float gravity;
     public float scatterRange;
+    public float minScale;
+    public float maxScale;
+    public float coachSpeedMultiplier;
     public bool adjustForCoachSpeed;
-    public bool disableWithoutSpeed;
     public bool isFadeDisabled; // otherwise fade gradually over time
     public bool isGrowing;
     public bool isShrinking;
-    public float minScale;
-    public float maxScale;
+    public bool randomiseScale;
 }
