@@ -14,7 +14,7 @@ public class ParticlePhysics : MonoBehaviour
     void Start()
     {
 
-        if (settings.randomDrag != 0 )
+        if (settings.randomDrag != 0)
         {
             settings.velocity = Random.Range(settings.velocity - settings.randomDrag, settings.velocity);
         }
@@ -25,11 +25,47 @@ public class ParticlePhysics : MonoBehaviour
         {
             if (settings.minScale == 0)
             {
-                settings.minScale = Random.Range(0.5f, 1f); ;
+                settings.minScale = 0.5f;
             }
+
             if (settings.maxScale == 0)
             {
-                settings.maxScale = Random.Range(1.5f, 2.5f);
+                settings.maxScale = 1.5f;
+            }
+
+            if (settings.randomiseScale)
+            {
+                settings.minScale = Random.Range(settings.minScale, settings.minScale + 0.5f);
+                settings.maxScale = Random.Range(settings.maxScale, settings.minScale + 1f);
+            }
+
+            rend.transform.localScale = new Vector3(settings.minScale, settings.minScale, 1);
+        }
+        else if (settings.isShrinking)
+        {
+            if (settings.minScale < settings.maxScale)
+            {
+                var minScale = settings.minScale;
+                var maxScale = settings.maxScale;
+
+                settings.minScale = maxScale;
+                settings.maxScale = minScale;
+            }
+
+            if (settings.minScale == 0)
+            {
+                settings.minScale = 1.5f;
+            }
+
+            if (settings.maxScale == 0)
+            {
+                settings.maxScale = 0.5f;
+            }
+
+            if (settings.randomiseScale)
+            {
+                settings.minScale = Random.Range(settings.minScale, settings.minScale + 1f);
+                settings.maxScale = Random.Range(settings.maxScale, settings.maxScale + 0.5f);
             }
 
             rend.transform.localScale = new Vector3(settings.minScale, settings.minScale, 1);
@@ -40,6 +76,10 @@ public class ParticlePhysics : MonoBehaviour
             scatterForce = Random.Range(settings.scatterRange * -1, settings.scatterRange) * magnitudeAdjustment;
 
         }
+        if (settings.adjustForCoachSpeed && settings.coachSpeedMultiplier == 0)
+        {
+            settings.coachSpeedMultiplier = 0.9f;
+        }
 
         isActivated = true;
     }
@@ -48,64 +88,61 @@ public class ParticlePhysics : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            if (!settings.disableWithoutSpeed || settings.disableWithoutSpeed && TransientDataScript.transientData.currentSpeed != 0)
+            // VERTICAL MOVEMENT
+            float verticalForce = settings.velocity;
+            settings.velocity -= settings.gravity; // reduce applied force over time
+
+            // HORIZONTAL MOVEMENT
+            float horizontalForce = scatterForce;
+
+            if (scatterForce != 0)
             {
-                // VERTICAL MOVEMENT
-                float verticalForce = settings.velocity;
-                settings.velocity -= settings.gravity; // reduce applied force over time
-
-                // HORIZONTAL MOVEMENT
-                float horizontalForce = scatterForce;
-
-                if (scatterForce != 0)
+                if (scatterForce > 0)
                 {
-                    if (scatterForce > 0)
-                    {
-                        scatterForce -= settings.horizontalAcceleration * 0.05f;
-                    }
-                    else
-                    {
-                        scatterForce += settings.horizontalAcceleration * 0.05f;
-                    }
+                    scatterForce -= settings.horizontalAcceleration * 0.05f;
+                }
+                else
+                {
+                    scatterForce += settings.horizontalAcceleration * 0.05f;
+                }
+            }
+
+            if (settings.adjustForCoachSpeed)
+            {
+                horizontalForce += TransientDataScript.transientData.currentSpeed * settings.coachSpeedMultiplier;
+            }
+
+            horizontalForce = horizontalForce * Time.deltaTime;
+            verticalForce = verticalForce * Time.deltaTime;
+
+            currentParticleLife -= Time.deltaTime;
+
+            // SET POSITION
+            transform.position = new Vector3(transform.position.x + horizontalForce, transform.position.y + verticalForce, 0);
+
+
+            // ADJUST APPEARANCE
+            if (!settings.isFadeDisabled || settings.isGrowing)
+            {
+                float lifeRatio = currentParticleLife / settings.particleLife;
+
+                if (!settings.isFadeDisabled)
+                {
+                    float alpha = Mathf.Lerp(0, 1, lifeRatio);
+                    rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha);
                 }
 
-                if (settings.adjustForCoachSpeed)
+                if (settings.isGrowing)
                 {
-                    horizontalForce += TransientDataScript.transientData.currentSpeed * 0.9f;
+                    float scale = Mathf.Lerp(settings.maxScale, settings.minScale, lifeRatio);
+                    transform.localScale = new Vector3(scale, scale, 1);
                 }
+            }
 
-                horizontalForce = horizontalForce * Time.deltaTime;
-                verticalForce = verticalForce * Time.deltaTime;
-
-                currentParticleLife -= Time.deltaTime;
-
-                // SET POSITION
-                transform.position = new Vector3(transform.position.x + horizontalForce, transform.position.y + verticalForce, 0);
-
-
-                // ADJUST APPEARANCE
-                if (!settings.isFadeDisabled || settings.isGrowing)
-                {
-                    float lifeRatio = currentParticleLife / settings.particleLife;
-
-                    if (!settings.isFadeDisabled)
-                    {
-                        float alpha = Mathf.Lerp(0, 1, lifeRatio);
-                        rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha);
-                    }
-
-                    if (settings.isGrowing)
-                    {
-                        float scale = Mathf.Lerp(settings.maxScale, settings.minScale, lifeRatio);
-                        transform.localScale = new Vector3(scale, scale, 1);
-                    }
-                }
-
-                // CHECK FOR DEATH
-                if (currentParticleLife <= 0)
-                {
-                    Destroy(gameObject);
-                }
+            // CHECK FOR DEATH
+            if (currentParticleLife <= 0)
+            {
+                Destroy(gameObject);
             }
         }
     }
