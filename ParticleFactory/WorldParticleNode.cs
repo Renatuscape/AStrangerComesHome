@@ -7,6 +7,7 @@ public class WorldParticleNode : MonoBehaviour
     public string customSortingLayer;
 
     public bool adjustSpawnWithSpeed = false;
+    public bool disableWithoutSpeed = false;
     public float maxTick;
     public float minTick;
     public int minParticles;
@@ -22,18 +23,21 @@ public class WorldParticleNode : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            spawnTimer += Time.deltaTime;
-
-            if (adjustSpawnWithSpeed)
+            if (!disableWithoutSpeed || (disableWithoutSpeed && TransientDataScript.transientData.currentSpeed != 0))
             {
-                spawnTimer += TransientDataScript.transientData.currentSpeed * 0.008f;
-            }
+                spawnTimer += Time.deltaTime;
 
-            if (spawnTimer > tick)
-            {
-                SpawnEachParticleType(gameObject);
-                spawnTimer = 0;
-                tick = Random.Range(minTick, maxTick);
+                if (adjustSpawnWithSpeed)
+                {
+                    spawnTimer += TransientDataScript.transientData.currentSpeed * 0.008f;
+                }
+
+                if (spawnTimer > tick)
+                {
+                    SpawnEachParticleType(gameObject);
+                    spawnTimer = 0;
+                    tick = Random.Range(minTick, maxTick);
+                }
             }
         }
     }
