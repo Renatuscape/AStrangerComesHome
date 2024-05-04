@@ -61,7 +61,7 @@ public class ShopItemPrefab : MonoBehaviour
         if (isReady)
         {
             itemFrame.SetActive(true);
-            shopMenu.PrintFloatText($"{itemSource.name}");
+            TransientDataScript.PrintFloatText($"{itemSource.name}");
         }
     }
 
@@ -87,7 +87,7 @@ public class ShopItemPrefab : MonoBehaviour
         {
             itemFrame.SetActive(false);
             buyButton.SetActive(false);
-            shopMenu.DisableFloatText();
+            TransientDataScript.DisableFloatText();
         }
     }
 }
