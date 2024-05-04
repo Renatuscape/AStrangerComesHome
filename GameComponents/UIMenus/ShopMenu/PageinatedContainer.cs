@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PageinatedContainer : MonoBehaviour
 {
     public GameObject stockContainer;
-    List<GameObject> prefabs;
+    public List<GameObject> prefabMasterList = new();
     public List<Item> stock;
     public int itemsPerPage = 28;
 
@@ -26,6 +27,7 @@ public class PageinatedContainer : MonoBehaviour
         // Clear out all dummy items
         foreach (Transform child in stockContainer.transform)
         {
+            if (child.name.ToLower().Contains("placeholder"))
             Destroy(child.gameObject);
         }
 
@@ -33,7 +35,7 @@ public class PageinatedContainer : MonoBehaviour
         btnPageRight.onClick.AddListener(() => ChangePage(false));
     }
 
-    public List<GameObject> Initialise(List<string> stock, bool showInventoryCount)
+    public List<GameObject> Initialise(List<string> stock, bool showInventoryCount, bool skipNotBuyable, bool skipNotSellable)
     {
         List<Item> items = new();
 
@@ -42,27 +44,33 @@ public class PageinatedContainer : MonoBehaviour
             items.Add(Items.FindByID(stockID));
         }
 
-        return Initialise(items, showInventoryCount);
+        return Initialise(items, showInventoryCount, skipNotBuyable, skipNotSellable);
     }
-    public List<GameObject> Initialise(List<Item> stock, bool showInventoryCount)
+    public List<GameObject> Initialise(List<Item> incomingStock, bool showInventoryCount, bool skipNotBuyable, bool skipNotSellable)
     {
+        Debug.Log("Attempting to initialise container " + gameObject.name);
         this.showInventoryCount = showInventoryCount;
         ClearPrefabs();
         pageIndex = 0;
 
-        if (stock != null)
-        {
-            if (stock.Count == 0)
-            {
-                stock = Items.all.Where(x => x.notBuyable == false).ToList();
-            }
+        stock = incomingStock;
 
-            // CREATE LIST OF PAGES
-            containerPages = new List<ContainerPage>();
-            SetUpContent();
+        if (stock == null || stock.Count == 0)
+        {
+            stock = Items.all.Where(x => x.notBuyable == false).ToList();
+        }
+        // CREATE LIST OF PAGES
+        containerPages = new List<ContainerPage>();
+        SetUpContent(skipNotBuyable, skipNotSellable);
+
+        foreach (var page in  containerPages)
+        {
+            SpawnPagePrefabs(page);
         }
 
-        return prefabs;
+        OpenPage(0);
+
+        return prefabMasterList;
     }
 
     public void ChangePage(bool pageBack)
@@ -85,20 +93,30 @@ public class PageinatedContainer : MonoBehaviour
         }
 
         if (oldIndex != pageIndex)
-            SpawnPageContent(pageIndex);
+            OpenPage(pageIndex);
     }
 
-    void SetUpContent()
+    void SetUpContent(bool skipNotBuyable, bool skipNotSellable)
     {
-        stock = stock.OrderBy(obj => obj.rarity).ToList();
+        stock = stock.OrderBy(obj => obj.rarity).ThenBy(obj => obj.name).ToList();
 
-        var foundCatalysts = stock.Where(x => x.type == ItemType.Catalyst).ToList();
-        var foundMaterials = stock.Where(x => x.type == ItemType.Material).ToList();
-        var foundSeeds = stock.Where(x => x.type == ItemType.Seed).ToList();
-        var foundPlants = stock.Where(x => x.type == ItemType.Plant).ToList();
-        var foundTrade = stock.Where(x => x.type == ItemType.Trade).ToList();
-        var foundTreasures = stock.Where(x => x.type == ItemType.Treasure).ToList();
-        var foundBooks = stock.Where(x => x.type == ItemType.Book).ToList();
+        if (skipNotSellable)
+        {
+            stock = stock.Where(i => !i.notSellable).ToList();
+        }
+
+        if (skipNotBuyable)
+        {
+            stock = stock.Where(i => !i.notBuyable).ToList();
+        }
+
+        var foundCatalysts = stock.Where(i => i.type == ItemType.Catalyst).ToList();
+        var foundMaterials = stock.Where(i => i.type == ItemType.Material).ToList();
+        var foundSeeds = stock.Where(i => i.type == ItemType.Seed).ToList();
+        var foundPlants = stock.Where(i => i.type == ItemType.Plant).ToList();
+        var foundTrade = stock.Where(i => i.type == ItemType.Trade).ToList();
+        var foundTreasures = stock.Where(i => i.type == ItemType.Treasure).ToList();
+        var foundBooks = stock.Where(i => i.type == ItemType.Book).ToList();
 
         GeneratePages(foundMaterials, "Materials");
         GeneratePages(foundCatalysts, "Catalysts");
@@ -111,6 +129,7 @@ public class PageinatedContainer : MonoBehaviour
 
     void GeneratePages(List<Item> foundList, string pageName)
     {
+        // Debug.Log("Attempting to generate page for list with " + foundList.Count + " entries named " + pageName);
         if (foundList.Count == 0)
             return; // Skip generating empty pages
 
@@ -119,7 +138,7 @@ public class PageinatedContainer : MonoBehaviour
         newPage.typeName = pageName;
         containerPages.Add(newPage);
 
-        var pageNumber = 1;
+        var pageIndex = 1;
 
         foreach (Item item in foundList)
         {
@@ -127,11 +146,11 @@ public class PageinatedContainer : MonoBehaviour
 
             if (currentPage.pageContent.Count == itemsPerPage)
             {
-                pageNumber++;
+                pageIndex++;
 
                 var nextPage = new ContainerPage();
                 nextPage.pageContent = new List<Item>();
-                nextPage.typeName = pageName + " " + pageNumber;
+                nextPage.typeName = pageName + " " + pageIndex;
                 containerPages.Add(nextPage);
 
                 currentPage = nextPage;
@@ -144,29 +163,37 @@ public class PageinatedContainer : MonoBehaviour
         }
     }
 
-    void SpawnPageContent(int pageIndex)
+    void SpawnPagePrefabs(ContainerPage page)
+    {
+        page.prefabs = new();
+
+        foreach (Item item in page.pageContent)
+        {
+            var prefab = BoxFactory.CreateItemIcon(item, showInventoryCount, 64, 18, true);
+            prefab.name = item.name;
+            prefab.transform.SetParent(stockContainer.transform, false);
+            prefabMasterList.Add(prefab);
+            page.prefabs.Add(prefab);
+        }
+        // Debug.Log("Spawned " + page.prefabs.Count + " prefabs for " + page.typeName);
+    }
+
+    public void OpenPage(int pageIndex)
     {
         if (pageIndex >= 0 && pageIndex < containerPages.Count)
         {
-            stockContainer.GetComponent<GridLayoutGroup>().enabled = false;
             foreach (Transform child in stockContainer.transform)
             {
-                Destroy(child.gameObject);
+                child.gameObject.SetActive(false);
             }
-            stockContainer.GetComponent<GridLayoutGroup>().enabled = true;
-            Canvas.ForceUpdateCanvases();
-            stockContainer.GetComponent<GridLayoutGroup>().enabled = false;
 
-            foreach (Item item in containerPages[pageIndex].pageContent)
+            if (containerPages[pageIndex].prefabs != null && containerPages[pageIndex].prefabs.Count > 0)
             {
-                var prefab = BoxFactory.CreateItemIcon(item, showInventoryCount, 64);
-                prefab.name = item.name;
-                prefab.transform.SetParent(stockContainer.transform, false);
-                prefabs.Add(prefab);
+                foreach (var prefab in containerPages[pageIndex].prefabs)
+                {
+                    prefab.gameObject.SetActive(true);
+                }
             }
-
-            stockContainer.GetComponent<GridLayoutGroup>().enabled = true;
-            Canvas.ForceUpdateCanvases();
 
             categoryName.text = containerPages[pageIndex].typeName;
         }
@@ -174,10 +201,20 @@ public class PageinatedContainer : MonoBehaviour
 
     void ClearPrefabs()
     {
-        foreach (GameObject pref in prefabs)
+        // Debug.Log("Clear prefabs was called on pageinated container.");
+        foreach (GameObject pref in prefabMasterList)
         {
             Destroy(pref);
         }
-        prefabs.Clear();
+        prefabMasterList.Clear();
+        containerPages.Clear();
     }
+}
+
+[System.Serializable]
+public class ContainerPage
+{
+    public string typeName;
+    public List<Item> pageContent;
+    public List<GameObject> prefabs;
 }
