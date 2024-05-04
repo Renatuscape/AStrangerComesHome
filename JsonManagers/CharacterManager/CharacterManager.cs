@@ -82,6 +82,14 @@ public class CharacterManager : MonoBehaviour
             character.giftableLevel = StaticGameValues.defaultGiftableLevel;
         }
 
+        if (character.shops != null && character.shops.Count > 0)
+        {
+            foreach (var shop in character.shops)
+            {
+                shop.Initialise();
+            }
+        }
+
         character.NameSetup();
         objectIDReader(ref character);
         characterList.Add(character);
