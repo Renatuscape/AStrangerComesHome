@@ -140,7 +140,7 @@ public class CharacterNode : MonoBehaviour
         }
         else if (!string.IsNullOrEmpty(characterID))
         {
-            Debug.Log("Attempting to set up character " + characterID);
+            // Debug.Log("Attempting to set up character " + characterID);
             bool checksPassed = AttemptChecks();
 
             if (checksPassed)
@@ -195,13 +195,13 @@ public class CharacterNode : MonoBehaviour
             passedDialogueRequirements = RequirementChecker.CheckDialogueRequirements(dialogue);
         }
 
-        Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}. Is already spawned: {isAlreadySpawned}");
+        // Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}. Is already spawned: {isAlreadySpawned}");
         return passedCustomRequirements && passedDialogueRequirements && !isAlreadySpawned;
     }
 
     void EnableCharacter()
     {
-        Debug.Log("Attempting to enable character " + characterID);
+        // Debug.Log("Attempting to enable character " + characterID);
 
         if (doNotLinkCharacterData)
         {
@@ -331,7 +331,7 @@ public class CharacterNode : MonoBehaviour
 
         if (!foundSpeaker)
         {
-            Debug.Log("No viable speaker found for location. Hiding node.");
+            // Debug.Log("No viable speaker found for location. Hiding node.");
             HideNode();
         }
         else
