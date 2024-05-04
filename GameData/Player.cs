@@ -272,4 +272,9 @@ public static class Player
             inventoryList.Remove(entry);
         }
     }
+
+    public static List<Item> GetInventory()
+    {
+        return Items.all.Where(i => GetCount(i.objectID, "Player.GetInventory()") > 0).ToList();
+    }
 }
