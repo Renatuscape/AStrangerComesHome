@@ -105,16 +105,16 @@ public static class Characters
 
     public static Character FindByTag(string searchWord, string caller)
     {
-        Debug.Log("Attempting to find tag: " + searchWord);
+        // Debug.Log("Attempting to find tag: " + searchWord);
 
         Character found = all.Find((s) => s.dialogueTag.ToLower() == searchWord.ToLower());
 
         if (found is null)
         {
-            Debug.Log($"Find by tag returned no known character with name {searchWord}. Caller was {caller}. Check if you are passing an objectID or dialogueTag.");
+            Debug.LogWarning($"Find by tag returned no known character with name {searchWord}. Caller was {caller}. Check if you are passing an objectID or dialogueTag.");
         }
 
-        Debug.Log("Found: " + searchWord);
+        // Debug.Log("Found: " + searchWord);
         return found;
     }
 
