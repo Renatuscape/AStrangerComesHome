@@ -155,7 +155,7 @@ public static class DialogueSetup
                     // Format in a way that a future SpriteManager can handle.
 
                     var spriteTag = dEvent.speaker.objectID + "-" + tag.Replace("S#", "");
-                    Debug.Log("Parsed sprite tag: " + spriteTag);
+                    // Debug.Log("Parsed sprite tag: " + spriteTag);
 
                     dEvent.spriteID = spriteTag;
                 }
