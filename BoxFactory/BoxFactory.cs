@@ -79,7 +79,7 @@ public class BoxFactory : MonoBehaviour
         return prefab;
     }
 
-    GameObject InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14)
+    GameObject InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14, bool addUiDataScript = false)
     {
         GameObject newIcon = Instantiate(iconPrefab);
 
@@ -106,6 +106,12 @@ public class BoxFactory : MonoBehaviour
 
         RectTransform transform = newIcon.GetComponent<RectTransform>();
         transform.sizeDelta = new Vector2(size, size);
+
+        if (addUiDataScript)
+        {
+            var uiData = newIcon.AddComponent<ItemUiData>();
+            uiData.item = item;
+        }
 
         return newIcon;
 
@@ -243,9 +249,9 @@ public class BoxFactory : MonoBehaviour
         return boxFactory.InstantiateIconRowPlainTextPrefab(item, amount,  displayAmount);
     }
 
-    public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14)
+    public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14, bool addUiDataScript = false)
     {
-        return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size, fontSize);
+        return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size, fontSize, addUiDataScript);
     }
 
     public static GameObject CreateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice, bool showFloatName)
