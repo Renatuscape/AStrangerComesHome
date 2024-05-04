@@ -86,15 +86,18 @@ public class PortraitRenderer : MonoBehaviour
     }
     public void EnableForShop(string characterID)
     {
+        rightFrame.enabled = false;
+        playerFrame.enabled = false;
+
         //SET SPRITE
         SetSprite(characterID);
 
         //ARRANGE
         gameObject.SetActive(true);
         EnablePlayer();
-        MoveSprite(playerSprite, -370f);
+        MoveSprite(playerSprite, -330f);
         rightPortraitContainer.SetActive(true);
-        MoveSprite(rightPortraitContainer, 370f);
+        MoveSprite(rightPortraitContainer, 360f);
     }
 
     public void EnableForTopicMenu(string characterID)
