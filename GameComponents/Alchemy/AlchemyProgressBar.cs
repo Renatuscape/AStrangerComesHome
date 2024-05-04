@@ -16,7 +16,7 @@ public class AlchemyProgressBar : MonoBehaviour
     public void Initialise(SynthesiserData synthData)
     {
         fullCoordinate = containerBG.transform.position.x;
-        emptyCoordinate = fullCoordinate - 700;
+        emptyCoordinate = fullCoordinate - 624;
         this.synthData = synthData;
         percentageFill = CalculatePercentage();
         UpdateFillBarPosition();
