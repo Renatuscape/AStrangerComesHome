@@ -99,6 +99,43 @@ public static class Items
         return ItemRarity.Junk;
     }
 
+    public static ItemType GetItemType(string typeCode)
+    {
+        if (typeCode == "PLA")
+        {
+            return ItemType.Plant;
+        }
+        else if (typeCode == "CAT")
+        {
+            return ItemType.Catalyst;
+        }
+        else if (typeCode == "MIS")
+        {
+            return ItemType.Misc;
+        }
+        else if (typeCode == "MAT")
+        {
+            return ItemType.Material;
+        }
+        else if (typeCode == "TRA")
+        {
+            return ItemType.Trade;
+        }
+        else if (typeCode == "BOO")
+        {
+            return ItemType.Book;
+        }
+        else if (typeCode == "SEE")
+        {
+            return ItemType.Seed;
+        }
+        else if (typeCode == "TRE")
+        {
+            return ItemType.Treasure;
+        }
+        return ItemType.Script;
+    }
+
     public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity)
     {
         string hexColour = "635550";
