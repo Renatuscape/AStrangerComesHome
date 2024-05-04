@@ -2,92 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ShopItemPrefab : MonoBehaviour
+public class ShopItemPrefab : MonoBehaviour, IPointerClickHandler
 {
-    public TransientDataScript transientData;
     public ShopMenu shopMenu;
 
     public Item itemSource;
     public bool isReady = false;
-    public TextMeshProUGUI valueText;
-    public GameObject frameOval;
-    public GameObject frameRound;
-    public GameObject itemFrame;
-    public GameObject buyButton;
-    public Image displayImage;
-    public Image displayShadow;
-    public float priceIncreasePercent;
+    public bool sellFromPlayer = false;
 
-    int priceAdjusted;
-    int rhetorics;
 
-    void Awake()
+    public void Initialise(Item item, ShopMenu script, bool sellFromPlayer)
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-        rhetorics = Player.GetCount("MAG002", "ShopMenu");
-        frameOval.SetActive(false);
-        frameRound.SetActive(false);
-        itemFrame.SetActive(false);
-        buyButton.SetActive(false);
-    }
-
-    public void EnableObject(Item item, ShopMenu script)
-    {
+        this.sellFromPlayer = sellFromPlayer;
         shopMenu = script;
         itemSource = item;
-        CalculatePrice();
-
-        displayImage.sprite = itemSource.sprite;
-        displayShadow.sprite = itemSource.sprite;
-        itemFrame = frameRound;
         isReady = true;
     }
 
-    public void CalculatePrice()
+    public void OnPointerClick(PointerEventData eventData)
     {
-        var newPrice = itemSource.basePrice * (1 + priceIncreasePercent / 100);
-        float rhetoricsDiscount = Mathf.Clamp(rhetorics * 0.02f, 0f, 0.20f); // 0.02f represents 2%, 0.20f represents 20%
-        float finalPrice = newPrice - (newPrice * rhetoricsDiscount);
-
-        priceAdjusted = (int)Mathf.Ceil(finalPrice);
-        //Debug.Log($"Price {itemSource.basePrice} adjusted by {priceIncreasePercent}% to {priceAdjusted}");
-
-        valueText.text = $"{priceAdjusted}";
-    }
-    public void MouseOverItem()
-    {
+        Debug.Log("Clicked shop item " + itemSource.name);
         if (isReady)
         {
-            itemFrame.SetActive(true);
-            TransientDataScript.PrintFloatText($"{itemSource.name}");
-        }
-    }
-
-    public void MouseClickItem()
-    {
-        if (isReady)
-        {
-            if (buyButton.activeInHierarchy == true)
+            if (sellFromPlayer)
             {
-                shopMenu.AttemptPurchase(itemSource, priceAdjusted);
-                buyButton.SetActive(false);
+                shopMenu.HighlightPlayerItem(itemSource);
             }
             else
-                buyButton.SetActive(true);
-
-            CalculatePrice();
-        }
-    }
-
-    public void MouseExitItem()
-    {
-        if (isReady)
-        {
-            itemFrame.SetActive(false);
-            buyButton.SetActive(false);
-            TransientDataScript.DisableFloatText();
+            {
+                shopMenu.HighlightShopItem(itemSource);
+            }
         }
     }
 }
