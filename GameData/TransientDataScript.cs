@@ -172,7 +172,7 @@ public class TransientDataScript : MonoBehaviour
     {
         if (NullCheck())
         {
-            PrintFloatEmbellishedItem(item, printPrice, printRarity);
+            Items.PrintFloatEmbellishedItem(item, printPrice, printRarity);
         }
         else
         {
