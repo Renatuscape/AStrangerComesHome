@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,128 +7,198 @@ public class Shop
 {
     public string name;
     public string objectID;
-    public string shopkeeper;
+    public string shopkeeperID;
+    public string backgroundGraphic;
+    public string containerGraphic;
     public int profitMargin = 25;
-    public int clearanceMargin = 10;
-    public ItemRarity itemRarityA;
-    public ItemRarity itemRarityB;
-    public ItemRarity itemRarityC;
-    public DayOfWeek saleDay;
-    public DayOfWeek closedDay;
-    public string specialItemA;
-    public string specialItemB;
-    public string specialItemC;
-    public string specialItemD;
+    public List<ShopCategory> categories;
+    public int saleDay; // Set to -1 to never hold sales
+    public int closedDay = -1; // Set to -1 to never close
 
-    public bool sellsCustomOnly;
-    public bool sellsSeeds;
-    public bool sellsPlants;
-    public bool sellsTreasures;
-    public bool sellsTrade;
-    public bool sellsMaterials;
-    public bool sellsBooks;
+    public bool doesNotSell;
     public bool buysItems;
+    public bool sellsCustomOnly;
+    public bool buysCustomOnly;
 
-    public string welcomeText;
-    public string farewellText;
-    public string sucessfulPurchaseText;
-    public string notEnoguhMoneyText;
-    public string maxedValueText;
-    public string soldItemText;
+    public RequirementPackage checks;
+    public List<Item> sellInventory;
+    public List<Item> buyInventory;
 
     [TextArea(5, 20)]
     public string shopDescription;
 
-    public List<string> customInventory = new();
+    public List<string> customSellList = new();
+    public List<string> customBuyList = new();
 
+    public void Initialise()
+    {
+        foreach (var category in categories)
+        {
+            category.Parse();
+        }
+
+        if (profitMargin < 0)
+        {
+            profitMargin = 0;
+        }
+    }
     public Character GetShopkeeper()
     {
-        DefineEnums();
-        return Characters.all.FirstOrDefault(x => x.name == shopkeeper);
+        return Characters.all.FirstOrDefault(c => c.name == shopkeeperID);
     }
-    public List<Item> GetInventory()
-    {
-        DefineEnums();
-        List<Item> shopInventory = new List<Item>();
 
-        if (customInventory.Count > 0)
+    public int CalculateSellFromInventoryPrice(Item item)
+    {
+        var prosperity = Player.GetCount("ATT006", name);
+        var buyPrice = CalculateBuyFromShopPrice(item);
+
+        float newPrice = buyPrice * 0.3f;
+        float prosperityBonus = newPrice * prosperity / 100;
+        newPrice = newPrice + prosperityBonus;
+
+        if (newPrice > item.basePrice)
         {
-            foreach (string itemName in customInventory)
+            newPrice = item.basePrice - 10;
+        }
+
+        return (int)Mathf.Ceil(newPrice);
+    }
+
+    public int CalculateBuyFromShopPrice(Item item)
+    {
+        //CALCULATE SHOP RATE
+        var judgement = Player.GetCount("ATT002", name);
+        var rhetorics = Player.GetCount("MAG002", name);
+
+        float profitMultiplier = profitMargin / 100;
+        float newItemPrice = item.basePrice;
+
+        if (saleDay == (int)TransientDataScript.GetWeekDay())
+        {
+            var percent25 = newItemPrice / 4;
+            newItemPrice = newItemPrice - percent25;
+        }
+
+        float tax = newItemPrice;
+
+        if (judgement > 0)
+        {
+            float judgementDiscount = newItemPrice * judgement / 100;
+            tax = tax - judgementDiscount;
+        }
+
+        if (rhetorics > 0)
+        {
+            float rhetoricsDiscount = newItemPrice * rhetorics / 100;
+            tax = tax - rhetoricsDiscount;
+        }
+
+        newItemPrice += tax;
+
+        if (newItemPrice < item.basePrice)
+        {
+            newItemPrice = item.basePrice + 10;
+        }
+        return (int)Mathf.Ceil(newItemPrice + (newItemPrice * profitMultiplier));
+    }
+
+    public List<Item> GetSellList()
+    {
+        if (sellInventory == null || sellInventory.Count == 0)
+        {
+            sellInventory = new();
+
+            if (customSellList.Count > 0)
             {
-                Item item = Items.all.FirstOrDefault(x => x.name == itemName);
-                if (item != null)
+                foreach (string objectID in customSellList)
                 {
-                    shopInventory.Add(item);
+                    Item item = Items.all.FirstOrDefault(c => c.name == objectID);
+                    if (item != null)
+                    {
+                        sellInventory.Add(item);
+                    }
+                }
+
+                if (sellsCustomOnly)
+                {
+                    return sellInventory;
                 }
             }
-
-            if (sellsCustomOnly)
+            if (!sellsCustomOnly)
             {
-                return shopInventory;
+                var curatedItems = Items.all.Where(c =>
+                {
+                    if (c.notBuyable)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        foreach (var category in categories)
+                        {
+                            if (c.type == category.type && category.rarities.Contains(c.rarity))
+                            {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                }).ToList();
+
+                foreach (var item in curatedItems)
+                {
+                    sellInventory.Add(item);
+                }
             }
         }
 
-        var curatedItems = Items.all.Where(x => x.rarity == itemRarityA || x.rarity == itemRarityB || x.rarity == itemRarityC);
-        curatedItems = curatedItems.Where(x => !x.notBuyable && x.rarity != ItemRarity.Script);
-
-        foreach (var item in curatedItems)
-        {
-            if (sellsSeeds && item.type == ItemType.Seed)
-            {
-                shopInventory.Add(item);
-            }
-            if (sellsPlants && item.type == ItemType.Plant)
-            {
-                shopInventory.Add(item);
-            }
-            if (sellsTreasures && item.type == ItemType.Treasure)
-            {
-                shopInventory.Add(item);
-            }
-            if (sellsTrade && item.type == ItemType.Trade)
-            {
-                shopInventory.Add(item);
-            }
-            if (sellsMaterials && item.type == ItemType.Material)
-            {
-                shopInventory.Add(item);
-            }
-            if (sellsBooks && item.type == ItemType.Book)
-            {
-                shopInventory.Add(item);
-            }
-        }
-
-        return shopInventory;
+        // Debug.Log("Shop returned sell inventory with count " + sellInventory.Count);
+        return sellInventory;
     }
 
-    public void DefineEnums()
+    public List<Item> GetBuyList()
     {
-        var dataString = objectID.Split('-');
-
-        if (dataString.Length > 3)
+        if (buyInventory == null || buyInventory.Count == 0)
         {
-            itemRarityA = Items.GetItemRarity(dataString[1]);
-            itemRarityB = Items.GetItemRarity(dataString[2]);
-            itemRarityC = Items.GetItemRarity(dataString[3]);
+            buyInventory = new List<Item>();
 
-            if (dataString.Length > 4 && int.TryParse(dataString[4], out int dayOfWeekNumberSale))
+            if (!buysCustomOnly)
             {
-                saleDay = (DayOfWeek)(dayOfWeekNumberSale);
+                buyInventory = GetSellList();
             }
-            if (dataString.Length > 5 && int.TryParse(dataString[5], out int dayOfWeekNumberClosed))
+            if (customBuyList.Count > 0)
             {
-                closedDay = (DayOfWeek)(dayOfWeekNumberClosed);
+                foreach (string objectID in customBuyList)
+                {
+                    buyInventory.Add(Items.FindByID(objectID));
+                }
             }
         }
-        else
-        {
-            Debug.Log($"Something was wrong with objectID ({objectID}) for shop ({name}). Enums could not be defined.");
-        }
+        return buyInventory;
     }
 
     public bool CheckRequirements()
     {
-        return true;
+        return RequirementChecker.CheckPackage(checks);
+    }
+}
+
+[System.Serializable]
+public class ShopCategory
+{
+    public string typeTag;
+    public ItemType type;
+
+    public List<string> rarityTags;
+    public List<ItemRarity> rarities;
+
+    public void Parse()
+    {
+        type = Items.GetItemType(typeTag.ToUpper());
+
+        foreach (string tag in rarityTags)
+        {
+            rarities.Add(Items.GetItemRarity(tag.ToUpper()));
+        }
     }
 }
