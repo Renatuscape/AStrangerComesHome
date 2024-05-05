@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class PageinatedContainer : MonoBehaviour
 {
     public GameObject stockContainer;
+    public GameObject selectorFrame;
+    public Item selectedItem;
     public List<GameObject> prefabMasterList = new();
     public List<Item> stock;
     public int itemsPerPage = 28;
+    public string noItemsMessage = "No Suitable Items";
 
     public List<ContainerPage> containerPages;
     public TextMeshProUGUI categoryName;
@@ -21,6 +24,8 @@ public class PageinatedContainer : MonoBehaviour
     public int pageIndex;
 
     bool showInventoryCount;
+    bool useDefaultFloat;
+    bool useSelectorFrame;
 
     private void Awake()
     {
@@ -33,9 +38,14 @@ public class PageinatedContainer : MonoBehaviour
 
         btnPageLeft.onClick.AddListener(() => ChangePage(true));
         btnPageRight.onClick.AddListener(() => ChangePage(false));
+
+        if (string.IsNullOrEmpty(noItemsMessage))
+        {
+            noItemsMessage = "No Suitable Items";
+        }
     }
 
-    public List<GameObject> Initialise(List<string> stock, bool showInventoryCount, bool skipNotBuyable, bool skipNotSellable)
+    public List<GameObject> Initialise(List<string> stock, bool showInventoryCount, bool useDefaultFloat, bool useSelectorFrame)
     {
         List<Item> items = new();
 
@@ -44,24 +54,47 @@ public class PageinatedContainer : MonoBehaviour
             items.Add(Items.FindByID(stockID));
         }
 
-        return Initialise(items, showInventoryCount, skipNotBuyable, skipNotSellable);
+        return Initialise(items, showInventoryCount, useDefaultFloat, useSelectorFrame);
     }
-    public List<GameObject> Initialise(List<Item> incomingStock, bool showInventoryCount, bool skipNotBuyable, bool skipNotSellable)
+    public List<GameObject> Initialise(List<Item> incomingStock, bool showInventoryCount, bool useDefaultFloat, bool useSelectorFrame, bool printAllIfStockIsEmpty = false)
     {
-        Debug.Log("Attempting to initialise container " + gameObject.name);
+        // Debug.Log("Attempting to initialise container " + gameObject.name);
         this.showInventoryCount = showInventoryCount;
+        this.useDefaultFloat = useDefaultFloat;
+        this.useSelectorFrame = useSelectorFrame;
+
         ClearPrefabs();
+        ClearSeletion();
+
         pageIndex = 0;
 
         stock = incomingStock;
 
         if (stock == null || stock.Count == 0)
         {
-            stock = Items.all.Where(x => x.notBuyable == false).ToList();
+            if (printAllIfStockIsEmpty)
+            {
+                Debug.Log("Adding all items to stock for " + gameObject.name);
+                stock = Items.all.Where(x => x.notBuyable == false).ToList();
+                btnPageRight.gameObject.SetActive(true);
+                btnPageLeft.gameObject.SetActive(true);
+            }
+            else
+            {
+                categoryName.text = noItemsMessage;
+                btnPageRight.gameObject.SetActive(false);
+                btnPageLeft.gameObject.SetActive(false);
+            }
         }
+        else
+        {
+            btnPageRight.gameObject.SetActive(true);
+            btnPageLeft.gameObject.SetActive(true);
+        }
+
         // CREATE LIST OF PAGES
         containerPages = new List<ContainerPage>();
-        SetUpContent(skipNotBuyable, skipNotSellable);
+        SetUpContent();
 
         foreach (var page in  containerPages)
         {
@@ -71,6 +104,13 @@ public class PageinatedContainer : MonoBehaviour
         OpenPage(0);
 
         return prefabMasterList;
+    }
+
+    public void SelectItem(ItemUiData itemData)
+    {
+        selectedItem = itemData.item;
+        selectorFrame.transform.position = itemData.gameObject.transform.position;
+        selectorFrame.gameObject.SetActive(true);
     }
 
     public void ChangePage(bool pageBack)
@@ -93,22 +133,16 @@ public class PageinatedContainer : MonoBehaviour
         }
 
         if (oldIndex != pageIndex)
+        {
             OpenPage(pageIndex);
+        }
+
+        ClearSeletion();
     }
 
-    void SetUpContent(bool skipNotBuyable, bool skipNotSellable)
+    void SetUpContent()
     {
         stock = stock.OrderBy(obj => obj.rarity).ThenBy(obj => obj.name).ToList();
-
-        if (skipNotSellable)
-        {
-            stock = stock.Where(i => !i.notSellable).ToList();
-        }
-
-        if (skipNotBuyable)
-        {
-            stock = stock.Where(i => !i.notBuyable).ToList();
-        }
 
         var foundCatalysts = stock.Where(i => i.type == ItemType.Catalyst).ToList();
         var foundMaterials = stock.Where(i => i.type == ItemType.Material).ToList();
@@ -174,6 +208,20 @@ public class PageinatedContainer : MonoBehaviour
             prefab.transform.SetParent(stockContainer.transform, false);
             prefabMasterList.Add(prefab);
             page.prefabs.Add(prefab);
+
+            var uiScript = prefab.GetComponent<ItemUiData>();
+
+            if (useSelectorFrame)
+            {
+                var selector = prefab.AddComponent<PageinatedSelectorFrame>();
+                selector.parentClass = this;
+                selector.itemUiData = uiScript;
+            }
+
+            if (!useDefaultFloat)
+            {
+                uiScript.disableFloatText = true;
+            }
         }
         // Debug.Log("Spawned " + page.prefabs.Count + " prefabs for " + page.typeName);
     }
@@ -191,11 +239,36 @@ public class PageinatedContainer : MonoBehaviour
             {
                 foreach (var prefab in containerPages[pageIndex].prefabs)
                 {
-                    prefab.gameObject.SetActive(true);
+                    if (prefab != null)
+                    {
+                        prefab.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        containerPages[pageIndex].prefabs.Remove(prefab);
+                        prefabMasterList.Remove(prefab);
+                    }
                 }
             }
 
             categoryName.text = containerPages[pageIndex].typeName;
+        }
+    }
+
+    public void ClearSeletion()
+    {
+        if (selectorFrame != null)
+        {
+            selectedItem = null;
+            selectorFrame.gameObject.SetActive(false);
+        }
+        else
+        {
+            if (useSelectorFrame)
+            {
+                Debug.LogWarning("Use Selector Frame was enabled, but selectorFrame object was null. Disabling useSelectorFrame.");
+                useSelectorFrame = false;
+            }
         }
     }
 
@@ -217,4 +290,15 @@ public class ContainerPage
     public string typeName;
     public List<Item> pageContent;
     public List<GameObject> prefabs;
+}
+
+public class PageinatedSelectorFrame : MonoBehaviour, IPointerDownHandler
+{
+    public PageinatedContainer parentClass;
+    public ItemUiData itemUiData;
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        parentClass.SelectItem(itemUiData);
+    }
 }
