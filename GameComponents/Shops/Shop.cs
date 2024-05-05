@@ -50,16 +50,17 @@ public class Shop
     public int CalculateSellFromInventoryPrice(Item item)
     {
         var prosperity = Player.GetCount("ATT006", name);
+        var judgement = Player.GetCount("ATT002", name);
+        var rhetorics = Player.GetCount("MAG002", name);
+
         var buyPrice = CalculateBuyFromShopPrice(item);
 
-        float newPrice = buyPrice * 0.3f;
-        float prosperityBonus = newPrice * prosperity / 100;
-        newPrice = newPrice + prosperityBonus;
+        float newPrice = buyPrice * 0.5f;
+        float prosperityBonus = newPrice * prosperity / 50;
+        float judgementBonus = newPrice * judgement / 75;
+        float rhetoricsBonus = newPrice * rhetorics / 75;
 
-        if (newPrice > item.basePrice)
-        {
-            newPrice = item.basePrice - 10;
-        }
+        newPrice = newPrice + prosperityBonus + judgementBonus + rhetoricsBonus;
 
         return (int)Mathf.Ceil(newPrice);
     }
@@ -70,8 +71,7 @@ public class Shop
         var judgement = Player.GetCount("ATT002", name);
         var rhetorics = Player.GetCount("MAG002", name);
 
-        float profitMultiplier = profitMargin / 100;
-        float newItemPrice = item.basePrice;
+        float newItemPrice = item.basePrice + (item.basePrice * profitMargin / 100);
 
         if (saleDay == (int)TransientDataScript.GetWeekDay())
         {
@@ -83,23 +83,19 @@ public class Shop
 
         if (judgement > 0)
         {
-            float judgementDiscount = newItemPrice * judgement / 100;
+            float judgementDiscount = newItemPrice * judgement / 75;
             tax = tax - judgementDiscount;
         }
 
         if (rhetorics > 0)
         {
-            float rhetoricsDiscount = newItemPrice * rhetorics / 100;
+            float rhetoricsDiscount = newItemPrice * rhetorics / 75;
             tax = tax - rhetoricsDiscount;
         }
 
         newItemPrice += tax;
 
-        if (newItemPrice < item.basePrice)
-        {
-            newItemPrice = item.basePrice + 10;
-        }
-        return (int)Mathf.Ceil(newItemPrice + (newItemPrice * profitMultiplier));
+        return (int)Mathf.Ceil(newItemPrice);
     }
 
     public List<Item> GetSellList()
