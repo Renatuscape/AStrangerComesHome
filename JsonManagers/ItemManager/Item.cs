@@ -136,7 +136,14 @@ public static class Items
         return ItemType.Script;
     }
 
-    public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity)
+    public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity, bool printType)
+    {
+
+
+        TransientDataScript.PrintFloatText(GetEmbellishedItemText(item, printPrice, printRarity, printType));
+    }
+
+    public static string GetEmbellishedItemText(Item item, bool printPrice, bool printRarity, bool printType)
     {
         string hexColour = "635550";
         if (item.rarity == ItemRarity.Common)
@@ -166,8 +173,9 @@ public static class Items
 
         string value = printPrice ? $"\nValue: {MoneyExchange.CalculateSellPrice(item)}" : "";
         string rarity = printRarity ? $"\nRarity: {item.rarity}" : "";
-        string content = $"<color=#{hexColour}>{item.name}{value}{rarity}</color>";
+        string type = printType ? $"\nType: {item.type}" : "";
+        string content = $"<color=#{hexColour}>{item.name}{value}{rarity}{type}</color>";
 
-        TransientDataScript.PrintFloatText(content);
+        return content;
     }
 }
