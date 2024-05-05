@@ -11,6 +11,7 @@ public class Shop
     public string backgroundGraphic;
     public string containerGraphic;
     public int profitMargin = 25;
+    public float buyPenalty = 0.9f; // lower sell-price further with this value.
     public List<ShopCategory> categories;
     public int saleDay; // Set to -1 to never hold sales
     public int closedDay = -1; // Set to -1 to never close
@@ -57,12 +58,12 @@ public class Shop
 
         float newPrice = buyPrice * 0.5f;
         float prosperityBonus = newPrice * prosperity / 50;
-        float judgementBonus = newPrice * judgement / 75;
-        float rhetoricsBonus = newPrice * rhetorics / 75;
+        float judgementBonus = newPrice * judgement / 50;
+        float rhetoricsBonus = newPrice * rhetorics / 50;
 
         newPrice = newPrice + prosperityBonus + judgementBonus + rhetoricsBonus;
 
-        return (int)Mathf.Ceil(newPrice);
+        return (int)Mathf.Ceil(newPrice * buyPenalty);
     }
 
     public int CalculateBuyFromShopPrice(Item item)
@@ -98,7 +99,7 @@ public class Shop
         return (int)Mathf.Ceil(newItemPrice);
     }
 
-    public List<Item> GetSellList()
+    public List<Item> GetSellFromShopList()
     {
         if (sellInventory == null || sellInventory.Count == 0)
         {
@@ -152,7 +153,7 @@ public class Shop
         return sellInventory;
     }
 
-    public List<Item> GetBuyList()
+    public List<Item> GetBuyFromPlayerList(bool excludeItemsNotInInventory)
     {
         if (buyInventory == null || buyInventory.Count == 0)
         {
@@ -160,7 +161,7 @@ public class Shop
 
             if (!buysCustomOnly)
             {
-                buyInventory = GetSellList();
+                buyInventory = GetSellFromShopList();
             }
             if (customBuyList.Count > 0)
             {
@@ -170,7 +171,17 @@ public class Shop
                 }
             }
         }
-        return buyInventory;
+
+        if (excludeItemsNotInInventory)
+        {
+            var filteredList = buyInventory.Where(i => Player.GetCount(i.objectID, "Shop") > 0).ToList();
+            // Debug.Log("Filtered list has " + filteredList.Count + " items, reduced from " + buyInventory.Count);
+            return filteredList;
+        }
+        else
+        {
+            return buyInventory;
+        }
     }
 
     public bool CheckRequirements()
