@@ -246,7 +246,7 @@ public class GiftItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        TransientDataScript.PrintFloatEmbellishedItem(item, true, true);
+        TransientDataScript.PrintFloatEmbellishedItem(item, true, true, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
