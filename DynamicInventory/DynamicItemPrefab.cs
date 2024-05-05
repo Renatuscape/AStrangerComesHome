@@ -47,7 +47,7 @@ public class DynamicItemPrefab : MonoBehaviour
     {
         if (isReady)
         {
-            TransientDataScript.PrintFloatEmbellishedItem(itemSource, true, true);
+            TransientDataScript.PrintFloatEmbellishedItem(itemSource, true, true, false);
         }
     }
 
