@@ -22,7 +22,7 @@ public class AlchemyTracker : MonoBehaviour
 
     public void StartTracking()
     {
-        Debug.Log("Enabling Alchemy Tracker.");
+        // Debug.Log("Enabling Alchemy Tracker.");
         dataManager = TransientDataScript.gameManager.dataManager;
 
         UpdateValues();
