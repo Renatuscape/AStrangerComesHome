@@ -168,11 +168,11 @@ public class TransientDataScript : MonoBehaviour
         }
     }
 
-    public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity)
+    public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity, bool printType)
     {
         if (NullCheck())
         {
-            Items.PrintFloatEmbellishedItem(item, printPrice, printRarity);
+            Items.PrintFloatEmbellishedItem(item, printPrice, printRarity, printType);
         }
         else
         {
