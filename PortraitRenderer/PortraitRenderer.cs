@@ -9,13 +9,13 @@ using UnityEngine.UI;
 public class PortraitRenderer : MonoBehaviour
 {
     public GameObject playerSprite;
-    float playerDefaultX = -300f;
+    float playerDefaultX = -600f;
     public GameObject rightPortraitContainer;
     public Image rightCharacterImage;
-    float rightDefaultX = 300f;
+    float rightDefaultX = 600f;
     public GameObject leftPortraitContainer;
     public Image leftCharacterImage;
-    float leftDefaultX = -300f;
+    float leftDefaultX = -600f;
 
     public Sprite defaultFrame;
     public List<Sprite> npcFrames;
@@ -81,8 +81,8 @@ public class PortraitRenderer : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        MoveSprite(playerSprite, -340f);
-        MoveSprite(rightPortraitContainer, 340f);
+        MoveSprite(playerSprite, -645f);
+        MoveSprite(rightPortraitContainer, 675f);
     }
     public void EnableForShop(string characterID)
     {
@@ -94,10 +94,12 @@ public class PortraitRenderer : MonoBehaviour
 
         //ARRANGE
         gameObject.SetActive(true);
+        playerSprite.transform.localPosition = new Vector3(-1020, playerSprite.transform.localPosition.y, 0);
+        rightPortraitContainer.transform.localPosition = new Vector3(1020, playerSprite.transform.localPosition.y, 0);
         EnablePlayer();
-        MoveSprite(playerSprite, -330f);
+        MoveSprite(playerSprite, playerDefaultX);
         rightPortraitContainer.SetActive(true);
-        MoveSprite(rightPortraitContainer, 360f);
+        MoveSprite(rightPortraitContainer, 735f);
     }
 
     public void EnableForTopicMenu(string characterID)
@@ -117,19 +119,8 @@ public class PortraitRenderer : MonoBehaviour
 
         gameObject.SetActive(true);
         EnablePlayer();
-        MoveSprite(playerSprite, -250f);
-        MoveSprite(rightPortraitContainer, 250);
-    }
-
-    public void EnableForDialogue()
-    {
-        ResetValues();
-
-        //ARRANGE
-        gameObject.SetActive(true);
-        EnablePlayer();
-        MoveSprite(playerSprite, -325);
-        MoveSprite(rightPortraitContainer, 325);
+        MoveSprite(playerSprite, -500f);
+        MoveSprite(rightPortraitContainer, 500);
     }
 
     public void EnableForGifting(Character character)
@@ -137,7 +128,7 @@ public class PortraitRenderer : MonoBehaviour
         gameObject.SetActive(true);
         SetSprite(character.objectID);
         rightPortraitContainer.SetActive(true);
-        MoveSprite(rightPortraitContainer, 325);
+        MoveSprite(rightPortraitContainer, 650);
     }
 
     //For other scripts to set the NPC portrait
@@ -203,23 +194,22 @@ public class PortraitRenderer : MonoBehaviour
         }
     }
 
-    IEnumerator MoveTransition(Transform portrait, float targetX, float timer = 0.001f)
+    IEnumerator MoveTransition(Transform portrait, float targetX)
     {
-        float adjustment = 2f;
+        float duration = 0.5f; // Adjust the duration as needed
+        float timer = 0f;
+        Vector3 startPosition = portrait.localPosition;
+        Vector3 targetPosition = new Vector3(targetX, portrait.localPosition.y, portrait.localPosition.z);
 
-        if (portrait.localPosition.x > targetX + adjustment || portrait.localPosition.x < targetX - adjustment)
+        while (timer < duration)
         {
-            yield return new WaitForSeconds(timer);
-
-            if (portrait.localPosition.x > targetX)
-            {
-                adjustment = adjustment * -1;
-            }
-
-            portrait.localPosition = new Vector3(portrait.localPosition.x + adjustment, portrait.localPosition.y, portrait.localPosition.z);
-
-            StartCoroutine(MoveTransition(portrait, targetX, timer + 0.00015f));
+            float t = timer / duration;
+            portrait.localPosition = Vector3.Lerp(startPosition, targetPosition, t);
+            timer += Time.deltaTime;
+            yield return null;
         }
+
+        portrait.localPosition = targetPosition;
     }
 
     void AnimatePing(GameObject container)
