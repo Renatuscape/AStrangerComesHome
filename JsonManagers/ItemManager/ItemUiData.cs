@@ -9,12 +9,13 @@ public class ItemUiData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public bool disableFloatText;
     public bool printPrice;
     public bool printRarity;
+    public bool printType;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!disableFloatText)
         {
-            Items.PrintFloatEmbellishedItem(item, printPrice, printRarity);
+            Items.PrintFloatEmbellishedItem(item, printPrice, printRarity, printType);
         }
     }
 
