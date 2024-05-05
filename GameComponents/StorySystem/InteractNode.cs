@@ -288,36 +288,36 @@ public class InteractNode : MonoBehaviour
         }
     }
 
-    private void SetUpWalkingNpc(CharacterNode cNode)
-    {
-        if (cNode != null)
-        {
-            CharacterNodeTracker.AddCharacterNode(cNode);
-            isSpawningNpc = true;
-            character = cNode.character;
-            nodeSprite.sprite = placeholderNpc.still;
-        }
-        else
-        {
-            Debug.Log("Walker was null");
-        }
-    }
+    //private void SetUpWalkingNpc(CharacterNode cNode)
+    //{
+    //    if (cNode != null)
+    //    {
+    //        CharacterNodeTracker.AddCharacterNode(cNode);
+    //        isSpawningNpc = true;
+    //        character = cNode.character;
+    //        nodeSprite.sprite = placeholderNpc.still;
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Walker was null");
+    //    }
+    //}
 
     private void SetUpItem(Dialogue dialogue)
     {
-        Debug.Log("Starting item setup.");
+        // Debug.Log("Starting item setup.");
         var random = Random.Range(0, 100);
 
         if (random < itemSpawnChance)
         {
-            Debug.Log("Passed random spawn check!");
+            // Debug.Log("Passed random spawn check!");
             itemNode = dialogue;
             isSpawningItem = true;
             nodeSprite.sprite = itemCrate[0];
         }
         else
         {
-            Debug.Log("Failed random spawn check. No loot today :)");
+            // Debug.Log("Failed random spawn check. No loot today :)");
         }
     }
 }
