@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class ShopMenu : MonoBehaviour
 {
@@ -12,10 +13,9 @@ public class ShopMenu : MonoBehaviour
     public int judgement;
     public DataManagerScript dataManager;
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
-    public float profitMargin;
 
     public GameObject clearanceNotice;
-    public GameObject shopItemPrefab;
+    public GameObject priceTagPrefab;
 
     public List<GameObject> buyFromShopPrefabs;
     public List<GameObject> sellFromPlayerPrefabs;
@@ -30,15 +30,13 @@ public class ShopMenu : MonoBehaviour
     public Toggle toggleMultiple;
 
     public GameObject itemInfoCard;
-    public GameObject itemDescriptionCard;
-    public TextMeshProUGUI itemName;
+    public TextMeshProUGUI itemNamePlate;
     public TextMeshProUGUI itemPrice;
-    public TextMeshProUGUI itemRarity;
-    public TextMeshProUGUI itemDescription;
+    public TextMeshProUGUI itemValue;
+    public TextMeshProUGUI itemNumberInInventory;
 
     void Awake()
     {
-        profitMargin = 2f;
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
 
         btnBuy.onClick.AddListener(() => BtnBuyFromShop());
@@ -46,7 +44,10 @@ public class ShopMenu : MonoBehaviour
         btnLeave.onClick.AddListener(() => BtnLeave());
 
         itemInfoCard.SetActive(false);
-        itemDescriptionCard.SetActive(false);
+        if (TransientDataScript.GameState != GameState.ShopMenu)
+        {
+            gameObject.SetActive(false);
+        }
     }
     public void SetUpShop(Character shopkeeper, Shop shop)
     {
@@ -62,7 +63,7 @@ public class ShopMenu : MonoBehaviour
 
         if (activeShop != null)
         {
-            // Set clearance sign
+            // SET CLEARANCE SIGN
             if (activeShop.saleDay == (int)TransientDataScript.GetWeekDay())
             {
                 clearanceNotice.SetActive(true);
@@ -72,40 +73,57 @@ public class ShopMenu : MonoBehaviour
                 clearanceNotice.SetActive(false);
             }
 
-            // CONTAINERS
-            sellFromPlayerPrefabs = sellFromPlayerMenu.Initialise(shop.GetSellList(), true, true, true);
-            buyFromShopPrefabs = buyFromShopMenu.Initialise(shop.GetBuyList(), false, true, true);
+            // SET UP CONTAINERS WITH PREFABS
+            buyFromShopPrefabs = buyFromShopMenu.Initialise(shop.GetSellFromShopList(), false, true, true);
 
-            if (shop.buysItems)
+            if (!shop.buysItems)
             {
-                foreach (var item in sellFromPlayerPrefabs)
-                {
-                    var uiData = item.GetComponent<ItemUiData>();
-                    uiData.printRarity = true;
-                    var shopItemScript = item.AddComponent<ShopItemPrefab>();
-                    shopItemScript.Initialise(uiData.item, this, true);
-                }
+                btnSell.interactable = false;
+            }
+            else
+            {
+                SetUpSellFromPlayerMenu();
             }
 
             if (shop.doesNotSell)
             {
                 BtnSellFromPlayer();
                 buyFromShopMenu.OpenPage(0);
+                btnBuy.interactable = false;
             }
             else
             {
-                foreach (var item in buyFromShopPrefabs)
+                foreach (GameObject itemPrefab in buyFromShopPrefabs)
                 {
-                    var uiData = item.GetComponent<ItemUiData>();
+                    var uiData = itemPrefab.GetComponent<ItemUiData>();
                     uiData.printRarity = true;
 
-                    var shopItemScript = item.AddComponent<ShopItemPrefab>();
+                    var shopItemScript = itemPrefab.AddComponent<ShopItemPrefab>();
                     shopItemScript.Initialise(uiData.item, this, false);
+
+                    GameObject priceTag = Instantiate(priceTagPrefab, itemPrefab.transform);
+                    priceTag.name = "PriceTag";
+
+                    var tagText = priceTag.GetComponentInChildren<TextMeshProUGUI>();
+                    tagText.text = activeShop.CalculateBuyFromShopPrice(uiData.item).ToString();
                 }
 
                 BtnBuyFromShop();
                 sellFromPlayerMenu.OpenPage(0);
             }
+        }
+    }
+
+    public void SetUpSellFromPlayerMenu()
+    {
+        sellFromPlayerPrefabs = sellFromPlayerMenu.Initialise(activeShop.GetBuyFromPlayerList(true), true, true, true);
+
+        foreach (var item in sellFromPlayerPrefabs)
+        {
+            var uiData = item.GetComponent<ItemUiData>();
+            uiData.printRarity = true;
+            var shopItemScript = item.AddComponent<ShopItemPrefab>();
+            shopItemScript.Initialise(uiData.item, this, true);
         }
     }
 
@@ -115,6 +133,7 @@ public class ShopMenu : MonoBehaviour
         {
             sellFromPlayerMenu.gameObject.SetActive(true);
             buyFromShopMenu.gameObject.SetActive(false);
+            buyFromShopMenu.ClearSeletion();
 
             btnSell.interactable = false;
 
@@ -126,7 +145,6 @@ public class ShopMenu : MonoBehaviour
         }
 
         itemInfoCard.SetActive(false);
-        itemDescriptionCard.SetActive(false);
     }
 
     public void BtnBuyFromShop()
@@ -135,6 +153,7 @@ public class ShopMenu : MonoBehaviour
         {
             sellFromPlayerMenu.gameObject.SetActive(false);
             buyFromShopMenu.gameObject.SetActive(true);
+            sellFromPlayerMenu.ClearSeletion();
 
             btnBuy.interactable = false;
 
@@ -145,7 +164,6 @@ public class ShopMenu : MonoBehaviour
         }
 
         itemInfoCard.SetActive(false);
-        itemDescriptionCard.SetActive(false);
     }
 
     public void BtnLeave()
@@ -156,47 +174,20 @@ public class ShopMenu : MonoBehaviour
 
     public void HighlightShopItem(Item item)
     {
-        itemName.text = item.name + $" ({Player.GetCount(item.objectID, name)} in inventory)";
-        itemPrice.text = activeShop.CalculateBuyFromShopPrice(item).ToString();
-        itemDescription.text = item.description;
-        itemRarity.text = item.rarity.ToString();
+        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false) + "</size></b>\n" + item.rarity;
+        itemPrice.text = $"Buy price: " + activeShop.CalculateBuyFromShopPrice(item).ToString();
+        itemValue.text = $"Value: {item.basePrice}";
+        itemNumberInInventory.text = $"({Player.GetCount(item.objectID, name)} in inventory)";
 
         itemInfoCard.SetActive(true);
-        // itemDescriptionCard.SetActive(true);
-
-        //var inventoryAmount = Player.GetCount(item.objectID, name);
-
-        //if (inventoryAmount < item.maxValue)
-        //{
-        //    var purchase = MoneyExchange.Purchase(itemCost);
-
-        //    if (purchase)
-        //    {
-        //        Player.Add(item.objectID);
-        //        AudioManager.PlayUISound("handleCoins");
-        //        //Debug.Log($"{activeShop} You purchased {item.name} for {itemCost}.");
-        //        TransientDataScript.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("Exchange returned false.");
-        //        TransientDataScript.PushAlert("I don't have enough money.");
-        //    }
-
-        //}
-        //else
-        //{
-        //    Debug.Log("I already have the maximum amount of this item.");
-        //    TransientDataScript.PushAlert("I don't have enough space for more of this.");
-        //}
 
     }
     public void HighlightPlayerItem(Item item)
     {
-        itemName.text = item.name;
-        itemPrice.text = activeShop.CalculateSellFromInventoryPrice(item).ToString();
-        itemDescription.text = item.description;
-        itemRarity.text = item.rarity.ToString();
+        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false) + "</size></b>\n" + item.rarity;
+        itemPrice.text = "Sell price: " + activeShop.CalculateSellFromInventoryPrice(item).ToString();
+        itemValue.text = $"Value: {item.basePrice}";
+        itemNumberInInventory.text = "";
 
         itemInfoCard.SetActive(true);
         // itemDescriptionCard.SetActive(true);
@@ -204,5 +195,65 @@ public class ShopMenu : MonoBehaviour
     void SyncSkills()
     {
         judgement = Player.GetCount("ATT002", "ShopMenu");
+    }
+
+    public void HandleTransaction(ShopItemPrefab shopItem)
+    {
+        Debug.Log("TRANSACTION DETECTED " + shopItem.itemSource.name);
+        var item = shopItem.itemSource;
+        var inventoryAmount = Player.GetCount(item.objectID, name);
+
+        if (shopItem.sellFromPlayer)
+        {
+            if (inventoryAmount > 0)
+            {
+                var itemCost = activeShop.CalculateSellFromInventoryPrice(item);
+
+                Player.Remove(item.objectID);
+                AudioManager.PlayUISound("handleCoins");
+                MoneyExchange.AddHighestDenomination(itemCost);
+                LogAlert.QueueTextAlert("Sold for " + itemCost + " shillings.");
+                //TransientDataScript.PushAlert($"Sold {item.name} for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
+
+                shopItem.UpdateInventoryCount();
+            }
+            else
+            {
+                Debug.LogWarning("Item count was 0. Ensure that item count is properly updated.");
+            }
+        }
+        else
+        {
+            var itemCost = activeShop.CalculateBuyFromShopPrice(item);
+
+            if (inventoryAmount < item.maxValue)
+            {
+                var purchase = MoneyExchange.Purchase(itemCost);
+
+                if (purchase)
+                {
+                    Player.Add(item.objectID);
+                    AudioManager.PlayUISound("handleCoins");
+                    //Debug.Log($"{activeShop} You purchased {item.name} for {itemCost}.");
+                    LogAlert.QueueTextAlert("Paid " + itemCost + " shillings.");
+                    //TransientDataScript.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
+
+                    shopItem.UpdateInventoryCount();
+                }
+                else
+                {
+                    AudioManager.PlayUISound("drumDoubleTap");
+                    // Debug.Log("Exchange returned false.");
+                    LogAlert.QueueTextAlert("I don't have enough money.");
+                }
+
+            }
+            else
+            {
+                AudioManager.PlayUISound("drumDoubleTap");
+                // Debug.Log("I already have the maximum amount of this item.");
+                LogAlert.QueueTextAlert("I don't have enough space for more of this.");
+            }
+        }
     }
 }
