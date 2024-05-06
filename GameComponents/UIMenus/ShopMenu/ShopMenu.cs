@@ -77,7 +77,7 @@ public class ShopMenu : MonoBehaviour
 
             // SET BACKGROUND
 
-            if (!string.IsNullOrEmpty(shop.backgroundGraphic))
+            if (string.IsNullOrEmpty(shop.backgroundGraphic))
             {
                 backgroundSprite.gameObject.SetActive(false);
             }
