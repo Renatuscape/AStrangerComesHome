@@ -16,6 +16,7 @@ public class ShopMenu : MonoBehaviour
 
     public GameObject clearanceNotice;
     public GameObject priceTagPrefab;
+    public Image backgroundSprite;
 
     public List<GameObject> buyFromShopPrefabs;
     public List<GameObject> sellFromPlayerPrefabs;
@@ -30,6 +31,7 @@ public class ShopMenu : MonoBehaviour
     public Toggle toggleMultiple;
 
     public GameObject itemInfoCard;
+
     public TextMeshProUGUI itemNamePlate;
     public TextMeshProUGUI itemPrice;
     public TextMeshProUGUI itemValue;
@@ -71,6 +73,28 @@ public class ShopMenu : MonoBehaviour
             else
             {
                 clearanceNotice.SetActive(false);
+            }
+
+            // SET BACKGROUND
+
+            if (!string.IsNullOrEmpty(shop.backgroundGraphic))
+            {
+                backgroundSprite.gameObject.SetActive(false);
+            }
+            else
+            {
+                var foundSprite = SpriteFactory.GetBackgroundSprite(shop.backgroundGraphic, "shop");
+
+                if (foundSprite != null)
+                {
+                    backgroundSprite.sprite = foundSprite;
+                    backgroundSprite.gameObject.SetActive(true);
+                }
+                else
+                {
+                    Debug.LogWarning("Shop sprite was not null, but could not be found. Check tag " + shop.backgroundGraphic);
+                    backgroundSprite.gameObject.SetActive(false);
+                }
             }
 
             // SET UP CONTAINERS WITH PREFABS
