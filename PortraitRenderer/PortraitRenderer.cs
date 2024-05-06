@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class PortraitRenderer : MonoBehaviour
@@ -97,9 +96,9 @@ public class PortraitRenderer : MonoBehaviour
         playerSprite.transform.localPosition = new Vector3(-1020, playerSprite.transform.localPosition.y, 0);
         rightPortraitContainer.transform.localPosition = new Vector3(1020, playerSprite.transform.localPosition.y, 0);
         EnablePlayer();
-        MoveSprite(playerSprite, playerDefaultX);
+        MoveSprite(playerSprite, -630);
         rightPortraitContainer.SetActive(true);
-        MoveSprite(rightPortraitContainer, 735f);
+        MoveSprite(rightPortraitContainer, 630);
     }
 
     public void EnableForTopicMenu(string characterID)
