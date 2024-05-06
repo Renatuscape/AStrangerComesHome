@@ -44,6 +44,7 @@ public class DialogueChoiceManager : MonoBehaviour
                 newChoice.transform.SetParent(choiceContainer.transform, false);
 
                 newChoice.GetComponent<Button>().onClick.AddListener(() => MakeChoice(choice));
+                newChoice.GetComponentInChildren<TextMeshProUGUI>().fontSize = 30;
 
                 choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
                 Canvas.ForceUpdateCanvases();
