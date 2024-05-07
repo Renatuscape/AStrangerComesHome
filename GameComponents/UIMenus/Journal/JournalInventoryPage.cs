@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,7 +22,7 @@ public class JournalInventoryPage : MonoBehaviour
         itemRarity.text = "";
         itemDescription.text = "";
 
-        itemPrefabs = inventoryContainer.Initialise(Player.GetInventory(), true, true, true);
+        itemPrefabs = inventoryContainer.Initialise(Player.GetInventory().Where(i => i.type != ItemType.Book).ToList(), true, true, true);
         SetUpInventoryItems();
         inventoryContainer.gameObject.SetActive(true);
     }
