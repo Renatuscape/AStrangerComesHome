@@ -55,6 +55,12 @@ public static class Items
 
     public static Item FindByID(string searchWord)
     {
+        if (searchWord.Contains('-'))
+        {
+            var baseID = searchWord.Split('-')[0];
+            searchWord = baseID;
+        }
+
         return all.FirstOrDefault(i => i.objectID.Contains(searchWord));
     }
 
