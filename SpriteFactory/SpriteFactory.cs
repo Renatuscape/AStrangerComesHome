@@ -11,6 +11,7 @@ public class SpriteFactory : MonoBehaviour
     public List<Sprite> unsortedUiSprites = new();
     public List<Sprite> unsortedWorldSprites = new();
     public List<Sprite> backgroundSprites = new();
+    public List<Sprite> itemSprites = new();
 
     public List<SpriteCollection> uiSpriteLibrary = new();
 
@@ -24,6 +25,17 @@ public class SpriteFactory : MonoBehaviour
     void Start()
     {
         instance = this;
+    }
+
+    public static Sprite GetItemSprite(string objectID)
+    {
+        var foundSprite = instance.itemSprites.FirstOrDefault(c => objectID.Contains(c.name));
+
+        if (foundSprite == null)
+        {
+            foundSprite = instance.itemSprites.FirstOrDefault(c => c.name.Contains(objectID.Substring(0, 3) + "000"));
+        }
+        return foundSprite;
     }
 
     public static SpriteCollection GetUiSprite(string objectID)
