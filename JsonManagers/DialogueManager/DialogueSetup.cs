@@ -36,6 +36,10 @@ public static class DialogueSetup
         {
             dialogue.stageType = StageType.Node;
         }
+        else if (dialogue.objectID.Substring(14, 1) == "L")
+        {
+            dialogue.stageType = StageType.Letter;
+        }
 
         //SET QUEST STAGE
         dialogue.questStage = int.Parse(dialogue.objectID.Substring(11, 2));
