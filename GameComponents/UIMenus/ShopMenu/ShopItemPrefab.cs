@@ -9,7 +9,8 @@ public class ShopItemPrefab : MonoBehaviour, IPointerDownHandler, IInitializePot
     public Item itemSource;
     public bool isReady = false;
     public bool sellFromPlayer = false;
-    public bool clicked = false;
+
+    bool doubleClickReady = false;
 
 
     public void Initialise(Item item, ShopMenu script, bool sellFromPlayer)
@@ -99,18 +100,32 @@ public class ShopItemPrefab : MonoBehaviour, IPointerDownHandler, IInitializePot
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("Clicked shop item " + itemSource.name);
+        //Debug.Log("Clicked shop item " + itemSource.name);
 
         if (isReady)
         {
-            if (sellFromPlayer)
+            if (doubleClickReady)
             {
-                shopMenu.HighlightPlayerItem(itemSource);
+                if (sellFromPlayer)
+                {
+                    shopMenu.HighlightPlayerItem(itemSource);
+                }
+                else
+                {
+                    shopMenu.HighlightShopItem(itemSource);
+                }
             }
             else
             {
-                shopMenu.HighlightShopItem(itemSource);
+                shopMenu.itemInfoCard.SetActive(false);
+                doubleClickReady = true;
+                Invoke("DisableDoubleClick", 0.35f);
             }
         }
+    }
+
+    void DisableDoubleClick()
+    {
+        doubleClickReady = false;
     }
 }
