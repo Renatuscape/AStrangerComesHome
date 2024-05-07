@@ -15,14 +15,13 @@ public class CollectionsBooks : MonoBehaviour
 
     public List<GameObject> prefabs = new();
     public Item selectedBook;
-    void Start()
+
+    public void Initialise(bool forLetters)
     {
         reader.gameObject.SetActive(false);
         bookDetails.SetActive(false);
-    }
+        gameObject.SetActive(true);
 
-    private void OnEnable()
-    {
         if (prefabs.Count > 0)
         {
             foreach (var prefab in prefabs)
@@ -43,15 +42,22 @@ public class CollectionsBooks : MonoBehaviour
 
             foreach (Item item in bookList)
             {
-                if (item.type == ItemType.Book) // filter by inventory later
+                if (item.type == ItemType.Book)
                 {
-                    var newBook = BoxFactory.CreateItemIcon(item, true, 64, 18);
-                    prefabs.Add(newBook);
-                    newBook.transform.SetParent(bookContainer.transform, false);
+                    if (Player.GetCount(item.objectID, name) > 0)
+                    {
+                        if (forLetters && item.objectID.Contains("LET")
+                        || !forLetters && item.objectID.Contains("BOO"))
+                        {
+                            var newBook = BoxFactory.CreateItemIcon(item, true, 64, 18);
+                            prefabs.Add(newBook);
+                            newBook.transform.SetParent(bookContainer.transform, false);
 
-                    newBook.AddComponent<ShelvedBook>();
-                    var script = newBook.GetComponent<ShelvedBook>();
-                    script.Initialise(this, item);
+                            newBook.AddComponent<ShelvedBook>();
+                            var script = newBook.GetComponent<ShelvedBook>();
+                            script.Initialise(this, item);
+                        }
+                    }
                 }
             }
         }
