@@ -101,6 +101,8 @@ public class Shop
 
     public List<Item> GetSellFromShopList()
     {
+        Debug.Log("Called SellFromShopList for " + name);
+
         if (sellInventory == null || sellInventory.Count == 0)
         {
             sellInventory = new();
@@ -109,18 +111,17 @@ public class Shop
             {
                 foreach (string objectID in customSellList)
                 {
-                    Item item = Items.all.FirstOrDefault(c => c.name == objectID);
+                    Item item = Items.all.FirstOrDefault(c => c.objectID.Contains(objectID));
+
                     if (item != null)
                     {
                         sellInventory.Add(item);
                     }
                 }
 
-                if (sellsCustomOnly)
-                {
-                    return sellInventory;
-                }
+                Debug.Log("At least one custom item was added. Returning sellInventory with count " + sellInventory.Count);
             }
+
             if (!sellsCustomOnly)
             {
                 var curatedItems = Items.all.Where(c =>
@@ -157,17 +158,41 @@ public class Shop
     {
         if (buyInventory == null || buyInventory.Count == 0)
         {
-            buyInventory = new List<Item>();
+            buyInventory = new();
 
-            if (!buysCustomOnly)
-            {
-                buyInventory = GetSellFromShopList();
-            }
+
             if (customBuyList.Count > 0)
             {
                 foreach (string objectID in customBuyList)
                 {
                     buyInventory.Add(Items.FindByID(objectID));
+                }
+            }
+
+            if (!buysCustomOnly)
+            {
+                var curatedItems = Items.all.Where(c =>
+                {
+                    if (c.notBuyable)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        foreach (var category in categories)
+                        {
+                            if (c.type == category.type && category.rarities.Contains(c.rarity))
+                            {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                }).ToList();
+
+                foreach (var item in curatedItems)
+                {
+                    buyInventory.Add(item);
                 }
             }
         }
