@@ -7,7 +7,8 @@ public enum StageType
     Dialogue,
     Memory,
     PopUp,
-    Node
+    Node,
+    Letter
 }
 
 [System.Serializable]
