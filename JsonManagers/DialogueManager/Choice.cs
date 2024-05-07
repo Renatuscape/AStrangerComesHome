@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -72,7 +73,17 @@ public class Choice
         {
             Debug.Log($"Delivered {entry.objectID} ({entry.amount})");
 
-            Player.Add(new IdIntPair() { objectID = entry.objectID, amount = entry.amount, description = entry.description});
+            var foundObject = GameCodex.GetBaseObject(entry.objectID); // ensure any item ID is trimmed properly
+
+            if (foundObject != null)
+            {
+                Player.Add(new IdIntPair() { objectID = foundObject.objectID, amount = entry.amount, description = entry.description });
+            }
+            else
+            {
+                Debug.Log($"{entry.objectID} NOT FOUND IN GAME CODEX. INTENTIONAL?");
+                Player.Add(new IdIntPair() { objectID = entry.objectID, amount = entry.amount, description = entry.description });
+            }
         }
     }
 }
