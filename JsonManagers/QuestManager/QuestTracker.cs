@@ -18,7 +18,7 @@ public class QuestTracker : MonoBehaviour
     }
     public void StartTracking()
     {
-        Debug.Log("Enabling Quest Tracker.");
+        // Debug.Log("Enabling Quest Tracker.");
         isEnabled = true;
         gameObject.SetActive(true);
     }
@@ -29,7 +29,7 @@ public class QuestTracker : MonoBehaviour
     }
     public void RunCheck()
     {
-        Debug.Log("QuestTracker running checks.");
+        // Debug.Log("QuestTracker running checks.");
 
         if (isEnabled)
         {
