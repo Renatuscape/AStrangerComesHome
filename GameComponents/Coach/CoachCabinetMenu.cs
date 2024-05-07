@@ -24,9 +24,7 @@ public class CoachCabinetMenu : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView != CameraView.Normal)
         {
-            TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
-
-            coachSynthesisersUnlocked = Player.GetCount("SCR004-SCR-NN", name);
+            coachSynthesisersUnlocked = Player.GetCount("SCR004", name);
 
             if (coachSynthesisersUnlocked > 0 && !cabinetCanvas.gameObject.activeInHierarchy)
             {
@@ -41,6 +39,7 @@ public class CoachCabinetMenu : MonoBehaviour
 
     public void OpenCabinet()
     {
+        TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
         cabinetCanvas.gameObject.SetActive(true);
 
         if (coachSynthesisersUnlocked > 0)
