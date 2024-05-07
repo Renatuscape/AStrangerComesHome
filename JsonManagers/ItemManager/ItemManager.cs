@@ -112,6 +112,7 @@ public class ItemManager : MonoBehaviour
             }
         }
 
+        item.objectID = item.objectID.Split('-')[0];
         itemList.Add(item);
     }
 
@@ -119,16 +120,16 @@ public class ItemManager : MonoBehaviour
     {
         item.type = TypeFinder(ref item);
         item.rarity = RarityFinder(ref item);
-        item.image = ImageFinder(ref item.objectID);
+        item.sprite = SpriteFactory.GetItemSprite(item.objectID);// item.image = ImageFinder(ref item.objectID);
 
-        if (item.image != null)
-        {
-            item.sprite = SpriteCreator(ref item.image);
-        }
-        else
-        {
-            Debug.LogError($"{item.objectID}.image was null. Could not create sprite.");
-        }
+        //if (item.image != null)
+        //{
+        //    item.sprite = SpriteCreator(ref item.image);
+        //}
+        //else
+        //{
+        //    Debug.LogError($"{item.objectID}.image was null. Could not create sprite.");
+        //}
 
         if (item.objectID[11] == 'N')
         {
@@ -291,17 +292,17 @@ public class ItemManager : MonoBehaviour
 
     public static int CalculatePrice(ref Item item)
     {
-        float price = 10;
+        float price = 5;
 
-        int seedPrice = 15;
-        int plantPrice = 35;
-        int materialPrice = 50;
-        int catalystPrice = 80;
-        int tradePrice = 100;
-        int bookPrice = 180;
-        int treasurePrice = 350;
+        int seedPrice = 5;
+        int plantPrice = 15;
+        int materialPrice = 30;
+        int catalystPrice = 40;
+        int tradePrice = 50;
+        int bookPrice = 100;
+        int treasurePrice = 250;
 
-        float rarityMultiplier = 0.3f;
+        float rarityMultiplier = 0.5f;
 
         if ((int)item.rarity >= 0)
         {
