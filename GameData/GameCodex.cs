@@ -28,6 +28,7 @@ public static class GameCodex
             identifier == "PLA" ||
             identifier == "SEE" ||
             identifier == "BOO" ||
+            identifier == "LET" ||
             identifier == "SCR" ||
             identifier == "MIS" ||
             identifier == "TRE")
