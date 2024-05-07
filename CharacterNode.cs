@@ -59,7 +59,7 @@ public class CharacterNode : MonoBehaviour
         {
             if (TransientDataScript.GameState == GameState.Overworld)
             {
-                Debug.Log($"Opening interact menu with {character.name}");
+                // Debug.Log($"Opening interact menu with {character.name}");
                 InteractMenu.Open(character);
             }
         }
