@@ -47,6 +47,12 @@ public class PopUpMenu : MonoBehaviour
         else if (stepIndex >= dialogue.content.Count)
         {
             stepIndex = 0;
+
+            if (dialogue.choices.Count > 0)
+            {
+                dialogue.choices[0].GrantRewards();
+            }
+
             dialogueSystem.ColosePopUpMenu();
         }
 
@@ -93,6 +99,7 @@ public class PopUpMenu : MonoBehaviour
 
     public void ContinueToNextStep(Dialogue dialogue, GameObject button)
     {
+
         stepIndex++;
         UpdateText(dialogue);
         Destroy(button);
