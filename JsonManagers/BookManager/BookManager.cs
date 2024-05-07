@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine.UI;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO.Ports;
 public class BookManager : MonoBehaviour
 {
     public List<Book> debugItemList = Books.all;
@@ -93,7 +94,14 @@ public class BookManager : MonoBehaviour
 
     void InitialiseBook(Book book, List<Book> bookList)
     {
-        IDReader(ref book);
+        if (book.objectID.Contains("LET"))
+        {
+            LetterSetup(ref book);
+        }
+        else
+        {
+            IDReader(ref book);
+        }
 
         bookList.Add(book);
     }
@@ -111,5 +119,31 @@ public class BookManager : MonoBehaviour
 
         book.inventoryItem = bookItems.FirstOrDefault(i => i.objectID.Contains(bookID));
         book.name = book.inventoryItem.name;
+    }
+
+    void LetterSetup(ref Book letter)
+    {
+        letter.isLetter = true;
+        var letterID = letter.objectID.Split("-")[0];
+        var letterSprite = SpriteFactory.GetItemSprite(letterID);
+
+        if (letterSprite == null)
+        {
+            letterSprite = SpriteFactory.GetItemSprite("LET000");
+        }
+
+        letter.inventoryItem = new()
+        {
+            objectID = letterID,
+            name = letter.name,
+            sprite = letterSprite,
+            notBuyable = true,
+            notSellable = true,
+            rarity = ItemRarity.Common,
+            type = ItemType.Book,
+            maxValue = 9,
+        };
+
+        Items.all.Add(letter.inventoryItem);
     }
 }
