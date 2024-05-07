@@ -13,6 +13,7 @@ public class Book
     public bool horizontalLayout = false;
     public bool scrolling = false;
     public bool autoPages;
+    public bool isLetter;
     public List<Page> pages;
 }
 
