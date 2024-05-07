@@ -151,6 +151,7 @@ public class PageinatedContainer : MonoBehaviour
         var foundTrade = stock.Where(i => i.type == ItemType.Trade).ToList();
         var foundTreasures = stock.Where(i => i.type == ItemType.Treasure).ToList();
         var foundBooks = stock.Where(i => i.type == ItemType.Book).ToList();
+        var foundMisc = stock.Where(i => i.type == ItemType.Misc).ToList();
 
         GeneratePages(foundMaterials, "Materials");
         GeneratePages(foundCatalysts, "Catalysts");
@@ -159,6 +160,7 @@ public class PageinatedContainer : MonoBehaviour
         GeneratePages(foundTreasures, "Treasures");
         GeneratePages(foundBooks, "Books");
         GeneratePages(foundTrade, "Trade");
+        GeneratePages(foundMisc, "Miscellaneous");
     }
 
     void GeneratePages(List<Item> foundList, string pageName)
