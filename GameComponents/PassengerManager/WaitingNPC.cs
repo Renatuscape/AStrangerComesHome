@@ -1,9 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
-using static UnityEngine.UI.Image;
 
 public class WaitingNPC : MonoBehaviour
 {
@@ -92,7 +88,7 @@ public class WaitingNPC : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
-            if (Player.GetCount("SCR013-SCR-NN", name) > 0)
+            if (Player.GetCount("SCR013", name) > 0)
             {
                 passengerManager.ActivateWaitingPassenger(gameObject);
             }
@@ -107,7 +103,7 @@ public class WaitingNPC : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
-            if (Player.GetCount("SCR013-SCR-NN", name) > 0)
+            if (Player.GetCount("SCR013", name) > 0)
             {
                 TransientDataScript.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
             }
