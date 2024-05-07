@@ -165,6 +165,7 @@ public class GameManagerScript : MonoBehaviour
         dataManager.alchemySynthesisers = new();
         dataManager.unlockedNames = new();
         dataManager.giftedThisWeek = new();
+        dataManager.postLocationID = "R0-LOCC0-CITY";
 
         Player.inventoryList = new();
         dataManager.inventoryList = new();
