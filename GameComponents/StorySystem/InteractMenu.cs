@@ -19,7 +19,7 @@ public class InteractMenu : MonoBehaviour
     public void Initialise(Character character, Shop shop = null)
     {
         TransientDataScript.SetGameState(GameState.Dialogue, name, gameObject);
-        Debug.Log($"Initialising interact menu with {character.name}");
+        // Debug.Log($"Initialising interact menu with {character.name}");
 
         buttons = new();
 
