@@ -35,6 +35,7 @@ public class DataManagerScript : MonoBehaviour
     public string frameID;
 
     //JOURNEY DATA - SAVE READY
+    public string postLocationID;
     public string currentRegion;
     public float mapPositionX;
     public float mapPositionY;
