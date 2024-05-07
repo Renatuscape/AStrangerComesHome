@@ -5,7 +5,7 @@ public enum CollectionPage
 {
     Recipes,
     Treasures,
-    Cards,
+    Letters,
     People,
     Books
 }
@@ -16,9 +16,8 @@ public class JournalCollectionsPage : MonoBehaviour
     public CollectionPage page = CollectionPage.Recipes;
     public GameObject recipes;
     public GameObject people;
-    public GameObject cards;
     public GameObject treasures;
-    public GameObject books;
+    public CollectionsBooks books;
 
     public void EnableRecipes()
     {
@@ -30,9 +29,9 @@ public class JournalCollectionsPage : MonoBehaviour
         ChangePage(CollectionPage.People);
     }
 
-    public void EnableCards()
+    public void EnableLetters()
     {
-        ChangePage(CollectionPage.Cards);
+        ChangePage(CollectionPage.Letters);
     }   
 
     public void EnableTreasures()
@@ -49,8 +48,19 @@ public class JournalCollectionsPage : MonoBehaviour
     {
         recipes.SetActive(page == CollectionPage.Recipes);
         people.SetActive(page == CollectionPage.People);
-        cards.SetActive(page == CollectionPage.Cards);
         treasures.SetActive(page == CollectionPage.Treasures);
-        books.SetActive(page == CollectionPage.Books);
+
+        if (page == CollectionPage.Books)
+        {
+            books.Initialise(false);
+        }
+        else if (page == CollectionPage.Letters)
+        {
+            books.Initialise(true);
+        }
+        else
+        {
+            books.gameObject.SetActive(false);
+        }
     }
 }
