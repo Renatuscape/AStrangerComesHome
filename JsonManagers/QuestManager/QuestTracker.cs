@@ -78,7 +78,7 @@ public class QuestTracker : MonoBehaviour
 
     IEnumerator InitiatePop(Dialogue dialogue)
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.5f);
 
         if (TransientDataScript.GameState == GameState.Overworld)
         {
