@@ -93,7 +93,7 @@ public class BoxFactory : MonoBehaviour
 
         var tag = newIcon.transform.Find("Tag").gameObject;
 
-        if (!displayInventoryAmount)
+        if (!displayInventoryAmount || item.rarity == ItemRarity.Unique)
         {
             tag.SetActive(false);
         }
