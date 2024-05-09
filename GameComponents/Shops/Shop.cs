@@ -211,7 +211,14 @@ public class Shop
 
     public bool CheckRequirements()
     {
-        return RequirementChecker.CheckPackage(checks);
+        if (checks == null)
+        {
+            return true;
+        }
+        else
+        {
+            return RequirementChecker.CheckPackage(checks);
+        }
     }
 }
 
