@@ -10,24 +10,26 @@ public class Item : BaseObject
     public int basePrice; //automatically calculated from type, rarity and ID
     public ItemType type; //retrieve from ID
     public ItemRarity rarity; //retrieve from ID
-    public Texture2D image; //retrieve from ID + folder
     public Sprite sprite;
-    public List<Texture2D> animationFrames; //for animation frames
     public string description;
     public bool notBuyable; //from ID, second to last letter N/B (not/buyable)
     public bool notSellable; //from ID, last letter N/S (not/sellable)
 
     //SEEDS
     public string outputID; //the ID of the object this can turn into
-    public Sprite stage1; //seed growth1, set by ID
-    public Sprite stage2; //seed growth2, set by ID
-    public Sprite stage3; //seed growth3, set by ID
     public int health; //Adds to price and growth time
     public int yield; //Adds to price and growth time
 
     public Item GetOutput()
     {
-        return Items.FindByID(outputID);
+        if (string.IsNullOrEmpty(outputID))
+        {
+            return null;
+        }
+        else
+        {
+            return Items.FindByID(outputID);
+        }
     }
 }
 
