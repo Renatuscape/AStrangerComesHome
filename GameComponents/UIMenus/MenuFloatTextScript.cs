@@ -8,10 +8,12 @@ public class MenuFloatTextScript : MonoBehaviour
 {
     public TransientDataScript transientData;
     public TextMeshProUGUI floatText;
+    public RectTransform rect;
     public Image backPanel;
     bool disable;
     float disableTimer;
     float disableTick;
+    public float mouseWorldPosition;
 
     void Awake()
     {
@@ -45,6 +47,22 @@ public class MenuFloatTextScript : MonoBehaviour
 
     public void PrintFloatText(string content)
     {
+        mouseWorldPosition = MouseTracker.GetMouseWorldPosition().x;
+        if (mouseWorldPosition > 12)
+        {
+            rect.anchorMin = new Vector2(1, rect.anchorMin.y);
+            rect.anchorMax = new Vector2(1, rect.anchorMax.y);
+            rect.pivot = rect.anchorMin;
+            rect.localPosition = new Vector3(-3, rect.localPosition.y, rect.localPosition.z);
+        }
+        else
+        {
+            rect.anchorMin = new Vector2(0, rect.anchorMin.y);
+            rect.anchorMax = new Vector2(0, rect.anchorMax.y);
+            rect.pivot = rect.anchorMin;
+            rect.localPosition = new Vector3(3, rect.localPosition.y, rect.localPosition.z);
+        }
+
         disableTick = 5;
         disableTimer = 0;
         disable = true;
