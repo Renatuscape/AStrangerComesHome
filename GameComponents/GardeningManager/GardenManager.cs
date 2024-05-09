@@ -73,7 +73,7 @@ public class GardenManager : MonoBehaviour
 
     void CheckPlanters()
     {
-        unlockedPlanters = Player.GetCount("SCR004-SCR-NN", name);
+        unlockedPlanters = Player.GetCount("SCR004", name);
 
         if (unlockedPlanters >= 1)
         {
@@ -175,15 +175,15 @@ public class GardenManager : MonoBehaviour
 
                 if (progressSeed < maxGrowth * 0.3f)
                 {
-                    plantSprite.sprite = seed.stage1;
+                    plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 1);
                 }
                 else if (progressSeed > maxGrowth * 0.3f && progressSeed < maxGrowth * 0.6f)
                 {
-                    plantSprite.sprite = seed.stage2;
+                    plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 2);
                 }
                 else if (progressSeed > maxGrowth * 0.6f)
                 {
-                    plantSprite.sprite = seed.stage3;
+                    plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 3);
                 }
             }
             else
