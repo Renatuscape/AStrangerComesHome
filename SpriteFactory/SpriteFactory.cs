@@ -12,6 +12,7 @@ public class SpriteFactory : MonoBehaviour
     public List<Sprite> unsortedWorldSprites = new();
     public List<Sprite> backgroundSprites = new();
     public List<Sprite> itemSprites = new();
+    public List<Sprite> sproutSprites = new();
 
     public List<SpriteCollection> uiSpriteLibrary = new();
 
@@ -35,6 +36,18 @@ public class SpriteFactory : MonoBehaviour
         {
             foundSprite = instance.itemSprites.FirstOrDefault(c => c.name.Contains(objectID.Substring(0, 3) + "000"));
         }
+        return foundSprite;
+    }
+
+    public static Sprite GetSprout(string objectID, int stage)
+    {
+        var foundSprite = instance.sproutSprites.FirstOrDefault(c => c.name == objectID + "-" + stage);
+
+        if (foundSprite == null)
+        {
+            foundSprite = instance.sproutSprites.FirstOrDefault(c => c.name == "SEE000-" + stage);
+        }
+
         return foundSprite;
     }
 
