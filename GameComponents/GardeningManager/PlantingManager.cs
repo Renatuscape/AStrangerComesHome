@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,11 +8,9 @@ using UnityEngine.UI;
 public class PlantingManager : MonoBehaviour
 {
     public DataManagerScript dataManager;
+    public PageinatedContainer seedContainer;
 
-    public GameObject seedContainter;
-    public GameObject gardenSeedPrefab;
     public GameObject planterFrame;
-    public GameObject seedFrame;
     public GameObject planterA;
     public Image planterIconA;
     public GameObject planterB;
@@ -22,18 +19,13 @@ public class PlantingManager : MonoBehaviour
     public Image planterIconC;
     public Sprite planterIconFree;
 
-    public Image plantPreview;
     public WhichPlanter activePlanter;
-    public Item activeSeed;
     public bool readyToPlant;
-    public List<GameObject> seedPrefabs;
 
     private void Awake()
     {
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
-        seedFrame.SetActive(false);
         planterFrame.SetActive(false);
-        plantPreview.sprite = null;
 
         planterIconA = planterA.GetComponent<Image>();
         planterIconB = planterB.GetComponent<Image>();
@@ -42,7 +34,7 @@ public class PlantingManager : MonoBehaviour
 
     private void OnEnable()
     {
-        seedFrame.SetActive(false);
+        planterFrame.SetActive(false);
         planterFrame.SetActive(false);
         readyToPlant = false;
 
@@ -83,36 +75,29 @@ public class PlantingManager : MonoBehaviour
     }
     private void PrintSeeds()
     {
+        List<Item> seedStock = new();
+
         foreach (Item item in Items.all)
         {
             if (item.type == ItemType.Seed)
             {
 
-                if (Player.GetCount(item.objectID, name) > 0)
+                if (Player.GetCount(item.objectID, name) > 0 && item.GetOutput() != null)
                 {
-                    var prefab = Instantiate(gardenSeedPrefab);
-                    prefab.name = item.name;
-                    prefab.transform.SetParent(seedContainter.transform, false);
-                    prefab.GetComponent<GardenSeedPrefab>().EnableObject(item, this);
-                    seedPrefabs.Add(prefab);
+                    seedStock.Add(item);
                 }
             }
         }
+
+        seedContainer.Initialise(seedStock, true, true, true);
     }
 
     private void RemoveSeeds()
     {
-        seedFrame?.SetActive(false);
-        seedFrame?.transform.SetParent(planterA.transform, false);
+        planterFrame.SetActive(false);
+        planterFrame.transform.SetParent(planterA.transform, false);
 
         readyToPlant = false;
-
-        foreach (var seed in seedPrefabs)
-        {
-            Destroy(seed);
-        }
-
-        seedPrefabs.Clear();
     }
 
     private void DynamicPlanterSelection()
@@ -128,8 +113,8 @@ public class PlantingManager : MonoBehaviour
     {
         readyToPlant = false;
 
-        seedFrame?.SetActive(false);
-        seedFrame?.transform.SetParent(planterA.transform, false);
+        planterFrame?.SetActive(false);
+        planterFrame?.transform.SetParent(planterA.transform, false);
         planterFrame?.SetActive(false);
         planterFrame?.transform.SetParent(planterA.transform, false);
 
@@ -141,7 +126,7 @@ public class PlantingManager : MonoBehaviour
         if (TransientDataScript.CameraView != CameraView.Garden)
             gameObject.SetActive(false);
 
-        if (activeSeed != null && planterFrame.activeInHierarchy == true)
+        if (seedContainer.selectedItem != null && planterFrame.activeInHierarchy == true)
             readyToPlant = true;
 
         //planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
@@ -150,23 +135,19 @@ public class PlantingManager : MonoBehaviour
 
     public void SelectSeed(GameObject seedObject) //must pass the spawned prefab. Might have to be done in a script triggered by event
     {
-        activeSeed = seedObject.GetComponent<GardenSeedPrefab>().itemSource;
-
-        if (activeSeed.GetOutput() != null)
+        if (seedContainer.selectedItem.GetOutput() != null)
         {
-        seedFrame.transform.SetParent(seedObject.transform);
-        seedFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
+            planterFrame.transform.SetParent(seedObject.transform);
+            planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
 
-        plantPreview.sprite = activeSeed.GetOutput().sprite;
-        seedFrame.SetActive(true);
+            planterFrame.SetActive(true);
         }
         else
         {
-            seedFrame.transform.SetParent(seedObject.transform);
-            seedFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
+            planterFrame.transform.SetParent(seedObject.transform);
+            planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
 
-            plantPreview.sprite = null;
-            seedFrame.SetActive(true);
+            planterFrame.SetActive(true);
         }
 
     }
@@ -196,14 +177,14 @@ public class PlantingManager : MonoBehaviour
 
     public void PlantThatSeed()
     {
-        if (readyToPlant && activeSeed != null) //both seed and planter has been selected
+        if (readyToPlant && seedContainer.selectedItem != null) //both seed and planter has been selected
         {
-            if (Player.GetCount(activeSeed.objectID, name) > 0)
+            if (Player.GetCount(seedContainer.selectedItem.objectID, name) > 0)
             {
                 //PLANTER A
                 if (activePlanter == WhichPlanter.PlanterA)
                 {
-                    if (!dataManager.planterIsActiveA && !string.IsNullOrEmpty(activeSeed.objectID))
+                    if (!dataManager.planterIsActiveA && !string.IsNullOrEmpty(seedContainer.selectedItem.objectID))
                     {
                         StorePlanterData(ref dataManager.seedA, ref dataManager.seedHealthA, ref dataManager.planterIsActiveA);
                     }
@@ -213,7 +194,7 @@ public class PlantingManager : MonoBehaviour
                 //PLANTER B
                 if (activePlanter == WhichPlanter.PlanterB)
                 {
-                    if (!dataManager.planterIsActiveB && !string.IsNullOrEmpty(activeSeed.objectID))
+                    if (!dataManager.planterIsActiveB && !string.IsNullOrEmpty(seedContainer.selectedItem.objectID))
                     {
                         StorePlanterData(ref dataManager.seedB, ref dataManager.seedHealthB, ref dataManager.planterIsActiveB);
                     }
@@ -223,43 +204,12 @@ public class PlantingManager : MonoBehaviour
                 //PLANTER C
                 if (activePlanter == WhichPlanter.PlanterC)
                 {
-                    if (!dataManager.planterIsActiveC && !string.IsNullOrEmpty(activeSeed.objectID))
+                    if (!dataManager.planterIsActiveC && !string.IsNullOrEmpty(seedContainer.selectedItem.objectID))
                     {
                         StorePlanterData(ref dataManager.seedC, ref dataManager.seedHealthC, ref dataManager.planterIsActiveC);
                     }
                     else
                         Debug.Log("This planter is occupied."); //add option to remove plant?
-                }
-
-
-                if (Player.GetCount(activeSeed.objectID, name) == 0)
-                {
-                    GameObject outSeed = seedPrefabs.FirstOrDefault(x => x.name == activeSeed.name);
-
-                    if (seedPrefabs.Count > 1) //If there are more seeds available, hop to next one
-                    {
-                        var index = seedPrefabs.IndexOf(outSeed);
-                        int newIndex = index + 1;
-
-                        if (newIndex >= seedPrefabs.Count)
-                        {
-                            newIndex = 0;
-                        }
-
-                        seedFrame.transform.SetParent(seedPrefabs[newIndex].transform);
-                        activeSeed = seedPrefabs[newIndex].GetComponent<GardenSeedPrefab>().itemSource;
-
-                        seedFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
-                    }
-                    else //if no more seeds are available, save the seed frame from deletion
-                    {
-                        readyToPlant = false;
-                        seedFrame?.SetActive(false);
-                        seedFrame?.transform.SetParent(planterA.transform, false);
-                    }
-
-                    seedPrefabs.Remove(outSeed);
-                    Destroy(outSeed);
                 }
             }
             else
@@ -271,12 +221,12 @@ public class PlantingManager : MonoBehaviour
 
     public void StorePlanterData(ref string storedSeed, ref int storedHealth, ref bool planterIsActive)
     {
-        if (activeSeed != null)
+        if (seedContainer.selectedItem != null)
         {
-            Player.Remove(activeSeed.objectID);
+            Player.Remove(seedContainer.selectedItem.objectID);
 
-            storedSeed = activeSeed.objectID;
-            storedHealth = activeSeed.health;
+            storedSeed = seedContainer.selectedItem.objectID;
+            storedHealth = seedContainer.selectedItem.health;
             planterIsActive = true;
 
             if (dataManager.planterIsActiveA && dataManager.planterIsActiveB && dataManager.planterIsActiveC)
