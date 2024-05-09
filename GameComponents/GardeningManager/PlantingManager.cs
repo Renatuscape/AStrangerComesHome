@@ -21,7 +21,7 @@ public class PlantingManager : MonoBehaviour
 
     public WhichPlanter activePlanter;
     public bool readyToPlant;
-
+    public int unlockedPlanters;
     private void Awake()
     {
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
@@ -34,14 +34,47 @@ public class PlantingManager : MonoBehaviour
 
     private void OnEnable()
     {
-        planterFrame.SetActive(false);
+        unlockedPlanters = Player.GetCount("SCR004", name);
+
         planterFrame.SetActive(false);
         readyToPlant = false;
 
-        //spawn prefabs here
+        if (unlockedPlanters == 1)
+        {
+            planterA.gameObject.SetActive(true);
+            planterB.gameObject.SetActive(false);
+            planterC.gameObject.SetActive(false);
+        }
+        else if (unlockedPlanters == 2)
+        {
+            planterA.gameObject.SetActive(true);
+            planterB.gameObject.SetActive(true);
+            planterC.gameObject.SetActive(false);
+        }
+        else if (unlockedPlanters >= 3)
+        {
+            planterA.gameObject.SetActive(true);
+            planterB.gameObject.SetActive(true);
+            planterC.gameObject.SetActive(true);
+        }
+        else
+        {
+            planterA.gameObject.SetActive(false);
+            planterB.gameObject.SetActive(false);
+            planterC.gameObject.SetActive(false);
+        }
+
         PrintSeeds();
 
-        DynamicPlanterSelection();
+        if (unlockedPlanters >= 3)
+        {
+            DynamicPlanterSelection();
+        }
+        else
+        {
+            MouseDownSelectPlanterA();
+        }
+
         UpdatePlanterIcons();
     }
 
@@ -230,9 +263,15 @@ public class PlantingManager : MonoBehaviour
             planterIsActive = true;
 
             if (dataManager.planterIsActiveA && dataManager.planterIsActiveB && dataManager.planterIsActiveC)
+            {
                 gameObject.SetActive(false); //Close planting manager if all planters are occupied
+            }
 
-            Invoke("DynamicPlanterSelection", 0.01f);
+
+            if (unlockedPlanters >= 3)
+            {
+                Invoke("DynamicPlanterSelection", 0.01f);
+            }
 
             UpdatePlanterIcons();
         }
