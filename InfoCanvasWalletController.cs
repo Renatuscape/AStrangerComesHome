@@ -23,7 +23,7 @@ public class InfoCanvasWalletController : MonoBehaviour
     public GameObject smallWalletTotal;
 
     float timer = 0.0f;
-    float tick = 1.5f;
+    float tick = 1f;
 
     void Update()
     {
@@ -41,10 +41,10 @@ public class InfoCanvasWalletController : MonoBehaviour
 
     void UpdateWallet()
     {
-        var playerGuilders = Player.GetCount("MIS003-RAR-NN", name);
-        var playerCrowns = Player.GetCount("MIS002-UNC-NN", name);
-        var playerShillings = Player.GetCount("MIS001-COM-NN", name);
-        var playerHellers = Player.GetCount("MIS000-JUN-NN", name);
+        var playerGuilders = Player.GetCount("MIS003", name);
+        var playerCrowns = Player.GetCount("MIS002", name);
+        var playerShillings = Player.GetCount("MIS001", name);
+        var playerHellers = Player.GetCount("MIS000", name);
         var playerTotal = MoneyExchange.GetPlayerMoney();
 
         if (GlobalSettings.uiWalletLarge)
