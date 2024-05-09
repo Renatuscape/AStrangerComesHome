@@ -36,7 +36,7 @@ public class TimeManagerComponent : MonoBehaviour
         {
             dataManager.timeOfDay += (Time.deltaTime / 400 * transientData.timeFlowSpeed) * Time.timeScale;
 
-            yearNumber = (int)Mathf.Round((int)dataManager.totalGameDays / 336);
+            yearNumber = 890 + (int)Mathf.Round((int)dataManager.totalGameDays / 336);
 
             monthNumber = (int)Mathf.Round((int)dataManager.totalGameDays / 28) % 12 + 1;
 
@@ -92,7 +92,7 @@ public class TimeManagerComponent : MonoBehaviour
             transientData.year = yearNumber;
 
             dayText.text = $"{(DayOfWeek)dayOfWeekNumber}";
-            dateText.text = $"D{dayOfMonthNumber}M{monthNumber}Y{yearNumber}";
+            dateText.text = $"{dayOfMonthNumber}/{monthNumber}/{yearNumber}";
         }
 
         if (TransientDataScript.GameState == GameState.Overworld)
