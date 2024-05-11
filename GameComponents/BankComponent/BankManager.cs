@@ -1,11 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BankManager : MonoBehaviour
 {
-    public PortraitRenderer portraits;
     public GameObject bankMenu;
 
     public GameObject leaveButton;
@@ -25,6 +24,9 @@ public class BankManager : MonoBehaviour
     public TextMeshProUGUI oldWorldObols;
 
     public TextMeshProUGUI playerTotal;
+
+    public GameObject closedNotice;
+    public Image background;
 
     private void Update()
     {
@@ -64,15 +66,17 @@ public class BankManager : MonoBehaviour
             exchangeButton.SetActive(false);
             loansButton.SetActive(false);
             chatButton.SetActive(false);
+            closedNotice.SetActive(true);
+            background.sprite = SpriteFactory.GetBackgroundSprite("Teller_Bank_Closed");
         }
         else if (Player.GetCount("ARC004", "BankManager") > 0)
         {
-            portraits.gameObject.SetActive(true);
-            portraits.EnableForShop("ARC004");
             leaveButton.SetActive(true);
             exchangeButton.SetActive(true);
             loansButton.SetActive(true);
             chatButton.SetActive(true);
+            closedNotice.SetActive(false);
+            background.sprite = SpriteFactory.GetBackgroundSprite("Teller_Bank_Open");
         }
         else
         {
@@ -82,6 +86,8 @@ public class BankManager : MonoBehaviour
             exchangeButton.SetActive(false);
             loansButton.SetActive(false);
             chatButton.SetActive(true);
+            closedNotice.SetActive(false);
+            background.sprite = SpriteFactory.GetBackgroundSprite("Teller_Bank_Open");
         }
 
         UpdateWallet();
@@ -89,11 +95,11 @@ public class BankManager : MonoBehaviour
 
     public void UpdateWallet()
     {
-        var playerHellers = Player.GetCount("MIS000-JUN-NN", "BankManager");
-        var playerShillings = Player.GetCount("MIS001-COM-NN", "BankManager");
-        var playerCrowns = Player.GetCount("MIS002-UNC-NN", "BankManager");
-        var playerGuilders = Player.GetCount("MIS003-RAR-NN", "BankManager");
-        var playerObols = Player.GetCount("MIS010-COM-NN", "BankManager");
+        var playerHellers = Player.GetCount("MIS000", "BankManager");
+        var playerShillings = Player.GetCount("MIS001", "BankManager");
+        var playerCrowns = Player.GetCount("MIS002", "BankManager");
+        var playerGuilders = Player.GetCount("MIS003", "BankManager");
+        var playerObols = Player.GetCount("MIS010", "BankManager");
 
         StartCoroutine(DelayedAdjust(guilders, playerGuilders));
         StartCoroutine(DelayedAdjust(crowns, playerCrowns));
