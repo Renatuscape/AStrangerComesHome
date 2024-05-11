@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -64,7 +63,7 @@ public class BankExchange : MonoBehaviour
     public void SellHellers()
     {
         int sliderValue = (int)slider.value * 100;
-        int inventoryHellers = Player.GetCount("MIS000-JUN-NN", "BankExchange, SellHellers()");
+        int inventoryHellers = Player.GetCount("MIS000", "BankExchange, SellHellers()");
         bool result = false;
 
         int remainder = sliderValue - (sliderValue % 100);
@@ -78,7 +77,7 @@ public class BankExchange : MonoBehaviour
             if (result)
             {
                 AudioManager.PlayUISound("handleCoins2");
-                Player.Remove("MIS000-JUN-NN", commissionCost);
+                Player.Remove("MIS000", commissionCost);
             }
         }
 
@@ -103,7 +102,7 @@ public class BankExchange : MonoBehaviour
             if (result)
             {
                 AudioManager.PlayUISound("handleCoins2");
-                Player.Remove("MIS001-COM-NN", commissionCost);
+                Player.Remove("MIS001", commissionCost);
             }
         }
 
@@ -114,7 +113,7 @@ public class BankExchange : MonoBehaviour
     public void BuyGuilders()
     {
         int sliderValue = (int)slider.value * 100;
-        int inventoryCrowns = Player.GetCount("MIS002-UNC-NN", "BankExchange, BuyCrowns()");
+        int inventoryCrowns = Player.GetCount("MIS002", "BankExchange, BuyCrowns()");
         bool result = false;
 
         int remainder = sliderValue - (sliderValue % 100);
@@ -128,7 +127,7 @@ public class BankExchange : MonoBehaviour
             if (result)
             {
                 AudioManager.PlayUISound("handleCoins2");
-                Player.Remove("MIS002-UNC-NN", commissionCost);
+                Player.Remove("MIS002", commissionCost);
             }
         }
 
