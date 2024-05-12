@@ -59,7 +59,7 @@ public static class GlobalSettingsManager
         GlobalSettings.uiWalletLarge = PlayerPrefs.GetInt("uiWalletLarge", 1) == 1;
         GlobalSettings.uiGearboxLarge = PlayerPrefs.GetInt("uiGearboxLarge", 1) == 1;
 
-        GlobalSettings.darkTheme = PlayerPrefs.GetInt("darkTheme", 1) == 1;
+        GlobalSettings.darkTheme = PlayerPrefs.GetInt("darkTheme", 0) == 1;
         GlobalSettings.dialogueTransparency = PlayerPrefs.GetFloat("dialogueTransparency", 0.8f);
     }
 }
