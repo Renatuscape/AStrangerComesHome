@@ -46,16 +46,16 @@ public class RadialLayout : LayoutGroup
         CalculateRadial();
     }
 
-    protected override void OnValidate()
-    {
-#if UNITY_EDITOR
-        if (!Application.isPlaying)
-        {
-            base.OnValidate();
-            CalculateRadial(true);
-        }
-#endif
-    }
+//    protected override void OnValidate()
+//    {
+//#if UNITY_EDITOR
+//        if (!Application.isPlaying)
+//        {
+//            base.OnValidate();
+//            CalculateRadial(true);
+//        }
+//#endif
+//    }
 
     public void CalculateRadial(bool isEditorCall = false)
     {
