@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class InteractMenu : MonoBehaviour
@@ -25,7 +24,15 @@ public class InteractMenu : MonoBehaviour
 
         if (character != null && !string.IsNullOrEmpty(character.objectID))
         {
+            gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
+            gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+            Canvas.ForceUpdateCanvases();
+
             PrintChatButton(character);
+
+            gameObject.GetComponent<VerticalLayoutGroup>().enabled = true;
+            gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+            Canvas.ForceUpdateCanvases();
 
             if (shop == null || string.IsNullOrEmpty(shop.objectID))
             {
@@ -45,6 +52,13 @@ public class InteractMenu : MonoBehaviour
             {
                 PrintGarageButton(character);
             }
+
+            gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
+            gameObject.GetComponent<ContentSizeFitter>().enabled = false;    
+            Canvas.ForceUpdateCanvases();
+            gameObject.GetComponent<VerticalLayoutGroup>().enabled = true;
+            gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+            Canvas.ForceUpdateCanvases();
         }
 
         gameObject.SetActive(true);
