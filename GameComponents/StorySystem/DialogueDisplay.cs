@@ -10,6 +10,8 @@ public class DialogueDisplay : MonoBehaviour
     public DialogueMenu dialogueMenu;
     public DialoguePortraitManager portraitManager;
 
+    public AudioSource textSoundEffect;
+
     public GameObject dialogueContainer;
 
     public GameObject leftNameDisplay;
@@ -86,6 +88,13 @@ public class DialogueDisplay : MonoBehaviour
     // DialogueMenu handles the quest and quest progression
     public void StartDialogue(Dialogue dialogue)
     {
+        if (textSoundEffect.clip == null)
+        {
+            textSoundEffect.clip = AudioManager.GetSoundEffect("knockSmall");
+        }
+
+        textSoundEffect.volume = GlobalSettings.uiVolume - 0.1f;
+
         if (dialogue.stageType != StageType.Dialogue)
         {
             Debug.LogWarning("Attempted to start a non-dialogue event. Was the choice leading to " + dialogue.objectID + " missing endConversation: true?");
@@ -231,7 +240,7 @@ public class DialogueDisplay : MonoBehaviour
             else
             {
                 endConversation = true;
-                
+
                 if (!hasResultText && !hasMissingItemsToPrint)
                 {
                     dialogueMenu.EndDialogue(choice);
@@ -244,7 +253,7 @@ public class DialogueDisplay : MonoBehaviour
 
     IEnumerator PrintContent(string textToPrint, bool isNarration)
     {
-        printSpeed = 0.05f;
+        printSpeed = 0.08f;
         isPrinting = true;
         contentText.text = "";
 
@@ -261,10 +270,11 @@ public class DialogueDisplay : MonoBehaviour
 
         foreach (var text in textArray)
         {
-            //if (printSpeed > 0)
-            //{
-            //    AudioManager.PlayAmbientSound("knockSmall", -0.1f);
-            //}
+            if (textSoundEffect.clip != null)
+            {
+                textSoundEffect.Play();
+            }
+
 
             if (printSpeed == 0)
             {
