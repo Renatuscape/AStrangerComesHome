@@ -60,7 +60,7 @@ public class Engine : MonoBehaviour
     }
     void BoostDecrease()
     {
-        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu || TransientDataScript.GameState == GameState.Dialogue || TransientDataScript.GameState == GameState.PlayerHome || TransientDataScript.GameState == GameState.MapMenu)
+        if (TransientDataScript.IsTimeFlowing())
         {
             if (currentBoost > 0)
             {
@@ -76,7 +76,7 @@ public class Engine : MonoBehaviour
     }
     void SpeedManager()
     {
-        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu || TransientDataScript.GameState == GameState.Dialogue || TransientDataScript.GameState == GameState.PlayerHome || TransientDataScript.GameState == GameState.MapMenu)
+        if (TransientDataScript.IsTimeFlowing())
         {
             //SET TARGET SPEED
             switch (transientData.engineState)
@@ -119,7 +119,7 @@ public class Engine : MonoBehaviour
 
     void ManaConsumption()
     {
-        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu || TransientDataScript.GameState == GameState.Dialogue || TransientDataScript.GameState == GameState.PlayerHome || TransientDataScript.GameState == GameState.MapMenu)
+        if (TransientDataScript.IsTimeFlowing())
         {
             manaConsumptionDebuff = 1f + (10 - engineFuelEfficiency) / 30;
 
