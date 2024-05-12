@@ -66,6 +66,20 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public static AudioClip GetSoundEffect(string soundName)
+    {
+        if (instance != null)
+        {
+            var clip = instance.soundEffects.FirstOrDefault(x => x.name == soundName);
+
+            if (clip == null)
+            {
+                Debug.Log("Could not find sound by the name " + soundName);
+            }
+            return clip;
+        }
+        else return null;
+    }
     public static void FadeToStop()
     {
         if (instance != null)
