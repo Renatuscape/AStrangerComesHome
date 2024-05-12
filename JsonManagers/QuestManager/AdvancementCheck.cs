@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using static UnityEditor.FilePathAttribute;
-using UnityEngine.Rendering.Universal;
 using UnityEngine;
 
 [System.Serializable]

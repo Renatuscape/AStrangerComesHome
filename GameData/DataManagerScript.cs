@@ -1,9 +1,6 @@
-using SaveLoadSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using UnityEditor.Search;
 using UnityEngine;
 
 public class DataManagerScript : MonoBehaviour
