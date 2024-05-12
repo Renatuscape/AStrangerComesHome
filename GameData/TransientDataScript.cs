@@ -122,6 +122,7 @@ public class TransientDataScript : MonoBehaviour
     {
         if (GameState == GameState.Overworld
             || GameState == GameState.JournalMenu
+            || GameState == GameState.MapMenu
             || GameState == GameState.BankMenu
             || GameState == GameState.ShopMenu
             || GameState == GameState.Dialogue // Used by pop dialogue and memories. Disables floating text.
