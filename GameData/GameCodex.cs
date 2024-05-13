@@ -13,9 +13,13 @@ public static class GameCodex
             identifier == "UNI" ||
             identifier == "GEN")
         {
-            if (objectID.Length > 6 && objectID.Substring(6, 2) == "-Q")
+            if (objectID.Contains("-Q") && objectID.Length > 6)
             {
                 return Quests.FindByID(objectID);
+            }
+            else if (objectID.Contains("-NAME"))
+            {
+                return null;
             }
             else
             {
@@ -47,6 +51,7 @@ public static class GameCodex
         {
             return Upgrades.FindByID(objectID);
         }
+
         return null;
     }
 }
