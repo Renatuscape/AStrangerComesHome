@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -78,10 +79,10 @@ public class SalvageSpawner : MonoBehaviour
         uncommonItems = Items.all.FindAll(x => x.rarity == ItemRarity.Uncommon && !x.notBuyable && !x.notSellable && x.type != ItemType.Misc && x.type != ItemType.Catalyst && x.type != ItemType.Plant);
         rareItems = Items.all.FindAll(x => x.rarity == ItemRarity.Rare && !x.notBuyable && !x.notSellable && x.type != ItemType.Misc && x.type != ItemType.Catalyst && x.type != ItemType.Plant);
 
-        coins.Add(Items.all.Find(x => x.objectID == "MIS000-JUN-NN"));
-        coins.Add(Items.all.Find(x => x.objectID == "MIS001-COM-NN"));
-        coins.Add(Items.all.Find(x => x.objectID == "MIS002-UNC-NN"));
-        coins.Add(Items.all.Find(x => x.objectID == "MIS003-RAR-NN"));
-        coins.Add(Items.all.Find(x => x.objectID == "MIS010-COM-NN"));
+        coins.Add(Items.all.FirstOrDefault(x => x.objectID == "MIS000"));
+        coins.Add(Items.all.FirstOrDefault(x => x.objectID == "MIS001"));
+        coins.Add(Items.all.FirstOrDefault(x => x.objectID == "MIS002"));
+        coins.Add(Items.all.FirstOrDefault(x => x.objectID == "MIS003"));
+        coins.Add(Items.all.FirstOrDefault(x => x.objectID == "MIS010"));
     }
 }
