@@ -192,4 +192,12 @@ public class BankManager : MonoBehaviour
         exchangeMenu.SetActive(false);
         accountMenu.SetActive(true);
     }
+
+    public void ChatButton()
+    {
+        exchangeMenu.SetActive(false);
+        accountMenu.SetActive(false);
+
+        TransientDataScript.gameManager.storySystem.OpenTopicMenu("ARC004");
+    }
 }
