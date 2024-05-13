@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
 {
+    public static bool setUpReady = false;
+
     //ALL GAME COMPONENTS
     public DataManagerScript dataManager;
     public Canvas loadingCanvas;
@@ -80,6 +82,7 @@ public class GameManagerScript : MonoBehaviour
         CreateGameController();
 
         loadingCanvas.gameObject.SetActive(false);
+        setUpReady = true;
     }
 
     async Task InitiateJsonManagers()
@@ -140,6 +143,7 @@ public class GameManagerScript : MonoBehaviour
         TransientDataScript.SetGameState(GameState.MainMenu, name, gameObject);
         TransientDataScript.transientData.currentMana = 25;
         menuUIManagerComponent.SetActive(true);
+        // Debug.LogWarning("ATTEMPTING TO ACTIVATE MAIN MENU");
         mainMenuComponent.SetActive(true);
     }
 
@@ -188,6 +192,7 @@ public class GameManagerScript : MonoBehaviour
 
     public void LoadRoutine()
     {
+        TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
         ResetGameComponents();
         DialogueTagParser.UpdateTags(dataManager);
         InitialiseMap();
