@@ -88,7 +88,7 @@ public class BankExchange : MonoBehaviour
     public void BuyCrowns()
     {
         int sliderValue = (int)slider.value * 100;
-        int inventoryShillings = Player.GetCount("MIS001-COM-NN", "BankExchange, BuyCrowns()");
+        int inventoryShillings = Player.GetCount("MIS001", "BankExchange, BuyCrowns()");
         bool result = false;
 
         int remainder = sliderValue - (sliderValue % 100);
