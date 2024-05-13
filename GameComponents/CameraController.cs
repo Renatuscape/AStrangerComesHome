@@ -34,15 +34,12 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         HandleCameraView();
-    }
-    void FixedUpdate()
-    {
         HandleCameraMovement();
     }
 
     void HandleCameraView()
     {
-        if (TransientDataScript.CameraView == CameraView.Normal && (vCam.m_Lens.OrthographicSize != 7 || camTransform.position.x != 0))
+        if (TransientDataScript.CameraView == CameraView.Normal && (vCam.m_Lens.OrthographicSize != 8.4 || camTransform.position.x != 0))
             CameraNormal();
 
         // Snap camera back to normal if the state is anything but these exceptions
@@ -139,7 +136,7 @@ public class CameraController : MonoBehaviour
     public void CameraNormal()
     {
         TransientDataScript.SetCameraView(CameraView.Normal);
-        vCam.m_Lens.OrthographicSize = 7;
+        vCam.m_Lens.OrthographicSize = 8.4f;
         camTransform.position = new Vector3(0, 0, vCam.gameObject.transform.position.z);
     }
 }
