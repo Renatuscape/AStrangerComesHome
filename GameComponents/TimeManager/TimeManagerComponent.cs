@@ -34,7 +34,15 @@ public class TimeManagerComponent : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            dataManager.timeOfDay += (Time.deltaTime / 400 * transientData.timeFlowSpeed) * Time.timeScale;
+            if (TransientDataScript.GameState == GameState.CharacterCreation)
+            {
+                dataManager.timeOfDay += (Time.deltaTime / 1000 * transientData.timeFlowSpeed) * Time.timeScale;
+            }
+            else
+            {
+                dataManager.timeOfDay += (Time.deltaTime / 400 * transientData.timeFlowSpeed) * Time.timeScale;
+            }
+
 
             yearNumber = 890 + (int)Mathf.Round((int)dataManager.totalGameDays / 336);
 
