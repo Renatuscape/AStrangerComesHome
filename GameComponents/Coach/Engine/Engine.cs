@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Engine : MonoBehaviour
@@ -13,7 +11,7 @@ public class Engine : MonoBehaviour
     public int engineBoostMax;
     public int engineClickPotency;
 
-    float baseSpeed = 0.5f;
+    float baseSpeed = 0.6f;
     float baseFuelConsumption = 0.01f;
 
     float secondGearMultiplier = 2.5f;
@@ -29,6 +27,11 @@ public class Engine : MonoBehaviour
     public float manaConsumptionDebuff;
     public float targetSpeed;
 
+    public float speedTimer;
+    public float effectTimer;
+    public float speedTick;
+    public float effectTick;
+
     void Awake()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
@@ -36,14 +39,13 @@ public class Engine : MonoBehaviour
         transientData.engineState = EngineState.Off;
         transientData.currentSpeed = 0;
         currentBoost = 0;
-        InvokeRepeating("SpeedManager", 0, 0.01f);
-        InvokeRepeating("BoostDecrease", 0, 0.02f);
-        InvokeRepeating("ManaConsumption", 0, 0.02f);
+        speedTick = 0.01f;
+        effectTick = 0.025f;
     }
 
     private void Start()
     {
-        boostMax = 50 + (5 * engineBoostMax); //Calculated here first, then whenever OnMouseDown is called
+        boostMax = 50 + (3 * engineBoostMax); //Calculated here first, then whenever OnMouseDown is called
     }
 
     private void OnEnable()
@@ -58,6 +60,40 @@ public class Engine : MonoBehaviour
         engineClickPotency = Player.GetCount("MEC002", "Engine"); //Crankshaft - click is more potent
         engineFuelEfficiency = Player.GetCount("MEC003", "Engine"); //Spark Tubes - engine uses less mana
     }
+
+    void Update()
+    {
+        if (TransientDataScript.IsTimeFlowing())
+        {
+            speedTimer += Time.deltaTime;
+            effectTimer += Time.deltaTime;
+
+            if (speedTimer > speedTick)
+            {
+                speedTimer = 0;
+                SpeedManager();
+            }
+
+            if (effectTimer > effectTick)
+            {
+                effectTimer = 0;
+                ManaConsumption();
+                BoostDecrease();
+            }
+        }
+    }
+
+    public void OnMouseDown()
+    {
+        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
+        {
+            boostMax = 100 + (20 * engineBoostMax);
+
+            if (TransientDataScript.GameState == GameState.Overworld && currentBoost < boostMax)
+                currentBoost = currentBoost + (5 + (0.5f * engineClickPotency));
+        }
+    }
+
     void BoostDecrease()
     {
         if (TransientDataScript.IsTimeFlowing())
@@ -78,6 +114,14 @@ public class Engine : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
+            if (TransientDataScript.GameState != GameState.Overworld &&
+                TransientDataScript.GameState != GameState.MapMenu &&
+                TransientDataScript.GameState != GameState.JournalMenu &&
+                TransientDataScript.GameState != GameState.StartMenu)
+            {
+                transientData.engineState = EngineState.Off;
+            }
+
             //SET TARGET SPEED
             switch (transientData.engineState)
             {
@@ -121,7 +165,7 @@ public class Engine : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            manaConsumptionDebuff = 1f + (10 - engineFuelEfficiency) / 30;
+            manaConsumptionDebuff = 2f + (10 - engineFuelEfficiency) / 30;
 
             //SWITCH TO FIRST GEAR BEFORE MANA RUNS OUT
             if (transientData.currentMana < 10 && transientData.engineState != EngineState.Off && transientData.engineState != EngineState.Reverse)
@@ -150,66 +194,6 @@ public class Engine : MonoBehaviour
                 default:
                     break;
             }
-        }
-    }
-
-    void Update()
-    {
-        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.MapMenu) //Keys only work during these states
-        {
-            //KEY INPUT LISTENERS
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                SyncUpgrades();
-
-                if (transientData.engineState != EngineState.FirstGear)
-                    transientData.engineState = EngineState.FirstGear;
-                else
-                    transientData.engineState = EngineState.Off;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                if (transientData.engineState != EngineState.SecondGear)
-                    transientData.engineState = EngineState.SecondGear;
-                else
-                    transientData.engineState = EngineState.Off;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                SyncUpgrades();
-
-                if (transientData.engineState != EngineState.ThirdGear)
-                    transientData.engineState = EngineState.ThirdGear;
-                else
-                    transientData.engineState = EngineState.Off;
-            }
-            if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Backspace))
-            {
-                if (transientData.engineState == EngineState.Off)
-                    transientData.engineState = EngineState.Reverse;
-                else
-                    transientData.engineState = EngineState.Off;
-            }
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.E))
-            {
-                SyncUpgrades();
-
-                if (transientData.engineState != EngineState.Off)
-                    transientData.engineState = EngineState.Off;
-                else
-                    transientData.engineState = EngineState.FirstGear;
-            }
-        }
-    }
-
-    public void OnMouseDown()
-    {
-        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
-        {
-            boostMax = 100 + (20 * engineBoostMax);
-
-            if (TransientDataScript.GameState == GameState.Overworld && currentBoost < boostMax)
-                currentBoost = currentBoost + (5 + (0.5f * engineClickPotency));
         }
     }
 }
