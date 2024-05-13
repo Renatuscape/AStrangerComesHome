@@ -57,6 +57,7 @@ public class SpriteFactory : MonoBehaviour
 
         if (foundCollection == null)
         {
+            // Debug.LogWarning("Character sprite returned null: " + objectID);
             return instance.defaultUiCharacter;
         }
         else

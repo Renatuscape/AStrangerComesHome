@@ -89,7 +89,7 @@ public static class DialoguePortraitHelper
             timeToFinish = speedMed;
         }
 
-        Debug.Log("Attempting to transition with speed " + timeToFinish);
+        // Debug.Log("Attempting to transition with speed " + timeToFinish);
         return timeToFinish;
     }
 
@@ -107,7 +107,7 @@ public static class DialoguePortraitHelper
             startPosition = positionNormal;
         }
 
-        Debug.Log("Start position for event sprite is " + startPosition);
+        // Debug.Log("Start position for event sprite is " + startPosition);
         spriteContainer.transform.localPosition = new Vector3(startPosition, spriteContainer.transform.localPosition.y, spriteContainer.transform.localPosition.z);
     }
 

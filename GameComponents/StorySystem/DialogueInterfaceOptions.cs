@@ -62,7 +62,7 @@ public class DialogueInterfaceOptions : MonoBehaviour
     }
     void SetLightTheme()
     {
-        Debug.Log("Chat theme set to light");
+        // Debug.Log("Chat theme set to light");
         Color newBGColour = new Color(lightThemeBackground.r, lightThemeBackground.g, lightThemeBackground.b, GlobalSettings.dialogueTransparency);
 
         foreach (Image img in backgroundImages)
@@ -75,7 +75,7 @@ public class DialogueInterfaceOptions : MonoBehaviour
 
     void SetDarkTheme()
     {
-        Debug.Log("Chat theme set to dark");
+        // Debug.Log("Chat theme set to dark");
         Color newBGColour = new Color(darkThemeBackground.r, darkThemeBackground.g, darkThemeBackground.b, GlobalSettings.dialogueTransparency);
 
         foreach (Image img in backgroundImages)

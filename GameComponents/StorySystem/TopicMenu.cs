@@ -38,7 +38,7 @@ public class TopicMenu : MonoBehaviour
 
     public List<Quest> FilterBySpeaker(string speakerID)
     {
-        Debug.Log("Sorting topics by speaker.");
+        // Debug.Log("Sorting topics by speaker.");
 
         List<Quest> foundQuests = new();
 
@@ -94,7 +94,7 @@ public class TopicMenu : MonoBehaviour
 
     public void CreateTopicButtons()
     {
-        Debug.Log("Quest list contained " + questList.Count);
+        // Debug.Log("Quest list contained " + questList.Count);
 
         if (questList.Count > 1 || (!allowAutoPlay && questList.Count > 0))
         {
