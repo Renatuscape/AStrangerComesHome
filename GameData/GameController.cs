@@ -15,9 +15,9 @@ public class GameController : MonoBehaviour
             TransientDataScript.GameState != GameState.CharacterCreation &&
             TransientDataScript.GameState != GameState.Dialogue)
         {
-            if (TransientDataScript.GameState == GameState.Overworld)
+            if (Input.GetKeyDown("space"))
             {
-                if (Input.GetKeyDown("space"))
+                if (TransientDataScript.GameState == GameState.Overworld)
                 {
                     if (TransientDataScript.CameraView != CameraView.Normal)
                     {
@@ -28,52 +28,104 @@ public class GameController : MonoBehaviour
                         ToggleCoachCamera(true);
                     }
                 }
-                if (Input.GetKeyDown("escape"))
-                {
-                    ToggleCoachCamera(false);
-                }
-                else if (Input.GetKeyDown("return"))
-                {
-                    Debug.Log("return key was pressed");
-                }
-                else if (Input.GetKeyDown("1"))
-                {
-                    Debug.Log("1 key was pressed");
-                }
-                else if (Input.GetKeyDown("2"))
-                {
-                    Debug.Log("2 key was pressed");
-                }
-                else if (Input.GetKeyDown("3"))
-                {
-                    Debug.Log("3 key was pressed");
-                }
-                else if (Input.GetKeyDown(KeyCode.M))
-                {
-                    ToggleMap(true);
-                }
-                else if (Input.GetKeyDown(KeyCode.R))
-                {
-                    Debug.Log("R key was pressed");
-                }
-            }
-            else if (TransientDataScript.GameState == GameState.MapMenu)
-            {
-                if (Input.GetKeyDown(KeyCode.M))
-                {
-                    ToggleMap(false );
-                }
-                else if (Input.GetKeyDown("escape"))
+                else if (TransientDataScript.GameState == GameState.MapMenu)
                 {
                     ToggleMap(false);
                 }
             }
-        }
-        else
-        {
             if (Input.GetKeyDown("escape"))
             {
-                Debug.Log("escape key was pressed");
+                if (TransientDataScript.GameState == GameState.Overworld)
+                {
+                    ToggleCoachCamera(false);
+                    Debug.Log("escape key was pressed");
+                }
+                else if (TransientDataScript.GameState == GameState.MapMenu)
+                {
+                    ToggleMap(false);
+                }
+            }
+            else if (Input.GetKeyDown("return"))
+            {
+                if (TransientDataScript.GameState == GameState.Overworld ||
+                    TransientDataScript.GameState == GameState.MapMenu)
+                {
+                    if (TransientDataScript.transientData.engineState != EngineState.Off)
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.Off;
+                    }
+                }
+            }
+            else if (Input.GetKeyDown("1") || Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                if (TransientDataScript.GameState == GameState.Overworld ||
+                    TransientDataScript.GameState == GameState.MapMenu)
+                {
+                    if (TransientDataScript.transientData.engineState != EngineState.FirstGear)
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.FirstGear;
+                    }
+                    else
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.Off;
+                    }
+                }
+            }
+            else if (Input.GetKeyDown("2") || Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                if (TransientDataScript.GameState == GameState.Overworld ||
+                   TransientDataScript.GameState == GameState.MapMenu)
+                {
+                    if (TransientDataScript.transientData.engineState != EngineState.SecondGear)
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.SecondGear;
+                    }
+                    else
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.Off;
+                    }
+                }
+            }
+            else if (Input.GetKeyDown("3") || Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                if (TransientDataScript.GameState == GameState.Overworld ||
+                    TransientDataScript.GameState == GameState.MapMenu)
+                {
+                    if (TransientDataScript.transientData.engineState != EngineState.ThirdGear)
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.ThirdGear;
+                    }
+                    else
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.Off;
+                    }
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                if (TransientDataScript.GameState == GameState.Overworld ||
+                    TransientDataScript.GameState == GameState.MapMenu)
+                {
+                    if (TransientDataScript.transientData.engineState != EngineState.Reverse)
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.Reverse;
+                    }
+                    else
+                    {
+                        TransientDataScript.transientData.engineState = EngineState.Off;
+                    }
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.M))
+            {
+                if (TransientDataScript.GameState == GameState.Overworld)
+                {
+                    ToggleMap(true);
+                }
+                else if (TransientDataScript.GameState == GameState.MapMenu)
+                {
+                    ToggleMap(false);
+                }
             }
         }
     }
