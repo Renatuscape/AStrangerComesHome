@@ -109,7 +109,7 @@ public class GardenManager : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            growthTimer += Time.fixedDeltaTime; //add skill adjustments
+            growthTimer += 0.5f * Time.deltaTime; //add skill adjustments
 
             if (growthTimer >= growthTick)
             {
@@ -289,17 +289,26 @@ public class GardenManager : MonoBehaviour
 
                     if (seed.yield > 1) //Plants with only one yield by default can only get a higher yield through the Earthsoul skill
                     {
-                        yield = Random.Range(0, seed.yield);
+                        yield = 1;
 
-                        if (yield < seed.yield)
+                        var randomChance = 10 + (int)Mathf.Ceil(cultivation * 0.8f);
+
+                        for (int i  = 0; i < yield; i++)
                         {
-                            yield += (int)Mathf.Floor(cultivation * 0.5f); //Cultivation used here. Every two levels guarantees one drop
-
-                            if (yield > seed.yield)
-                                yield = seed.yield + 1; //with high enough cultivation, you can get an additional drop!
+                            if (Random.Range(0, 101) < randomChance)
+                            {
+                                yield++;
+                            }
                         }
                     }
-                    var toAdd = yield + (int)Mathf.Floor(earthsoul * 0.2f);
+
+                    var toAdd = yield + (int)Mathf.Ceil(earthsoul * 0.2f);
+
+                    if (toAdd < 1)
+                    {
+                        Debug.LogWarning("Yield was less than one for " + seed.name);
+                        toAdd = 1;
+                    }
                     Player.Add(outputPlant.objectID, toAdd); //Bonus 1 or 2 yield from Earthsoul mythical skill
 
                     //PLANT HEALTH
