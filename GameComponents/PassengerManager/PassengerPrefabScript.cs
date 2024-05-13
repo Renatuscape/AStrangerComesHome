@@ -85,7 +85,8 @@ public class PassengerPrefabScript : MonoBehaviour
     {
         float distance = CalculateDistance(origin, destination);
         Debug.Log("Distance between A and B: " + distance);
-        fare = (int)(distance * distance) * (int)Mathf.Ceil(Player.GetCount("SCR012-SCR-NN", name) * 0.5f);
+        fare = (int)(distance * distance) * (int)Mathf.Ceil(Player.GetCount("SCR012", name) * 0.5f);
+        Debug.Log("Fare calculated to " + fare);
     }
 
     public static float CalculateDistance(Location pointA, Location pointB)
@@ -105,7 +106,7 @@ public class PassengerPrefabScript : MonoBehaviour
                 // Actual fare is added by highest denomination
                 int added = MoneyExchange.AddHighestDenomination(fare);
 
-                AudioManager.PlayAmbientSound("handleCoins");
+                AudioManager.PlayAmbientSound("handleCoins", -0.2f);
 
                 // Ensure the player had inventory space for full fare
                 if (added < fare)
@@ -118,9 +119,9 @@ public class PassengerPrefabScript : MonoBehaviour
                 }
 
                 // Tip is paid out in hellers and scripted items are updated to track
-                Player.Add("MIS000-JUN-NN", Random.Range(0, fare), true);
-                Player.Add("SCR000-SCR-NN");
-                Player.Add("SCR001-SCR-NN", fare);
+                Player.Add("MIS000", Random.Range(0, fare), true);
+                Player.Add("SCR000");
+                Player.Add("SCR001", fare);
 
                 // Spirit Essence drop
                 if (Random.Range(0, 100) > 80 - (fortune * 4))
