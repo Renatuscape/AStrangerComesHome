@@ -29,9 +29,9 @@ public class ManaConverter : MonoBehaviour
 
     void SyncUpgrades()
     {
-        manaClickPotency = Player.GetCount("MAG000", "ManaConverter");
-        manaPassiveGeneration = Player.GetCount("MAG001", "ManaConverter");
-        manapool = Player.GetCount("MAG002", "ManaConverter");
+        manaClickPotency = Player.GetCount("MAU000", "ManaConverter");
+        manaPassiveGeneration = Player.GetCount("MAU001", "ManaConverter");
+        manapool = Player.GetCount("MAU002", "ManaConverter");
     }
     void UpdateManaPool()
     {
