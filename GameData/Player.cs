@@ -7,12 +7,13 @@ public static class Player
 
     public static bool GetEntry(string objectID, string caller, out IdIntPair entry)
     {
-        entry = inventoryList?.Find(o => o?.objectID != null && o.objectID.Contains(objectID));
+        entry = inventoryList?.Find(o => o?.objectID != null && o.objectID == objectID);
 
         if (entry != null)
         {
             return true;
         }
+
         return false;
     }
 
