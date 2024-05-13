@@ -12,7 +12,7 @@ public class planterScript : MonoBehaviour
     public Skill overgrowth;
 
     public int currentWeeds;
-    public int maxWeeds = 5;
+    public int maxWeeds = 3;
     public float weedTimer;
     public int weedTick;
 
