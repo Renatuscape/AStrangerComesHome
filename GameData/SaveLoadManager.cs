@@ -1,11 +1,10 @@
-using SaveLoadSystem;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 
 
 public class SaveLoadManager : MonoBehaviour
@@ -54,7 +53,7 @@ public class SaveLoadManager : MonoBehaviour
 
     public async void LoadGame()
     {
-        TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
+        //TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
 
         string json = await LoadJsonFromFileAsync();
 
@@ -67,7 +66,6 @@ public class SaveLoadManager : MonoBehaviour
             gameManager.LoadRoutine();
         }
     }
-
     private void SaveJsonToFile(string json)
     {
         string fullPath = GetSaveFilePath();
@@ -75,20 +73,18 @@ public class SaveLoadManager : MonoBehaviour
         Debug.Log("Game saved at " + fullPath);
     }
 
-    private string LoadJsonFromFile()
-    {
-        string fullPath = GetSaveFilePath();
-        if (File.Exists(fullPath))
-        {
-            gameManager.LoadRoutine();
-            return File.ReadAllText(fullPath);
-        }
+    //private string LoadJsonFromFile()
+    //{
+    //    string fullPath = GetSaveFilePath();
+    //    if (File.Exists(fullPath))
+    //    {
+    //        gameManager.LoadRoutine();
+    //        return File.ReadAllText(fullPath);
+    //    }
 
-        Debug.LogError("Save file does not exist!");
-        return null;
-    }
-
-
+    //    Debug.LogError("Save file does not exist!");
+    //    return null;
+    //}
 
     private string GetSaveFilePath()
     {
