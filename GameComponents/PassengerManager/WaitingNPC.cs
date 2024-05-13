@@ -59,10 +59,20 @@ public class WaitingNPC : MonoBehaviour
         int random = Random.Range(0, transientData.currentRegion.locations.Count - 1);
         destination = transientData.currentRegion.locations[random];
 
-        if (destination == null || destination.noPassengers || destination == transientData.currentLocation || destination.type == LocationType.Crossing)
+        if (destination == null ||
+            destination.noPassengers ||
+            destination == transientData.currentLocation ||
+            destination.type == LocationType.Crossing ||
+            CalculateDistance(origin, destination) < 3)
         {
             RollDestination();
         }
+    }
+
+    public static float CalculateDistance(Location pointA, Location pointB)
+    {
+        float distance = Mathf.Sqrt(Mathf.Pow(pointB.mapX - pointA.mapX, 2) + Mathf.Pow(pointB.mapY - pointA.mapY, 2));
+        return distance;
     }
 
     void LateUpdate()
@@ -86,9 +96,9 @@ public class WaitingNPC : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal && TransientDataScript.transientData.currentSpeed == 0)
         {
-            if (Player.GetCount("SCR013", name) > 0)
+            if (Player.GetCount("SCR012", name) > 0)
             {
                 passengerManager.ActivateWaitingPassenger(gameObject);
             }
@@ -103,7 +113,7 @@ public class WaitingNPC : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
-            if (Player.GetCount("SCR013", name) > 0)
+            if (Player.GetCount("SCR012", name) > 0)
             {
                 TransientDataScript.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
             }
