@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class TransientDataScript : MonoBehaviour
 {
@@ -17,24 +14,6 @@ public class TransientDataScript : MonoBehaviour
 
     [TextArea(20, 50)]
     public string gameStateLog = "Game State Changes";
-
-    //void Update() // For debugging collision
-    //{
-    //    // Cast a ray from the camera to the mouse position
-    //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //    RaycastHit hit;
-
-    //    // Perform the raycast
-    //    if (Physics.Raycast(ray, out hit))
-    //    {
-    //        // Check if the hit object has a collider
-    //        if (hit.collider != null)
-    //        {
-    //            // Log the name of the collided GameObject
-    //            Debug.Log("Mouse is hovering over: " + hit.collider.gameObject.name);
-    //        }
-    //    }
-    //}
 
     //CAMERA
     public static CameraView CameraView { get; private set; }
@@ -123,10 +102,10 @@ public class TransientDataScript : MonoBehaviour
         if (GameState == GameState.Overworld
             || GameState == GameState.JournalMenu
             || GameState == GameState.MapMenu
+            || GameState == GameState.StartMenu
             || GameState == GameState.BankMenu
             || GameState == GameState.ShopMenu
             || GameState == GameState.Dialogue // Used by pop dialogue and memories. Disables floating text.
-            || GameState == GameState.StartMenu
             || GameState == GameState.AlchemyMenu)
         {
             return true;
@@ -223,19 +202,24 @@ public class TransientDataScript : MonoBehaviour
     {
         if (NullCheck())
         {
-            LogStateChange(callerScript, callerObject, newState);
-            GameState = newState;
-            DisableFloatText();
-
-            if (newState == GameState.Overworld)
+            // if (GameManagerScript.setUpReady == true || callerObject == gameManager)
             {
-                gameManager.questTracker.RunCheck();
+                LogStateChange(callerScript, callerObject, newState);
+                GameState = newState;
+                DisableFloatText();
+
+                if (newState == GameState.Overworld)
+                {
+                    gameManager.questTracker.RunCheck();
+                }
             }
         }
         else
         {
             Debug.Log("transientData not found.");
         }
+
+        // Debug.LogWarning(callerScript + " " + callerObject + " " + newState); // + ". Change was " + (GameManagerScript.setUpReady == true || callerObject == gameManager));
     }
 
     public static DayOfWeek GetWeekDay()
