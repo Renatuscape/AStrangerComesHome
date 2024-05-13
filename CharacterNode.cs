@@ -316,13 +316,13 @@ public class CharacterNode : MonoBehaviour
                         if (!CharacterNodeTracker.CheckIfCharacterExistsInWorld(speaker))
                         {
                             characterID = speaker;
-                            Debug.Log("Found viable dialogue and speaker for location.");
+                            // Debug.Log("Found viable dialogue and speaker for location.");
                             foundSpeaker = true;
                             break;
                         }
                         else
                         {
-                            Debug.Log("Viable speaker was found, but had already been spawned. Continuing search.");
+                            // Debug.Log("Viable speaker was found, but had already been spawned. Continuing search.");
                         }
                     }
                 }
