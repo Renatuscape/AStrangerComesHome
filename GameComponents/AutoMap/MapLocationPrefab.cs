@@ -7,14 +7,15 @@ public class MapLocationPrefab : MonoBehaviour
     public Location location;
 
     public bool doubleCLickReady;
+
     private void OnMouseDown()
     {
         Debug.Log($"Tile: {(int)transform.localPosition.x}, {(int)transform.localPosition.y}");
-        autoMap.PlaceMarker(transform.localPosition);
 
         if (doubleCLickReady)
         {
-            autoMap.GoToCoordinates(transform.localPosition);
+            autoMap.PlaceMarker(transform.localPosition);
+            autoMap.mapCanvas.SetLocation(location);
             doubleCLickReady = false;
         }
         else
@@ -36,6 +37,11 @@ public class MapLocationPrefab : MonoBehaviour
         if (!location.isHidden)
         {
             TransientDataScript.PrintFloatText($"{location.name}");
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            autoMap.GoToCoordinates(transform.localPosition);
         }
     }
 
