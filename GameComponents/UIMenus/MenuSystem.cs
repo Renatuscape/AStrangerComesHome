@@ -21,7 +21,16 @@ public class MenuSystem : MonoBehaviour
         interactMenu.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
+    public void CloseAnyMenu()
+    {
+        if (TransientDataScript.GameState != GameState.Loading
+        && TransientDataScript.GameState != GameState.MainMenu
+        && TransientDataScript.GameState != GameState.CharacterCreation
+        && TransientDataScript.GameState != GameState.Dialogue)
+        {
+            EnableOverworld();
+        }
+    }
     void Update()
     {
         if (TransientDataScript.GameState != GameState.Loading
@@ -29,38 +38,22 @@ public class MenuSystem : MonoBehaviour
             && TransientDataScript.GameState != GameState.CharacterCreation
             && TransientDataScript.GameState != GameState.Dialogue)
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Debug.Log("Escape key registered in MenuUIManager.");
-                if (TransientDataScript.CameraView == CameraView.Normal
-                    && (TransientDataScript.GameState == GameState.StartMenu
-                    || TransientDataScript.GameState == GameState.JournalMenu
-                    || TransientDataScript.GameState == GameState.MapMenu
-                    || TransientDataScript.GameState == GameState.ShopMenu))
-                {
-                    EnableOverworld();
-                }
-                else if (TransientDataScript.CameraView != CameraView.Normal)
-                {
-                    TransientDataScript.SetCameraView(CameraView.Normal);
-                }
-                else if (TransientDataScript.GameState == GameState.Overworld)
-                    startMenu.SetActive(true);
-            }
-
-            else if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.J))
-            {
-                if (TransientDataScript.GameState == GameState.JournalMenu)
-                {
-                    TransientDataScript.SetGameState(GameState.Overworld, "Menu UI Manager", gameObject);
-                    Debug.Log(name + " changed GameState to " + GameState.Overworld);
-                }
-                else if (TransientDataScript.GameState == GameState.Overworld)
-                {
-                    TransientDataScript.SetGameState(GameState.JournalMenu, "Menu UI Manager", gameObject);
-                    journalMenu.SetActive(true);
-                }
-            }
+            //if (Input.GetKeyDown(KeyCode.Escape))
+            //{
+            //    Debug.Log("Escape key registered in MenuUIManager.");
+            //    if (TransientDataScript.CameraView == CameraView.Normal
+            //        && (TransientDataScript.GameState == GameState.StartMenu
+            //        || TransientDataScript.GameState == GameState.JournalMenu
+            //        || TransientDataScript.GameState == GameState.MapMenu
+            //        || TransientDataScript.GameState == GameState.ShopMenu))
+            //    {
+            //        EnableOverworld();
+            //    }
+            //    else if (TransientDataScript.CameraView != CameraView.Normal)
+            //    {
+            //        TransientDataScript.SetCameraView(CameraView.Normal);
+            //    }
+            //}
 
             if (TransientDataScript.GameState == GameState.ShopMenu && !shopMenu.gameObject.activeInHierarchy)
             {
