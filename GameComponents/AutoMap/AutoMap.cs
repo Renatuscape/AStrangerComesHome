@@ -1,30 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class AutoMap : MonoBehaviour
 {
-    public Transform TopTarget;
-    public Transform BottomTarget;
-    public Transform LeftTarget;
-    public Transform RightTarget;
-
     public GameObject mapContainer;
-    public GameObject tilePrefab; // Reference to your tile prefab
+    public GameObject tilePrefab;
     public GameObject mapMarker;
     public GameObject locationMarker;
+    public AutoMapCanvas mapCanvas;
+
     public MapPlayerToken playerToken;
-    public SerializableDictionary<Vector2Int, GameObject> mapTiles = new();
+
     public List<GameObject> mapMarkers = new();
     public List<Sprite> baseTiles;
     public List<Sprite> edgeTiles;
     public List<Sprite> terrainTiles;
     public List<Sprite> markerTiles;
 
+    public SerializableDictionary<Vector2Int, GameObject> mapTiles = new();
+
     public TransientDataScript transientData;
     public DataManagerScript dataManager;
     public AutoMapBuilder mapBuilder;
-    public AutoMapScroller mapScroller;
     public AutoMapTravelManager travelManager;
     public AutoMapPainter tilePainter;
 
@@ -38,7 +37,6 @@ public class AutoMap : MonoBehaviour
 
     private void Start()
     {
-        mapScroller = new(this);
         mapBuilder = new(this, mapContainer);
         travelManager = new(this);
 
@@ -51,6 +49,7 @@ public class AutoMap : MonoBehaviour
         if (isTrue)
         {
             transform.position = enabledPosition;
+            mapCanvas.ToggleEnable(true);
             GoToPlayerToken();
             mapBuilder.CheckLockedLocations();
         }
@@ -58,6 +57,7 @@ public class AutoMap : MonoBehaviour
         else
         {
             transform.position = disabledPosition;
+            mapCanvas.ToggleEnable(false);
             mapContainer.transform.localPosition = new Vector3(0, 0, 0);
         }
     }
@@ -73,34 +73,8 @@ public class AutoMap : MonoBehaviour
             }
         }
 
-        //SCROLL LOGIC
-        if (TransientDataScript.GameState == GameState.MapMenu)
-        {
-            if (transform.position != enabledPosition)
-            {
-                transform.position = enabledPosition;
-            }
-            var worldPosition = MouseTracker.GetMouseWorldPosition();
-
-            if (worldPosition.x < LeftTarget.position.x)
-            {
-                mapScroller.ScrollMapRight();
-            }
-            else if (worldPosition.x > RightTarget.position.x)
-            {
-                mapScroller.ScrollMapLeft();
-            }
-            else if (worldPosition.y > TopTarget.position.y)
-            {
-                mapScroller.ScrollMapDown();
-            }
-
-            else if (worldPosition.y < BottomTarget.position.y)
-            {
-                mapScroller.ScrollMapUp();
-            }
-        }
-        else //Force this bitch to hide if she hasn't
+        // ENSURE DISABLE
+        if (TransientDataScript.GameState != GameState.MapMenu)
         {
             if (transform.position != disabledPosition)
             {
@@ -139,17 +113,6 @@ public class AutoMap : MonoBehaviour
         mapStartX = region.columns / 2 * -1;
         mapEndX = region.columns / 2;
 
-        if (mapScroller is not null)
-        {
-        mapScroller.xCutOff = mapEndX /2;
-        mapScroller.yCutOff = mapEndY / 2;
-        }
-        else
-        {
-            Debug.Log("Map Scroller has not been initialised yet.");
-        }
-
-
         mapBuilder.ChangeMap(region);
         mapContainer.transform.localPosition = new Vector3(0, 0, 0);
 
@@ -166,6 +129,7 @@ public class AutoMap : MonoBehaviour
 
         playerToken.transform.localPosition = new Vector3(dataManager.mapPositionX, dataManager.mapPositionY, 0);
         CheckCurrentLocation();
+        mapCanvas.ChangeRegion();
     }
 
     public Location CheckCurrentLocation()
@@ -191,7 +155,7 @@ public class AutoMap : MonoBehaviour
 
     public void GoToPlayerToken()
     {
-        StartCoroutine(MoveToCoordinates(playerToken.transform.localPosition));
+        mapContainer.transform.position = playerToken.transform.localPosition * -1;
     }
 
     public void PlaceMarker(Vector3 coordinates)
@@ -215,7 +179,6 @@ public class AutoMap : MonoBehaviour
             yield return null; // Wait for the next frame
         }
 
-        // Ensure the final position is set to the target coordinates
         mapContainer.transform.position = targetPosition;
     }
 }
