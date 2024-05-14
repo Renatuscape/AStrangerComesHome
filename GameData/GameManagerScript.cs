@@ -231,7 +231,6 @@ public class GameManagerScript : MonoBehaviour
             dataManager.mapPositionY = 0;
         }
 
-        mapComponent.mapScroller = new(mapComponent);
         mapComponent.mapBuilder = new(mapComponent, mapComponent.mapContainer);
 
         Region region = Regions.FindByID(dataManager.currentRegion);
