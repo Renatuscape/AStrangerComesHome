@@ -6,7 +6,9 @@ public class MenuSystem : MonoBehaviour
 {
     public TransientDataScript transientData;
 
+    public Canvas menuCanvas;
     public GameObject startMenu;
+    public GameObject debugMenu;
     public ShopMenu shopMenu;
     public GiftMenu giftMenu;
     public InteractMenu interactMenu;
@@ -19,47 +21,47 @@ public class MenuSystem : MonoBehaviour
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         interactMenu.gameObject.SetActive(true); //Ensures that the static method has an instance to use
         interactMenu.gameObject.SetActive(false);
+        debugMenu.SetActive(false);
     }
 
-    public void CloseAnyMenu()
-    {
-        if (TransientDataScript.GameState != GameState.Loading
-        && TransientDataScript.GameState != GameState.MainMenu
-        && TransientDataScript.GameState != GameState.CharacterCreation
-        && TransientDataScript.GameState != GameState.Dialogue)
-        {
-            EnableOverworld();
-        }
-    }
     void Update()
     {
-        if (TransientDataScript.GameState != GameState.Loading
-            && TransientDataScript.GameState != GameState.MainMenu
-            && TransientDataScript.GameState != GameState.CharacterCreation
-            && TransientDataScript.GameState != GameState.Dialogue)
+        if (TransientDataScript.GameState == GameState.JournalMenu)
         {
-            //if (Input.GetKeyDown(KeyCode.Escape))
-            //{
-            //    Debug.Log("Escape key registered in MenuUIManager.");
-            //    if (TransientDataScript.CameraView == CameraView.Normal
-            //        && (TransientDataScript.GameState == GameState.StartMenu
-            //        || TransientDataScript.GameState == GameState.JournalMenu
-            //        || TransientDataScript.GameState == GameState.MapMenu
-            //        || TransientDataScript.GameState == GameState.ShopMenu))
-            //    {
-            //        EnableOverworld();
-            //    }
-            //    else if (TransientDataScript.CameraView != CameraView.Normal)
-            //    {
-            //        TransientDataScript.SetCameraView(CameraView.Normal);
-            //    }
-            //}
-
-            if (TransientDataScript.GameState == GameState.ShopMenu && !shopMenu.gameObject.activeInHierarchy)
+            if (Input.GetKey(KeyCode.LeftControl) &&
+                Input.GetKey(KeyCode.LeftShift) &&
+                Input.GetKey(KeyCode.D))
             {
-                transientData.engineState = EngineState.Off;
+                debugMenu.SetActive(true);
             }
         }
+        if (TransientDataScript.GameState != GameState.JournalMenu && debugMenu.activeInHierarchy)
+        {
+            debugMenu.SetActive(false);
+        }
+
+        //if (TransientDataScript.GameState != GameState.AlchemyMenu &&
+        //    TransientDataScript.GameState != GameState.ShopMenu &&
+        //    TransientDataScript.GameState != GameState.StartMenu &&
+        //    TransientDataScript.GameState != GameState.MainMenu &&
+        //    TransientDataScript.GameState != GameState.JournalMenu &&
+        //    TransientDataScript.GameState != GameState.Dialogue)
+        //{
+        //    if (menuCanvas.enabled == true)
+        //    {
+        //        menuCanvas.enabled = false;
+        //    }
+        //}
+        //else
+        //{
+        //    if (menuCanvas.enabled == false)
+        //    {
+        //        menuCanvas.enabled = true;
+
+        //        Canvas.ForceUpdateCanvases();
+        //        Canvas.ForceUpdateCanvases();
+        //    }
+        //}
     }
 
     public void EnableOverworld()
@@ -68,7 +70,6 @@ public class MenuSystem : MonoBehaviour
         {
             TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
         }
-
     }
 
     public void QuitGame()
