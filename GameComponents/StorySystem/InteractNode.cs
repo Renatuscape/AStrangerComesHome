@@ -87,17 +87,20 @@ public class InteractNode : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (isSpawningNpc)
+        if (TransientDataScript.transientData.currentSpeed == 0)
         {
-            HandleNpcClick();
-        }
-        else if (isSpawningMemory)
-        {
-            HandleMemoryClick();
-        }
-        else if (isSpawningItem)
-        {
-            HandleItemClick();
+            if (isSpawningNpc)
+            {
+                HandleNpcClick();
+            }
+            else if (isSpawningMemory)
+            {
+                HandleMemoryClick();
+            }
+            else if (isSpawningItem)
+            {
+                HandleItemClick();
+            }
         }
     }
     private void Animate()
