@@ -239,7 +239,7 @@ public class TransientDataScript : MonoBehaviour
     {
         if (NullCheck())
         {
-            Debug.Log($"Returning menu system ({gameManager.menuSystem})");
+            // Debug.Log($"Returning menu system ({gameManager.menuSystem})");
             return gameManager.menuSystem;
         }
         else
