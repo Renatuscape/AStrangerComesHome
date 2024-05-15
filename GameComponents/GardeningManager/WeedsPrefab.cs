@@ -11,12 +11,6 @@ public class WeedsPrefab : MonoBehaviour
         weedsObject = Items.FindByID("PLA000");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnMouseDown()
     {
         if (TransientDataScript.CameraView == CameraView.Garden)
