@@ -6,17 +6,17 @@ public class MapLocationPrefab : MonoBehaviour
     public AutoMap autoMap;
     public Location location;
 
-    public bool doubleCLickReady;
+    public bool doubleClickReady;
 
     private void OnMouseDown()
     {
         Debug.Log($"Tile: {(int)transform.localPosition.x}, {(int)transform.localPosition.y}");
 
-        if (doubleCLickReady)
+        if (doubleClickReady)
         {
             autoMap.PlaceMarker(transform.localPosition);
             autoMap.mapCanvas.SetLocation(location);
-            doubleCLickReady = false;
+            doubleClickReady = false;
         }
         else
         {
@@ -25,9 +25,9 @@ public class MapLocationPrefab : MonoBehaviour
     }
     IEnumerator DoubleClickTimer()
     {
-        doubleCLickReady = true;
+        doubleClickReady = true;
         yield return new WaitForSeconds(0.5f);
-        doubleCLickReady = false;
+        doubleClickReady = false;
     }
 
     private void OnMouseOver()
