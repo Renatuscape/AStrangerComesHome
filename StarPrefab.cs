@@ -39,10 +39,7 @@ public class StarPrefab : MonoBehaviour
 
     public void Flicker()
     {
-        if (setUpComplete && flicker && !isPuttingOut)
-        {
-            rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, Random.Range(maxAlpha - flickerForce, maxAlpha));
-        }
+        rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, Random.Range(maxAlpha - flickerForce, maxAlpha));
     }
 
     internal void PutOut()
