@@ -15,6 +15,7 @@ public class NightSkyController : MonoBehaviour
     public List<StarPrefab> starList = new();
     public int maxStars;
     public bool rolledForStars;
+
     void Start()
     {
         screen = GetComponent<SpriteRenderer>();
@@ -22,7 +23,7 @@ public class NightSkyController : MonoBehaviour
         maxStars = Random.Range(10, 101);
     }
 
-    void Update()
+    public void UpdateNightSky()
     {
         if (TransientDataScript.IsTimeFlowing())
         {
@@ -51,7 +52,7 @@ public class NightSkyController : MonoBehaviour
             else if (timeOfDay >= 0.7f && timeOfDay <= 0.8f)
             {
                 alphaValue = (timeOfDay - 0.7f) / 0.1f;
-                
+
                 if (rolledForStars)
                 {
                     rolledForStars = false;
@@ -63,20 +64,34 @@ public class NightSkyController : MonoBehaviour
             // Interpolate starsToSpawn based on alphaValue
             float interpolatedStars = Mathf.Lerp(0, maxStars, alphaValue); // Adjust max stars as needed
             starsToSpawn = (int)interpolatedStars;
-        }
 
-        if (starList.Count < starsToSpawn)
-        {
-            var newStar = Instantiate(starPrefab);
-            newStar.transform.SetParent(starContainer.transform, false);
-            newStar.transform.localPosition = new Vector3(Random.Range(-14.8f, 14.8f), Random.Range(5.7f, 8.2f), 0);
-            starList.Add(newStar.GetComponent<StarPrefab>());
+            if (starList.Count < starsToSpawn)
+            {
+                var newStar = Instantiate(starPrefab);
+                newStar.transform.SetParent(starContainer.transform, false);
+                newStar.transform.localPosition = new Vector3(Random.Range(-14.8f, 14.8f), Random.Range(5.7f, 8.2f), 0);
+                starList.Add(newStar.GetComponent<StarPrefab>());
+            }
+            else if (starList.Count > starsToSpawn)
+            {
+                var randomStar = starList[Random.Range(0, starList.Count - 1)];
+                starList.Remove(randomStar);
+                randomStar.PutOut();
+            }
         }
-        else if (starList.Count > starsToSpawn)
+    }
+
+    public void StarFlicker()
+    {
+        if (starList.Count > 0)
         {
-            var randomStar = starList[Random.Range(0, starList.Count - 1)];
-            starList.Remove(randomStar);
-            randomStar.PutOut();
+            foreach (var star in starList)
+            {
+                if (star.flicker && star.setUpComplete && !star.isPuttingOut)
+                {
+                    star.Flicker();
+                }
+            }
         }
     }
 
