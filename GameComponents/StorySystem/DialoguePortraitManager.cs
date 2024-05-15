@@ -6,20 +6,14 @@ public class DialoguePortraitManager : MonoBehaviour
 {
     // Portraits should be anchored at centre. If anchor changes, these measurements will be off.
 
+    public DialoguePortraitHelper portraitAnimator;
     public Image spriteLeft;
     public Image spriteRight;
     public PlayerSprite playerSprite;
 
-    //float portraitWidth = 1228;
-    //float portraitHeight = 1736;
-
-    private void Start()
-    {
-        DialoguePortraitHelper.portraitManager = this;
-    }
     private void OnEnable()
     {
-        var starterPosition = DialoguePortraitHelper.positionOff;
+        var starterPosition = portraitAnimator.positionOff;
 
         spriteRight.gameObject.SetActive(false);
         spriteRight.gameObject.transform.localPosition = new Vector3(starterPosition, spriteRight.gameObject.transform.localPosition.y, spriteRight.gameObject.transform.localPosition.z);
@@ -62,12 +56,12 @@ public class DialoguePortraitManager : MonoBehaviour
 
             if (!string.IsNullOrEmpty(dEvent.startingPlacement))
             {
-                DialoguePortraitHelper.SetStartPosition(dEvent, spriteObject);
+                portraitAnimator.SetStartPosition(dEvent, spriteObject);
             }
 
             if (!string.IsNullOrEmpty(dEvent.targetPlacement))
             {
-                DialoguePortraitHelper.SetTargetPosition(dEvent, spriteObject);
+                portraitAnimator.SetTargetPosition(dEvent, spriteObject);
             }
         }
     }
