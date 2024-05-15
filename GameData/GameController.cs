@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -170,6 +169,7 @@ public class GameController : MonoBehaviour
             {
                 if (TransientDataScript.GameState == GameState.Overworld)
                 {
+                    TransientDataScript.SetGameState(GameState.JournalMenu, name, gameObject);
                     TransientDataScript.gameManager.menuSystem.journalMenu.SetActive(true);
                 }
                 else if (TransientDataScript.GameState == GameState.JournalMenu)
@@ -181,6 +181,7 @@ public class GameController : MonoBehaviour
             {
                 if (TransientDataScript.GameState == GameState.Overworld)
                 {
+                    TransientDataScript.SetGameState(GameState.JournalMenu, name, gameObject);
                     TransientDataScript.gameManager.menuSystem.journalMenu.SetActive(true);
                     TransientDataScript.gameManager.menuSystem.journalMenu.GetComponent<Journal>().mainPage = JournalMainPage.Inventory;
                 }
@@ -193,6 +194,7 @@ public class GameController : MonoBehaviour
             {
                 if (TransientDataScript.GameState == GameState.Overworld)
                 {
+                    TransientDataScript.SetGameState(GameState.JournalMenu, name, gameObject);
                     TransientDataScript.gameManager.menuSystem.journalMenu.SetActive(true);
                     TransientDataScript.gameManager.menuSystem.journalMenu.GetComponent<Journal>().mainPage = JournalMainPage.Quests;
                 }
