@@ -84,8 +84,6 @@ public class DialogueDisplay : MonoBehaviour
         }
     }
 
-    // Concerns only the display of text. Portraits are handled by DialoguePortraitManager
-    // DialogueMenu handles the quest and quest progression
     public void StartDialogue(Dialogue dialogue)
     {
         if (textSoundEffect.clip == null)
@@ -125,7 +123,7 @@ public class DialogueDisplay : MonoBehaviour
 
         // Parse tags here instead of at start to get latest tags
         var parsedText = DialogueTagParser.ParseText(activeEvent.content);
-        StartCoroutine(PrintContent(parsedText, activeEvent.speaker.objectID == "ARC999"));
+        PrintContent(parsedText, activeEvent.speaker.objectID == "ARC999");
         chatHistory.text += parsedText + "\n";
 
         eventIndex++;
@@ -178,7 +176,7 @@ public class DialogueDisplay : MonoBehaviour
 
                 SetDisplayNames(resultEvent);
                 var parsedText = DialogueTagParser.ParseText(content);
-                StartCoroutine(PrintContent(parsedText, speakerTag == "Narration"));
+                PrintContent(parsedText, speakerTag == "Narration");
 
                 PrintToChatLog("Choice: " + choice.optionText, true, true);
                 PrintToChatLog(resultEvent.speaker.NamePlate(), true, false);
@@ -251,43 +249,50 @@ public class DialogueDisplay : MonoBehaviour
         Debug.Log($"Speaker was {speakerTag} and whether it has text returned {hasResultText}.");
     }
 
-    IEnumerator PrintContent(string textToPrint, bool isNarration)
+    void PrintContent(string textToPrint, bool isNarration)
     {
-        printSpeed = 0.08f;
-        isPrinting = true;
-        contentText.text = "";
-
-        if (isNarration)
-        {
-            contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 0.7f);
-        }
-        else
-        {
-            contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 1);
-        }
-
-        var textArray = textToPrint.Split(' ');
-
-        foreach (var text in textArray)
-        {
-            if (textSoundEffect.clip != null)
-            {
-                textSoundEffect.Play();
-            }
-
-
-            if (printSpeed == 0)
-            {
-                contentText.text = textToPrint;
-                break;
-            }
-
-            yield return new WaitForSeconds(printSpeed);
-            contentText.text += text + " ";
-        }
-
-        isPrinting = false;
+        GameObject printer = new();
+        var script = printer.AddComponent<DialoguePrinter>();
+        script.Initialise(this, textToPrint, isNarration);
     }
+
+    //IEnumerator PrintContent(string textToPrint, bool isNarration)
+    //{
+    //    printSpeed = 0.08f;
+    //    isPrinting = true;
+    //    contentText.text = "";
+
+    //    if (isNarration)
+    //    {
+    //        contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 0.7f);
+    //    }
+    //    else
+    //    {
+    //        contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 1);
+    //    }
+
+    //    var textArray = textToPrint.Split(' ');
+
+    //    foreach (var text in textArray)
+    //    {
+    //        if (textSoundEffect.clip != null)
+    //        {
+    //            textSoundEffect.Play();
+    //        }
+
+
+    //        if (printSpeed == 0)
+    //        {
+    //            contentText.text = textToPrint;
+    //            break;
+    //        }
+
+    //        yield return new WaitForSeconds(printSpeed);
+    //        contentText.text += text + " ";
+    //    }
+
+    //    isPrinting = false;
+    //}
 
     void SetDisplayNames(DialogueEvent dEvent)
     {
@@ -370,5 +375,77 @@ public class DialogueDisplay : MonoBehaviour
         chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
         chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
         Canvas.ForceUpdateCanvases();
+    }
+}
+
+public class DialoguePrinter : MonoBehaviour
+{
+    DialogueDisplay dialogueParent;
+    bool readyToPrint = false;
+    string textToPrint;
+    float printTimer = 0;
+    string[] textArray;
+    int textIndex;
+    public void Initialise(DialogueDisplay dialogueDisplay, string textToPrint, bool isNarration)
+    {
+        dialogueParent = dialogueDisplay;
+        this.textToPrint = textToPrint;
+        textArray = textToPrint.Split(' ');
+
+        dialogueParent.printSpeed = 0.08f;
+        dialogueParent.isPrinting = true;
+        dialogueParent.contentText.text = "";
+
+        if (isNarration)
+        {
+            dialogueParent.contentText.color = new Color(dialogueParent.contentText.color.r, dialogueParent.contentText.color.g, dialogueParent.contentText.color.b, 0.7f);
+        }
+        else
+        {
+            dialogueParent.contentText.color = new Color(dialogueParent.contentText.color.r, dialogueParent.contentText.color.g, dialogueParent.contentText.color.b, 1);
+        }
+
+        readyToPrint = true;
+    }
+    private void Update()
+    {
+        if (readyToPrint)
+        {
+            printTimer += Time.deltaTime;
+
+            if (printTimer >= dialogueParent.printSpeed)
+            {
+                printTimer = 0;
+                PrintStep();
+
+                if (textIndex >= textArray.Length)
+                {
+                    dialogueParent.isPrinting = false;
+                    Destroy(gameObject);
+                }
+            }
+        }
+    }
+    void PrintStep()
+    {
+        var wordToPrint = textArray[textIndex];
+
+        if (dialogueParent.textSoundEffect.clip != null)
+        {
+            dialogueParent.textSoundEffect.Play();
+        }
+
+
+        if (dialogueParent.printSpeed == 0)
+        {
+            dialogueParent.contentText.text = textToPrint;
+            textIndex = textArray.Length;
+        }
+        else
+        {
+            dialogueParent.contentText.text += wordToPrint + " ";
+            textIndex++;
+        }
+
     }
 }
