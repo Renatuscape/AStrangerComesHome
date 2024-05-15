@@ -20,15 +20,18 @@ public class StationManager : MonoBehaviour
 
     void Update()
     {
-        if (transientData.currentLocation != null && spawnedStation == null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
+        if (transientData.currentLocation != null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
         {
-            if (transientData.currentLocation.type == LocationType.Crossing && transientData.currentLocation.gates.Count == 1)
+            if (spawnedStation == null)
             {
+                if (transientData.currentLocation.type == LocationType.Crossing && transientData.currentLocation.gates.Count == 1)
+                {
 
-            }
-            else if (transientData.currentSpeed < 5)
-            {
-                SetUpStation();
+                }
+                else if (transientData.currentSpeed < 5)
+                {
+                    SetUpStation();
+                }
             }
         }
 
@@ -42,6 +45,7 @@ public class StationManager : MonoBehaviour
                 {
                     spawnedStationScript.RemoveStation();
                     spawnedStationScript = null;
+                    spawnedStation = null;
                 }
             }
         }
