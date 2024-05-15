@@ -23,7 +23,6 @@ public class StorySystem : MonoBehaviour
             dialogueMenu.SetActive(false);
         }
         button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
-        DialoguePortraitHelper.portraitManager = portraitManager;
     }
     public void OpenTopicMenu(string speakerID)
     {
