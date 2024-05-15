@@ -1,39 +1,107 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public static class DialoguePortraitHelper
+public class DialoguePortraitHelper : MonoBehaviour
 {
-    public static DialoguePortraitManager portraitManager; // Reference to the MonoBehaviour instance
+    public const float positionClose = 230;
+    public const float positionNormal = 630;
+    public const float positionMid = 0;
+    public const float positionFar = 860;
+    public float positionOff = 1600;
 
-    public static float positionClose = 230;
-    public static float positionNormal = 630;
-    public static float positionMid = 0;
-    public static float positionFar = 860;
-    public static float positionOff = 1600;
+    const float speedSlow = 1.3f;
+    const float speedMed = 0.7f;
+    const float speedFast = 0.2f;
 
-    public static float speedSlow = 1.5f;
-    public static float speedMed = 0.8f;
-    public static float speedFast = 0.2f;
+    public bool isAnimating = false;
+    public bool completeAllTransitionsNow = false;
+    public float animationTimer;
+    float animationTick = 0.015f;
 
-    static bool isAnimating = false;
+    public List<PortraitTransitionData> portraitTransitions = new();
+    public List<PortraitTransitionData> completedAnimations = new();
 
-    static SerializableDictionary<DialogueEvent, GameObject> currentlyAnimating = new();
-
-    public static void FinishAnimationsNow()
+    private void Update()
     {
-        portraitManager.StopAllCoroutines();
-
-        foreach (var kvp in currentlyAnimating)
+        if (isAnimating)
         {
-            var dEvent = kvp.Key;
-            var container = kvp.Value;
+            animationTimer += Time.deltaTime;
 
-            container.transform.localPosition = new Vector3(ParsePosition(dEvent, dEvent.targetPlacement), container.transform.localPosition.y, container.transform.localPosition.z);
+            if (animationTimer >= animationTick)
+            {
+                animationTimer = 0;
+                Animate();
+            }
+        }
+    }
+
+    public void Animate()
+    {
+        if (isAnimating && portraitTransitions.Count > 0)
+        {
+            if (completeAllTransitionsNow)
+            {
+                foreach (var transition in portraitTransitions)
+                {
+                    transition.portrait.transform.localPosition = new Vector3(transition.targetX, transition.portrait.transform.localPosition.y, 0);
+                    completedAnimations.Add(transition);
+                }
+
+                completeAllTransitionsNow = false;
+            }
+            else
+            {
+                foreach (var transition in portraitTransitions)
+                {
+                    if (!transition.isComplete)
+                    {
+                        if (transition.isMovingRight)
+                        {
+                            transition.portrait.transform.localPosition = new Vector3(transition.portrait.transform.localPosition.x + transition.distancePerTick, transition.portrait.transform.localPosition.y, 0);
+
+                            if (transition.portrait.transform.localPosition.x >= transition.targetX)
+                            {
+                                transition.portrait.transform.localPosition = new Vector3(transition.targetX, transition.portrait.transform.localPosition.y, 0);
+                                transition.isComplete = true;
+                            }
+                        }
+                        else
+                        {
+                            transition.portrait.transform.localPosition = new Vector3(transition.portrait.transform.localPosition.x - transition.distancePerTick, transition.portrait.transform.localPosition.y, 0);
+                            
+                            if (transition.portrait.transform.localPosition.x <= transition.targetX)
+                            {
+                                transition.portrait.transform.localPosition = new Vector3(transition.targetX, transition.portrait.transform.localPosition.y, 0);
+                                transition.isComplete = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        completedAnimations.Add(transition);
+                    }
+                }
+            }
         }
 
-        currentlyAnimating = new();
+        if (completedAnimations.Count > 0)
+        {
+            foreach (var transition in completedAnimations)
+            {
+                portraitTransitions.Remove(transition);
+            }
+
+            completedAnimations.Clear();
+        }
+
+        if (portraitTransitions.Count == 0)
+        {
+            isAnimating = false;
+        }
     }
-    public static float ParsePosition(DialogueEvent dEvent, string tag)
+
+    public float ParsePosition(DialogueEvent dEvent, string tag)
     {
         //OFF-FAR-NOR-CLO-MID
         float position;
@@ -67,7 +135,7 @@ public static class DialoguePortraitHelper
         return position;
     }
 
-    public static float ParseAnimationSpeed(string tag)
+    public float ParseAnimationSpeed(string tag)
     {
         // NON-SLO-MED-FAS
         float timeToFinish;
@@ -89,11 +157,10 @@ public static class DialoguePortraitHelper
             timeToFinish = speedMed;
         }
 
-        // Debug.Log("Attempting to transition with speed " + timeToFinish);
         return timeToFinish;
     }
 
-    public static void SetStartPosition(DialogueEvent dEvent, GameObject spriteContainer)
+    public void SetStartPosition(DialogueEvent dEvent, GameObject spriteContainer)
     {
         //OFF-FAR-NOR-CLO-MID
         float startPosition;
@@ -107,64 +174,60 @@ public static class DialoguePortraitHelper
             startPosition = positionNormal;
         }
 
-        // Debug.Log("Start position for event sprite is " + startPosition);
         spriteContainer.transform.localPosition = new Vector3(startPosition, spriteContainer.transform.localPosition.y, spriteContainer.transform.localPosition.z);
     }
 
-    public static void SetTargetPosition(DialogueEvent dEvent, GameObject spriteContainer)
+    public void SetTargetPosition(DialogueEvent dEvent, GameObject spriteContainer)
     {
-        var position = ParsePosition(dEvent, dEvent.targetPlacement);
+        var targetPosition = ParsePosition(dEvent, dEvent.targetPlacement);
+        var startPosition = spriteContainer.transform.localPosition.x;
 
-        if (spriteContainer.transform.localPosition.x != position)
+        if (startPosition != targetPosition)
         {
             if (isAnimating)
             {
-                FinishAnimationsNow();
+                completeAllTransitionsNow = true;
             }
 
             var time = ParseAnimationSpeed(dEvent.moveAnimationSpeed);
+            var travelDistance = startPosition - targetPosition;
+            int totalFrames = Mathf.CeilToInt(time / animationTick); // Calculate total frames based on animation time and tick interval
+            float distancePerFrame = travelDistance / totalFrames;
+            bool isMovingRight = false;
 
-            if (portraitManager == null)
+            if (startPosition < targetPosition)
             {
-                Debug.LogError("Portrait manager was null. Make sure dialogueHelper has a monobehaviour to reference.");
+                isMovingRight = true;
             }
-            if (dEvent == null)
-            {
-                Debug.Log("Event was null.");
-            }
-            if (spriteContainer == null)
-            {
-                Debug.Log("Sprite container was null.");
-            }
-            portraitManager.StartCoroutine(TransitionToTarget(dEvent, position, time, spriteContainer));
 
-            // check event for secondary character animation
+            if (distancePerFrame < 0)
+            {
+                distancePerFrame = distancePerFrame * -1;
+            }
+
+            portraitTransitions.Add(new()
+            {
+                portrait = spriteContainer,
+                startX = startPosition,
+                targetX = targetPosition,
+                time = time,
+                isMovingRight = isMovingRight,
+                distancePerTick = distancePerFrame
+            });
+
+            isAnimating = true;
         }
     }
 
-    static IEnumerator TransitionToTarget(DialogueEvent dEvent, float targetPosition, float transitionTime, GameObject spriteContainer)
+    [System.Serializable]
+    public class PortraitTransitionData
     {
-        isAnimating = true;
-        currentlyAnimating.Add(dEvent, spriteContainer);
-
-        Vector3 startPosition = spriteContainer.transform.localPosition;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < transitionTime)
-        {
-            float t = elapsedTime / transitionTime;
-            float newPositionX = Mathf.Lerp(startPosition.x, targetPosition, t);
-            Vector3 newPosition = new Vector3(newPositionX, startPosition.y, startPosition.z);
-            spriteContainer.transform.localPosition = newPosition;
-
-            elapsedTime += Time.deltaTime;
-            yield return null; // Wait for the next frame
-        }
-
-        // Ensure the target position is reached exactly
-        spriteContainer.transform.localPosition = new Vector3(targetPosition, startPosition.y, startPosition.z);
-
-        currentlyAnimating.Remove(dEvent);
-        isAnimating = false;
+        public GameObject portrait;
+        public float startX;
+        public float targetX;
+        public float distancePerTick;
+        public float time;
+        public bool isMovingRight;
+        public bool isComplete;
     }
 }
