@@ -20,7 +20,7 @@ public class CoachLights : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (dataManager.timeOfDay < 0.8 && dataManager.timeOfDay > 0.3)
+        if (dataManager.timeOfDay < 0.8 && dataManager.timeOfDay > 0.4)
         {
             if (!isOff)
             {
