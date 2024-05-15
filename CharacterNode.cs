@@ -55,7 +55,7 @@ public class CharacterNode : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (character != null)
+        if (character != null && TransientDataScript.transientData.currentSpeed == 0)
         {
             if (TransientDataScript.GameState == GameState.Overworld)
             {
