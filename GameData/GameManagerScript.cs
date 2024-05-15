@@ -48,7 +48,7 @@ public class GameManagerScript : MonoBehaviour
 
     void Awake()
     {
-        Application.targetFrameRate = 120;
+        // Application.targetFrameRate = 120;
         Screen.SetResolution(1920, 1080, false);
 
         TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
