@@ -37,8 +37,7 @@ public class StarPrefab : MonoBehaviour
         StartCoroutine(FadeInOnStart());
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Flicker()
     {
         if (setUpComplete && flicker && !isPuttingOut)
         {
