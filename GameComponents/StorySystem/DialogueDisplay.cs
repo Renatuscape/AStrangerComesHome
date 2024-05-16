@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class DialogueDisplay : MonoBehaviour
 {
     public DialogueMenu dialogueMenu;
+    public DialoguePrinter printer;
     public DialoguePortraitManager portraitManager;
 
     public AudioSource textSoundEffect;
@@ -47,6 +48,7 @@ public class DialogueDisplay : MonoBehaviour
     {
         btnAutoPlay.onClick.AddListener(() => ToggleAuto());
         chatHistory.text = "<b>Conversation History</b>\n";
+        printer.Initialise(this);
     }
 
     private void Update()
@@ -142,7 +144,7 @@ public class DialogueDisplay : MonoBehaviour
                 readyToPrintChoices = true;
             }
         }
-        else if (!autoEnabled)
+        else
         {
             continueEnabled = true;
         }
@@ -251,48 +253,13 @@ public class DialogueDisplay : MonoBehaviour
 
     void PrintContent(string textToPrint, bool isNarration)
     {
-        GameObject printer = new();
-        var script = printer.AddComponent<DialoguePrinter>();
-        script.Initialise(this, textToPrint, isNarration);
+        if (!printer.readyToPrint)
+        {
+            printer.Initialise(this);
+        }
+
+        printer.StartPrint(textToPrint, isNarration);
     }
-
-    //IEnumerator PrintContent(string textToPrint, bool isNarration)
-    //{
-    //    printSpeed = 0.08f;
-    //    isPrinting = true;
-    //    contentText.text = "";
-
-    //    if (isNarration)
-    //    {
-    //        contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 0.7f);
-    //    }
-    //    else
-    //    {
-    //        contentText.color = new Color(contentText.color.r, contentText.color.g, contentText.color.b, 1);
-    //    }
-
-    //    var textArray = textToPrint.Split(' ');
-
-    //    foreach (var text in textArray)
-    //    {
-    //        if (textSoundEffect.clip != null)
-    //        {
-    //            textSoundEffect.Play();
-    //        }
-
-
-    //        if (printSpeed == 0)
-    //        {
-    //            contentText.text = textToPrint;
-    //            break;
-    //        }
-
-    //        yield return new WaitForSeconds(printSpeed);
-    //        contentText.text += text + " ";
-    //    }
-
-    //    isPrinting = false;
-    //}
 
     void SetDisplayNames(DialogueEvent dEvent)
     {
@@ -322,11 +289,11 @@ public class DialogueDisplay : MonoBehaviour
 
     public void Continue()
     {
-        if (continueEnabled && !isPrinting)
+        if (!autoEnabled && continueEnabled && !isPrinting)
         {
             PrintEvent();
         }
-        else if (isPrinting)
+        else if (!autoEnabled && isPrinting)
         {
             //AudioManager.PlayAmbientSound("smallSnap");
             printSpeed = 0;
@@ -344,6 +311,15 @@ public class DialogueDisplay : MonoBehaviour
     public void ToggleAuto()
     {
         autoEnabled = !autoEnabled;
+
+        if (autoEnabled)
+        {
+            btnAutoPlay.image.color = Color.gray;
+        }
+        else
+        {
+            btnAutoPlay.image.color = Color.white;
+        }
     }
 
     public void PrintToChatLog(string text, bool spaceBefore, bool italics = false)
@@ -375,77 +351,5 @@ public class DialogueDisplay : MonoBehaviour
         chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
         chatHistory.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
         Canvas.ForceUpdateCanvases();
-    }
-}
-
-public class DialoguePrinter : MonoBehaviour
-{
-    DialogueDisplay dialogueParent;
-    bool readyToPrint = false;
-    string textToPrint;
-    float printTimer = 0;
-    string[] textArray;
-    int textIndex;
-    public void Initialise(DialogueDisplay dialogueDisplay, string textToPrint, bool isNarration)
-    {
-        dialogueParent = dialogueDisplay;
-        this.textToPrint = textToPrint;
-        textArray = textToPrint.Split(' ');
-
-        dialogueParent.printSpeed = 0.08f;
-        dialogueParent.isPrinting = true;
-        dialogueParent.contentText.text = "";
-
-        if (isNarration)
-        {
-            dialogueParent.contentText.color = new Color(dialogueParent.contentText.color.r, dialogueParent.contentText.color.g, dialogueParent.contentText.color.b, 0.7f);
-        }
-        else
-        {
-            dialogueParent.contentText.color = new Color(dialogueParent.contentText.color.r, dialogueParent.contentText.color.g, dialogueParent.contentText.color.b, 1);
-        }
-
-        readyToPrint = true;
-    }
-    private void Update()
-    {
-        if (readyToPrint)
-        {
-            printTimer += Time.deltaTime;
-
-            if (printTimer >= dialogueParent.printSpeed)
-            {
-                printTimer = 0;
-                PrintStep();
-
-                if (textIndex >= textArray.Length)
-                {
-                    dialogueParent.isPrinting = false;
-                    Destroy(gameObject);
-                }
-            }
-        }
-    }
-    void PrintStep()
-    {
-        var wordToPrint = textArray[textIndex];
-
-        if (dialogueParent.textSoundEffect.clip != null)
-        {
-            dialogueParent.textSoundEffect.Play();
-        }
-
-
-        if (dialogueParent.printSpeed == 0)
-        {
-            dialogueParent.contentText.text = textToPrint;
-            textIndex = textArray.Length;
-        }
-        else
-        {
-            dialogueParent.contentText.text += wordToPrint + " ";
-            textIndex++;
-        }
-
     }
 }
