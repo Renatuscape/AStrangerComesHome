@@ -49,7 +49,6 @@ public class GameManagerScript : MonoBehaviour
     void Awake()
     {
         // Application.targetFrameRate = 120;
-        Screen.SetResolution(1920, 1080, false);
 
         TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
         StartUpRoutine();
@@ -87,6 +86,8 @@ public class GameManagerScript : MonoBehaviour
 
     async Task InitiateJsonManagers()
     {
+        Screen.SetResolution(1920, 1080, false);
+
         await spriteFactory.WaitForBuildCompletionAsync();
         Debug.Log("Sprite Factory finished building.");
 
@@ -149,6 +150,8 @@ public class GameManagerScript : MonoBehaviour
 
     public void NewGameRoutine()
     {
+        dataManager.version = Application.version;
+        dataManager.lastVersionSaved = "none";
         dataManager.playerName = "Morgan";
         dataManager.playerNameColour = "597266";
         dataManager.eyesHexColour = "87DF5C";
@@ -167,15 +170,16 @@ public class GameManagerScript : MonoBehaviour
         dataManager.planterIsActiveA = false;
         dataManager.planterIsActiveB = false;
         dataManager.planterIsActiveC = false;
-        dataManager.alchemySynthesisers = new();
-        dataManager.unlockedNames = new();
-        dataManager.giftedThisWeek = new();
+        dataManager.alchemySynthesisers.Clear();
+        dataManager.unlockedNames.Clear();
+        dataManager.giftedThisWeek.Clear();
         dataManager.postLocationID = "R0-LOCC0-CITY";
 
-        Player.inventoryList = new();
-        dataManager.inventoryList = new();
-        Debug.Log($"Player inventory = new(). Count is {Player.inventoryList.Count}. DataManager inventory = {dataManager.inventoryList.Count}");
+        Player.inventoryList.Clear();
+        dataManager.questProgression.Clear();
+        dataManager.inventoryList.Clear();
         dataManager.inventoryList = Player.inventoryList;
+        dataManager.questProgression = Player.questProgression;
 
 
         //Add skills to the player inventory from the start
