@@ -11,6 +11,13 @@ public enum CharacterType
 }
 
 [System.Serializable]
+public class RestrictedInfo
+{
+    public string content;
+    public RequirementPackage checks;
+}
+
+[System.Serializable]
 public class Character : BaseObject
 {
     public string dialogueTag;
@@ -18,6 +25,7 @@ public class Character : BaseObject
     public string trueName;
     public string hexColour;
     public string description;
+    public List<RestrictedInfo> dynamicDescriptions;
     public int giftableLevel;
     public bool excludeFromPrint = false;
 
@@ -25,7 +33,6 @@ public class Character : BaseObject
     public Sprite sprite;
     public SpriteCollection spriteCollection;
     public List<Sprite> spriteAnimation;
-    public List<WalkingLocation> walkingLocations;
 
     public string namePlate;
     public string trueNamePlate;
@@ -116,13 +123,6 @@ public static class Characters
 
         // Debug.Log("Found: " + searchWord);
         return found;
-    }
-
-    public static List<Character> FindAllWalkers()
-    {
-        var walkingNpcs = all.Where((c) => c.walkingLocations != null && c.walkingLocations.Count > 1).ToList();
-
-        return walkingNpcs;
     }
 
     public static Character FindByID(string searchWord)
