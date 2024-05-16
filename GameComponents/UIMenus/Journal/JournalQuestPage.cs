@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -26,10 +27,10 @@ public class JournalQuestPage : MonoBehaviour
     }
     private void OnEnable()
     {
-        displayTitle.font = fontManager.header.font;
-        displayTopicName.font = fontManager.subtitle.font;
-        displayDescription.font = fontManager.script.font;
-        pageTitle.font = fontManager.header.font;
+        //displayTitle.font = fontManager.header.font;
+        //displayTopicName.font = fontManager.subtitle.font;
+        //displayDescription.font = fontManager.script.font;
+        //pageTitle.font = fontManager.header.font;
         StartCoroutine(InstantiateQuests());
     }
 
@@ -69,19 +70,28 @@ public class JournalQuestPage : MonoBehaviour
     {
         detailContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
         displayTitle.text = quest.name;
-        string topicName = "";
-        string description = "";
-        
+
         int questStage = quest.GetQuestStage();
 
-        if (questStage < quest.dialogues.Count)
+        var dialogue = quest.dialogues.FirstOrDefault(d => d.questStage == questStage);
+        string topicName = "";
+        string description = "";
+
+        if (dialogue != null)
         {
-            topicName = quest.dialogues[questStage].topicName ?? "";
-            var parsedText = DialogueTagParser.ParseText(quest.dialogues[questStage].hint);
-            description = parsedText;
+            topicName = dialogue.topicName ?? "";
+
+            if (string.IsNullOrEmpty(dialogue.hint))
+            {
+                description = DialogueTagParser.ParseText(quest.description);
+            }
+            else
+            {
+                description = DialogueTagParser.ParseText(dialogue.hint);
+            }
         }
 
-        if (topicName == "")
+        if (topicName == "" || topicName == quest.name)
         {
             displayTopicName.gameObject.SetActive(false);
         }
@@ -89,12 +99,6 @@ public class JournalQuestPage : MonoBehaviour
         {
             displayTopicName.gameObject.SetActive(true);
             displayTopicName.text = topicName;
-        }
-
-        if (description == "")
-        {
-            var parsedText = DialogueTagParser.ParseText(quest.description);
-            description = parsedText;
         }
 
         displayDescription.text = description;
