@@ -40,13 +40,13 @@ public class DialogueMenu : MonoBehaviour
     {
         if (isSuccess)
         {
-            Player.Set(activeQuest.objectID, choice.advanceTo);
+            Player.SetQuest(activeQuest.objectID, choice.advanceTo);
         }
 
         if (!isSuccess && choice.advanceToOnFailure > -1)
         {
             Debug.Log("Choice failed, and choice had valid advanceToOnFailure value.");
-            Player.Set(activeQuest.objectID, choice.advanceToOnFailure);
+            Player.SetQuest(activeQuest.objectID, choice.advanceToOnFailure);
         }
 
         choiceManager.gameObject.SetActive(false);
