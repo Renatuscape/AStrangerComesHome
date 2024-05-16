@@ -27,7 +27,6 @@ public static class DialogueTagParser
             string tag = tagEntry.Key;
             string value = tagEntry.Value;
 
-            // Use Regex to replace all occurrences of the tag
             text = text.Replace(tag, value);
         }
 
