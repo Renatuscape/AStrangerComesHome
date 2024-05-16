@@ -45,7 +45,7 @@ public class QuestTracker : MonoBehaviour
 
         foreach (Quest quest in Quests.all)
         {
-            int stage = Player.GetCount(quest.objectID, name);
+            int stage = Player.GetQuestStage(quest.objectID);
 
             if (quest.dialogues != null &&
                 quest.dialogues.Count > 0
@@ -78,7 +78,7 @@ public class QuestTracker : MonoBehaviour
 
     IEnumerator InitiatePop(Dialogue dialogue)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
 
         if (TransientDataScript.GameState == GameState.Overworld)
         {
@@ -89,11 +89,11 @@ public class QuestTracker : MonoBehaviour
             //Assuming pop-ups only have one choice for now:
             if (dialogue.choices != null && dialogue.choices.Count > 0)
             {
-                Player.Set(dialogue.questID, dialogue.choices[0].advanceTo);
+                Player.SetQuest(dialogue.questID, dialogue.choices[0].advanceTo);
             }
             else
             {
-                Player.Add(dialogue.questID, 1, false);
+                Player.IncreaseQuest(dialogue.questID, 1);
             }
         }
     }
@@ -124,7 +124,7 @@ public static class QuestResetter
 
         foreach (Quest quest in questsAdvancingDaily)
         {
-            Player.Add(quest.objectID);
+            Player.IncreaseQuest(quest.objectID);
         }
         if (daysPassed % 7 == 0)
         {
@@ -143,17 +143,17 @@ public static class QuestResetter
         {
             if (Random.Range(0, 100) < quest.resetChance)
             {
-                int currentStage = Player.GetCount(quest.objectID, "QuestResetter");
+                int currentStage = Player.GetQuestStage(quest.objectID);
 
                 if (currentStage >= 100 || currentStage >= quest.dialogues.Count)
                 {
                     if (quest.resetToRandomStage)
                     {
-                        Player.Set(quest.objectID, Random.Range(0, quest.dialogues.Count));
+                        Player.SetQuest(quest.objectID, Random.Range(0, quest.dialogues.Count));
                     }
                     else
                     {
-                        Player.Set(quest.objectID, 0);
+                        Player.SetQuest(quest.objectID, 0);
                     }
                 }
             }
