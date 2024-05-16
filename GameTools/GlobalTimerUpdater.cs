@@ -11,6 +11,11 @@ public class GlobalTimerUpdater : MonoBehaviour
     public float secondTimer;
     float secondTick = 1;
 
+    private void Start()
+    {
+        animationTimer = animationTick;
+        secondTimer = secondTick;
+    }
     void Update()
     {
         if (TransientDataScript.IsTimeFlowing())
