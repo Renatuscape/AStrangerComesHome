@@ -25,16 +25,11 @@ public class TimeManagerComponent : MonoBehaviour
     //public string[] weekdayArray = new string[] { "Lunden", "Martiden", "Mercuiden", "Ioviden", "Venerden", "Saturiden", "Solden" };
     public string calendarOutputText;
 
-    void Start()
-    {
-        
-    }
-
-    void FixedUpdate()
+    void Update()
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            if (TransientDataScript.GameState == GameState.CharacterCreation)
+            if (TransientDataScript.GameState == GameState.Dialogue)
             {
                 dataManager.timeOfDay += (Time.deltaTime / 1000 * transientData.timeFlowSpeed) * Time.timeScale;
             }
