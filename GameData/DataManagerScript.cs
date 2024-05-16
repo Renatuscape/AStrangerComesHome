@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class DataManagerScript : MonoBehaviour
 {
+    public string version;
+    public string lastVersionSaved;
+
     //PLAYER DATA
     public string playerName;
     public string pronounSub;
@@ -15,6 +18,7 @@ public class DataManagerScript : MonoBehaviour
     public int playerGold;
 
     public List<IdIntPair> inventoryList = Player.inventoryList;
+    public List<IdIntPair> questProgression = Player.questProgression;
 
     //GAME SETTINGS
     public float autoPlaySpeed;
