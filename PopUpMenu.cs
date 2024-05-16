@@ -52,7 +52,10 @@ public class PopUpMenu : MonoBehaviour
             {
                 dialogue.choices[0].GrantRewards();
             }
-
+            else
+            {
+                Player.IncreaseQuest(dialogue.questID);
+            }
             dialogueSystem.ColosePopUpMenu();
         }
 
