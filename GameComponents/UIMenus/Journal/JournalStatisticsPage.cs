@@ -9,14 +9,14 @@ public class JournalStatisticsPage : MonoBehaviour
     public DataManagerScript dataManager;
     public PlayerIcon playerIcon;
     public PlayerSprite playerSprite;
+    public GameObject personaliaContainer;
     public TextMeshProUGUI namePlate;
-    public TextMeshProUGUI titleText;
-    public TextMeshProUGUI totalDays;
-    public TextMeshProUGUI totalMoney;
+    public TextMeshProUGUI licenseInfo;
 
     void OnEnable()
     {
         playerIcon.playerSprite = playerSprite;
+        int licenseGrade = Player.GetCount("SCR012", name);
         playerIcon.UpdateImages();
 
         if (Characters.all.Count > 0)
@@ -37,13 +37,18 @@ public class JournalStatisticsPage : MonoBehaviour
             namePlate.text = dataManager.playerName;
         }
 
+        if (licenseGrade > 0)
+        {
+            licenseInfo.text = $"Grade {licenseGrade} License\nExperience: {Mathf.FloorToInt((float)dataManager.totalGameDays / 28)} months";
 
-        totalDays.text = $"Days passed: {dataManager.totalGameDays}";
-        totalMoney.text = $"Gold: {dataManager.playerGold}";
+            // namePlate.font = fontManager.header.font;
+            // licenseInfo.font = fontManager.script.font;
 
-        namePlate.font = fontManager.header.font;
-        titleText.font = fontManager.subtitle.font;
-        totalDays.font = fontManager.script.font;
-        totalMoney.font = fontManager.script.font;
+            personaliaContainer.SetActive(true);
+        }
+        else
+        {
+            personaliaContainer.SetActive(false);
+        }
     }
 }
