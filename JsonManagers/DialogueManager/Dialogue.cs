@@ -72,7 +72,16 @@ public class Dialogue
 
             foreach (IdIntPair requirement in requirements)
             {
-                int amount = Player.GetCount(requirement.objectID, "Choice Requirement Check");
+                int amount;
+                
+                if (requirement.objectID.Length > 8 && requirement.objectID.Contains("-Q"))
+                {
+                    amount = Player.GetQuestStage(requirement.objectID);
+                }
+                else
+                {
+                    amount = Player.GetCount(requirement.objectID, "Choice Requirement Check");
+                } 
 
                 // Debug.Log($"{requirement.amount} {requirement.objectID} is required. Player has {amount}");
 
@@ -89,8 +98,16 @@ public class Dialogue
         {
             foreach (IdIntPair restriction in restrictions)
             {
-                int amount = Player.GetCount(restriction.objectID, "Choice Restriction Check");
-                //Debug.Log($"{restriction.objectID} is restricted to max {restriction.amount}. Player has {amount}.");
+                int amount;
+
+                if (restriction.objectID.Length > 8 && restriction.objectID.Contains("-Q"))
+                {
+                    amount = Player.GetQuestStage(restriction.objectID);
+                }
+                else
+                {
+                    amount = Player.GetCount(restriction.objectID, "Choice Requirement Check");
+                }
 
                 if (amount > restriction.amount)
                 {
