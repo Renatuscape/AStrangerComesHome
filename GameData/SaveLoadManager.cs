@@ -22,34 +22,11 @@ public class SaveLoadManager : MonoBehaviour
 
     public void SaveGame()
     {
+        dataManager.lastVersionSaved = Application.version;
+
         string json = JsonUtility.ToJson(dataManager, prettyPrint: true);
         SaveJsonToFile(json);
     }
-
-    //public void LoadGame()
-    //{
-    //    string json = LoadJsonFromFile();
-    //    if (!string.IsNullOrEmpty(json))
-    //    {
-    //        JsonUtility.FromJsonOverwrite(json, dataManager);
-    //    }
-    //}
-
-    //public void LoadGame()
-    //{
-    //    string json = LoadJsonFromFile();
-
-    //    // Log the JSON value before loading
-    //    Debug.Log("Loaded JSON data: " + json);
-
-    //    if (!string.IsNullOrEmpty(json))
-    //    {
-    //        JsonUtility.FromJsonOverwrite(json, dataManager);
-
-    //        // Log the value of currentRegion after loading
-    //        Debug.Log("currentRegion after loading: " + dataManager.currentRegion);
-    //    }
-    //}
 
     public async void LoadGame()
     {
