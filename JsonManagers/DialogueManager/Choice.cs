@@ -77,12 +77,27 @@ public class Choice
 
             if (foundObject != null)
             {
-                Player.Add(new IdIntPair() { objectID = foundObject.objectID, amount = entry.amount, description = entry.description });
+                if (foundObject.objectType == ObjectType.Quest)
+                {
+                    Player.SetQuest(entry.objectID, entry.amount);
+                }
+                else
+                {
+                    Player.Add(new IdIntPair() { objectID = foundObject.objectID, amount = entry.amount, description = entry.description });
+                }
+
             }
             else
             {
-                Debug.Log($"{entry.objectID} NOT FOUND IN GAME CODEX. INTENTIONAL?");
-                Player.Add(new IdIntPair() { objectID = entry.objectID, amount = entry.amount, description = entry.description });
+                if (entry.objectID.Length > 8 && entry.objectID.Contains("-Q"))//objectID.Substring(6, 2) == "-Q")Substring(6, 2) == "-Q")
+                {
+                    Player.SetQuest(entry.objectID, entry.amount);
+                }
+                else
+                {
+                    Debug.Log($"{entry.objectID} NOT FOUND IN GAME CODEX. INTENTIONAL?");
+                    Player.Add(new IdIntPair() { objectID = entry.objectID, amount = entry.amount, description = entry.description });
+                }
             }
         }
     }
