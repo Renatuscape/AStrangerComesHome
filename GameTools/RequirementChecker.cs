@@ -20,53 +20,6 @@ public static class RequirementChecker
         }
     }
 
-    public static bool CheckWalkingRequirements(Character character)
-    {
-        var currentLocation = TransientDataScript.GetCurrentLocation();
-        bool validLocation = false;
-        bool validTime = false;
-        bool validDay = false;
-
-        foreach (WalkingLocation walkingLocation in character.walkingLocations)
-        {
-            foreach (string locationID in walkingLocation.locations)
-            {
-                if (locationID == currentLocation.objectID)
-                {
-                    validLocation = true;
-                    break;
-                }
-            }
-
-            if (CheckTime(walkingLocation.timeStart, walkingLocation.timeEnd))
-            {
-                validTime = true;
-            }
-
-            foreach (int day in walkingLocation.daysOfWeek)
-            {
-                if (CheckWeekDay(day))
-                {
-                    validDay = true;
-                    break;
-                }
-            }
-
-            if (validDay && validLocation && validTime)
-            {
-                return true;
-            }
-            else
-            {
-                validDay = false;
-                validLocation = false;
-                validTime = false;
-            }
-        }
-
-        return false;
-    }
-
     public static bool CheckTime(float startTime, float endTime)
     {
         if (startTime != endTime)
