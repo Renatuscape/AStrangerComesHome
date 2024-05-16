@@ -70,10 +70,10 @@ public class CollectionsPeople : MonoBehaviour
                 peoplePageTrueName.gameObject.SetActive(true);
             }
 
-            peoplePageDescription.text += $"\nDebug:" +
-                $"\nAffecton {Player.GetCount(people[index].objectID, ToString())}" +
-                $"\nName returned {people[index].NamePlate()}" +
-                $"\nType {people[index].type}";
+            //peoplePageDescription.text += $"\nDebug:" +
+            //    $"\nAffecton {Player.GetCount(people[index].objectID, ToString())}" +
+            //    $"\nName returned {people[index].NamePlate()}" +
+            //    $"\nType {people[index].type}";
         }
 
     }
