@@ -4,10 +4,19 @@ using UnityEngine;
 public static class Player
 {
     public static List<IdIntPair> inventoryList = new();
+    public static List<IdIntPair> questProgression = new();
 
     public static bool GetEntry(string objectID, string caller, out IdIntPair entry)
     {
-        entry = inventoryList?.Find(o => o?.objectID != null && o.objectID == objectID);
+
+        if (objectID.Length > 8 && objectID.Contains("-Q"))//objectID.Substring(6, 2) == "-Q")
+        {
+            entry = questProgression.FirstOrDefault(q => q?.objectID != null && q.objectID == objectID);
+        }
+        else
+        {
+            entry = inventoryList.FirstOrDefault(o => o?.objectID != null && o.objectID == objectID);
+        }
 
         if (entry != null)
         {
@@ -34,18 +43,60 @@ public static class Player
         Add(objectID, removeAmount, doNotLog);
     }
 
-    // SET - forcibly sets object to specified value in player inventory
-    public static void Set(string objectID, int amount, bool doNotLog = false)
+    public static void SetQuest(string objectID, int amount)
     {
-        var foundObject = inventoryList.FirstOrDefault(o => o.objectID == objectID);
+        Debug.Log("SetQuest called for id " + objectID);
+
+        IdIntPair foundObject = questProgression.FirstOrDefault(q => q.objectID == objectID);
 
         if (foundObject != null)
         {
-            inventoryList.FirstOrDefault(o => o.objectID == objectID).amount = amount;
+            questProgression.FirstOrDefault(q => q.objectID == objectID).amount = amount;
         }
         else
         {
-            Add(objectID, amount, doNotLog);
+            questProgression.Add(new() { objectID = objectID, amount = amount });
+            Debug.Log("Quest Progression now contains " + questProgression.Count);
+        }
+    }
+    public static void IncreaseQuest(string objectID, int amount = 0)
+    {
+        Debug.Log("IncreaseQuest called for id " + objectID);
+
+        IdIntPair foundObject = questProgression.FirstOrDefault(q => q.objectID == objectID);
+
+        if (foundObject != null)
+        {
+            questProgression.FirstOrDefault(q => q.objectID == objectID).amount += amount;
+        }
+        else
+        {
+            questProgression.Add(new() { objectID = objectID, amount = amount });
+        }
+    }
+
+    // SET - forcibly sets object to specified value in player inventory
+    public static void Set(string objectID, int amount, bool doNotLog = false)
+    {
+        IdIntPair foundObject;
+
+        if (objectID.Length > 8 && objectID.Contains("-Q"))//objectID.Substring(6, 2) == "-Q")Substring(6, 2) == "-Q")
+        {
+            Debug.Log("Quest detected in Player.Set");
+            SetQuest(objectID, amount);
+        }
+        else
+        {
+            foundObject = inventoryList.FirstOrDefault(o => o.objectID == objectID);
+
+            if (foundObject != null)
+            {
+                inventoryList.FirstOrDefault(o => o.objectID == objectID).amount = amount;
+            }
+            else
+            {
+                Add(objectID, amount, doNotLog);
+            }
         }
     }
 
@@ -133,10 +184,17 @@ public static class Player
 
         if (foundObject != null)
         {
-            // Check whether object already exists in inventory. GetCount is not sufficient here
-            var entry = inventoryList.FirstOrDefault(e => e.objectID == objectID);
+            IdIntPair entry;
 
-            // Create new entry if one does not exist
+            if (foundObject.objectType == ObjectType.Quest)
+            {
+                entry = questProgression.FirstOrDefault(e => e.objectID == objectID);
+            }
+            else
+            {
+                entry = inventoryList.FirstOrDefault(e => e.objectID == objectID);
+            }
+
             if (entry == null)
             {
                 entry = new() { objectID = objectID, amount = 0 };
@@ -153,7 +211,6 @@ public static class Player
                 entry.amount = foundObject.maxValue;
                 amountAdded = foundObject.maxValue - entry.amount;
             }
-
         }
 
         if (!doNotLog)
@@ -217,6 +274,20 @@ public static class Player
         else
         {
             return 0;
+        }
+    }
+
+    public static int GetQuestStage(string searchID)
+    {
+        var entry = questProgression.FirstOrDefault(q => q.objectID == searchID);
+
+        if (entry == null)
+        {
+            return 0;
+        }
+        else
+        {
+            return entry.amount;
         }
     }
 
