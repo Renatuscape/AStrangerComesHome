@@ -12,7 +12,7 @@ public static class DialogueTagParser
     {
         if (string.IsNullOrEmpty(text))
         {
-            Debug.Log("No text to parse");
+            // Debug.Log("No text to parse");
             return text;
         }
 
@@ -84,10 +84,6 @@ public static class DialogueTagParser
         }
 
         Debug.Log($"Tags contain {tags.Count} entries:");
-        //foreach (KeyValuePair<string, string> kvp in tags)
-        //{
-        //    Debug.Log($"{kvp.Key}: {kvp.Value}");
-        //}
     }
 
     static void AddNewTag(string key, string value)
@@ -127,7 +123,6 @@ public static class DialogueTagParser
     {
         if (text.StartsWith("The ", StringComparison.OrdinalIgnoreCase) || text.StartsWith("the ", StringComparison.OrdinalIgnoreCase))
         {
-            // Remove the prefix
             text = text.Substring(4);
         }
         return text;
