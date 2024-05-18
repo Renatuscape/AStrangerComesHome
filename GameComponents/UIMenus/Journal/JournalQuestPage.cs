@@ -83,7 +83,24 @@ public class JournalQuestPage : MonoBehaviour
 
             if (string.IsNullOrEmpty(dialogue.hint))
             {
-                description = DialogueTagParser.ParseText(quest.description);
+                if (quest.dynamicDescriptions != null && quest.dynamicDescriptions.Count > 0)
+                {
+                    for (int i = quest.dynamicDescriptions.Count - 1; i >= 0; i--)
+                    {
+                        var dDescription = quest.dynamicDescriptions[i];
+
+                        if (RequirementChecker.CheckPackage(dDescription.checks))
+                        {
+                            description = dDescription.content;
+                            break;
+                        }
+                    }
+                }
+                
+                if (description == "")
+                {
+                    description = DialogueTagParser.ParseText(quest.description);
+                }
             }
             else
             {
