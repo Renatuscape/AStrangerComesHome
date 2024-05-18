@@ -6,17 +6,22 @@ public class ParticlePhysics : MonoBehaviour
     public SpriteRenderer rend;
     public float currentParticleLife;
     public bool isActivated = false;
+    public float velocity = 0;
     public float scatterForce = 0;
     public float updateFrequency = 0.01f;
     public float updateTimer = 0;
 
     float magnitudeAdjustment = 0.2f;
-    void Start()
-    {
 
+    private void Start()
+    {
         if (settings.randomDrag != 0)
         {
-            settings.velocity = Random.Range(settings.velocity - settings.randomDrag, settings.velocity);
+            velocity = Random.Range(settings.velocity - settings.randomDrag, settings.velocity);
+        }
+        else
+        {
+            velocity = settings.velocity;
         }
 
         currentParticleLife = settings.particleLife;
@@ -70,6 +75,11 @@ public class ParticlePhysics : MonoBehaviour
 
             rend.transform.localScale = new Vector3(settings.minScale, settings.minScale, 1);
         }
+        else if (!settings.isGrowing && !settings.isShrinking)
+        {
+            settings.minScale = rend.transform.localScale.x;
+            settings.maxScale = rend.transform.localScale.y;
+        }
 
         if (settings.scatterRange != 0)
         {
@@ -80,6 +90,30 @@ public class ParticlePhysics : MonoBehaviour
         {
             settings.coachSpeedMultiplier = 0.9f;
         }
+    }
+    public void PlayBehaviour(GameObject parentObject)
+    {
+        transform.SetParent(parentObject.transform);
+        transform.localPosition = new Vector3(0, 0, 0);
+        rend.transform.localScale = new Vector3(settings.minScale, settings.minScale, 1);
+        rend.color = new Color(1, 1, 1, 1);
+
+        currentParticleLife = settings.particleLife;
+
+        if (settings.randomDrag != 0)
+        {
+            velocity = Random.Range(settings.velocity - settings.randomDrag, settings.velocity);
+        }
+        else
+        {
+            velocity = settings.velocity;
+        }
+
+        if (settings.scatterRange != 0)
+        {
+            scatterForce = Random.Range(settings.scatterRange * -1, settings.scatterRange) * magnitudeAdjustment;
+
+        }
 
         isActivated = true;
     }
@@ -89,8 +123,8 @@ public class ParticlePhysics : MonoBehaviour
         if (TransientDataScript.IsTimeFlowing())
         {
             // VERTICAL MOVEMENT
-            float verticalForce = settings.velocity;
-            settings.velocity -= settings.gravity; // reduce applied force over time
+            float verticalForce = velocity;
+            velocity -= settings.gravity; // reduce applied force over time
 
             // HORIZONTAL MOVEMENT
             float horizontalForce = scatterForce;
@@ -142,13 +176,13 @@ public class ParticlePhysics : MonoBehaviour
             // CHECK FOR DEATH
             if (currentParticleLife <= 0)
             {
-                Destroy(gameObject);
+                gameObject.SetActive(false);
             }
         }
     }
 
     private void OnDisable()
     {
-        Destroy(gameObject);
+        ParticleFactory.ReturnParticle(gameObject);
     }
 }
