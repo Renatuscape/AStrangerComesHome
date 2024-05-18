@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -58,8 +59,8 @@ public class CollectionsPeople : MonoBehaviour
         {
             peoplePageTitle.text = people[index].namePlate;
             peoplePageTrueName.text = people[index].NamePlate();
-            peoplePageDescription.text = people[index].description;
             peoplePagePicture.sprite = people[index].sprite;
+            string description = "";
 
             if (peoplePageTitle.text == peoplePageTrueName.text)
             {
@@ -69,6 +70,27 @@ public class CollectionsPeople : MonoBehaviour
             {
                 peoplePageTrueName.gameObject.SetActive(true);
             }
+
+            if (people[index].dynamicDescriptions != null && people[index].dynamicDescriptions.Count > 0)
+            {
+                for (int i = people[index].dynamicDescriptions.Count - 1; i >= 0; i--)
+                {
+                    var dDescription = people[index].dynamicDescriptions[i];
+
+                    if (RequirementChecker.CheckPackage(dDescription.checks))
+                    {
+                        description = DialogueTagParser.ParseText(dDescription.content);
+                        break;
+                    }
+                }
+            }
+
+            if (description == "")
+            {
+                description = people[index].description;
+            }
+
+            peoplePageDescription.text = description;
 
             //peoplePageDescription.text += $"\nDebug:" +
             //    $"\nAffecton {Player.GetCount(people[index].objectID, ToString())}" +
