@@ -52,12 +52,8 @@ public class WorldParticleNode : MonoBehaviour
 
             while (spawned < toSpawn)
             {
-                var newParticle = ParticleFactory.SpawnWorldParticle(particle);
+                ParticleFactory.GetParticle(container, particle, gameObject.name);
 
-                if (newParticle != null)
-                {
-                    newParticle.transform.SetParent(container.transform, false);
-                }
                 spawned++;
             }
         }
