@@ -87,7 +87,6 @@ public class ParticleFactory : MonoBehaviour
 
     public static GameObject GetParticle(GameObject parentObject, string particleID, string caller)
     {
-        // Debug.Log("Attempting to spawn " + particleID);
         return instance.GetWorldParticle(parentObject, particleID, caller);
     }
 
@@ -95,11 +94,4 @@ public class ParticleFactory : MonoBehaviour
     {
         instance.ReturnParticleToPool(particle);
     }
-}
-
-[System.Serializable]
-public class ObjectPool
-{
-    public string accessID;
-    public List<GameObject> objectInstances;
 }
