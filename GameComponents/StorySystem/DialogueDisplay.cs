@@ -155,6 +155,7 @@ public class DialogueDisplay : MonoBehaviour
 
     public void PrintChoiceResult(Choice choice, bool isSuccess, List<IdIntPair> missingItems)
     {
+        autoTimer = 0;
         string speakerTag = isSuccess ? choice.successSpeaker : choice.failureSpeaker;
         bool hasResultText = !string.IsNullOrEmpty(speakerTag);
         bool hasMissingItemsToPrint = missingItems != null && missingItems.Count > 0;
