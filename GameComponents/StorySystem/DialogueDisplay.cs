@@ -193,6 +193,15 @@ public class DialogueDisplay : MonoBehaviour
             foreach (var entry in missingItems)
             {
                 Debug.Log($"Missing {entry.amount} {entry.objectID}. Print this for the player somehow.");
+
+                BaseObject missingType = GameCodex.GetBaseObject(entry.objectID);
+
+                if (missingType.objectType == ObjectType.Item)
+                {
+                    Item item = (Item)missingType;
+                    PrintToChatLog($"\nMissing {entry.amount}x {item.name}.", false, false);
+                }
+
             }
         }
 
