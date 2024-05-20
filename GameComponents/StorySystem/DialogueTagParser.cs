@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -35,6 +34,7 @@ public static class DialogueTagParser
 
     public static void UpdateTags(DataManagerScript dataManager) {
         Debug.Log("Updating Dialogue Tags");
+
         tags = new();
         CreateTags(dataManager);
     }
