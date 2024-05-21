@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -125,7 +124,7 @@ public static class Recipes
 
     public static Recipe AttemptAlchemy(List<IdIntPair> ingredientsIn, out bool isSuccess, bool isDebugging = false)
     {
-        int alchemySkill = Player.GetCount("ALC000", "Recipes");
+        int alchemySkill = Player.GetCount(StaticTags.Alchemy, "Recipes");
 
         if (isDebugging)
         {
@@ -146,7 +145,7 @@ public static class Recipes
         }
 
         isSuccess = false;
-        return FindByID("REC001-NN");
+        return FindByID(StaticTags.CausticWasteRecipe);
     }
 
     public static List<string> AttemptSecretAlchemy(Recipe attemptedRecipe, List<ItemIntPair> ingredientsIn)
@@ -157,7 +156,7 @@ public static class Recipes
         bool isJourneyman = false;
         bool isExpert = false;
         bool isMaster = false;
-        int secretAlchemy = Player.GetCount("ALC001", "Recipes, AttemptSecretAlchemy()");
+        int secretAlchemy = Player.GetCount(StaticTags.SecretAlchemy, "Recipes, AttemptSecretAlchemy()");
 
         if (secretAlchemy >= 8)
         {
