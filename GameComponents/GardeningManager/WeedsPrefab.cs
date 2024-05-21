@@ -8,7 +8,7 @@ public class WeedsPrefab : MonoBehaviour
     public planterScript planterParent;
     void Start()
     {
-        weedsObject = Items.FindByID("PLA000");
+        weedsObject = Items.FindByID(StaticTags.WeedItem);
     }
 
     private void OnMouseDown()
