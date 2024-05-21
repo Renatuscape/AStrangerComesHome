@@ -73,7 +73,7 @@ public class SkillManager : MonoBehaviour
 
         if (skill.maxValue == 0)
         {
-            if (skill.type == SkillType.Attribute)
+            if (skill.type == SkillType.Attunement)
             {
                 skill.maxValue = StaticGameValues.maxAttributeValue;
             }
@@ -114,7 +114,7 @@ public class SkillManager : MonoBehaviour
         }
         else
         {
-            return SkillType.Attribute;
+            return SkillType.Attunement;
         }
     }
 
