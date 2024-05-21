@@ -26,7 +26,6 @@ public class Dialogue
     public int minimumDaysPassed;
 
     public List<string> content;
-    public List<DialogueStep> dialogueSteps = new(); //a step is one line of dialogue from one speaker
     public List<DialogueEvent> dialogueEvents = new(); // new version of step with more data
     public List<IdIntPair> requirements = new();
     public List<IdIntPair> restrictions = new();
@@ -140,7 +139,7 @@ public static class Dialogues
     {
         foreach (Dialogue dialogue in all)
         {
-            Debug.Log($"{dialogue}" + $"\n{dialogue.dialogueSteps.Count}");
+            Debug.Log($"{dialogue}" + $"\n{dialogue.dialogueEvents.Count}");
         }
     }
 
