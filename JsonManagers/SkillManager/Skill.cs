@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum SkillType
 {
-    Attribute,
+    Attunement,
     Gardening,
     Alchemy,
     Magic
@@ -20,6 +20,7 @@ public class Skill : BaseObject
     public Texture2D image; //retrieve from ID + folder
     public Sprite sprite;
     public string description;
+    public List<RestrictedInfo> dynamicDescriptions;
 }
 
 public static class Skills
