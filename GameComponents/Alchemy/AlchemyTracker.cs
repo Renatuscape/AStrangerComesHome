@@ -22,7 +22,6 @@ public class AlchemyTracker : MonoBehaviour
 
     public void StartTracking()
     {
-        // Debug.Log("Enabling Alchemy Tracker.");
         dataManager = TransientDataScript.gameManager.dataManager;
 
         UpdateValues();
@@ -44,19 +43,13 @@ public class AlchemyTracker : MonoBehaviour
                         Progress();
                     }
                 }
-            }
-            //else
-            //{
-            //    gameObject.SetActive(false); // Don't use this resource unless it's actually necessary
-            //}   
+            } 
         }
     }
 
     void Progress()
     {
         UpdateValues();
-
-        //bool anyActiveSynthesiser = false;
 
         foreach (SynthesiserData synth in dataManager.alchemySynthesisers)
         {
@@ -70,16 +63,8 @@ public class AlchemyTracker : MonoBehaviour
                 {
                     synth.progressSynth += progressAmount;
                 }
-
-                //anyActiveSynthesiser = true;
             }
         }
-
-        //if (!anyActiveSynthesiser)
-        //{
-        //    Debug.Log("No active synthesiser was found. Disabling Alchemy Tracker.");
-        //    gameObject.SetActive(false);
-        //}
     }
 
     void ConsumeMana(SynthesiserData synth)
@@ -103,8 +88,8 @@ public class AlchemyTracker : MonoBehaviour
     void UpdateValues()
     {
         timer = 0;
-        tick = 10 - (Player.GetCount("ALC004", name) * 0.9f);
-        progressAmount = 1 + (Player.GetCount("ALC003", name) * 0.6f);
-        baseManaConsumption = (int)Mathf.Floor(6 - (Player.GetCount("MAG001", name) * 0.5f));
+        tick = 10 - (Player.GetCount(StaticTags.Hermeneutics, name) * 0.9f);
+        progressAmount = 1 + (Player.GetCount(StaticTags.Chemistry, name) * 0.6f);
+        baseManaConsumption = (int)Mathf.Floor(6 - (Player.GetCount(StaticTags.Metaphysics, name) * 0.5f));
     }
 }
