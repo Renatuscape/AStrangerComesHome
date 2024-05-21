@@ -25,10 +25,10 @@ public class GardenManager : MonoBehaviour
     public SpriteRenderer planterC;
     public SpriteRenderer plantSpriteC;
 
-    public int gardening; //improves growth for all plants
-    public int cultivation; //improves yield rate for multi-yield plants
-    public int nurturing; //creates a small chance that plant health does not decrease
-    public int earthsoul; //at level 5, this mysterious skill grants all plants an extra life. At level 10, two extra lives.
+    public int gardening; // improves growth for all plants
+    public int cultivation; // improves survival (within health)
+    public int epistemology; // improves yield chances
+    public int goetia; // improves survival by up to 20%. At level 5, this mysterious skill grants all plants an extra life. At level 10, two extra lives.
     public int unlockedPlanters;
     bool plantersChecked;
 
@@ -36,11 +36,6 @@ public class GardenManager : MonoBehaviour
     public float growthTick = 1;
 
     public List<Sprite> planterSprites;
-
-    public int gardeningLevel; //improves growth for all plants
-    public int nurturingLevel; //improves yield rate for multi-yield plants
-    public int cultivationLevel; //creates a small chance that plant health does not decrease
-    public int earthsoulLevel; //at level 5, this mysterious skill grants all plants an extra life. At level 10, two extra lives.
 
     private void Awake()
     {
@@ -63,17 +58,17 @@ public class GardenManager : MonoBehaviour
 
     void SyncSkills()
     {
-        gardening = Player.GetCount("GAR000", "GardenManager");
-        cultivation = Player.GetCount("GAR001", "GardenManager");
-        nurturing = Player.GetCount("GAR002", "GardenManager");
-        earthsoul = Player.GetCount("GAR003", "GardenManager");
+        gardening = Player.GetCount(StaticTags.Gardening, "GardenManager");
+        cultivation = Player.GetCount(StaticTags.Cultivation, "GardenManager");
+        epistemology = Player.GetCount(StaticTags.Epistemology, "GardenManager");
+        goetia = Player.GetCount(StaticTags.Goetia, "GardenManager");
 
         CheckPlanters();
     }
 
     void CheckPlanters()
     {
-        unlockedPlanters = Player.GetCount("SCR004", name);
+        unlockedPlanters = Player.GetCount(StaticTags.unlockedPlanters, name);
 
         if (unlockedPlanters >= 1)
         {
@@ -259,6 +254,7 @@ public class GardenManager : MonoBehaviour
         {
             var maxGrowth = 100 * seed.health * seed.yield;
             var outputPlant = seed.GetOutput();
+            var deathLevel = 0 - Mathf.Floor(goetia * 0.2f);
 
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
             if (growthProgress < maxGrowth && planterIsActive)
@@ -291,18 +287,18 @@ public class GardenManager : MonoBehaviour
                     {
                         yield = 1;
 
-                        var randomChance = 10 + (int)Mathf.Ceil(cultivation * 0.8f);
+                        var failChance = 90 - (epistemology * 5) - (gardening * 3);
 
                         for (int i  = 0; i < yield; i++)
                         {
-                            if (Random.Range(0, 101) < randomChance)
+                            if (Random.Range(0, 100) > failChance)
                             {
                                 yield++;
                             }
                         }
                     }
 
-                    var toAdd = yield + (int)Mathf.Ceil(earthsoul * 0.2f);
+                    var toAdd = yield + (int)Mathf.Ceil(goetia * 0.2f);
 
                     if (toAdd < 1)
                     {
@@ -313,25 +309,28 @@ public class GardenManager : MonoBehaviour
 
                     //PLANT HEALTH
                     var rollForHealth = Random.Range(0, 100);
+                    var survivalChance = 90 - (cultivation * 5) - (gardening * 2);
 
-                    if (rollForHealth > nurturing * 3)
+                    if (rollForHealth < goetia * 2)
                     {
-                        seedHealth--;
-                        Debug.Log("The plant has lost health at a roll of " + rollForHealth + " against " + nurturing * 3 + ".");
+                        LogAlert.QueueTextAlert($"A mystical force has vitalised this {outputPlant.name}!");
+                    }
+                    else if (seed.health > 1 && rollForHealth < survivalChance)
+                    {
+                        seedHealth = 0;
                     }
                     else
                     {
-                        TransientDataScript.PushAlert($"This plant is extra resilient!");
-                        Debug.Log("Plant miraculously retains its health at a roll of " + rollForHealth + " against " + nurturing * 5 + ". Add some effect or notice to the game.");
+                        seedHealth--;
                     }
 
                     //CHECK IF PLANT IS DEAD
-                    if (seedHealth > 0)
+                    if (seedHealth > deathLevel)
                     {
-                        growthProgress = maxGrowth / 3; //skill could help here?
+                        growthProgress = maxGrowth / 3;
                     }
 
-                    else if (seedHealth <= 0)
+                    else if (seedHealth <= deathLevel)
                     {
                         growthProgress = 0;
                         planterIsActive = false;
@@ -340,7 +339,7 @@ public class GardenManager : MonoBehaviour
                 }
                 else
                 {
-                    TransientDataScript.PushAlert($"I don't have space for {outputPlant.name}.");
+                    LogAlert.QueueTextAlert($"I don't have space for {outputPlant.name}.");
                 }
             }
         }
