@@ -268,7 +268,7 @@ public class GardenManager : MonoBehaviour
                     growthRate = "great";
 
                 // Display info for the plant currently growing in this planter
-                TransientDataScript.PushAlert($"This {outputPlant.name} is growing at a {growthRate} pace.");
+                LogAlert.QueueTextAlert($"This {outputPlant.name} is growing at a {growthRate} pace.");
             }
 
             //IF THE PLANTER IS READY TO BE HARVESTED
