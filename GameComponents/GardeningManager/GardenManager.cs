@@ -1,21 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-//HANDLES PLANT GROWTH AND HARVESTING
-public enum WhichPlanter
+[Serializable]
+public class GardeningPlanterPackage
 {
-    PlanterA,
-    PlanterB,
-    PlanterC
+    public PlanterData planterData;
+    public SpriteRenderer plantSprite;
+    public SpriteRenderer worldPlanter;
 }
 
+//HANDLES GARDEN PLANTER SETUP
 public class GardenManager : MonoBehaviour
 {
     public DataManagerScript dataManager;
-    public TransientDataScript transientData;
     public GameObject confirmPlantingMenu;
 
     public SpriteRenderer planterA;
@@ -24,13 +25,15 @@ public class GardenManager : MonoBehaviour
     public SpriteRenderer plantSpriteB;
     public SpriteRenderer planterC;
     public SpriteRenderer plantSpriteC;
+    public List<GardeningPlanterPackage> planterPackages = new();
 
+    public int creation;
     public int gardening; // improves growth for all plants
     public int cultivation; // improves survival (within health)
     public int epistemology; // improves yield chances
     public int goetia; // improves survival by up to 20%. At level 5, this mysterious skill grants all plants an extra life. At level 10, two extra lives.
     public int unlockedPlanters;
-    bool plantersChecked;
+    public bool plantersChecked;
 
     public float growthTimer;
     public float growthTick = 1;
@@ -39,8 +42,6 @@ public class GardenManager : MonoBehaviour
 
     private void Awake()
     {
-        dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         CheckPlanters();
         confirmPlantingMenu.SetActive(false);
         SyncSkills();
@@ -58,6 +59,7 @@ public class GardenManager : MonoBehaviour
 
     void SyncSkills()
     {
+        creation = Player.GetCount(StaticTags.Creation, "GardenManager");
         gardening = Player.GetCount(StaticTags.Gardening, "GardenManager");
         cultivation = Player.GetCount(StaticTags.Cultivation, "GardenManager");
         epistemology = Player.GetCount(StaticTags.Epistemology, "GardenManager");
@@ -68,61 +70,97 @@ public class GardenManager : MonoBehaviour
 
     void CheckPlanters()
     {
-        unlockedPlanters = Player.GetCount(StaticTags.unlockedPlanters, name);
+        // ENSURE PLANTER DATA EXISTS
+        unlockedPlanters = Player.GetCount(StaticTags.UnlockedPlanters, name);
 
         if (unlockedPlanters >= 1)
         {
-            planterA.gameObject.SetActive(true);
+            SetUpPlanter("planterA", plantSpriteA, planterA);
         }
         if (unlockedPlanters >= 2)
         {
-            planterB.gameObject.SetActive(true);
+            SetUpPlanter("planterB", plantSpriteB, planterB);
         }
         if (unlockedPlanters >= 3)
         {
-            planterC.gameObject.SetActive(true);
+            SetUpPlanter("planterC", plantSpriteC, planterC);
         }
         if (unlockedPlanters < 1)
         {
             planterA.gameObject.SetActive(false);
             planterB.gameObject.SetActive(false);
             planterC.gameObject.SetActive(false);
+
+            if (dataManager.planters != null && dataManager.planters.Count > 0)
+            {
+                dataManager.planters.Clear();
+            }
         }
+
         plantersChecked = true;
     }
+
+    PlanterData CreatePlanter(string planterID)
+    {
+        PlanterData newPlanter = new PlanterData();
+        newPlanter.planterID = planterID;
+        newPlanter.planterSpriteID = planterSprites[0].name;
+        dataManager.planters.Add(newPlanter);
+
+        return newPlanter;
+    }
+
+    void SetUpPlanter(string planterDataID, SpriteRenderer plantSprite, SpriteRenderer worldPlanter)
+    {
+        if (dataManager.planters == null)
+        {
+            dataManager.planters = new();
+        }
+
+        var planterData = dataManager.planters.FirstOrDefault(p => p.planterID == planterDataID);
+
+        if (planterData == null)
+        {
+            planterData = CreatePlanter(planterDataID);
+        }
+
+        var package = planterPackages.FirstOrDefault(p => p.planterData.planterID == planterData.planterID);
+
+        if (package == null)
+        {
+            package = new();
+            package.planterData = planterData;
+            planterPackages.Add(package);
+        }
+
+        package.worldPlanter = worldPlanter;
+        package.plantSprite = plantSprite;
+        package.worldPlanter.gameObject.SetActive(true);
+    }
+
     public void UpdatePlanterSprite()
     {
         if (planterSprites.Count >= 1)
         {
-            planterA.sprite = planterSprites[dataManager.planterSpriteA];
-            planterB.sprite = planterSprites[dataManager.planterSpriteB];
-            planterC.sprite = planterSprites[dataManager.planterSpriteC];
+            foreach (var planter in planterPackages)
+            {
+                planter.worldPlanter.sprite = planterSprites.FirstOrDefault(s => s.name.Contains(planter.planterData.planterSpriteID));
+            }
         }
     }
 
-    private void Update()
+    public void GlobalPushGrow()
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            growthTimer += 0.5f * Time.deltaTime; //add skill adjustments
+            GrowthTick();
 
-            if (growthTimer >= growthTick)
+            foreach (var planter in planterPackages)
             {
-                GrowthTick();
-                growthTimer = 0;
-            }
-
-            if (!dataManager.planterIsActiveA || dataManager.seedA == null)
-            {
-                plantSpriteA.sprite = null;
-            }
-            if (!dataManager.planterIsActiveB || dataManager.seedB == null)
-            {
-                plantSpriteB.sprite = null;
-            }
-            if (!dataManager.planterIsActiveC || dataManager.seedC == null)
-            {
-                plantSpriteC.sprite = null;
+                if (!planter.planterData.isActive || planter.planterData.seed == null)
+                {
+                    planter.plantSprite = null;
+                }
             }
         }
     }
@@ -138,128 +176,93 @@ public class GardenManager : MonoBehaviour
             plantersChecked = false;
         }
 
-        if (unlockedPlanters > 0)
+        if (plantersChecked && unlockedPlanters > 0)
         {
-            if (dataManager.planterIsActiveA && !string.IsNullOrEmpty(dataManager.seedA))
-                UpdatePlanterData(ref plantSpriteA, ref dataManager.seedA, ref dataManager.progressSeedA);
-
-            if (unlockedPlanters > 1 && dataManager.planterIsActiveB && !string.IsNullOrEmpty(dataManager.seedB))
-                UpdatePlanterData(ref plantSpriteB, ref dataManager.seedB, ref dataManager.progressSeedB);
-
-            if (unlockedPlanters > 2 && dataManager.planterIsActiveC && !string.IsNullOrEmpty(dataManager.seedC))
-                UpdatePlanterData(ref plantSpriteC, ref dataManager.seedC, ref dataManager.progressSeedC);
-        }
-    }
-
-    void UpdatePlanterData(ref SpriteRenderer plantSprite, ref string seedID, ref float progressSeed)
-    {
-        var seed = Items.FindByID(seedID);
-
-        if (seed == null)
-        {
-            Debug.LogWarning("Seed not found: " + seedID);
-        }
-
-        else
-        {
-            var maxGrowth = 100 * seed.health * seed.yield;
-
-            if (progressSeed <= maxGrowth)
+            foreach(var planter in planterPackages)
             {
-                progressSeed += 1 + (gardening * 0.2f); // GARDENING SKILL INCREASES GROWTH PER TICK
-
-                if (progressSeed < maxGrowth * 0.3f)
+                if (planter.planterData.isActive && planter.planterData.seed != null)
                 {
-                    plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 1);
+                    UpdatePlanterData(planter);
                 }
-                else if (progressSeed > maxGrowth * 0.3f && progressSeed < maxGrowth * 0.6f)
-                {
-                    plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 2);
-                }
-                else if (progressSeed > maxGrowth * 0.6f)
-                {
-                    plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 3);
-                }
-            }
-            else
-            {
-                plantSprite.sprite = seed.GetOutput().sprite;
-            }
-        }
-
-    }
-
-    public void ClickPlanter(WhichPlanter planter)
-    {
-        SyncSkills();
-
-        if (TransientDataScript.CameraView == CameraView.Garden)
-        {
-            if (dataManager.planterIsActiveA && dataManager.seedA == null)
-            {
-                dataManager.planterIsActiveA = false;
-                Debug.Log("SeedA was missing. Planter deactivated.");
-            }
-            if (dataManager.planterIsActiveB && dataManager.seedB == null)
-            {
-                dataManager.planterIsActiveB = false;
-                Debug.Log("SeedB was missing. Planter deactivated.");
-            }
-            if (dataManager.planterIsActiveC && dataManager.seedC == null)
-            {
-                dataManager.planterIsActiveC = false;
-                Debug.Log("SeedC was missing. Planter deactivated.");
-            }
-
-            switch (planter)
-            {
-                case WhichPlanter.PlanterA:
-                    ProcessPlanterClick(ref dataManager.planterIsActiveA, ref dataManager.progressSeedA, ref dataManager.seedA, ref dataManager.seedHealthA, plantSpriteA);
-                    break;
-                case WhichPlanter.PlanterB:
-                    ProcessPlanterClick(ref dataManager.planterIsActiveB, ref dataManager.progressSeedB, ref dataManager.seedB, ref dataManager.seedHealthB, plantSpriteB);
-                    break;
-                case WhichPlanter.PlanterC:
-                    ProcessPlanterClick(ref dataManager.planterIsActiveC, ref dataManager.progressSeedC, ref dataManager.seedC, ref dataManager.seedHealthC, plantSpriteC);
-                    break;
-                default:
-                    break;
             }
         }
     }
 
-    private void ProcessPlanterClick(ref bool planterIsActive, ref float growthProgress, ref string seedID, ref int seedHealth, SpriteRenderer plantRenderer)
+    void UpdatePlanterData(GardeningPlanterPackage planter)
     {
-        Item seed;
+        var seed = planter.planterData.seed;
+        ref var progress = ref planter.planterData.progress;
 
-        if (!string.IsNullOrEmpty(seedID))
+        var maxGrowth = 100 * seed.health * seed.yield;
+
+        if (progress <= maxGrowth)
         {
-            seed = Items.FindByID(seedID);
+            float growth = 1 + (gardening * 0.2f) + (creation * 0.2f) + (goetia * 0.2f) - planter.planterData.weeds;
+
+            if (growth < 0.3f)
+            {
+                growth = 0.3f;
+            }
+
+            progress += growth;
+
+            if (progress < maxGrowth * 0.3f)
+            {
+                planter.plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 1);
+            }
+            else if (progress > maxGrowth * 0.3f && progress < maxGrowth * 0.6f)
+            {
+                planter.plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 2);
+            }
+            else if (progress > maxGrowth * 0.6f)
+            {
+                planter.plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 3);
+            }
         }
         else
         {
-            seed = null;
+            planter.plantSprite.sprite = seed.GetOutput().sprite;
         }
+    }
 
-        Debug.Log($"Processinng click. Planter is active {planterIsActive}, growth progress {growthProgress}, seed ID {seedID}, seed object: {(seed != null ? seed.name : "null")}");
+    public void ClickPlanter(PlanterData planterData)
+    {
+
+        if (TransientDataScript.IsTimeFlowing() && TransientDataScript.CameraView == CameraView.Garden)
+        {
+            SyncSkills();
+
+            GardeningPlanterPackage package = planterPackages.FirstOrDefault(p => p.planterData.planterID == planterData.planterID);
+
+            if (package != null)
+            {
+                ProcessPlanterClick(package);
+            }
+        }
+    }
+
+    private void ProcessPlanterClick(GardeningPlanterPackage package)
+    {
+        Item seed = package.planterData.seed;
+        PlanterData planterData = package.planterData;
 
         //IF THE PLANTER IS EMPTY
-        if (!planterIsActive)
+        if (!planterData.isActive)
         {
             confirmPlantingMenu.SetActive(true);
         }
 
         //IF THERE IS A SEED AND THE PLANTER IS ACTIVE
-        else if (seed != null && planterIsActive)
+        else if (seed != null && planterData.isActive)
         {
             var maxGrowth = 100 * seed.health * seed.yield;
             var outputPlant = seed.GetOutput();
             var deathLevel = 0 - Mathf.Floor(goetia * 0.2f);
 
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
-            if (growthProgress < maxGrowth && planterIsActive)
+            if (planterData.progress < maxGrowth && planterData.isActive)
             {
-                Debug.Log($"{seed.name} is growing. {growthProgress}/{maxGrowth}");
+                Debug.Log($"{seed.name} is growing. {planterData.progress}/{maxGrowth}");
 
                 string growthRate = "decent";
                 if (gardening < 3)
@@ -272,13 +275,13 @@ public class GardenManager : MonoBehaviour
             }
 
             //IF THE PLANTER IS READY TO BE HARVESTED
-            if (growthProgress >= maxGrowth)
+            if (planterData.progress >= maxGrowth)
             {
                 var plantInInventory = Player.GetCount(outputPlant.objectID, name);
 
                 if (plantInInventory + seed.yield <= outputPlant.maxValue)
                 {
-                    Debug.Log($"{seed.name} is ready! {growthProgress}/{maxGrowth}");
+                    Debug.Log($"{seed.name} is ready! {planterData.progress}/{maxGrowth}");
 
                     //PLANT YIELD
                     var yield = seed.yield;
@@ -317,24 +320,24 @@ public class GardenManager : MonoBehaviour
                     }
                     else if (seed.health > 1 && rollForHealth < survivalChance)
                     {
-                        seedHealth = 0;
+                        planterData.seedHealth = 0;
                     }
                     else
                     {
-                        seedHealth--;
+                        planterData.seedHealth--;
                     }
 
                     //CHECK IF PLANT IS DEAD
-                    if (seedHealth > deathLevel)
+                    if (planterData.seedHealth > deathLevel)
                     {
-                        growthProgress = maxGrowth / 3;
+                        planterData.progress = maxGrowth / 3;
                     }
 
-                    else if (seedHealth <= deathLevel)
+                    else if (planterData.seedHealth <= deathLevel)
                     {
-                        growthProgress = 0;
-                        planterIsActive = false;
-                        plantRenderer.sprite = null;
+                        planterData.progress = 0;
+                        planterData.isActive = false;
+                        package.plantSprite.sprite = null;
                     }
                 }
                 else
@@ -343,25 +346,10 @@ public class GardenManager : MonoBehaviour
                 }
             }
         }
-        else if (seed == null && planterIsActive)
+        else if (seed == null && planterData.isActive)
         {
             //Check planters for bugs
-
-            if (string.IsNullOrEmpty(dataManager.seedA) && dataManager.planterIsActiveA)
-            {
-                Debug.LogWarning("Planter A is active but there is no seed. Deactivating planter.");
-                dataManager.planterIsActiveA = false;
-            }
-            if (string.IsNullOrEmpty(dataManager.seedB) && dataManager.planterIsActiveB)
-            {
-                Debug.LogWarning("Planter B is active but there is no seed. Deactivating planter.");
-                dataManager.planterIsActiveA = false;
-            }
-            if (string.IsNullOrEmpty(dataManager.seedC) && dataManager.planterIsActiveC)
-            {
-                Debug.LogWarning("Planter C is active but there is no seed. Deactivating planter.");
-                dataManager.planterIsActiveA = false;
-            }
+            planterData.isActive = false;
         }
     }
 }
