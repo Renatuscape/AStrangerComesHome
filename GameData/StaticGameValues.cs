@@ -15,37 +15,37 @@ public static class StaticGameValues
 public static class StaticTags
 {
     // Skills
-    public static string Gardening = "GAR000";
-    public static string Cultivation = "GAR001";
-    public static string Epistemology = "GAR002";
-    public static string Goetia = "GAR003";
+    public static string Gardening { get; } = "GAR000";
+    public static string Cultivation { get; } = "GAR001";
+    public static string Epistemology { get; } = "GAR002";
+    public static string Goetia { get; } = "GAR003";
 
-    public static string Alchemy = "ALC000";
-    public static string SecretAlchemy = "ALC001";
-    public static string ForbiddenAlchemy = "ALC002";
-    public static string Chemistry = "ALC003";
-    public static string Hermeneutics = "ALC004";
+    public static string Alchemy { get; } = "ALC000";
+    public static string SecretAlchemy { get; } = "ALC001";
+    public static string ForbiddenAlchemy { get; } = "ALC002";
+    public static string Chemistry { get; } = "ALC003";
+    public static string Hermeneutics { get; } = "ALC004";
 
-    public static string Magic = "MAG000";
-    public static string Metaphysics = "MAG001";
-    public static string Rhetorics = "MAG002";
-    public static string Thaumaturgy = "MAG003";
+    public static string Magic { get; } = "MAG000";
+    public static string Metaphysics { get; } = "MAG001";
+    public static string Rhetorics { get; } = "MAG002";
+    public static string Thaumaturgy { get; } = "MAG003";
 
     // Attunements
-    public static string Wandering = "ATT000";
-    public static string Fate = "ATT001";
-    public static string Judgement = "ATT002";
-    public static string Knowledge = "ATT003";
-    public static string Creation = "ATT004";
-    public static string Mysticism = "ATT005";
-    public static string Prosperity = "ATT006";
-    public static string Dreaming = "ATT007";
-    public static string Destruction = "ATT008";
+    public static string Wandering { get; } = "ATT000";
+    public static string Fate { get; } = "ATT001";
+    public static string Judgement { get; } = "ATT002";
+    public static string Knowledge { get; } = "ATT003";
+    public static string Creation { get; } = "ATT004";
+    public static string Mysticism { get; } = "ATT005";
+    public static string Prosperity { get; } = "ATT006";
+    public static string Dreaming { get; } = "ATT007";
+    public static string Destruction { get; } = "ATT008";
 
     // Scripts
-    public static string unlockedPlanters = "SCR004";
+    public static string UnlockedPlanters { get; } = "SCR004";
 
     // Misc
-    public static string WeedItem = "PLA000";
-    public static string CausticWasteRecipe = "REC001-NN";
+    public static string WeedItem { get; } = "PLA000";
+    public static string CausticWasteRecipe { get; } = "REC001-NN";
 }
