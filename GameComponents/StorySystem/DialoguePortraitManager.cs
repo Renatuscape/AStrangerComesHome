@@ -52,6 +52,11 @@ public class DialoguePortraitManager : MonoBehaviour
 
         if (spriteObject != null)
         {
+            if (portraitAnimator.isAnimating)
+            {
+                portraitAnimator.CompleteAnimationsNow();
+            }
+
             spriteObject.SetActive(true);
 
             if (!string.IsNullOrEmpty(dEvent.startingPlacement))
