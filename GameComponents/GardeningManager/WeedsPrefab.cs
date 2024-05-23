@@ -5,7 +5,7 @@ using UnityEngine;
 public class WeedsPrefab : MonoBehaviour
 {
     public Item weedsObject;
-    public planterScript planterParent;
+    public PlanterScript planterParent;
     void Start()
     {
         weedsObject = Items.FindByID(StaticTags.WeedItem);
@@ -17,7 +17,7 @@ public class WeedsPrefab : MonoBehaviour
         {
             Player.Add(weedsObject.objectID);
 
-            planterParent.currentWeeds--;
+            planterParent.planterData.weeds--;
             Destroy(gameObject);
             int rollForBonus = Random.Range(0, 100);
 
