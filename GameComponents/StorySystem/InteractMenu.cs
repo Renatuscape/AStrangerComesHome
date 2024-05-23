@@ -24,14 +24,10 @@ public class InteractMenu : MonoBehaviour
 
         if (character != null && !string.IsNullOrEmpty(character.objectID))
         {
-            gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
-            gameObject.GetComponent<ContentSizeFitter>().enabled = false;
-            Canvas.ForceUpdateCanvases();
 
             PrintChatButton(character);
 
-            gameObject.GetComponent<VerticalLayoutGroup>().enabled = true;
-            gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(prefabContainer.GetComponent<RectTransform>());
             Canvas.ForceUpdateCanvases();
 
             if (shop == null || string.IsNullOrEmpty(shop.objectID))
@@ -53,11 +49,11 @@ public class InteractMenu : MonoBehaviour
                 PrintGarageButton(character);
             }
 
-            gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
-            gameObject.GetComponent<ContentSizeFitter>().enabled = false;    
+            prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+            prefabContainer.GetComponent<ContentSizeFitter>().enabled = false;    
             Canvas.ForceUpdateCanvases();
-            gameObject.GetComponent<VerticalLayoutGroup>().enabled = true;
-            gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+            prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+            prefabContainer.GetComponent<ContentSizeFitter>().enabled = true;
             Canvas.ForceUpdateCanvases();
         }
 
@@ -67,8 +63,16 @@ public class InteractMenu : MonoBehaviour
 
     void PrintChatButton(Character character)
     {
+        prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+        prefabContainer.GetComponent<ContentSizeFitter>().enabled = false;
+        Canvas.ForceUpdateCanvases();
+
         var chatButton = GetButton($"Chat with {character.NamePlate()}");
         chatButton.GetComponent<Button>().onClick.AddListener(() => storySystem.OpenTopicMenu(character.objectID));
+
+        prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        prefabContainer.GetComponent<ContentSizeFitter>().enabled = true;
+        Canvas.ForceUpdateCanvases();
     }
 
     void FindViableShops(Character character)
