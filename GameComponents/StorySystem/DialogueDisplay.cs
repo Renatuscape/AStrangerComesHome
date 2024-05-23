@@ -234,7 +234,7 @@ public class DialogueDisplay : MonoBehaviour
         }
         else
         {
-            if (choice.advanceToOnFailure >= 0)
+            if (choice.advanceToOnFailure >= 0 && !choice.endConversationOnFailure)
             {
                 endConversation = false;
 
