@@ -6,7 +6,7 @@ using UnityEngine;
 public class Choice
 {
     public bool endConversation = false;
-    public bool doesNotAdvance = false;
+    public bool endConversationOnFailure = true;
     public bool hiddenOnFail = false;
     public int advanceTo; //set to 100 to complete quest
     public int advanceToOnFailure = -1;
