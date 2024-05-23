@@ -23,7 +23,7 @@ public class NightSkyController : MonoBehaviour
         maxStars = Random.Range(10, 101);
     }
 
-    public void UpdateNightSky()
+    public void GlobalPushRefreshSky()
     {
         if (TransientDataScript.IsTimeFlowing())
         {
@@ -81,7 +81,7 @@ public class NightSkyController : MonoBehaviour
         }
     }
 
-    public void StarFlicker()
+    public void GlobalPushStarFlicker()
     {
         if (starList.Count > 0)
         {
