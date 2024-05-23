@@ -7,8 +7,10 @@ using UnityEngine.UI;
 //HANDLES PLANTING SEEDS
 public class PlantingManager : MonoBehaviour
 {
+    public GardenManager gardenManager;
     public DataManagerScript dataManager;
     public PageinatedContainer seedContainer;
+    public PlanterData activePlanter;
 
     public GameObject planterFrame;
     public GameObject planterA;
@@ -19,7 +21,6 @@ public class PlantingManager : MonoBehaviour
     public Image planterIconC;
     public Sprite planterIconFree;
 
-    public WhichPlanter activePlanter;
     public bool readyToPlant;
     public int unlockedPlanters;
     private void Awake()
@@ -34,7 +35,7 @@ public class PlantingManager : MonoBehaviour
 
     private void OnEnable()
     {
-        unlockedPlanters = Player.GetCount("SCR004", name);
+        unlockedPlanters = Player.GetCount(StaticTags.UnlockedPlanters, name);
 
         planterFrame.SetActive(false);
         readyToPlant = false;
@@ -81,31 +82,29 @@ public class PlantingManager : MonoBehaviour
 
     private void UpdatePlanterIcons()
     {
-        if (dataManager.planterIsActiveA)
+        if (gardenManager.plantersChecked && gardenManager.planterPackages != null)
         {
-            planterIconA.sprite = Items.all.FirstOrDefault(x => x.objectID == dataManager.seedA).sprite;
-        }
-        else
-        {
-            planterIconA.sprite = planterIconFree;
-        }
-        if (dataManager.planterIsActiveB)
-        {
-            planterIconB.sprite = Items.all.FirstOrDefault(x => x.objectID == dataManager.seedB).sprite;
-        }
-        else
-        {
-            planterIconB.sprite = planterIconFree;
-        }
-        if (dataManager.planterIsActiveC)
-        {
-            planterIconC.sprite = Items.all.FirstOrDefault(x => x.objectID == dataManager.seedC).sprite;
-        }
-        else
-        {
-            planterIconC.sprite = planterIconFree;
+            foreach (var planter in gardenManager.planterPackages)
+            {
+                if (planter.planterData.isActive)
+                {
+                    if (planter.planterData.planterID == "planterA")
+                    {
+                        planterIconA.sprite = Items.all.FirstOrDefault(x => x.objectID == planter.planterData.seed.objectID).sprite;
+                    }
+                    else if (planter.planterData.planterID == "planterB")
+                    {
+                        planterIconB.sprite = Items.all.FirstOrDefault(x => x.objectID == planter.planterData.seed.objectID).sprite;
+                    }
+                    else if (planter.planterData.planterID == "planterC")
+                    {
+                        planterIconC.sprite = Items.all.FirstOrDefault(x => x.objectID == planter.planterData.seed.objectID).sprite;
+                    }
+                }
+            }
         }
     }
+
     private void PrintSeeds()
     {
         List<Item> seedStock = new();
@@ -135,13 +134,27 @@ public class PlantingManager : MonoBehaviour
 
     private void DynamicPlanterSelection()
     {
-        if (!dataManager.planterIsActiveA)
-            MouseDownSelectPlanterA();
-        else if (!dataManager.planterIsActiveB)
-            MouseDownSelectPlanterB();
-        else if (!dataManager.planterIsActiveC)
-            MouseDownSelectPlanterC();
+
+        foreach (var planter in gardenManager.planterPackages)
+        {
+            if (!planter.planterData.isActive)
+            {
+                if (planter.planterData.planterID == "planterA")
+                {
+                    MouseDownSelectPlanterA();
+                }
+                else if (planter.planterData.planterID == "planterB")
+                {
+                    MouseDownSelectPlanterB();
+                }
+                else if (planter.planterData.planterID == "planterC")
+                {
+                    MouseDownSelectPlanterC();
+                }
+            }
+        }
     }
+
     private void OnDisable()
     {
         readyToPlant = false;
@@ -188,21 +201,21 @@ public class PlantingManager : MonoBehaviour
     //FOR SELECTING PLANTER IN THE MENU. CONSOLIDATE INTO ONE METHOD LATER, BUT IT WORKS FOR NOW
     public void MouseDownSelectPlanterA()
     {
-        activePlanter = WhichPlanter.PlanterA;
+        activePlanter = dataManager.planters.FirstOrDefault(p => p.planterID == "planterA");
         planterFrame.transform.SetParent(planterA.transform);
         planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
         planterFrame.SetActive(true);
     }
     public void MouseDownSelectPlanterB()
     {
-        activePlanter = WhichPlanter.PlanterB;
+        activePlanter = dataManager.planters.FirstOrDefault(p => p.planterID == "planterB");
         planterFrame.transform.SetParent(planterB.transform);
         planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
         planterFrame.SetActive(true);
     }
     public void MouseDownSelectPlanterC()
     {
-        activePlanter = WhichPlanter.PlanterC;
+        activePlanter = dataManager.planters.FirstOrDefault(p => p.planterID == "planterC");
         planterFrame.transform.SetParent(planterC.transform);
         planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
         planterFrame.SetActive(true);
@@ -214,35 +227,16 @@ public class PlantingManager : MonoBehaviour
         {
             if (Player.GetCount(seedContainer.selectedItem.objectID, name) > 0)
             {
-                //PLANTER A
-                if (activePlanter == WhichPlanter.PlanterA)
+                if (activePlanter != null)
                 {
-                    if (!dataManager.planterIsActiveA && !string.IsNullOrEmpty(seedContainer.selectedItem.objectID))
+                    if (!activePlanter.isActive && !string.IsNullOrEmpty(seedContainer.selectedItem.objectID))
                     {
-                        StorePlanterData(ref dataManager.seedA, ref dataManager.seedHealthA, ref dataManager.planterIsActiveA);
+                        StorePlanterData(activePlanter);
                     }
                     else
-                        Debug.Log("This planter is occupied."); //add option to remove plant?
-                }
-                //PLANTER B
-                if (activePlanter == WhichPlanter.PlanterB)
-                {
-                    if (!dataManager.planterIsActiveB && !string.IsNullOrEmpty(seedContainer.selectedItem.objectID))
                     {
-                        StorePlanterData(ref dataManager.seedB, ref dataManager.seedHealthB, ref dataManager.planterIsActiveB);
+                        LogAlert.QueueTextAlert("This planter is occupied.");
                     }
-                    else
-                        Debug.Log("This planter is occupied."); //add option to remove plant?
-                }
-                //PLANTER C
-                if (activePlanter == WhichPlanter.PlanterC)
-                {
-                    if (!dataManager.planterIsActiveC && !string.IsNullOrEmpty(seedContainer.selectedItem.objectID))
-                    {
-                        StorePlanterData(ref dataManager.seedC, ref dataManager.seedHealthC, ref dataManager.planterIsActiveC);
-                    }
-                    else
-                        Debug.Log("This planter is occupied."); //add option to remove plant?
                 }
             }
             else
@@ -252,21 +246,31 @@ public class PlantingManager : MonoBehaviour
         }
     }
 
-    public void StorePlanterData(ref string storedSeed, ref int storedHealth, ref bool planterIsActive)
+    public void StorePlanterData(PlanterData planterData)
     {
         if (seedContainer.selectedItem != null)
         {
             Player.Remove(seedContainer.selectedItem.objectID);
 
-            storedSeed = seedContainer.selectedItem.objectID;
-            storedHealth = seedContainer.selectedItem.health;
-            planterIsActive = true;
+            planterData.seed = Items.FindByID(seedContainer.selectedItem.objectID);
+            planterData.seedHealth = seedContainer.selectedItem.health;
+            planterData.isActive= true;
 
-            if (dataManager.planterIsActiveA && dataManager.planterIsActiveB && dataManager.planterIsActiveC)
+            bool isAnyPlanterFree = false;
+
+            foreach (var planter in dataManager.planters)
             {
-                gameObject.SetActive(false); //Close planting manager if all planters are occupied
+                if (!planter.isActive)
+                {
+                    isAnyPlanterFree = true;
+                    break;
+                }
             }
 
+            if (!isAnyPlanterFree)
+            {
+                gameObject.SetActive(false);
+            }
 
             if (unlockedPlanters >= 3)
             {
