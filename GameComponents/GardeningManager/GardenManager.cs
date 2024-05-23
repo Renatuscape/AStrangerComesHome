@@ -197,7 +197,7 @@ public class GardenManager : MonoBehaviour
 
         if (progress <= maxGrowth)
         {
-            float growth = 1 + (gardening * 0.2f) + (creation * 0.2f) + (goetia * 0.2f) - planter.planterData.weeds;
+            float growth = 2 + (gardening * 0.2f) + (creation * 0.1f) + (goetia * 0.1f) - (planter.planterData.weeds * 0.5f);
 
             if (growth < 0.3f)
             {
