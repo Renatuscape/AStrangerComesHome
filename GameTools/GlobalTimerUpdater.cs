@@ -5,23 +5,24 @@ using UnityEngine;
 public class GlobalTimerUpdater : MonoBehaviour
 {
     public NightSkyController nightSkyController;
+    public GardenManager gardenManager;
 
     public float animationTimer;
     float animationTick = 0.15f;
-    public float secondTimer;
-    float secondTick = 1;
+    public float threeSecondTimer;
+    float threeSecondTick = 3;
 
     private void Start()
     {
         animationTimer = animationTick;
-        secondTimer = secondTick;
+        threeSecondTimer = threeSecondTick;
     }
     void Update()
     {
         if (TransientDataScript.IsTimeFlowing())
         {
             animationTimer += Time.deltaTime;
-            secondTimer += Time.deltaTime;
+            threeSecondTimer += Time.deltaTime;
 
             if (animationTimer >= animationTick)
             {
@@ -29,10 +30,10 @@ public class GlobalTimerUpdater : MonoBehaviour
                 PushAnimation();
             }
 
-            if (secondTimer >= secondTick)
+            if (threeSecondTimer >= threeSecondTick)
             {
-                secondTimer = 0;
-                PushSecond();
+                threeSecondTimer = 0;
+                PushThreeSeconds();
             }
 
             PushEveryFrame();
@@ -41,15 +42,15 @@ public class GlobalTimerUpdater : MonoBehaviour
 
     void PushEveryFrame()
     {
-        nightSkyController.StarFlicker();
+        nightSkyController.GlobalPushStarFlicker();
     }
     void PushAnimation()
     {
-        nightSkyController.UpdateNightSky();
+        nightSkyController.GlobalPushRefreshSky();
     }
 
-    void PushSecond()
+    void PushThreeSeconds()
     {
-
+        gardenManager.GlobalPushGrow();
     }
 }
