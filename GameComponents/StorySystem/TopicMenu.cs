@@ -98,17 +98,20 @@ public class TopicMenu : MonoBehaviour
 
         if (questList.Count > 1 || (!allowAutoPlay && questList.Count > 0))
         {
-            topicContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-
             foreach (Quest quest in questList)
             {
+                topicContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+                topicContainer.GetComponent<ContentSizeFitter>().enabled = false;
+                Canvas.ForceUpdateCanvases();
+
                 PrintTopicButton(quest);
+
+                topicContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+                topicContainer.GetComponent<ContentSizeFitter>().enabled = true;
+                Canvas.ForceUpdateCanvases();
             }
 
-            topicContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-            Canvas.ForceUpdateCanvases();
-            topicContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-            topicContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(topicContainer.GetComponent<RectTransform>());
             Canvas.ForceUpdateCanvases();
         }
         else if (questList.Count == 1)
