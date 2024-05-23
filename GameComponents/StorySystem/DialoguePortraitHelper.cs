@@ -36,19 +36,24 @@ public class DialoguePortraitHelper : MonoBehaviour
         }
     }
 
+    public void CompleteAnimationsNow()
+    {
+        foreach (var transition in portraitTransitions)
+        {
+            transition.portrait.transform.localPosition = new Vector3(transition.targetX, transition.portrait.transform.localPosition.y, 0);
+            completedAnimations.Add(transition);
+        }
+
+        completeAllTransitionsNow = false;
+    }
+
     public void Animate()
     {
         if (isAnimating && portraitTransitions.Count > 0)
         {
             if (completeAllTransitionsNow)
             {
-                foreach (var transition in portraitTransitions)
-                {
-                    transition.portrait.transform.localPosition = new Vector3(transition.targetX, transition.portrait.transform.localPosition.y, 0);
-                    completedAnimations.Add(transition);
-                }
-
-                completeAllTransitionsNow = false;
+                CompleteAnimationsNow();
             }
             else
             {
