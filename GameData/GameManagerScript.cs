@@ -167,24 +167,23 @@ public class GameManagerScript : MonoBehaviour
         dataManager.mapPositionY = 0f;
         dataManager.passengerIsActiveA = false;
         dataManager.passengerIsActiveB = false;
-        dataManager.planterIsActiveA = false;
-        dataManager.planterIsActiveB = false;
-        dataManager.planterIsActiveC = false;
-        dataManager.alchemySynthesisers.Clear();
-        dataManager.unlockedNames.Clear();
-        dataManager.giftedThisWeek.Clear();
         dataManager.postLocationID = "R0-LOCC0-CITY";
 
         Player.inventoryList.Clear();
         dataManager.questProgression.Clear();
         dataManager.inventoryList.Clear();
+        dataManager.planters.Clear();
+        dataManager.alchemySynthesisers.Clear();
+        dataManager.unlockedNames.Clear();
+        dataManager.giftedThisWeek.Clear();
+
         dataManager.inventoryList = Player.inventoryList;
         dataManager.questProgression = Player.questProgression;
 
 
         //Add skills to the player inventory from the start
-        Player.Add("ATT000", 10, true); // Wandering
-        Player.Add("ATT001", 8, true); // Fate
+        Player.Add(StaticTags.Wandering, 10, true); // Wandering
+        Player.Add(StaticTags.Fate, 8, true); // Fate
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
