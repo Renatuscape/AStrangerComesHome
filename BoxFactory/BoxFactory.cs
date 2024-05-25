@@ -56,6 +56,7 @@ public class BoxFactory : MonoBehaviour
 
         return newButton;
     }
+
     GameObject InstantiateBodyText(string inputText, float width)
     {
         GameObject newBodyText = InstantiateButton(inputText, width, TextAlignmentOptions.Left);
@@ -82,7 +83,7 @@ public class BoxFactory : MonoBehaviour
     GameObject InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14, bool addUiDataScript = false)
     {
         GameObject newIcon = Instantiate(iconPrefab);
-
+        TextMeshProUGUI text;
 
         Image[] images = newIcon.transform.Find("ImageContainer").GetComponentsInChildren<Image>();
 
@@ -93,25 +94,45 @@ public class BoxFactory : MonoBehaviour
 
         var tag = newIcon.transform.Find("Tag").gameObject;
 
+        if (addUiDataScript || displayInventoryAmount)
+        {
+            text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
+
+            if (displayInventoryAmount)
+            {
+
+                text.text = $"{Player.GetCount(item.objectID, name)}";
+                text.fontSize = fontSize;
+            }
+
+            if (addUiDataScript)
+            {
+                var uiData = newIcon.AddComponent<ItemUiData>();
+                uiData.item = item;
+                uiData.numberMesh = text;
+
+                foreach (Image image in images)
+                {
+                    if (image.name.ToLower().Contains("shadow"))
+                    {
+                        uiData.itemShadow = image;
+                    }
+                    else
+                    {
+                        uiData.itemSprite = image;
+                    }
+                }
+            }
+        }
+
         if (!displayInventoryAmount || item.rarity == ItemRarity.Unique)
         {
             tag.SetActive(false);
-        }
-        else
-        {
-            TextMeshProUGUI text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
-            text.text = $"{Player.GetCount(item.objectID, name)}";
-            text.fontSize = fontSize;
         }
 
         RectTransform transform = newIcon.GetComponent<RectTransform>();
         transform.sizeDelta = new Vector2(size, size);
 
-        if (addUiDataScript)
-        {
-            var uiData = newIcon.AddComponent<ItemUiData>();
-            uiData.item = item;
-        }
 
         return newIcon;
 
