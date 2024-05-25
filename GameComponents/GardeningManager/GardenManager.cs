@@ -40,6 +40,8 @@ public class GardenManager : MonoBehaviour
 
     public List<Sprite> planterSprites;
 
+    public float growth = 1.5f;
+
     private void Awake()
     {
         CheckPlanters();
@@ -188,6 +190,17 @@ public class GardenManager : MonoBehaviour
         }
     }
 
+    float CalculateGrowth(PlanterData planter)
+    {
+        float amount = 1.5f + (gardening * 0.2f) + (creation * 0.2f) + (goetia * 0.2f);
+
+        if (planter.weeds > 0)
+        {
+            amount = amount / planter.weeds;
+        }
+
+        return amount;
+    }
     void UpdatePlanterData(GardeningPlanterPackage planter)
     {
         var seed = planter.planterData.seed;
@@ -197,12 +210,7 @@ public class GardenManager : MonoBehaviour
 
         if (progress <= maxGrowth)
         {
-            float growth = 2 + (gardening * 0.2f) + (creation * 0.1f) + (goetia * 0.1f) - (planter.planterData.weeds * 0.5f);
-
-            if (growth < 0.3f)
-            {
-                growth = 0.3f;
-            }
+            growth = CalculateGrowth(planter.planterData);
 
             progress += growth;
 
@@ -255,23 +263,75 @@ public class GardenManager : MonoBehaviour
         //IF THERE IS A SEED AND THE PLANTER IS ACTIVE
         else if (seed != null && planterData.isActive)
         {
-            var maxGrowth = 100 * seed.health * seed.yield;
-            var outputPlant = seed.GetOutput();
-            var deathLevel = 0 - Mathf.Floor(goetia * 0.2f);
+            int maxGrowth = 100 * seed.health * seed.yield;
+            Item outputPlant = seed.GetOutput();
+            float deathLevel = 0;
 
+            if (seed.health > 1)
+            {
+                deathLevel -= Mathf.Floor(goetia * 0.2f);
+            }
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
             if (planterData.progress < maxGrowth && planterData.isActive)
             {
                 Debug.Log($"{seed.name} is growing. {planterData.progress}/{maxGrowth}");
 
-                string growthRate = "decent";
-                if (gardening < 3)
-                    growthRate = "normal";
-                else if (gardening > 6)
-                    growthRate = "great";
+                growth = CalculateGrowth(planterData);
+
+                string growthRate = "a poor";
+
+                if (growth >= 7.3)
+                {
+                    growthRate = "a brilliant";
+                }
+                else if (growth >= 6)
+                {
+                    growthRate = "a fantastic";
+                }
+                else if (growth >= 4)
+                {
+                    growthRate = "a great";
+                }
+                else if (growth >= 2.5)
+                {
+                    growthRate = "a good";
+                }
+                else if (growth >= 1.5)
+                {
+                    growthRate = "an average";
+                }
+
+                string growthState = "was just planted.";
+
+                if (planterData.progress > 0)
+                {
+                    float growthPercentage = planterData.progress / maxGrowth * 100;
+
+                    if (growthPercentage >= 90)
+                    {
+                        growthState = "is almost ready!";
+                    }
+                    else if (growthPercentage >= 70)
+                    {
+                        growthState = "needs a little more time.";
+                    }
+                    else if (growthPercentage >= 50)
+                    {
+                        growthState = "is making good progress.";
+                    }
+                    else if (growthPercentage >= 25)
+                    {
+                        growthState = "is showing promise.";
+                    }
+                    else if (growthPercentage >= 1)
+                    {
+                        growthState = "has started sprouting.";
+                    }
+                }
+
 
                 // Display info for the plant currently growing in this planter
-                LogAlert.QueueTextAlert($"This {outputPlant.name} is growing at a {growthRate} pace.");
+                LogAlert.QueueTextAlert($"This {outputPlant.name} {growthState} It is growing at {growthRate} pace.");
             }
 
             //IF THE PLANTER IS READY TO BE HARVESTED
@@ -331,6 +391,7 @@ public class GardenManager : MonoBehaviour
                     if (planterData.seedHealth > deathLevel)
                     {
                         planterData.progress = maxGrowth / 3;
+                        UpdatePlanterData(package);
                     }
 
                     else if (planterData.seedHealth <= deathLevel)
