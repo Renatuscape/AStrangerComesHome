@@ -35,6 +35,9 @@ public class AutoMap : MonoBehaviour
     public int mapStartY;
     public int mapEndY;
 
+    float tick = 0.0001f;
+    float timer;
+
     private void Start()
     {
         mapBuilder = new(this, mapContainer);
@@ -64,13 +67,12 @@ public class AutoMap : MonoBehaviour
 
     private void Update()
     {
-        //TRAVEL LOGIC
-        if (TransientDataScript.GameState == GameState.MapMenu || TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.JournalMenu)
+
+        timer += Time.deltaTime;
+        if (timer >= tick)
         {
-            if (transientData.engineState != EngineState.Off && playerToken.transform.localPosition != mapMarker.transform.localPosition && travelManager is not null)
-            {
-                travelManager.Travel();
-            }
+            timer = 0;
+            Tick();
         }
 
         // ENSURE DISABLE
@@ -79,6 +81,17 @@ public class AutoMap : MonoBehaviour
             if (transform.position != disabledPosition)
             {
                 transform.position = disabledPosition;
+            }
+        }
+    }
+
+    void Tick()
+    {
+        if (TransientDataScript.GameState == GameState.MapMenu || TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.JournalMenu)
+        {
+            if (transientData.engineState != EngineState.Off && playerToken.transform.localPosition != mapMarker.transform.localPosition && travelManager is not null)
+            {
+                travelManager.Travel();
             }
         }
     }
