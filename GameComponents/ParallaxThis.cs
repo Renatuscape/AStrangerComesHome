@@ -13,6 +13,9 @@ public class ParallaxThis : MonoBehaviour
 
     private float parallaxEffect;
 
+    float tick = 0.005f;
+    float timer;
+
     private void Awake()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
@@ -25,12 +28,22 @@ public class ParallaxThis : MonoBehaviour
         spriteSize = spriteObject.GetComponent<SpriteRenderer>().bounds.size;
     }
 
-    void LateUpdate()
+    void Update()
     {
+        timer += Time.deltaTime;
 
+        if (timer >= tick)
+        {
+            Tick();
+            timer = 0;
+        }
+    }
+
+    void Tick()
+    {
         parallaxEffect = transientData.currentSpeed * parallaxMultiplier;
 
-        transform.position = new Vector2((transform.position.x + passiveSpeed + parallaxEffect) * Time.timeScale, transform.position.y);
+        transform.position = new Vector2((transform.position.x + passiveSpeed + parallaxEffect), transform.position.y);
 
         if (transform.position.x <= (0 - spriteSize.x) || transform.position.x >= spriteSize.x)
         {
