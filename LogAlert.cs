@@ -147,19 +147,19 @@ public class LogAlert : MonoBehaviour
             }
             else if (amount == 2)
             {
-                QueueTextAlert($"{character.NamePlate()} likes that.");
+                QueueTextAlert($"{character.NamePlate()}\nlikes that a lot.");
             }
             else if (amount == 3)
             {
-                QueueTextAlert($"{character.NamePlate()} appreciates that.");
+                QueueTextAlert($"{character.NamePlate()} is delighted.");
             }
             else if (amount == 4)
             {
-                QueueTextAlert($"{character.NamePlate()} loves that.");
+                QueueTextAlert($"{character.NamePlate()} loves that!");
             }
             else if (amount >= 5)
             {
-                QueueTextAlert($"{character.NamePlate()} is ecstatic.");
+                QueueTextAlert($"{character.NamePlate()} is ecstatic!");
             }
         }
     }
