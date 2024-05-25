@@ -19,8 +19,11 @@ public class CollectionsBooks : MonoBehaviour
     public void Initialise(bool forLetters)
     {
         reader.gameObject.SetActive(false);
-        bookDetails.SetActive(false);
+        bookDetails.SetActive(true);
         gameObject.SetActive(true);
+
+        detailTitle.text = "";
+        detailDescription.text = "Double-click a book to see its content, if it has anything of interest.";
 
         if (prefabs.Count > 0)
         {
@@ -31,7 +34,6 @@ public class CollectionsBooks : MonoBehaviour
             prefabs.Clear();
 
             reader.gameObject.SetActive(false);
-            bookDetails.SetActive(false);
         }
 
         var bookList = Books.GetBookItems();
