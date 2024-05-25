@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UIElements;
 
 public class AutoMapTravelManager
 {
@@ -20,7 +19,7 @@ public class AutoMapTravelManager
         if (MapBoundsCheck())
         {
             // ADJUST PLAYER SPEED ON MAP
-            playerTokenSpeed = autoMap.transientData.currentSpeed * 0.0006f;
+            playerTokenSpeed = autoMap.transientData.currentSpeed * 0.001f;
 
             // RETRIEVE POSITION FROM DATAMANAGER
             var tempPosition = new Vector3(autoMap.dataManager.mapPositionX, autoMap.dataManager.mapPositionY, playerToken.transform.localPosition.z);
