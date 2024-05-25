@@ -204,7 +204,20 @@ public class ParallaxLayer : MonoBehaviour
 
     public bool hasNoMaxOffset;
 
+    float tick = 0.005f;
+    float timer = 0;
+
     private void Update()
+    {
+        timer += Time.deltaTime;
+        if (timer >= tick)
+        {
+            timer = 0;
+            Tick();
+        }
+    }
+
+    void Tick()
     {
         var newX = (parallaxFacade.transform.position.x * offsetMultiplier) + originalX;
 
