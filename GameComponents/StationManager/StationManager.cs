@@ -20,6 +20,18 @@ public class StationManager : MonoBehaviour
 
     void Update()
     {
+        if ( TransientDataScript.IsTimeFlowing())
+        {
+            CheckIfReadyToSpawn();
+
+            CheckIfReadyToRemove();
+
+            CheckIfOutOfBounds();
+        }
+    }
+
+    void CheckIfReadyToSpawn()
+    {
         if (transientData.currentLocation != null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
         {
             if (spawnedStation == null)
@@ -34,7 +46,10 @@ public class StationManager : MonoBehaviour
                 }
             }
         }
+    }
 
+    void CheckIfReadyToRemove()
+    {
         if (spawnedStation != null && spawnedStationScript != null && transientData.currentLocation == null)
         {
             if (spawnedStation.transform.position.x < -20 || spawnedStation.transform.position.x > 20)
@@ -49,18 +64,32 @@ public class StationManager : MonoBehaviour
                 }
             }
         }
-        else if (spawnedStation != null && spawnedStationScript != null && transientData.currentLocation != null)
+
+        if (spawnedStation != null && transientData.currentLocation != null && !spawnedStation.name.Contains(transientData.currentLocation.objectID))
+        {
+            transientData.activePrefabs.Remove(spawnedStation);
+
+            if (spawnedStationScript != null && !spawnedStationScript.readyToDestroy)
+            {
+                spawnedStationScript.RemoveStation();
+                spawnedStationScript = null;
+                spawnedStation = null;
+            }
+        }
+    }
+
+    void CheckIfOutOfBounds()
+    {
+        if (spawnedStation != null && spawnedStationScript != null && transientData.currentLocation != null)
         {
             if (spawnedStation.transform.position.x < -30 && !spawnedStationScript.movingRight)
             {
                 spawnedStationScript.MoveRight();
-                // spawnedStation.transform.position = new Vector3(25, 0, 0);
             }
 
             else if (spawnedStation.transform.position.x > 30 && !spawnedStationScript.movingLeft)
             {
                 spawnedStationScript.MoveLeft();
-                //spawnedStation.transform.position = new Vector3(-25, 0, 0);
             }
         }
     }
@@ -80,7 +109,7 @@ public class StationManager : MonoBehaviour
         }
 
         spawnedStation = Instantiate(foundStation);
-        spawnedStation.name = "spawnedStation";
+        spawnedStation.name = "spawnedStation-" + TransientDataScript.GetCurrentLocation().objectID;
         transientData.activePrefabs.Add(spawnedStation);
         spawnedStationScript = spawnedStation.GetComponent<StationParallax>();
     }
