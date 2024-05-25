@@ -4,18 +4,12 @@ using UnityEngine;
 
 public class WeedsPrefab : MonoBehaviour
 {
-    public Item weedsObject;
     public PlanterScript planterParent;
-    void Start()
-    {
-        weedsObject = Items.FindByID(StaticTags.WeedItem);
-    }
 
     private void OnMouseDown()
     {
         if (TransientDataScript.CameraView == CameraView.Garden)
         {
-            Player.Add(weedsObject.objectID);
 
             planterParent.planterData.weeds--;
             Destroy(gameObject);
@@ -23,7 +17,11 @@ public class WeedsPrefab : MonoBehaviour
 
             if (rollForBonus > 85)
             {
-                Player.Add(weedsObject.objectID, 1);
+                Player.Add(StaticTags.WeedItem, 2);
+            }
+            else
+            {
+                Player.Add(StaticTags.WeedItem);
             }
         }
     }
