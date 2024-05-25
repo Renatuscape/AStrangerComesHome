@@ -204,6 +204,19 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            screenSetting++;
+            Debug.Log("Change resolution up registered.");
+            SetScreenResolution();
+        }
+        else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            screenSetting--;
+            Debug.Log("Change resolution down registered.");
+            SetScreenResolution();
+        }
     }
 
     void ToggleMap(bool enable)
@@ -230,5 +243,38 @@ public class GameController : MonoBehaviour
         {
             gm.cameraComponent.CameraNormal();
         }
+    }
+
+    int screenSetting = 2;
+    void SetScreenResolution()
+    {
+        int max = 3;
+        if (screenSetting < 0)
+        {
+            screenSetting = max;
+        }
+        else if (screenSetting > max)
+        {
+            screenSetting = 0;
+        }
+
+        if (screenSetting == max)
+        {
+            Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
+        }
+        else if (screenSetting == 2)
+        {
+            Screen.SetResolution(1920, 1080, false);
+        }
+        else if (screenSetting == 1)
+        {
+            Screen.SetResolution(1440, 810, false);
+        }
+        else if (screenSetting == 0)
+        {
+            Screen.SetResolution(960, 540, false);
+        }
+
+        Debug.Log(Screen.currentResolution);
     }
 }
