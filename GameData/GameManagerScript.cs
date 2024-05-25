@@ -86,7 +86,6 @@ public class GameManagerScript : MonoBehaviour
 
     async Task InitiateJsonManagers()
     {
-        Screen.SetResolution(1920, 1080, false);
 
         await spriteFactory.WaitForBuildCompletionAsync();
         Debug.Log("Sprite Factory finished building.");
