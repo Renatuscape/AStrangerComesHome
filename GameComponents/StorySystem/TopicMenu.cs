@@ -155,7 +155,7 @@ public class TopicMenu : MonoBehaviour
 
                 button.transform.SetParent(topicContainer.transform, false);
                 var text = button.gameObject.transform.GetChild(0);
-                text.GetComponent<TextMeshProUGUI>().text = topicName;
+                text.GetComponent<TextMeshProUGUI>().text = DialogueTagParser.ParseText(topicName);
                 buttonList.Add(button);
 
                 button.GetComponent<Button>().onClick.AddListener(() => StartDialogue(quest, false));
