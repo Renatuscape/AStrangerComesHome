@@ -12,7 +12,9 @@ public class JournalStatisticsPage : MonoBehaviour
     public GameObject personaliaContainer;
     public TextMeshProUGUI namePlate;
     public TextMeshProUGUI licenseInfo;
-
+    public GameObject upgradeContainer;
+    public GameObject otherContainer;
+    public List<GameObject> prefabs;
     void OnEnable()
     {
         playerIcon.playerSprite = playerSprite;
