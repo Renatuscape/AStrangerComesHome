@@ -16,6 +16,9 @@ public class StationParallax : MonoBehaviour
 
     public bool movingLeft;
     public bool movingRight;
+
+    float tick = 0.005f;
+    float timer;
     private void Awake()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
@@ -25,8 +28,17 @@ public class StationParallax : MonoBehaviour
         totalClusters = clusters.Count;
     }
 
-    // Update is called once per frame
     void Update()
+    {
+        timer += Time.deltaTime;
+        if (timer >= tick)
+        {
+            timer = 0;
+            Tick();
+        }
+    }
+
+    void Tick()
     {
         var parallaxEffect = transientData.currentSpeed * parallaxMultiplier;
 
