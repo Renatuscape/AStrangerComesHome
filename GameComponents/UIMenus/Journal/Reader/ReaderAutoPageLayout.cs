@@ -15,6 +15,8 @@ public class ReaderAutoPageLayout : MonoBehaviour
 
     public TextMeshProUGUI pageNumberL;
     public TextMeshProUGUI pageNumberR;
+    public GameObject buttonForward;
+    public GameObject buttonBack;
 
     int pageIndex;
     Book prevBook;
@@ -44,8 +46,18 @@ public class ReaderAutoPageLayout : MonoBehaviour
     internal void PrintAutoPage()
     {
         reader.CleanReader();
-        pageNumberL.text = $"{pageIndex + 1}";
-        pageNumberR.text = $"{pageIndex + 2}";
+        if (autoPageinator.pages.Count > 2)
+        {
+            pageNumberL.text = $"{pageIndex + 1}";
+            pageNumberR.text = $"{pageIndex + 2}";
+            buttonForward.gameObject.SetActive(true);
+            buttonBack.gameObject.SetActive(true);
+        }
+        else
+        {
+            buttonForward.gameObject.SetActive(false);
+            buttonBack.gameObject.SetActive(false);
+        }
 
         if (autoPageinator.pages != null && autoPageinator.pages.Count > 0)
         {

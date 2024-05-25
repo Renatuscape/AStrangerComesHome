@@ -30,19 +30,31 @@ public class ReaderVerticalLayout : MonoBehaviour
             prevBook = book;
         }
 
-        pages = book.pages;
-        PrintPage();
+        if (pages != null && pages.Count > 0)
+        {
+            pages = book.pages;
+            PrintPage();
+        }
     }
 
     void PrintPage()
     {
         reader.CleanReader();
-        pageNumberL.text = $"{pageIndex + 1}";
-        pageNumberR.text = $"{pageIndex + 2}";
 
-        if (pages != null && pages.Count > 0)
+        if (pages.Count > 2)
         {
-            foreach (var text in pages[pageIndex].text)
+            pageNumberL.text = $"{pageIndex + 1}";
+            pageNumberR.text = $"{pageIndex + 2}";
+            pageNumberL.gameObject.SetActive(true);
+            pageNumberR.gameObject.SetActive(true);
+        }
+        else
+        {
+            pageNumberL.gameObject.SetActive(false);
+            pageNumberR.gameObject.SetActive(false);
+        }
+
+        foreach (var text in pages[pageIndex].text)
             {
                 var prefab = reader.PrintLine(text, pageA);
             }
@@ -57,7 +69,6 @@ public class ReaderVerticalLayout : MonoBehaviour
                     }
                 }
             }
-        }
     }
 
     public void BtnForward()
