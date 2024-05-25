@@ -295,7 +295,7 @@ public static class Player
     {
         Debug.Log("Checking timers.");
         List<IdIntPair> timersToRemove = new();
-        foreach (var entry in inventoryList)
+        foreach (var entry in questProgression)
         {
             if (entry.objectID.Contains("-SetTIMER"))
             {
@@ -339,7 +339,7 @@ public static class Player
 
         foreach (var entry in timersToRemove)
         {
-            inventoryList.Remove(entry);
+            questProgression.Remove(entry);
         }
     }
 
