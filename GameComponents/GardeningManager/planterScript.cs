@@ -45,16 +45,20 @@ public class PlanterScript : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (!foundPlanterData)
+        if (TransientDataScript.IsTimeFlowing())
         {
-            FindPlanterData();
+            if (!foundPlanterData)
+            {
+                FindPlanterData();
+            }
+
+            if (foundPlanterData && TransientDataScript.CameraView == CameraView.Garden)
+            {
+                Debug.Log($"{planterData.planterID} click registered.");
+                gardenManager.ClickPlanter(planterData);
+            }
         }
 
-        if (foundPlanterData && TransientDataScript.IsTimeFlowing() && TransientDataScript.CameraView == CameraView.Garden)
-        {
-            Debug.Log($"{planterData.planterID} click registered.");
-            gardenManager.ClickPlanter(planterData);
-        }
     }
 
     private void Update()
@@ -71,23 +75,9 @@ public class PlanterScript : MonoBehaviour
                     WeedTick();
             }
 
-            if (TransientDataScript.GameState == GameState.Overworld)
+            if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Garden)
             {
-                if (TransientDataScript.CameraView == CameraView.Garden)
-                {
-                    if (planterData.weeds == 0)
-                    {
-                        boxCollider.enabled = true;
-                    }
-                    else
-                    {
-                        boxCollider.enabled = false;
-                    }
-                }
-                else
-                {
-                    boxCollider.enabled = false;
-                }
+                boxCollider.enabled = true;
             }
             else
             {
@@ -108,7 +98,7 @@ public class PlanterScript : MonoBehaviour
             weed.GetComponent<WeedsPrefab>().planterParent = this;
             weed.name = "Weeds";
             weed.transform.parent = gameObject.transform;
-            weed.transform.localPosition = new Vector3(rand, -0.12f, 0);
+            weed.transform.localPosition = new Vector3(rand, -0.12f, -1);
 
             var weedFlip = Random.Range(0, 100);
 
