@@ -205,13 +205,12 @@ public class PageinatedContainer : MonoBehaviour
 
         foreach (Item item in page.pageContent)
         {
-            var prefab = BoxFactory.CreateItemIcon(item, showInventoryCount, 64, 18, true);
+            var uiScript = BoxFactory.CreateItemIcon(item, showInventoryCount, 64, 18);
+            var prefab = uiScript.gameObject;
             prefab.name = item.name;
             prefab.transform.SetParent(stockContainer.transform, false);
             prefabMasterList.Add(prefab);
             page.prefabs.Add(prefab);
-
-            var uiScript = prefab.GetComponent<ItemIconData>();
 
             if (useSelectorFrame)
             {
@@ -274,13 +273,15 @@ public class PageinatedContainer : MonoBehaviour
         }
     }
 
-    void ClearPrefabs()
+    public void ClearPrefabs()
     {
         // Debug.Log("Clear prefabs was called on pageinated container.");
         foreach (GameObject pref in prefabMasterList)
         {
-            Destroy(pref);
+            Destroy(pref.GetComponent<PageinatedSelectorFrame>());
+            pref.GetComponent<ItemIconData>().Return("PageinatedContainer on ClearPrefabs.");
         }
+
         prefabMasterList.Clear();
         containerPages.Clear();
     }

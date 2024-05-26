@@ -32,7 +32,7 @@ public class DraggableShopItem : MonoBehaviour, IBeginDragHandler, IEndDragHandl
     {
         if (!isDragging)
         {
-            Destroy(gameObject);
+            gameObject.GetComponent<ItemIconData>().Return("DraggableShopItem");
         }
 
         foreach (var image in images)
@@ -91,11 +91,8 @@ public class DraggableShopItem : MonoBehaviour, IBeginDragHandler, IEndDragHandl
         if (lastCollision != null && lastCollision.name.ToLower().Contains("register"))
         {
             shopItem.shopMenu.HandleTransaction(shopItem);
-            Destroy(gameObject);
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+
+        gameObject.GetComponent<ItemIconData>().Return("DraggableShopItem on EndDrag");
     }
 }

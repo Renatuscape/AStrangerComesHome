@@ -50,7 +50,7 @@ public class GiftMenu : MonoBehaviour
     {
         foreach (var giftItem in spawnedItems)
         {
-            Destroy(giftItem.gameObject);
+            giftItem.gameObject.GetComponent<ItemIconData>().Return("GiftMenu setup");
         }
 
         spawnedItems.Clear();
@@ -96,7 +96,7 @@ public class GiftMenu : MonoBehaviour
     {
         foreach (Item item in  availableInventory)
         {
-            var newItem = BoxFactory.CreateItemIcon(item, true, 64, 18);
+            var newItem = BoxFactory.CreateItemIcon(item, true, 64, 18).gameObject;
             newItem.transform.SetParent(inventoryContainer.transform, false);
 
             var giftItem = newItem.AddComponent<GiftItem>();
@@ -129,7 +129,8 @@ public class GiftMenu : MonoBehaviour
 
         foreach (Transform child in selectedGiftContainer.transform)
         {
-            Destroy(child.gameObject);
+            Destroy(child.gameObject.GetComponent<GiftItem>());
+            child.gameObject.GetComponent<ItemIconData>().Return("GiftMenu on SelectGift.");
         }
 
         var newChoice = BoxFactory.CreateItemIcon(item, false, 64);
@@ -221,6 +222,14 @@ public class GiftMenu : MonoBehaviour
 
     public void Close()
     {
+        foreach (var giftItem in spawnedItems)
+        {
+            giftItem.gameObject.GetComponent<ItemIconData>().Return("GiftMenu setup");
+        }
+
+        spawnedItems.Clear();
+        availableInventory.Clear();
+
         gameObject.SetActive(false);
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }

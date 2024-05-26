@@ -7,44 +7,78 @@ public class CollectionsTreasures : MonoBehaviour
 {
     public GameObject treasureContainer;
     public GameObject mysteryPrefab;
-    private void OnEnable()
+    public List<ItemIconData> itemIcons = new();
+    public List<GameObject> instantiatedMysteries = new();
+
+    private void Awake()
     {
         foreach (Transform child in treasureContainer.transform)
         {
             Destroy(child.gameObject);
         }
+    }
+    private void OnEnable()
+    {
+        CleanAndReturnPrefabs();
 
         foreach (Item item in Items.all)
         {
             if (item.type == ItemType.Treasure)
             {
 
+                var prefab = BoxFactory.CreateItemIcon(item, false, 64, 14);
+                prefab.transform.SetParent(treasureContainer.transform, false);
+                var iconData = prefab.GetComponent<ItemIconData>();
+
                 if (!Player.GetEntry(item.objectID, name, out var x))
                 {
-                    var prefab = BoxFactory.CreateItemIcon(item, false, 64, 14, false);
-                    prefab.transform.SetParent(treasureContainer.transform, false);
 
-                    Image[] images = prefab.transform.Find("ImageContainer").GetComponentsInChildren<Image>();
+                    iconData.itemSprite.color = Color.black;
+                    var mystery = Instantiate(mysteryPrefab);
+                    mystery.name = "mystery";
+                    mystery.transform.SetParent(iconData.itemSprite.gameObject.transform, false);
+                    instantiatedMysteries.Add(mystery);
 
-                    foreach (Image image in images)
-                    {
-                        if (!image.name.ToLower().Contains("shadow"))
-                        {
-                            image.color = Color.black;
-                            var mystery = Instantiate(mysteryPrefab);
-                            mystery.transform.SetParent(image.gameObject.transform, false);
-                        }
-                    }
+                    iconData.disableFloatText = true;
                 }
                 else
                 {
-                    var prefab = BoxFactory.CreateItemIcon(item, false, 64, 14, true);
-                    prefab.transform.SetParent(treasureContainer.transform, false);
 
                     var script = prefab.GetComponent<ItemIconData>();
                     script.printRarity = true;
+                    iconData.disableFloatText = false;
                 }
+
+                itemIcons.Add(prefab);
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        CleanAndReturnPrefabs();
+    }
+
+    void CleanAndReturnPrefabs()
+    {
+        foreach (var itemIconData in itemIcons)
+        {
+            itemIconData.itemSprite.color = Color.white;
+            itemIconData.disableFloatText = false;
+
+            itemIconData.Return("CollectionsTreasures in onEnable");
+        }
+
+        itemIcons.Clear();
+
+        if (instantiatedMysteries.Count > 0)
+        {
+            for (int i = instantiatedMysteries.Count - 1; i >= 0; i--)
+            {
+                Destroy(instantiatedMysteries[i]);
+            }
+        }
+
+        instantiatedMysteries.Clear();
     }
 }

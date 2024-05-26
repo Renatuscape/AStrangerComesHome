@@ -64,17 +64,14 @@ public class AlchemyObject
 
     public void CreateInventoryPrefab()
     {
-        var prefab = BoxFactory.CreateItemIcon(itemEntry.item, true, 64, 18);
-        prefab.name = itemEntry.item.name;
-        prefab.transform.SetParent(inventoryContainer.transform, false);
-        prefab.AddComponent<AlchemyInventoryItem>();
-        var script = prefab.GetComponent<AlchemyInventoryItem>();
+        var itemIcon = BoxFactory.CreateItemIcon(itemEntry.item, true, 64, 18);
+        itemIcon.gameObject.name = itemEntry.item.name;
+        itemIcon.gameObject.transform.SetParent(inventoryContainer.transform, false);
+        var script = itemIcon.gameObject.AddComponent<AlchemyInventoryItem>();
         script.item = itemEntry.item;
         script.alchemyObject = this;
 
-        var tag = prefab.transform.Find("Tag").gameObject;
-
-        inventoryAmountText = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
+        inventoryAmountText = itemIcon.countText;
         UpdateNumbers();
 
         inventoryClass = script;
@@ -157,7 +154,7 @@ public class AlchemyObject
     public void ReturnToInventory(AlchemyDraggableItem draggable)
     {
         draggableObjects.Remove(draggable);
-        UnityEngine.Object.Destroy(draggable.gameObject);
+        draggable.gameObject.GetComponent<ItemIconData>().Return("Alchemy object on return to inventory.");
 
         currentlyInBag++;
         currentlyOnTable--;
@@ -193,7 +190,7 @@ public class AlchemyObject
         // ADD CHECKS FOR THE AMOUNT OF STUFF ALREADY SPAWNED
 
         var item = itemEntry.item;
-        var prefab = BoxFactory.CreateItemIcon(item, false, 96);
+        var prefab = BoxFactory.CreateItemIcon(item, false, 96).gameObject;
         prefab.transform.SetParent(dragParent.transform, false);
         prefab.name = item.name;
         prefab.AddComponent<AlchemyDraggableItem>();

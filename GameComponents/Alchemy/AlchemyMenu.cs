@@ -263,7 +263,7 @@ public class AlchemyMenu : MonoBehaviour
         // Ensure the object is exactly at the target position
         prefab.transform.position = targetLocation;
 
-        Destroy(prefab);
+        prefab.GetComponent<ItemIconData>().Return("AlchemyMenu on AnimateCreate");
     }
 
     void CreateFailure()
@@ -275,14 +275,15 @@ public class AlchemyMenu : MonoBehaviour
     {
         foreach (var entry in alchemyObjects)
         {
-            Destroy(entry.inventoryClass.gameObject);
-            Destroy(entry.selectedEntryPrefab);
+            entry.inventoryClass.gameObject.GetComponent<ItemIconData>().Return("AlchemyMenu on disable");
+            Destroy(entry.selectedEntryPrefab);//entry.selectedEntryPrefab.GetComponent<ItemIconData>().Return();
+            Debug.Log("Implement object pool for ItemRows!");
 
             if (entry.draggableObjects != null)
             {
                 foreach (var obj in entry.draggableObjects)
                 {
-                    Destroy(obj.gameObject);
+                    obj.gameObject.GetComponent<ItemIconData>().Return("AlchemyMenu on disable");
                 }
             }
         }

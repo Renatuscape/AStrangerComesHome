@@ -60,7 +60,7 @@ public class AlchemyYieldManager : MonoBehaviour
     {
         yield return new WaitForSeconds(timer);
 
-        var yieldPrefab = BoxFactory.CreateItemIcon(Items.FindByID(yield.objectID), false, 96);
+        var yieldPrefab = BoxFactory.CreateItemIcon(Items.FindByID(yield.objectID), false, 96).gameObject;
         yieldPrefab.transform.SetParent(prefabContainer.transform, false);
         yieldPrefabs.Add(yieldPrefab);
 
@@ -74,7 +74,7 @@ public class AlchemyYieldManager : MonoBehaviour
     {
         foreach (GameObject go in yieldPrefabs)
         {
-            Destroy(go);
+            go.GetComponent<ItemIconData>().Return("AlchemyYieldManager on Clear");
         }
 
         yieldPrefabs.Clear();

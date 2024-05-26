@@ -29,7 +29,7 @@ public class CollectionsBooks : MonoBehaviour
         {
             foreach (var prefab in prefabs)
             {
-                Destroy(prefab);
+                prefab.GetComponent<ItemIconData>().Return("CollectionsBook in Initialise");
             }
             prefabs.Clear();
 
@@ -51,7 +51,7 @@ public class CollectionsBooks : MonoBehaviour
                         if (forLetters && item.objectID.Contains("LET")
                         || !forLetters && item.objectID.Contains("BOO"))
                         {
-                            var newBook = BoxFactory.CreateItemIcon(item, true, 64, 18);
+                            var newBook = BoxFactory.CreateItemIcon(item, true, 64, 18).gameObject;
                             prefabs.Add(newBook);
                             newBook.transform.SetParent(bookContainer.transform, false);
 
