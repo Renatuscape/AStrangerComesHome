@@ -107,14 +107,7 @@ public class PortraitRenderer : MonoBehaviour
 
         SetSprite(c);
 
-        if (c.type != CharacterType.Generic && Player.GetCount(c.objectID, name) < 1)
-        {
-            rightPortraitContainer.SetActive(false);
-        }
-        else
-        {
-            rightPortraitContainer.SetActive(true);
-        }
+        rightPortraitContainer.SetActive(true);
 
         gameObject.SetActive(true);
         EnablePlayer();
