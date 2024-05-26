@@ -10,6 +10,7 @@ public static class StaticGameValues
     public static int maxSkillValue = 10;
     public static int maxUpgradeValue = 10;
     public static int defaultGiftableLevel = 10;
+    public static float parallaxFrameRate = 0.001f;
 }
 
 public static class StaticTags
@@ -47,5 +48,9 @@ public static class StaticTags
 
     // Misc
     public static string WeedItem { get; } = "PLA000";
+
+    public static string CausticWaste { get; } = "MAT030";
     public static string CausticWasteRecipe { get; } = "REC001-NN";
+
+    public static string CoachSynths { get; } = "SCR010";
 }
