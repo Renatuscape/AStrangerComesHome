@@ -106,7 +106,7 @@ public class PageinatedContainer : MonoBehaviour
         return prefabMasterList;
     }
 
-    public void SelectItem(ItemUiData itemData)
+    public void SelectItem(ItemIconData itemData)
     {
         selectedItem = itemData.item;
         selectorFrame.transform.position = itemData.gameObject.transform.position;
@@ -211,7 +211,7 @@ public class PageinatedContainer : MonoBehaviour
             prefabMasterList.Add(prefab);
             page.prefabs.Add(prefab);
 
-            var uiScript = prefab.GetComponent<ItemUiData>();
+            var uiScript = prefab.GetComponent<ItemIconData>();
 
             if (useSelectorFrame)
             {
@@ -297,7 +297,7 @@ public class ContainerPage
 public class PageinatedSelectorFrame : MonoBehaviour, IPointerDownHandler
 {
     public PageinatedContainer parentClass;
-    public ItemUiData itemUiData;
+    public ItemIconData itemUiData;
 
     public void OnPointerDown(PointerEventData eventData)
     {
