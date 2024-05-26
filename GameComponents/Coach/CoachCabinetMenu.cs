@@ -24,7 +24,7 @@ public class CoachCabinetMenu : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView != CameraView.Normal)
         {
-            coachSynthesisersUnlocked = Player.GetCount("SCR004", name);
+            coachSynthesisersUnlocked = Player.GetCount(StaticTags.CoachSynths, name);
 
             if (coachSynthesisersUnlocked > 0 && !cabinetCanvas.gameObject.activeInHierarchy)
             {
