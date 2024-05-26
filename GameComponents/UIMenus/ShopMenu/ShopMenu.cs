@@ -119,7 +119,7 @@ public class ShopMenu : MonoBehaviour
             {
                 foreach (GameObject itemPrefab in buyFromShopPrefabs)
                 {
-                    var uiData = itemPrefab.GetComponent<ItemUiData>();
+                    var uiData = itemPrefab.GetComponent<ItemIconData>();
                     uiData.printRarity = true;
 
                     var shopItemScript = itemPrefab.AddComponent<ShopItemPrefab>();
@@ -144,7 +144,7 @@ public class ShopMenu : MonoBehaviour
 
         foreach (var item in sellFromPlayerPrefabs)
         {
-            var uiData = item.GetComponent<ItemUiData>();
+            var uiData = item.GetComponent<ItemIconData>();
             uiData.printRarity = true;
             var shopItemScript = item.AddComponent<ShopItemPrefab>();
             shopItemScript.Initialise(uiData.item, this, true);

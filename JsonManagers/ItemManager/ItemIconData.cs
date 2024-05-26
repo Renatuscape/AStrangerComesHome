@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemUiData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Item item;
-    public TextMeshProUGUI numberMesh;
+    public TextMeshProUGUI textMesh;
     public Image itemSprite;
     public Image itemShadow;
     public bool disableFloatText;

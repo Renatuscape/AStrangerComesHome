@@ -41,7 +41,7 @@ public class CollectionsTreasures : MonoBehaviour
                     var prefab = BoxFactory.CreateItemIcon(item, false, 64, 14, true);
                     prefab.transform.SetParent(treasureContainer.transform, false);
 
-                    var script = prefab.GetComponent<ItemUiData>();
+                    var script = prefab.GetComponent<ItemIconData>();
                     script.printRarity = true;
                 }
             }
