@@ -13,7 +13,7 @@ public class ParallaxThis : MonoBehaviour
 
     private float parallaxEffect;
 
-    float tick = 0.005f;
+    float tick = StaticGameValues.parallaxFrameRate;
     float timer;
 
     private void Awake()
@@ -28,7 +28,7 @@ public class ParallaxThis : MonoBehaviour
         spriteSize = spriteObject.GetComponent<SpriteRenderer>().bounds.size;
     }
 
-    void Update()
+    void LateUpdate()
     {
         timer += Time.deltaTime;
 

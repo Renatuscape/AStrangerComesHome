@@ -17,7 +17,7 @@ public class StationParallax : MonoBehaviour
     public bool movingLeft;
     public bool movingRight;
 
-    float tick = 0.005f;
+    float tick = StaticGameValues.parallaxFrameRate;
     float timer;
     private void Awake()
     {
@@ -28,7 +28,7 @@ public class StationParallax : MonoBehaviour
         totalClusters = clusters.Count;
     }
 
-    void Update()
+    void LateUpdate()
     {
         timer += Time.deltaTime;
         if (timer >= tick)

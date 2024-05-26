@@ -204,10 +204,10 @@ public class ParallaxLayer : MonoBehaviour
 
     public bool hasNoMaxOffset;
 
-    float tick = 0.005f;
+    float tick = StaticGameValues.parallaxFrameRate;
     float timer = 0;
 
-    private void Update()
+    private void LateUpdate()
     {
         timer += Time.deltaTime;
         if (timer >= tick)
