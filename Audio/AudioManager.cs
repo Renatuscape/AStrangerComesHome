@@ -11,11 +11,25 @@ public class AudioManager : MonoBehaviour
     public List<AudioClip> bgMusic;
     public List<AudioClip> soundEffects;
 
+    public List<AudioSource> audioPool;
+    public List<AudioSource> playersInUse;
     private void Start()
     {
         instance = this;
+        CreateAudioPool(25);
     }
 
+
+    void CreateAudioPool(int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            var audioSource = new GameObject().AddComponent<AudioSource>();
+            audioSource.gameObject.name = "AudioSource";
+            audioSource.gameObject.transform.SetParent(transform, false);
+            audioPool.Add(audioSource);
+        }
+    }
     private void OnEnable()
     {
         musicPlayer.Stop();
@@ -138,7 +152,10 @@ public class AudioManager : MonoBehaviour
 
             if (sound != null)
             {
-                var audioSource = new GameObject().AddComponent<AudioSource>();
+                var audioSource = audioPool[0];
+                audioPool.RemoveAt(0);
+                playersInUse.Add(audioSource);
+
                 audioSource.clip = sound;
 
                 if (type == "ambient")
@@ -152,7 +169,24 @@ public class AudioManager : MonoBehaviour
 
                 audioSource.Play();
 
-                Destroy(audioSource.gameObject, sound.length);
+                if (audioPool.Count < 5)
+                {
+                    RecycleAudio();
+                }
+            }
+        }
+    }
+
+    void RecycleAudio()
+    {
+        for (int i = playersInUse.Count - 1; i >= 0; i--)
+        {
+            var audio = playersInUse[i];
+
+            if (!audio.isPlaying)
+            {
+                playersInUse.Remove(audio);
+                audioPool.Add(audio);
             }
         }
     }
