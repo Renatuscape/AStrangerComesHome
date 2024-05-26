@@ -11,7 +11,8 @@ public class BoxFactory : MonoBehaviour
     public int fontBodySize;
     public int fontSubtitleSize;
     public int fontHeaderSize;
-    public List<ItemIconData> itemIcons;
+    public List<ItemIconData> itemIconPool;
+    public List<GameObject> itemIconsOnLoan;
 
     [SerializeField]
     GameObject buttonPrefab;
@@ -29,6 +30,8 @@ public class BoxFactory : MonoBehaviour
     void Start()
     {
         boxFactory = GetComponent<BoxFactory>();
+
+        GenerateItemIconPool(400);
     }
 
     GameObject InstantiateButton(string inputText, float width, TextAlignmentOptions textAlignment)
@@ -63,63 +66,73 @@ public class BoxFactory : MonoBehaviour
         return prefab;
     }
 
-    GameObject InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14, bool addUiDataScript = false)
+    void GenerateItemIconPool(int instances)
     {
-        GameObject newIcon = Instantiate(iconPrefab);
-        TextMeshProUGUI text;
+        for (int i = 0; i < instances; i++)
+        {
+            GameObject iconInstance = Instantiate(iconPrefab);
 
-        Image[] images = newIcon.transform.Find("ImageContainer").GetComponentsInChildren<Image>();
+            var iconData = iconInstance.AddComponent<ItemIconData>();
 
-        foreach (Image image in images)
+            var tag = iconInstance.transform.Find("Tag").gameObject;
+            var price = iconInstance.transform.Find("PriceTag").gameObject;
+
+            iconData.countText = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
+            iconData.priceText = price.transform.GetComponentInChildren<TextMeshProUGUI>();
+
+            iconData.images = iconInstance.transform.Find("ImageContainer").GetComponentsInChildren<Image>();
+
+            foreach (Image image in iconData.images)
+            {
+                if (image.name.ToLower().Contains("shadow"))
+                {
+                    iconData.itemShadow = image;
+                }
+                else
+                {
+                    iconData.itemSprite = image;
+                }
+            }
+
+            iconData.gameObject.transform.SetParent(gameObject.transform, false);
+            iconData.gameObject.SetActive(false);
+            itemIconPool.Add(iconData);
+        }
+    }
+
+    ItemIconData InstantiateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14)
+    {
+        ItemIconData itemIcon = itemIconPool[0];
+        itemIconPool.RemoveAt(0);
+
+        itemIcon.item = item;
+
+        foreach (Image image in itemIcon.images)
         {
             image.sprite = item.sprite;
         }
 
-        var tag = newIcon.transform.Find("Tag").gameObject;
-
-        if (addUiDataScript || displayInventoryAmount)
-        {
-            text = tag.transform.GetComponentInChildren<TextMeshProUGUI>();
-
-            if (displayInventoryAmount)
-            {
-
-                text.text = $"{Player.GetCount(item.objectID, name)}";
-                text.fontSize = fontSize;
-            }
-
-            if (addUiDataScript)
-            {
-                var uiData = newIcon.AddComponent<ItemIconData>();
-                uiData.item = item;
-                uiData.textMesh = text;
-
-                foreach (Image image in images)
-                {
-                    if (image.name.ToLower().Contains("shadow"))
-                    {
-                        uiData.itemShadow = image;
-                    }
-                    else
-                    {
-                        uiData.itemSprite = image;
-                    }
-                }
-            }
-        }
-
         if (!displayInventoryAmount || item.rarity == ItemRarity.Unique)
         {
-            tag.SetActive(false);
+            itemIcon.countText.transform.parent.gameObject.SetActive(false);
+        }
+        else if (displayInventoryAmount)
+        {
+            itemIcon.countText.transform.parent.gameObject.SetActive(true);
+            itemIcon.countText.text = $"{Player.GetCount(item.objectID, name)}";
+            itemIcon.countText.fontSize = fontSize;
         }
 
-        RectTransform transform = newIcon.GetComponent<RectTransform>();
+        RectTransform transform = itemIcon.gameObject.GetComponent<RectTransform>();
         transform.sizeDelta = new Vector2(size, size);
+        itemIcon.gameObject.name = item.objectID + "_Icon";
+        itemIcon.gameObject.SetActive(true);
 
-
-        return newIcon;
-
+        boxFactory.itemIconsOnLoan.Add(itemIcon.gameObject);
+        itemIcon.EnablePrice(false, 0);
+        return itemIcon;
     }
+
     GameObject InstantiateIconRowPrefab(Item item, float amount)
     {
         GameObject newButton = Instantiate(iconRowPrefab);
@@ -250,16 +263,27 @@ public class BoxFactory : MonoBehaviour
         {
             Debug.Log("Item was null upon reaching Box Factory.");
         }
-        return boxFactory.InstantiateIconRowPlainTextPrefab(item, amount,  displayAmount);
+        return boxFactory.InstantiateIconRowPlainTextPrefab(item, amount, displayAmount);
     }
 
-    public static GameObject CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14, bool addUiDataScript = false)
+    public static ItemIconData CreateItemIcon(Item item, bool displayInventoryAmount, int size = 32, int fontSize = 14)
     {
-        return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size, fontSize, addUiDataScript);
+        return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size, fontSize);
     }
 
     public static GameObject CreateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice, bool showFloatName)
     {
         return boxFactory.InstantiateUpgradeIcon(upgrade, displayLevel, displayPrice, showFloatName);
+    }
+
+    public static void ReturnItemIconToPool(ItemIconData itemIconData, string caller)
+    {
+        Debug.Log(itemIconData.gameObject.name + " itemIcon was successfully returned by " + caller);
+        itemIconData.gameObject.transform.SetParent(boxFactory.gameObject.transform, false);
+        itemIconData.gameObject.transform.localPosition = new Vector3(0, 0, 0);
+        itemIconData.gameObject.SetActive(false);
+
+        boxFactory.itemIconPool.Add(itemIconData);
+        boxFactory.itemIconsOnLoan.Remove(itemIconData.gameObject);
     }
 }
