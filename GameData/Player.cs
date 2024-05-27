@@ -142,7 +142,7 @@ public static class Player
     static void AddTimer(string objectID)
     {
         Debug.Log($"Detected -SetTIMER tag. Adding {objectID} to inventory.");
-        var foundEntry = inventoryList.FirstOrDefault(e => e.objectID == objectID);
+        var foundEntry = questProgression.FirstOrDefault(e => e.objectID == objectID);
 
         if (foundEntry != null)
         {
@@ -153,7 +153,7 @@ public static class Player
         {
             Debug.Log("No existing timer entry. Creating and adding new.");
             foundEntry = new() { objectID = objectID, amount = 0 };
-            inventoryList.Add(foundEntry);
+            questProgression.Add(foundEntry);
         }
     }
 
@@ -300,37 +300,21 @@ public static class Player
             if (entry.objectID.Contains("-SetTIMER"))
             {
                 var timerData = entry.objectID.Split('-');
+                Quest relevantQuest = Quests.FindByID(timerData[0] + "-" + timerData[1]);
 
-                if (int.TryParse(timerData[4], out int timerMax))
+                if (relevantQuest != null)
                 {
-                    Debug.Log("This timer is set for " + timerMax);
+                    int currentStage = GetQuestStage(relevantQuest.objectID);
 
-                    if (entry.amount < timerMax)
+                    if (int.TryParse(timerData[2], out int timerStage))
                     {
-                        Debug.Log("Updated quest timer " + entry.objectID);
-                        entry.amount++;
-                    }
-                    else
-                    {
-                        Debug.Log("Quest timer has reached max. Checking for quest completion.");
-
-                        Quest relevantQuest = Quests.FindByID(timerData[0] + "-" + timerData[1]);
-                        if (relevantQuest == null)
+                        if (currentStage <= timerStage)
                         {
-                            Debug.LogWarning("Could not find relevant quest related to " + entry.objectID);
+                            entry.amount++;
                         }
                         else
                         {
-                            if (int.TryParse(timerData[2], out int timerStage))
-                            {
-                                int stage = GetCount(relevantQuest.objectID, "Player");
-
-                                if (stage > timerStage)
-                                {
-                                    Debug.Log("Timed quest completed. Removing timer.");
-                                    timersToRemove.Add(entry);
-                                }
-                            }
+                            timersToRemove.Add(entry);
                         }
                     }
                 }
