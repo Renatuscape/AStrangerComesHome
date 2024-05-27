@@ -27,7 +27,7 @@ public class DialogueMenu : MonoBehaviour
 
         Dialogue dialogue = GetDialogue(activeQuest);
 
-        dialogueDisplay.StartDialogue(dialogue);
+        dialogueDisplay.StartDialogue(dialogue, true);
     }
 
     public void PrintChoices(Dialogue dialogue)
@@ -59,7 +59,7 @@ public class DialogueMenu : MonoBehaviour
 
         if (dialogue != null)
         {
-            dialogueDisplay.StartDialogue(dialogue);
+            dialogueDisplay.StartDialogue(dialogue, false);
         }
         else
         {
