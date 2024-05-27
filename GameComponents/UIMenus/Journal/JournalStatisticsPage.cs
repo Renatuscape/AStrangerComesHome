@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class JournalStatisticsPage : MonoBehaviour
 {
@@ -14,7 +15,16 @@ public class JournalStatisticsPage : MonoBehaviour
     public TextMeshProUGUI licenseInfo;
     public GameObject upgradeContainer;
     public GameObject otherContainer;
-    public List<GameObject> prefabs;
+    public List<UpgradeIcon> upgrades;
+    bool upgradesSetUp = false;
+
+    private void Start()
+    {
+        if (!upgradesSetUp)
+        {
+            BuildUpgradePage();
+        }
+    }
     void OnEnable()
     {
         playerIcon.playerSprite = playerSprite;
@@ -51,6 +61,51 @@ public class JournalStatisticsPage : MonoBehaviour
         else
         {
             personaliaContainer.SetActive(false);
+        }
+
+        if (upgradesSetUp)
+        {
+            UpdateUpgradeNumbers();
+        }
+        else
+        {
+            BuildUpgradePage();
+        }
+    }
+
+    void UpdateUpgradeNumbers()
+    {
+        foreach (var upgrade in upgrades)
+        {
+            upgrade.level = Player.GetCount(upgrade.upgrade.objectID, "JournalStatistics Update Numbers");
+            upgrade.SetLevelText();
+        }
+    }
+
+    void BuildUpgradePage()
+    {
+        if (Upgrades.all.Count >= 7)
+        {
+            int upgradeIndex = 0;
+
+            foreach (Transform slot in upgradeContainer.transform)
+            {
+                Destroy(slot.gameObject.GetComponent<Image>());
+                var upgrade = BoxFactory.CreateUpgradeIcon(Upgrades.all[upgradeIndex], true, false, true);
+                upgrade.gameObject.transform.SetParent(slot.transform, false);
+                var rect = upgrade.GetComponent<RectTransform>();
+                rect.sizeDelta = new Vector2(150, 150);
+
+                rect.anchorMin = new Vector2(0.5f, 0.5f);
+                rect.anchorMax = new Vector2(0.5f, 0.5f);
+
+                rect.anchoredPosition = new Vector3(0, 0, 0);
+
+                upgrades.Add(upgrade.gameObject.GetComponent<UpgradeIcon>());
+                upgradeIndex++;
+            }
+
+            upgradesSetUp = true;
         }
     }
 }
