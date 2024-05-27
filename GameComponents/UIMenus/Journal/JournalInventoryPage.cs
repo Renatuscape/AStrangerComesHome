@@ -30,6 +30,7 @@ public class JournalInventoryPage : MonoBehaviour
     private void OnDisable()
     {
         inventoryContainer.gameObject.SetActive(false);
+        inventoryContainer.ClearPrefabs();
     }
 
     private void Update()
