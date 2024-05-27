@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class DialogueInterfaceOptions : MonoBehaviour
 {
     public GameObject buttonContainer;
-    public GameObject historyDisplay;
+    public Canvas chatLogCanvas;
     public TextMeshProUGUI chatHistory;
 
     public TextMeshProUGUI contentText;
@@ -41,8 +41,8 @@ public class DialogueInterfaceOptions : MonoBehaviour
     }
     private void OnEnable()
     {
-        historyDisplay.SetActive(true);
-        CloseHistory();
+        chatLogCanvas.gameObject.SetActive(false);
+        chatHistory.text = "";
 
         GlobalSettingsManager.LoadSettings();
 
@@ -129,14 +129,12 @@ public class DialogueInterfaceOptions : MonoBehaviour
 
     public void CloseHistory()
     {
+        chatLogCanvas.gameObject.SetActive(false);
         var sizeFitter = chatHistory.gameObject.GetComponent<ContentSizeFitter>();
-        var rect = historyDisplay.GetComponent<RectTransform>();
 
         sizeFitter.enabled = false;
         sizeFitter.enabled = true;
         Canvas.ForceUpdateCanvases();
-
-        rect.anchoredPosition = new Vector3 (0, -2000, 0);
 
         sizeFitter.enabled = false;
         sizeFitter.enabled = true;
@@ -145,14 +143,12 @@ public class DialogueInterfaceOptions : MonoBehaviour
 
     public void OpenHistory()
     {
+        chatLogCanvas.gameObject.SetActive(true);
         var sizeFitter = chatHistory.gameObject.GetComponent<ContentSizeFitter>();
-        var rect = historyDisplay.GetComponent<RectTransform>();
 
         sizeFitter.enabled = false;
         sizeFitter.enabled = true;
         Canvas.ForceUpdateCanvases();
-
-        rect.anchoredPosition = new Vector3(0, 0, 0);
 
         sizeFitter.enabled = false;
         sizeFitter.enabled = true;
