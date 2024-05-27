@@ -86,7 +86,7 @@ public class DialogueDisplay : MonoBehaviour
         }
     }
 
-    public void StartDialogue(Dialogue dialogue)
+    public void StartDialogue(Dialogue dialogue, bool isInitialStep)
     {
         if (textSoundEffect.clip == null)
         {
@@ -113,6 +113,17 @@ public class DialogueDisplay : MonoBehaviour
 
             activeDialogue = dialogue;
             eventIndex = 0;
+
+            if (isInitialStep)
+            {
+                var titleText = dialogue.topicName;
+                if (string.IsNullOrEmpty(titleText))
+                {
+                    titleText = Quests.FindByID(dialogue.questID).name;
+                }
+
+                PrintToChatLog(DialogueTagParser.ParseText(titleText).ToUpper(), false, false);
+            }
 
             PrintEvent();
         }
@@ -160,6 +171,8 @@ public class DialogueDisplay : MonoBehaviour
         bool hasResultText = !string.IsNullOrEmpty(speakerTag);
         bool hasMissingItemsToPrint = missingItems != null && missingItems.Count > 0;
 
+        PrintToChatLog("Choice: " + choice.optionText, true, true);
+
         // HANDLE RESULT PRINT
         if (hasResultText) // if there is no speaker, skip the print
         {
@@ -180,8 +193,6 @@ public class DialogueDisplay : MonoBehaviour
                 SetDisplayNames(resultEvent);
                 var parsedText = DialogueTagParser.ParseText(content);
                 PrintContent(parsedText, speakerTag == "Narration");
-
-                PrintToChatLog("Choice: " + choice.optionText, true, true);
                 PrintToChatLog(resultEvent.speaker.NamePlate(), true, false);
                 PrintToChatLog(parsedText, false, false);
             }
