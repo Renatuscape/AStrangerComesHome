@@ -81,7 +81,7 @@ public class ShopItemPrefab : MonoBehaviour, IPointerDownHandler, IInitializePot
             Debug.Log("Spawning draggable " + itemSource.name);
             // Here we instantiate the second object, that we want to drag. 
             var item = itemSource;
-            var prefab = BoxFactory.CreateItemIcon(item, false, 96);
+            var prefab = BoxFactory.CreateItemIcon(item, false, 96).gameObject;
             prefab.transform.SetParent(shopMenu.transform, false);
             prefab.name = item.name;
 
