@@ -206,9 +206,9 @@ public class GardenManager : MonoBehaviour
         var seed = planter.planterData.seed;
         ref var progress = ref planter.planterData.progress;
 
-        var maxGrowth = 100 * seed.health * seed.yield;
+        var maxGrowth = 100 * (seed.health + seed.yield);
 
-        if (progress <= maxGrowth)
+        if (progress < maxGrowth)
         {
             growth = CalculateGrowth(planter.planterData);
 
