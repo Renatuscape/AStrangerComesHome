@@ -82,7 +82,7 @@ public class PlantingManager : MonoBehaviour
 
     private void UpdatePlanterIcons()
     {
-        if (gardenManager.plantersChecked && gardenManager.planterPackages != null)
+        if (gardenManager.planterPackages != null)
         {
             foreach (var planter in gardenManager.planterPackages)
             {
@@ -101,7 +101,26 @@ public class PlantingManager : MonoBehaviour
                         planterIconC.sprite = Items.all.FirstOrDefault(x => x.objectID == planter.planterData.seed.objectID).sprite;
                     }
                 }
+                else
+                {
+                    if (planter.planterData.planterID == "planterA")
+                    {
+                        planterIconA.sprite = gardenManager.planterSprites.FirstOrDefault(s => s.name.Contains(planter.planterData.planterSpriteID));
+                    }
+                    else if (planter.planterData.planterID == "planterB")
+                    {
+                        planterIconB.sprite = gardenManager.planterSprites.FirstOrDefault(s => s.name.Contains(planter.planterData.planterSpriteID));
+                    }
+                    else if (planter.planterData.planterID == "planterC")
+                    {
+                        planterIconC.sprite = gardenManager.planterSprites.FirstOrDefault(s => s.name.Contains(planter.planterData.planterSpriteID));
+                    }
+                }
             }
+        }
+        else
+        {
+            Debug.Log("Garden manager was not ready.");
         }
     }
 
@@ -129,6 +148,7 @@ public class PlantingManager : MonoBehaviour
         planterFrame.SetActive(false);
         planterFrame.transform.SetParent(planterA.transform, false);
 
+        seedContainer.ClearPrefabs();
         readyToPlant = false;
     }
 
