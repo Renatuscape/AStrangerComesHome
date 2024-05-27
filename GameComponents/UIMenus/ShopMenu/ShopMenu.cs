@@ -15,7 +15,6 @@ public class ShopMenu : MonoBehaviour
     public PortraitRenderer portraitRenderer; //remember to use .gameObject for the object
 
     public GameObject clearanceNotice;
-    public GameObject priceTagPrefab;
     public Image backgroundSprite;
 
     public List<GameObject> buyFromShopPrefabs;
@@ -125,11 +124,7 @@ public class ShopMenu : MonoBehaviour
                     var shopItemScript = itemPrefab.AddComponent<ShopItemPrefab>();
                     shopItemScript.Initialise(uiData.item, this, false);
 
-                    GameObject priceTag = Instantiate(priceTagPrefab, itemPrefab.transform);
-                    priceTag.name = "PriceTag";
-
-                    var tagText = priceTag.GetComponentInChildren<TextMeshProUGUI>();
-                    tagText.text = activeShop.CalculateBuyFromShopPrice(uiData.item).ToString();
+                    uiData.EnablePrice(true, activeShop.CalculateBuyFromShopPrice(uiData.item));
                 }
 
                 BtnBuyFromShop();
@@ -234,7 +229,7 @@ public class ShopMenu : MonoBehaviour
                 var itemCost = activeShop.CalculateSellFromInventoryPrice(item);
 
                 Player.Remove(item.objectID);
-                AudioManager.PlayUISound("handleCoins");
+                AudioManager.PlayUISound("cloth3", +0.3f);
                 MoneyExchange.AddHighestDenomination(itemCost);
                 LogAlert.QueueTextAlert("Sold for " + itemCost + " shillings.");
                 //TransientDataScript.PushAlert($"Sold {item.name} for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
@@ -257,7 +252,7 @@ public class ShopMenu : MonoBehaviour
                 if (purchase)
                 {
                     Player.Add(item.objectID);
-                    AudioManager.PlayUISound("handleCoins");
+                    AudioManager.PlayUISound("cloth3", +0.3f);
                     //Debug.Log($"{activeShop} You purchased {item.name} for {itemCost}.");
                     LogAlert.QueueTextAlert("Paid " + itemCost + " shillings.");
                     //TransientDataScript.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
@@ -267,7 +262,6 @@ public class ShopMenu : MonoBehaviour
                 else
                 {
                     AudioManager.PlayUISound("drumDoubleTap");
-                    // Debug.Log("Exchange returned false.");
                     LogAlert.QueueTextAlert("I don't have enough money.");
                 }
 
@@ -279,5 +273,11 @@ public class ShopMenu : MonoBehaviour
                 LogAlert.QueueTextAlert("I don't have enough space for more of this.");
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        buyFromShopMenu.ClearPrefabs();
+        sellFromPlayerMenu.ClearPrefabs();
     }
 }
