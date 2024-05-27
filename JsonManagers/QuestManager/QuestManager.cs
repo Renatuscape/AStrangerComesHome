@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Threading.Tasks;
-using System.Linq;
 
 public class QuestManager : MonoBehaviour
 {
