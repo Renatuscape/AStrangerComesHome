@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -48,7 +47,7 @@ public class JournalQuestPage : MonoBehaviour
                 newQuest.GetComponent<QuestPrefab>().quest = quest;
                 newQuest.GetComponent<QuestPrefab>().journalQuestPage = this;
                 var textMesh = newQuest.transform.Find("QuestTitle").GetComponent<TextMeshProUGUI>();
-                textMesh.text = quest.name;
+                textMesh.text = DialogueTagParser.ParseText(quest.name);
                 textMesh.font = fontManager.subtitle.font;
                 questPrefabs.Add(newQuest);
 
@@ -69,7 +68,7 @@ public class JournalQuestPage : MonoBehaviour
     public void DisplayQuestDetails(Quest quest)
     {
         detailContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-        displayTitle.text = quest.name;
+        displayTitle.text = DialogueTagParser.ParseText(quest.name);
 
         int questStage = quest.GetQuestStage();
 
@@ -115,10 +114,10 @@ public class JournalQuestPage : MonoBehaviour
         else
         {
             displayTopicName.gameObject.SetActive(true);
-            displayTopicName.text = topicName;
+            displayTopicName.text = DialogueTagParser.ParseText(topicName);
         }
 
-        displayDescription.text = description;
+        displayDescription.text = DialogueTagParser.ParseText(description);
         detailContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
         Canvas.ForceUpdateCanvases();
         detailContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
