@@ -278,7 +278,7 @@ public class BoxFactory : MonoBehaviour
 
     public static void ReturnItemIconToPool(ItemIconData itemIconData, string caller)
     {
-        Debug.Log(itemIconData.gameObject.name + " itemIcon was successfully returned by " + caller);
+        // Debug.Log(itemIconData.gameObject.name + " itemIcon was successfully returned by " + caller);
         itemIconData.gameObject.transform.SetParent(boxFactory.gameObject.transform, false);
         itemIconData.gameObject.transform.localPosition = new Vector3(0, 0, 0);
         itemIconData.gameObject.SetActive(false);
