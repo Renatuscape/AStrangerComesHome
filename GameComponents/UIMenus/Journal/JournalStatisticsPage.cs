@@ -94,7 +94,7 @@ public class JournalStatisticsPage : MonoBehaviour
                 var upgrade = BoxFactory.CreateUpgradeIcon(Upgrades.all[upgradeIndex], true, false, true);
                 upgrade.gameObject.transform.SetParent(slot.transform, false);
                 var rect = upgrade.GetComponent<RectTransform>();
-                rect.sizeDelta = new Vector2(150, 150);
+                rect.sizeDelta = new Vector2(100, 100);
 
                 rect.anchorMin = new Vector2(0.5f, 0.5f);
                 rect.anchorMax = new Vector2(0.5f, 0.5f);
