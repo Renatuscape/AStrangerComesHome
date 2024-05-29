@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class UpgradeWearTracker
@@ -10,6 +11,37 @@ public static class UpgradeWearTracker
     public static float CalculateMaxWear(int level)
     {
         return upgradeHealthPerLevel * (level * upgradeWearMultiplier);
+    }
+
+    public static int CalculateRepairPrice(string upgradeID)
+    {
+        int upgradeWear = Player.upgradeWear.FirstOrDefault(e => e.objectID == upgradeID).amount;
+        int wearPrice = (int)Mathf.Ceil(upgradeWear * 0.3f);
+
+        return wearPrice;
+    }
+
+    public static bool RepairUpgrade(string upgradeID, int repairPrice)
+    {
+        var upgradeEntry = Player.upgradeWear.FirstOrDefault(e => e.objectID == upgradeID);
+
+        if (upgradeEntry != null)
+        {
+            if (MoneyExchange.Purchase(repairPrice))
+            {
+                upgradeEntry.amount = 0;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Could not find upgrade entry with ID " + upgradeID);
+            return false;
+        }
     }
 
     public static void GlobalPushWearUpgrade()
