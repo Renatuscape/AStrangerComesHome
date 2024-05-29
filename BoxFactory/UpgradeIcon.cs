@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public Upgrade upgrade;
     public TextMeshProUGUI priceText;
     public TextMeshProUGUI levelText;
+    public Slider wearSlider;
 
     public int level;
     public int price;
@@ -16,7 +18,7 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     bool showLevel = false;
     bool showFloatName = false;
 
-    public void Setup(Upgrade upgrade, bool showLevel, bool showPrice, bool showFloatName)
+    public void Setup(Upgrade upgrade, bool showLevel, bool showPrice, bool showFloatName, bool showWearSlider)
     {
         this.upgrade = upgrade;
         this.showLevel = showLevel;
@@ -39,6 +41,51 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (showPrice || showLevel)
         {
             UpdateText();
+        }
+
+        if (showWearSlider)
+        {
+            if (Player.upgradeWear == null || Player.upgradeWear.Count < 1)
+            {
+                foreach (var up in Upgrades.all)
+                {
+                    TransientDataScript.gameManager.dataManager.upgradeWear.Add(new IdIntPair() { objectID = up.objectID, amount = 0 });
+                    Player.upgradeWear = TransientDataScript.gameManager.dataManager.upgradeWear;
+                }
+            }
+
+            wearSlider.gameObject.SetActive(true);
+            UpdateSlider();
+        }
+        else
+        {
+            wearSlider.gameObject.SetActive(false);
+        }
+    }
+
+    public void UpdateSlider()
+    {
+        if (wearSlider != null)
+        {
+            float maxValue = UpgradeWearTracker.CalculateMaxWear(level);
+
+            int wear = Player.upgradeWear.FirstOrDefault(e => e.objectID == upgrade.objectID).amount;
+
+            wearSlider.maxValue = maxValue;
+
+            if (wear >= maxValue / 6)
+            {
+                wearSlider.value = wear;
+            }
+            else
+            {
+                wearSlider.value = 0;
+            }
+
+        }
+        else
+        {
+            Debug.Log("Could not find slider.");
         }
     }
 
