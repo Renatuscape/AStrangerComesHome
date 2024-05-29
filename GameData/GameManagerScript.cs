@@ -176,9 +176,9 @@ public class GameManagerScript : MonoBehaviour
         dataManager.unlockedNames.Clear();
         dataManager.giftedThisWeek.Clear();
 
+        SetUpUpgradeWear();
         dataManager.inventoryList = Player.inventoryList;
         dataManager.questProgression = Player.questProgression;
-
 
         //Add skills to the player inventory from the start
         Player.Add(StaticTags.Wandering, 10, true); // Wandering
@@ -192,11 +192,28 @@ public class GameManagerScript : MonoBehaviour
         alchemyTracker.StartTracking();
     }
 
+    void SetUpUpgradeWear()
+    {
+        TransientDataScript.gameManager.dataManager.upgradeWear = new();
+
+        foreach (var up in Upgrades.all)
+        {
+            TransientDataScript.gameManager.dataManager.upgradeWear.Add(new IdIntPair() { objectID = up.objectID, amount = 0 });
+            Player.upgradeWear = TransientDataScript.gameManager.dataManager.upgradeWear;
+        }
+    }
+
     public void LoadRoutine()
     {
         TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
         ResetGameComponents();
         DialogueTagParser.UpdateTags(dataManager);
+
+        if (Player.upgradeWear == null || Player.upgradeWear.Count < 1)
+        {
+            SetUpUpgradeWear();
+        }
+
         InitialiseMap();
 
         questTracker.StartTracking();
