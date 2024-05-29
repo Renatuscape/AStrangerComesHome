@@ -56,12 +56,12 @@ public class BoxFactory : MonoBehaviour
         return newBodyText;
     }
 
-    GameObject InstantiateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice, bool showFloatName)
+    GameObject InstantiateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice, bool showFloatName, bool showWearSlider)
     {
         var prefab = Instantiate(upgradePrefab);
         var script = prefab.GetComponent<UpgradeIcon>();
 
-        script.Setup(upgrade, displayLevel, displayPrice, showFloatName);
+        script.Setup(upgrade, displayLevel, displayPrice, showFloatName, showWearSlider);
 
         return prefab;
     }
@@ -271,9 +271,9 @@ public class BoxFactory : MonoBehaviour
         return boxFactory.InstantiateItemIcon(item, displayInventoryAmount, size, fontSize);
     }
 
-    public static GameObject CreateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice, bool showFloatName)
+    public static GameObject CreateUpgradeIcon(Upgrade upgrade, bool displayLevel, bool displayPrice, bool showFloatName, bool showWearSlider)
     {
-        return boxFactory.InstantiateUpgradeIcon(upgrade, displayLevel, displayPrice, showFloatName);
+        return boxFactory.InstantiateUpgradeIcon(upgrade, displayLevel, displayPrice, showFloatName, showWearSlider);
     }
 
     public static void ReturnItemIconToPool(ItemIconData itemIconData, string caller)
