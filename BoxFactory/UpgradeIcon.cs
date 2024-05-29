@@ -73,13 +73,13 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
             wearSlider.maxValue = maxValue;
 
-            if (wear >= maxValue / 6)
+            if (wear >= maxValue / 100 * 3)
             {
-                wearSlider.value = wear;
+                wearSlider.value = maxValue - wear;
             }
             else
             {
-                wearSlider.value = 0;
+                wearSlider.value = maxValue;
             }
 
         }
