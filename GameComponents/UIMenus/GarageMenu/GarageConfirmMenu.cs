@@ -5,14 +5,18 @@ using UnityEngine.UI;
 public class GarageConfirmMenu : MonoBehaviour
 {
     public GarageMenu garageMenu;
-    public Upgrade upgrade;
+    public UpgradeIcon upgradeIcon;
     public Button btnUpgrade;
+    public Button btnRepair;
     public TextMeshProUGUI upgradeTitle;
     public TextMeshProUGUI upgradeDescription;
     public TextMeshProUGUI upgradePrice;
+    public TextMeshProUGUI repairPrice;
+    public GameObject repairInfo;
     public GameObject upgradeContainer;
     public bool isSetUp = false;
     int level; // track level here to avoid delay issues when upgrading
+    int calculatedRepairPrice;
 
     public void SetUp(GarageMenu garageMenu)
     {
@@ -20,6 +24,7 @@ public class GarageConfirmMenu : MonoBehaviour
         {
             this.garageMenu = garageMenu;
             btnUpgrade.onClick.AddListener(() => UpgradeButton());
+            btnRepair.onClick.AddListener(() => RepairButton());
             gameObject.SetActive(false);
             isSetUp = true;
         }
@@ -30,38 +35,86 @@ public class GarageConfirmMenu : MonoBehaviour
 
         if (level < 10)
         {
-            if (garageMenu.AttemptUpgrade(upgrade))
+            if (garageMenu.AttemptUpgrade(upgradeIcon.upgrade))
             {
                 level++;
-                upgradePrice.text = upgrade.GetPrice().ToString();
-                upgradeTitle.text = upgrade.name + $" Lv. {level}";
+                upgradePrice.text = upgradeIcon.upgrade.GetPrice().ToString();
+                upgradeTitle.text = upgradeIcon.name + $" Lv. {level}";
+                AudioManager.PlayUISound("bellCopperHigh");
             }
             else
             {
-                TransientDataScript.PushAlert("Not enough money!");
+                LogAlert.QueueTextAlert("Not enough money!");
+                AudioManager.PlayUISound("knockSmall");
             }
         }
         else
         {
-            TransientDataScript.PushAlert("There is no room for further improvement.");
+            LogAlert.QueueTextAlert("There is no room for further improvement.");
+            AudioManager.PlayUISound("pingGlassy");
+        }
+    }
+
+    public void RepairButton()
+    {
+        if (UpgradeWearTracker.RepairUpgrade(upgradeIcon.upgrade.objectID, calculatedRepairPrice))
+        {
+            LogAlert.QueueTextAlert(upgradeIcon.name + " has been repaired.");
+            repairInfo.gameObject.SetActive(false);
+            btnRepair.gameObject.SetActive(false);
+            upgradeIcon.UpdateSlider();  //upgradeIcon.wearSlider.value = 0;
+            AudioManager.PlayUISound("pingGlassy");
+        }
+        else
+        {
+            LogAlert.QueueTextAlert("I don't have enough money to repair this.");
+            AudioManager.PlayUISound("knockSmall");
         }
     }
 
     public void Open(Upgrade upgrade)
     {
-        this.upgrade = upgrade;
-        level = Player.GetCount(upgrade.objectID, name);
-        upgradeTitle.text = upgrade.name + $" Lv. {level}";
-        upgradeDescription.text = upgrade.description;
-        upgradePrice.text = upgrade.GetPrice().ToString();
-        gameObject.SetActive(true);
-
         foreach (Transform child in upgradeContainer.transform)
         {
             Destroy(child.gameObject);
         }
 
-        var prefab = BoxFactory.CreateUpgradeIcon(upgrade, false, false, false);
+        var prefab = BoxFactory.CreateUpgradeIcon(upgrade, false, false, false, true);
         prefab.transform.SetParent(upgradeContainer.transform);
+        var script = prefab.GetComponent<UpgradeIcon>();
+        upgradeIcon = script;
+
+        level = Player.GetCount(upgradeIcon.upgrade.objectID, name);
+        upgradeIcon.level = level;
+        upgradeIcon.UpdateSlider();
+
+        upgradeTitle.text = upgradeIcon.upgrade.name + $" Lv. {level}";
+        upgradeDescription.text = upgradeIcon.upgrade.description;
+        upgradeIcon.UpdateSlider();
+
+        if (level < 10)
+        {
+            upgradePrice.text = upgrade.GetPrice().ToString();
+        }
+        else
+        {
+            upgradePrice.text = "Fully Upgraded";
+        }
+
+        calculatedRepairPrice = UpgradeWearTracker.CalculateRepairPrice(upgrade.objectID);
+
+        if (calculatedRepairPrice >= 10)
+        {
+            repairPrice.text = calculatedRepairPrice.ToString();
+            repairInfo.gameObject.SetActive(true);
+            btnRepair.gameObject.SetActive(true);
+        }
+        else
+        {
+            repairInfo.gameObject.SetActive(false);
+            btnRepair.gameObject.SetActive(false);
+        }
+
+        gameObject.SetActive(true);
     }
 }
