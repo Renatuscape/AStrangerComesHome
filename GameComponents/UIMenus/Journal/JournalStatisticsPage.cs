@@ -79,6 +79,7 @@ public class JournalStatisticsPage : MonoBehaviour
         {
             upgrade.level = Player.GetCount(upgrade.upgrade.objectID, "JournalStatistics Update Numbers");
             upgrade.SetLevelText();
+            upgrade.UpdateSlider();
         }
     }
 
@@ -91,7 +92,7 @@ public class JournalStatisticsPage : MonoBehaviour
             foreach (Transform slot in upgradeContainer.transform)
             {
                 Destroy(slot.gameObject.GetComponent<Image>());
-                var upgrade = BoxFactory.CreateUpgradeIcon(Upgrades.all[upgradeIndex], true, false, true);
+                var upgrade = BoxFactory.CreateUpgradeIcon(Upgrades.all[upgradeIndex], true, false, true, true);
                 upgrade.gameObject.transform.SetParent(slot.transform, false);
                 var rect = upgrade.GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(100, 100);
