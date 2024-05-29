@@ -11,7 +11,7 @@ public class GarageMenu : MonoBehaviour
     public GameObject magicUpContainer;
     public GarageConfirmMenu confirmMenu;
     public List<UpgradeIcon> upgradeList;
-    public Upgrade selectedUpgrade;
+    public UpgradeIcon selectedUpgradeIcon;
 
     bool upgradesLoaded = false;
 
@@ -40,7 +40,8 @@ public class GarageMenu : MonoBehaviour
         {
             foreach (Upgrade upgrade in Upgrades.all)
             {
-                var prefab = BoxFactory.CreateUpgradeIcon(upgrade, true, false, true);
+                var prefab = BoxFactory.CreateUpgradeIcon(upgrade, true, false, true, false);
+                prefab.name = upgrade.objectID + " " + upgrade.name;
 
                 if (upgrade.type == UpgradeType.Magical)
                 {
@@ -53,7 +54,8 @@ public class GarageMenu : MonoBehaviour
 
                 prefab.AddComponent<GarageUpgradePrefab>();
                 var script = prefab.GetComponent<GarageUpgradePrefab>();
-                script.Initialise(this, upgrade);
+                var upgradeIcon = prefab.GetComponent<UpgradeIcon>();
+                script.Initialise(this, upgradeIcon);
 
                 upgradeList.Add(prefab.GetComponent<UpgradeIcon>());
             }
@@ -69,10 +71,10 @@ public class GarageMenu : MonoBehaviour
         }
     }
 
-    public void SelectUpgrade(Upgrade upgrade)
+    public void SelectUpgrade(UpgradeIcon upgradeIcon)
     {
-        selectedUpgrade = upgrade;
-        confirmMenu.Open(upgrade);
+        selectedUpgradeIcon = upgradeIcon;
+        confirmMenu.Open(upgradeIcon.upgrade);
     }
 
     public bool AttemptUpgrade(Upgrade upgrade)
