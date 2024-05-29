@@ -19,6 +19,7 @@ public class DataManagerScript : MonoBehaviour
 
     public List<IdIntPair> inventoryList = Player.inventoryList;
     public List<IdIntPair> questProgression = Player.questProgression;
+    public List<IdIntPair> upgradeWear = Player.upgradeWear;
 
     //GAME SETTINGS
     public float autoPlaySpeed;
