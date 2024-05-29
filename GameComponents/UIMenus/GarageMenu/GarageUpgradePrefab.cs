@@ -4,13 +4,13 @@ using UnityEngine.EventSystems;
 public class GarageUpgradePrefab : MonoBehaviour, IPointerClickHandler, IPointerExitHandler
 {
     public GarageMenu garageMenu;
-    public Upgrade upgrade;
+    public UpgradeIcon upgradeIcon;
     public bool isClicked;
 
-    public void Initialise(GarageMenu garageMenu, Upgrade upgrade)
+    public void Initialise(GarageMenu garageMenu, UpgradeIcon upgrade)
     {
         this.garageMenu = garageMenu;
-        this.upgrade = upgrade;
+        upgradeIcon = upgrade;
         isClicked = false;
     }
 
@@ -18,7 +18,7 @@ public class GarageUpgradePrefab : MonoBehaviour, IPointerClickHandler, IPointer
     {
         if (isClicked)
         {
-            garageMenu.SelectUpgrade(upgrade);
+            garageMenu.SelectUpgrade(upgradeIcon);
         }
         else
         {
