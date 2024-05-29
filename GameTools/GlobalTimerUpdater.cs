@@ -52,5 +52,7 @@ public class GlobalTimerUpdater : MonoBehaviour
     void PushThreeSeconds()
     {
         gardenManager.GlobalPushGrow();
+
+        UpgradeWearTracker.GlobalPushWearUpgrade();
     }
 }
