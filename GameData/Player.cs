@@ -5,6 +5,7 @@ public static class Player
 {
     public static List<IdIntPair> inventoryList = new();
     public static List<IdIntPair> questProgression = new();
+    public static List<IdIntPair> upgradeWear = new();
 
     public static bool GetEntry(string objectID, string caller, out IdIntPair entry)
     {
