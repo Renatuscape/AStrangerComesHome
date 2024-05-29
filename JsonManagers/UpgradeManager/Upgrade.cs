@@ -18,6 +18,7 @@ public class Upgrade : BaseObject
     public Texture2D image; //retrieve from ID + folder
     public Sprite sprite;
     public string description;
+    public bool isBroken = false;
 
     public void AddToPlayer(int amount = 1, bool doNotLog = false)
     {
