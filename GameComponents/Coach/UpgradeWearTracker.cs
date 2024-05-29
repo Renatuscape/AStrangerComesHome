@@ -10,7 +10,7 @@ public static class UpgradeWearTracker
 
     public static float CalculateMaxWear(int level)
     {
-        return upgradeHealthPerLevel * (level * upgradeWearMultiplier);
+        return upgradeHealthPerLevel * ((level +1) * upgradeWearMultiplier);
     }
 
     public static int CalculateRepairPrice(string upgradeID)
@@ -48,45 +48,39 @@ public static class UpgradeWearTracker
     {
         if (TransientDataScript.transientData.currentSpeed > 0)
         {
-            if (Player.upgradeWear == null || Player.upgradeWear.Count < 1)
-            {
-                foreach (var up in Upgrades.all)
-                {
-                    TransientDataScript.gameManager.dataManager.upgradeWear.Add(new IdIntPair() { objectID = up.objectID, amount = 0 });
-                    Player.upgradeWear = TransientDataScript.gameManager.dataManager.upgradeWear;
-                }
-            }
-
-            var randomUpgrade = Player.upgradeWear[Random.Range(0, Player.upgradeWear.Count - 1)];
+            var randomUpgrade = Player.upgradeWear[Random.Range(0, Player.upgradeWear.Count)];
 
             int upgradeLevel = Player.GetCount(randomUpgrade.objectID, "UpgradeWearTracker");
             float maxWear = CalculateMaxWear(upgradeLevel);
             int wearLevel;
+            Debug.Log("Calculated maxWear: " + maxWear + ". Attempting to check current amount against " + (maxWear * 0.9f));
 
-            if (TransientDataScript.transientData.engineState != EngineState.Reverse)
+            if (upgradeLevel > 0 || randomUpgrade.amount < maxWear * 0.9f)
             {
-                wearLevel = (int)TransientDataScript.transientData.engineState;
+                if (TransientDataScript.transientData.engineState != EngineState.Reverse)
+                {
+                    wearLevel = (int)TransientDataScript.transientData.engineState;
+                }
+                else
+                {
+                    wearLevel = 1;
+                }
+
+                randomUpgrade.amount += wearLevel;
             }
-            else
-            {
-                wearLevel = 1;
-            }
 
-
-            randomUpgrade.amount += wearLevel;
-
-            if (upgradeLevel >= maxWear * 0.75f)
+            if (randomUpgrade.amount >= maxWear * 0.75f)
             {
                 var upgrade = Upgrades.FindByID(randomUpgrade.objectID);
 
-                if (upgrade.isBroken)
+                if (!upgrade.isBroken)
                 {
                     LogAlert.QueueTextAlert($"{upgrade.name} is broken and needs repairs.");
                     AudioManager.PlayUISound("tapGlassMuffled", 0.2f);
                     upgrade.isBroken = true;
                 }
 
-                if (upgradeLevel >= maxWear)
+                if (randomUpgrade.amount >= maxWear && upgradeLevel > 0)
                 {
                     Player.Remove(randomUpgrade.objectID, 1, true);
 
