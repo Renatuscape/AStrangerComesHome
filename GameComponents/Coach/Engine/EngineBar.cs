@@ -29,8 +29,11 @@ public class EngineBar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        boostFraction = engine.currentBoost * 100 / engine.boostMax / 100;
+        if (engine.isReady)
+        {
+            boostFraction = engine.currentBoost * 100 / engine.boostMax / 100;
 
-        barMask.localPosition = Vector3.Lerp(barPositionEmpty, barPositionFull, boostFraction);
+            barMask.localPosition = Vector3.Lerp(barPositionEmpty, barPositionFull, boostFraction);
+        }
     }
 }
