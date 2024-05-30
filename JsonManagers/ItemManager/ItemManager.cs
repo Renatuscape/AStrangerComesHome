@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 public class ItemManager : MonoBehaviour
 {
     public List<Item> debugItemList = Items.all;
-    public bool allObjecctsLoaded = false;
+    public bool allObjectsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 8;
 
@@ -61,7 +61,7 @@ public class ItemManager : MonoBehaviour
                     filesLoaded++;
                     if (filesLoaded == numberOfFilesToLoad)
                     {
-                        allObjecctsLoaded = true;
+                        allObjectsLoaded = true;
                         Debug.Log("All ITEMS successfully loaded from Json.");
                     }
                 }

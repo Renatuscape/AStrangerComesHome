@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 public class SkillManager : MonoBehaviour
 {
     public List<Skill> debugSkillList = Skills.all;
-    public bool allObjecctsLoaded = false;
+    public bool allObjectsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 1;
 
@@ -43,7 +43,7 @@ public class SkillManager : MonoBehaviour
                     filesLoaded++;
                     if (filesLoaded == numberOfFilesToLoad)
                     {
-                        allObjecctsLoaded = true;
+                        allObjectsLoaded = true;
                         Debug.Log("All SKILLS successfully loaded from Json.");
                     }
                 }
