@@ -111,7 +111,7 @@ public class BookManager : MonoBehaviour
         if (bookItems == null || bookItems.Count == 0)
         {
             bookItems = Books.GetBookItems();
-            Debug.Log("Set book items list for BookManager ID reader.");
+            // Debug.Log("Set book items list for BookManager ID reader.");
         }
 
         string bookID = book.objectID.Split("-")[0];
