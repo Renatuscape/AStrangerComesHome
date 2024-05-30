@@ -10,6 +10,7 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public TextMeshProUGUI priceText;
     public TextMeshProUGUI levelText;
     public Slider wearSlider;
+    public GameObject brokenIcon;
 
     public int level;
     public int price;
@@ -17,6 +18,7 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     bool showPrice = false;
     bool showLevel = false;
     bool showFloatName = false;
+    bool showWearSlider = false;
 
     public void Setup(Upgrade upgrade, bool showLevel, bool showPrice, bool showFloatName, bool showWearSlider)
     {
@@ -24,9 +26,11 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         this.showLevel = showLevel;
         this.showPrice = showPrice;
         this.showFloatName = showFloatName;
+        this.showWearSlider = showWearSlider;
 
         var imageComponent = gameObject.GetComponent<Image>();
         imageComponent.sprite = upgrade.sprite;
+        brokenIcon.SetActive(false);
 
         if (!showLevel)
         {
@@ -63,9 +67,20 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
     }
 
+    public void UpdateBrokenIcon()
+    {
+        if (upgrade.isBroken)
+        {
+            brokenIcon.SetActive(true);
+        }
+        else
+        {
+            brokenIcon.SetActive(false);
+        }
+    }
     public void UpdateSlider()
     {
-        if (wearSlider != null)
+        if (wearSlider != null && showWearSlider)
         {
             float maxValue = UpgradeWearTracker.CalculateMaxWear(level);
 
@@ -81,6 +96,8 @@ public class UpgradeIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             {
                 wearSlider.value = maxValue;
             }
+
+            UpdateBrokenIcon();
 
         }
         else
