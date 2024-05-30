@@ -45,6 +45,7 @@ public class GameManagerScript : MonoBehaviour
     public AlchemyTracker alchemyTracker;
     public QuestTracker questTracker;
     public SpriteFactory spriteFactory;
+    public Engine coachEngine;
 
     void Awake()
     {
@@ -222,16 +223,23 @@ public class GameManagerScript : MonoBehaviour
 
     public void ResetGameComponents()
     {
+        loadingCanvas.gameObject.SetActive(true);
+
         CharacterNodeTracker.ClearCharacterNodes();
         foreach (GameObject component in listOfGameComponents)
         {
             component.SetActive(false);
-        }
-
-        foreach (GameObject component in listOfGameComponents)
-        {
             component.SetActive(true);
         }
+
+        foreach (Upgrade upgrade in Upgrades.all)
+        {
+            upgrade.isBroken = false;
+        }
+
+        coachEngine.Enable();
+
+        loadingCanvas.gameObject.SetActive(false);
     }
 
     public void InitialiseMap()
