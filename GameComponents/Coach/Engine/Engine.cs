@@ -5,11 +5,12 @@ using UnityEngine;
 public class Engine : MonoBehaviour
 {
     public TransientDataScript transientData;
+    static Engine instance;
 
-    public int engineBoostEfficiency;
-    public int engineFuelEfficiency;
-    public int engineBoostMax;
-    public int engineClickPotency;
+    public float engineBoostEfficiency;
+    public float engineFuelEfficiency;
+    public float engineBoostMax;
+    public float engineClickPotency;
 
     float baseSpeed = 0.6f;
     float baseFuelConsumption = 0.01f;
@@ -32,38 +33,61 @@ public class Engine : MonoBehaviour
     public float speedTick;
     public float effectTick;
 
-    void Awake()
+    public Upgrade MEC000;
+    public Upgrade MEC001;
+    public Upgrade MEC002;
+    public Upgrade MEC003;
+    public bool isReady = false;
+
+    public void Enable()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
+        instance = this;
+        boostMax = 50 + (3 * engineBoostMax);
+
+        MEC000 = Upgrades.FindByID("MEC000");
+        MEC001 = Upgrades.FindByID("MEC001");
+        MEC002 = Upgrades.FindByID("MEC002");
+        MEC003 = Upgrades.FindByID("MEC003");
 
         transientData.engineState = EngineState.Off;
         transientData.currentSpeed = 0;
         currentBoost = 0;
         speedTick = 0.01f;
         effectTick = 0.025f;
-    }
 
-    private void Start()
-    {
-        boostMax = 50 + (3 * engineBoostMax); //Calculated here first, then whenever OnMouseDown is called
-    }
-
-    private void OnEnable()
-    {
         SyncUpgrades();
+
+        isReady = true;
     }
 
-    void SyncUpgrades()
+    public static void SyncUpgrades()
     {
-        engineBoostEfficiency = Player.GetCount("MEC000", "Engine"); //Capacitor - boost depletes slower
-        engineBoostMax = Player.GetCount("MEC001", "Engine"); //Brass Chamber - more boost can be stored
-        engineClickPotency = Player.GetCount("MEC002", "Engine"); //Crankshaft - click is more potent
-        engineFuelEfficiency = Player.GetCount("MEC003", "Engine"); //Spark Tubes - engine uses less mana
+        if (instance != null && instance.isReady)
+        {
+            instance.engineBoostEfficiency = Player.GetCount("MEC000", "Engine"); //Capacitor - boost depletes slower
+
+            instance.engineBoostMax = Player.GetCount("MEC001", "Engine"); //Brass Chamber - more boost can be stored
+
+            if (instance.MEC001.isBroken)
+            {
+                instance.boostMax = 50 + (20 * instance.engineBoostMax);
+            }
+            else
+            {
+                instance.boostMax = 100 + (20 * instance.engineBoostMax);
+            }
+
+
+            instance.engineClickPotency = Player.GetCount("MEC002", "Engine"); //Crankshaft - click is more potent
+
+            instance.engineFuelEfficiency = Player.GetCount("MEC003", "Engine"); //Spark Tubes - engine uses less mana
+        }
     }
 
     void Update()
     {
-        if (TransientDataScript.IsTimeFlowing())
+        if (TransientDataScript.IsTimeFlowing() && isReady)
         {
             speedTimer += Time.deltaTime;
             effectTimer += Time.deltaTime;
@@ -87,10 +111,18 @@ public class Engine : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
         {
-            boostMax = 100 + (20 * engineBoostMax);
-
             if (TransientDataScript.GameState == GameState.Overworld && currentBoost < boostMax)
-                currentBoost = currentBoost + (5 + (0.5f * engineClickPotency));
+            {
+                if (MEC002.isBroken)
+                {
+                    currentBoost = currentBoost + (2 + (0.5f * engineClickPotency));
+                }
+                else
+                {
+                    currentBoost = currentBoost + (5 + (0.5f * engineClickPotency));
+                }
+            }
+
         }
     }
 
@@ -100,7 +132,15 @@ public class Engine : MonoBehaviour
         {
             if (currentBoost > 0)
             {
-                boostDecrease = 0.3f - (0.02f * engineBoostEfficiency);
+                if (MEC000.isBroken)
+                {
+                    boostDecrease = 0.45f - (0.02f * engineBoostEfficiency);
+                }
+                else
+                {
+                    boostDecrease = 0.3f - (0.02f * engineBoostEfficiency);
+                }
+
                 currentBoost = currentBoost - boostDecrease;
             }
             else if (currentBoost < 0)
@@ -165,7 +205,15 @@ public class Engine : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            manaConsumptionDebuff = 2f + (10 - engineFuelEfficiency) / 30;
+            if (MEC003.isBroken)
+            {
+                manaConsumptionDebuff = 2f + (10 - engineFuelEfficiency) / 10;
+            }
+            else
+            {
+                manaConsumptionDebuff = 2f + (10 - engineFuelEfficiency) / 25;
+            }
+
 
             //SWITCH TO FIRST GEAR BEFORE MANA RUNS OUT
             if (transientData.currentMana < 10 && transientData.engineState != EngineState.Off && transientData.engineState != EngineState.Reverse)
