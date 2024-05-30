@@ -90,6 +90,28 @@ public class TransientDataScript : MonoBehaviour
         SetGameState(GameState.Overworld, name, gameObject);
     }
 
+    public static void SetGameState(GameState newState, string callerScript, GameObject callerObject)
+    {
+        if (NullCheck())
+        {
+            {
+                LogStateChange(callerScript, callerObject, newState);
+                GameState = newState;
+                DisableFloatText();
+
+                if (newState == GameState.Overworld)
+                {
+                    gameManager.questTracker.RunCheck();
+                    Engine.SyncUpgrades();
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("transientData not found.");
+        }
+    }
+
     public static void TravelByGate(Gate gate)
     {
         Debug.Log("Travel by Gate called at TransientDataScript");
@@ -196,30 +218,6 @@ public class TransientDataScript : MonoBehaviour
             Debug.Log("transientData not found.");
             return null;
         }
-    }
-
-    public static void SetGameState(GameState newState, string callerScript, GameObject callerObject)
-    {
-        if (NullCheck())
-        {
-            // if (GameManagerScript.setUpReady == true || callerObject == gameManager)
-            {
-                LogStateChange(callerScript, callerObject, newState);
-                GameState = newState;
-                DisableFloatText();
-
-                if (newState == GameState.Overworld)
-                {
-                    gameManager.questTracker.RunCheck();
-                }
-            }
-        }
-        else
-        {
-            Debug.Log("transientData not found.");
-        }
-
-        // Debug.LogWarning(callerScript + " " + callerObject + " " + newState); // + ". Change was " + (GameManagerScript.setUpReady == true || callerObject == gameManager));
     }
 
     public static DayOfWeek GetWeekDay()
