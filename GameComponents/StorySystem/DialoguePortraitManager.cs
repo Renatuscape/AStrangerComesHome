@@ -23,6 +23,10 @@ public class DialoguePortraitManager : MonoBehaviour
         playerSprite.gameObject.transform.localPosition = new Vector3(starterPosition * -1, playerSprite.gameObject.transform.localPosition.y, playerSprite.gameObject.transform.localPosition.z);
     }
 
+    public void SetRightPortrait(string speakerID)
+    {
+        spriteRight.sprite = SpriteFactory.GetUiSprite(speakerID).GetDefaultFrame();
+    }
     public void StartDialogueEvent(DialogueEvent dEvent)
     {
         gameObject.SetActive(true);
