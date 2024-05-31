@@ -191,6 +191,12 @@ public class DialogueDisplay : MonoBehaviour
                 string content = isSuccess ? choice.successText : choice.failureText;
 
                 SetDisplayNames(resultEvent);
+
+                if (resultEvent.speaker.objectID != "Traveller" && resultEvent.speaker.objectID != "ARC999")
+                {
+                    portraitManager.SetRightPortrait(resultEvent.speaker.objectID);
+                }
+
                 var parsedText = DialogueTagParser.ParseText(content);
                 PrintContent(parsedText, speakerTag == "Narration");
                 PrintToChatLog(resultEvent.speaker.NamePlate(), true, false);
