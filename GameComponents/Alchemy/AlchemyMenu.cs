@@ -17,6 +17,7 @@ public class AlchemyMenu : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public AlchemyTracker alchemyTracker;
+    public AlchemyAnimator alchemyAnimator;
     public SynthesiserData synthData;
     public AlchemySelectedIngredients selectedIngredients;
     public AlchemyInventory inventory;
@@ -103,6 +104,8 @@ public class AlchemyMenu : MonoBehaviour
         {
             Debug.Log("Synthdata was somehow null when opening alchemy menu.");
         }
+
+        alchemyAnimator.Initialise(synthData);
     }
     void SetUpContainers()
     {
@@ -178,6 +181,7 @@ public class AlchemyMenu : MonoBehaviour
         synthData.isSynthActive = false;
         synthData.progressSynth = 0;
         synthData.synthRecipe = null;
+        // alchemyAnimator.AnimateClaim();
     }
 
     public void HandleCreate()
@@ -222,6 +226,7 @@ public class AlchemyMenu : MonoBehaviour
                 alchemyTracker.gameObject.SetActive(true);
 
                 InitialiseAnimateCreate(draggablePrefabs, animationTimer);
+                alchemyAnimator.AnimateCreate();
 
                 if (!isSuccessful)
                 {
