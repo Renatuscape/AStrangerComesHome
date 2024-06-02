@@ -121,6 +121,9 @@ public class StationManager : MonoBehaviour
             transientData.activePrefabs.Remove(spawnedStation);
             Destroy(spawnedStation);
         }
+
+        spawnedStation = null;
+        spawnedStationScript = null;
         transientData.currentLocation = null;
     }
 }
