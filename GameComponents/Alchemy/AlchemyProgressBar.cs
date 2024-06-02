@@ -5,18 +5,13 @@ public class AlchemyProgressBar : MonoBehaviour
 {
     public AlchemyMenu alchemyMenu;
     public SynthesiserData synthData;
-    public GameObject fillBar;
+    public RectTransform fillBar;
     public GameObject containerBG;
-    public float fullCoordinate;
-    public float currentCoordinate;
-    public float emptyCoordinate;
     public float percentageFill;
     public bool isEnabled;
 
     public void Initialise(SynthesiserData synthData)
     {
-        fullCoordinate = containerBG.transform.position.x;
-        emptyCoordinate = fullCoordinate - 624;
         this.synthData = synthData;
         percentageFill = CalculatePercentage();
         UpdateFillBarPosition();
@@ -25,7 +20,7 @@ public class AlchemyProgressBar : MonoBehaviour
 
     private void Start()
     {
-        fillBar.transform.position = new Vector3(emptyCoordinate, fillBar.transform.position.y, fillBar.transform.position.z);
+        fillBar.localScale = new Vector3(0, 1, 1);
     }
 
     private void Update()
@@ -68,13 +63,13 @@ public class AlchemyProgressBar : MonoBehaviour
     void UpdateFillBarPosition()
     {
         float smoothness = 2;
-        // Calculate the new x-coordinate of the fill bar based on the percentage completion
-        float targetXCoordinate = Mathf.Lerp(emptyCoordinate, fullCoordinate, percentageFill);
 
-        if (targetXCoordinate > -1000 && targetXCoordinate < 1000)
+        float xScale = Mathf.Lerp(0, 1, percentageFill);
+
+        if (xScale > -1000 && xScale < 1000)
         {
             // Smoothly move the fill bar to the target position
-            fillBar.transform.position = Vector3.Lerp(fillBar.transform.position, new Vector3(targetXCoordinate, fillBar.transform.position.y, fillBar.transform.position.z), Time.deltaTime * smoothness);
+            fillBar.localScale = Vector3.Lerp(fillBar.localScale, new Vector3(xScale, 1, 1), Time.deltaTime * smoothness);
         }
         else
         {
