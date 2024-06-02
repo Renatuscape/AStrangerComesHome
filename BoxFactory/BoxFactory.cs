@@ -278,12 +278,15 @@ public class BoxFactory : MonoBehaviour
 
     public static void ReturnItemIconToPool(ItemIconData itemIconData, string caller)
     {
-        // Debug.Log(itemIconData.gameObject.name + " itemIcon was successfully returned by " + caller);
-        itemIconData.gameObject.transform.SetParent(boxFactory.gameObject.transform, false);
-        itemIconData.gameObject.transform.localPosition = new Vector3(0, 0, 0);
-        itemIconData.gameObject.SetActive(false);
+        if (boxFactory != null)
+        {
+            // Debug.Log(itemIconData.gameObject.name + " itemIcon was successfully returned by " + caller);
+            itemIconData.gameObject.transform.SetParent(boxFactory.gameObject.transform, false);
+            itemIconData.gameObject.transform.localPosition = new Vector3(0, 0, 0);
+            itemIconData.gameObject.SetActive(false);
 
-        boxFactory.itemIconPool.Add(itemIconData);
-        boxFactory.itemIconsOnLoan.Remove(itemIconData.gameObject);
+            boxFactory.itemIconPool.Add(itemIconData);
+            boxFactory.itemIconsOnLoan.Remove(itemIconData.gameObject);
+        }
     }
 }
