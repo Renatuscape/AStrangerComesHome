@@ -106,6 +106,6 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
     private void OnDestroy()
     {
-        Debug.LogWarning("Item icon named " + gameObject.name + " was destroyed! Fix old code, please :(");
+        // Debug.LogWarning("Item icon named " + gameObject.name + " was destroyed! Fix old code, please :(");
     }
 }
