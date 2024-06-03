@@ -63,12 +63,6 @@ public static class DialogueSetup
                 Character foundSpeaker = Characters.all.Find((s) => s.dialogueTag.ToLower() == speakerTag.ToLower());
                 if (foundSpeaker != null)
                 {
-                    //// PARSE CONTENT AND ADD STEP
-                    //DialogueStep step = new() { name = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
-                    //step.speaker = foundSpeaker;
-                    //step.text = dialogue.content[i + 1];
-                    //dialogue.dialogueSteps.Add(step);
-
                     // PARSE CONTENT AND ADD EVENT
                     DialogueEvent dEvent = new () { speaker = foundSpeaker, eventName = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
                     dEvent.content = dialogue.content[i + 1];
@@ -81,7 +75,7 @@ public static class DialogueSetup
                 }
                 else
                 {
-                    Debug.LogWarning($"Could not parse dialogue content for {dialogue.questID} stage {dialogue.questStage} because speaker tag \"{speakerTag}\" return null.");
+                    Debug.LogError($"Could not parse dialogue content for {dialogue.questID} stage {dialogue.questStage} because speaker tag \"{speakerTag}\" return null.");
                 }
             }
             else
@@ -163,6 +157,15 @@ public static class DialogueSetup
 
                     dEvent.spriteID = spriteTag;
                 }
+                else if (tag.Contains("BG#"))
+                {
+                    // Format in a way that a future SpriteManager can handle.
+
+                    var spriteTag = dEvent.speaker.objectID + "-" + tag.Replace("BG#", "");
+                    // Debug.Log("Parsed sprite tag: " + spriteTag);
+
+                    dEvent.backgroundID = spriteTag;
+                }
             }
 
             if (string.IsNullOrEmpty(dEvent.spriteID))
@@ -196,6 +199,7 @@ public class DialogueEvent
     public string targetPlacement; //TP# OFF-FAR-NOR-CLO-MID
     public string effect;
     public string moveAnimationSpeed; //MAS# NON-SLO-MED-FAS
+    public string backgroundID; //BG# imageName or imageName-WithoutFade or remove or removeWithoutFade
     public bool isLeft = false;
     public bool hideOtherPortrait = false;
 
