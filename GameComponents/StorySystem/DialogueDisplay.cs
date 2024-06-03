@@ -116,6 +116,8 @@ public class DialogueDisplay : MonoBehaviour
 
             if (isInitialStep)
             {
+                dialogueMenu.SetUpBackground(dialogue.backgroundID);
+
                 var titleText = dialogue.topicName;
                 if (string.IsNullOrEmpty(titleText))
                 {
@@ -123,6 +125,13 @@ public class DialogueDisplay : MonoBehaviour
                 }
 
                 PrintToChatLog(DialogueTagParser.ParseText(titleText).ToUpper(), false, false);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(dialogue.backgroundID))
+                {
+                    dialogueMenu.SetUpBackground(dialogue.backgroundID);
+                }
             }
 
             PrintEvent();
@@ -133,6 +142,11 @@ public class DialogueDisplay : MonoBehaviour
     {
         activeEvent = activeDialogue.dialogueEvents[eventIndex];
         SetDisplayNames(activeEvent);
+
+        if (!string.IsNullOrEmpty(activeEvent.backgroundID))
+        {
+            dialogueMenu.SetUpBackground(activeEvent.backgroundID);
+        }
 
         // Parse tags here instead of at start to get latest tags
         var parsedText = DialogueTagParser.ParseText(activeEvent.content);
