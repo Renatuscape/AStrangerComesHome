@@ -32,9 +32,15 @@ public class DialogueMenu : MonoBehaviour
 
     public void PrintChoices(Dialogue dialogue)
     {
-        choiceManager.PrintChoices(dialogue);
+        //choiceManager.PrintChoices(dialogue);
+        StartCoroutine(PrintChoicesWithDelay(dialogue));
     }
 
+    IEnumerator PrintChoicesWithDelay(Dialogue dialogue)
+    {
+        yield return new WaitForSeconds(0.5f);
+        choiceManager.PrintChoices(dialogue);
+    }
 
     public void HandleChoiceResult(Choice choice, bool isSuccess, List<IdIntPair> missingItems)
     {
