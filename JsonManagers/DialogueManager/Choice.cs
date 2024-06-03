@@ -20,6 +20,8 @@ public class Choice
     public List<IdIntPair> restrictions;
     public List<IdIntPair> rewards;
     public ChoiceNodeData nodeData;
+    public DialogueEvent successEvent;
+    public DialogueEvent failureEvent;
 
     public bool AttemptAllChecks(bool grantRewards, out bool passedRequirements, out bool passedRestrictions, out List<IdIntPair> missingItems)
     {
@@ -85,7 +87,6 @@ public class Choice
                 {
                     Player.Add(new IdIntPair() { objectID = foundObject.objectID, amount = entry.amount, description = entry.description });
                 }
-
             }
             else
             {
