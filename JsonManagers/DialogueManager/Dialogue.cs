@@ -21,6 +21,7 @@ public class Dialogue
     public int questStage;
     public string topicName;
     public string hint;
+    public string backgroundID;
     public int startTime = 0;
     public int endTime = 0;
     public int minimumDaysPassed;
