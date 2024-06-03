@@ -8,6 +8,7 @@ public class DialogueMenu : MonoBehaviour
     public StorySystem storySystem;
     public DialogueDisplay dialogueDisplay;
     public DialogueChoiceManager choiceManager;
+    public DialogueBackgroundManager backgroundManager;
 
     public Quest activeQuest;
     public string initiatingNPC;
@@ -16,6 +17,7 @@ public class DialogueMenu : MonoBehaviour
     private void OnEnable()
     {
         choiceManager.gameObject.SetActive(false);
+        backgroundManager.backgroundImage.sprite = null;
     }
 
     public void StartDialogue(Quest quest, string speakerID, bool doNotReopenTopic)
@@ -28,6 +30,11 @@ public class DialogueMenu : MonoBehaviour
         Dialogue dialogue = GetDialogue(activeQuest);
 
         dialogueDisplay.StartDialogue(dialogue, true);
+    }
+
+    public void SetUpBackground(string backgroundID)
+    {
+        backgroundManager.SetUpBackground(backgroundID);
     }
 
     public void PrintChoices(Dialogue dialogue)
@@ -109,4 +116,5 @@ public class DialogueMenu : MonoBehaviour
     {
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
+
 }
