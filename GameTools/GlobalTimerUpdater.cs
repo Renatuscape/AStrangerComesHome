@@ -12,10 +12,13 @@ public class GlobalTimerUpdater : MonoBehaviour
     public float threeSecondTimer;
     float threeSecondTick = 3;
 
+    float secondTick = 1;
+    public float secondTimer;
     private void Start()
     {
         animationTimer = animationTick;
         threeSecondTimer = threeSecondTick;
+        secondTimer = secondTick;
     }
     void Update()
     {
@@ -23,11 +26,18 @@ public class GlobalTimerUpdater : MonoBehaviour
         {
             animationTimer += Time.deltaTime;
             threeSecondTimer += Time.deltaTime;
+            secondTimer += Time.deltaTime;
 
             if (animationTimer >= animationTick)
             {
                 animationTimer = 0;
                 PushAnimation();
+            }
+
+            if (secondTimer >= secondTick)
+            {
+                secondTimer = 0;
+                PushSecond();
             }
 
             if (threeSecondTimer >= threeSecondTick)
@@ -49,6 +59,10 @@ public class GlobalTimerUpdater : MonoBehaviour
         nightSkyController.GlobalPushRefreshSky();
     }
 
+    void PushSecond()
+    {
+        ManaConverter.GlobalPushManaRegen();
+    }
     void PushThreeSeconds()
     {
         gardenManager.GlobalPushGrow();
