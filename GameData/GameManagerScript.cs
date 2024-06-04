@@ -46,6 +46,7 @@ public class GameManagerScript : MonoBehaviour
     public QuestTracker questTracker;
     public SpriteFactory spriteFactory;
     public Engine coachEngine;
+    public ManaConverter manaConverter;
 
     void Awake()
     {
@@ -238,6 +239,7 @@ public class GameManagerScript : MonoBehaviour
         }
 
         coachEngine.Enable();
+        manaConverter.Enable();
 
         loadingCanvas.gameObject.SetActive(false);
     }
