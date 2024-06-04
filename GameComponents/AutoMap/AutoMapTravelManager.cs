@@ -19,7 +19,7 @@ public class AutoMapTravelManager
         if (MapBoundsCheck())
         {
             // ADJUST PLAYER SPEED ON MAP
-            playerTokenSpeed = autoMap.transientData.currentSpeed * 0.001f;
+            playerTokenSpeed = autoMap.transientData.currentSpeed * 0.0015f;
 
             // RETRIEVE POSITION FROM DATAMANAGER
             var tempPosition = new Vector3(autoMap.dataManager.mapPositionX, autoMap.dataManager.mapPositionY, playerToken.transform.localPosition.z);
