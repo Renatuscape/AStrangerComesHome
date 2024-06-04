@@ -1,88 +1,112 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ManaConverter : MonoBehaviour
 {
-    public TransientDataScript transientData;
+    public static ManaConverter instance;
 
     public int manapool;
     public int manaPassiveGeneration;
     public int manaClickPotency;
+    public int skillMagic;
+    public int attMysticism;
 
-    private void Awake()
+    public Upgrade MAU000;
+    public Upgrade MAU001;
+    public Upgrade MAU002;
+    public bool isReady = false;
+    public void Enable()
     {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-        transientData.currentMana = 0;
-        transientData.manapool = 100;
-    }
-    void Start()
-    {
-        Invoke("PassiveManaRegeneration", 0);
-    }
+        TransientDataScript.transientData.currentMana = 0;
+        TransientDataScript.transientData.manapool = 100;
 
-    private void OnEnable()
-    {
+        MAU000 = Upgrades.FindByID("MAU000");
+        MAU001 = Upgrades.FindByID("MAU001");
+        MAU002 = Upgrades.FindByID("MAU002");
+
+        instance = this;
+
         SyncUpgrades();
+        isReady = true;
     }
 
-    void SyncUpgrades()
+    public static void SyncUpgrades()
     {
-        manaClickPotency = Player.GetCount("MAU000", "ManaConverter");
-        manaPassiveGeneration = Player.GetCount("MAU001", "ManaConverter");
-        manapool = Player.GetCount("MAU002", "ManaConverter");
+        if (instance != null && instance.isReady)
+        {
+            instance.manaClickPotency = Player.GetCount("MAU000", "ManaConverter");
+            instance.manaPassiveGeneration = Player.GetCount("MAU001", "ManaConverter");
+            instance.manapool = Player.GetCount("MAU002", "ManaConverter");
+            instance.skillMagic = Player.GetCount(StaticTags.Magic, "ManaConverter");
+            instance.attMysticism = Player.GetCount(StaticTags.Mysticism, "ManaConverter");
+
+            instance.UpdateManaPool();
+        }
     }
     void UpdateManaPool()
     {
-        transientData.manapool = 100 + (manapool * 30);
+        if (MAU002.isBroken)
+        {
+            TransientDataScript.transientData.manapool = 50 + (manapool * 5) + (skillMagic * 5);
+        }
+        else
+        {
+            TransientDataScript.transientData.manapool = 100 + (manapool * 30) + (skillMagic * 30);
+        }
     }
 
-    void PassiveManaRegeneration()
+    public static void GlobalPushManaRegen()
     {
-        //SyncUpgrades();
-
-        //REGENERATION AMOUNT
-        var manaRecovery = 0.3f + (0.1f * manaPassiveGeneration);
-        UpdateManaPool();
-
-
-        //PASSIVE MANA ONLY REGENERATES DURING THESE STATES
-        if (TransientDataScript.GameState == GameState.Overworld
-            || TransientDataScript.GameState == GameState.ShopMenu
-            || TransientDataScript.GameState == GameState.Dialogue
-            || TransientDataScript.GameState == GameState.PlayerHome
-            || TransientDataScript.GameState == GameState.MapMenu)
+        if (TransientDataScript.IsTimeFlowing() && instance.isReady)
         {
-            if (transientData.currentMana < transientData.manapool)
-            {
-                transientData.currentMana = transientData.currentMana + manaRecovery;
+            //REGENERATION AMOUNT
+            var manaRecovery = 1.5f + (0.2f * instance.manaPassiveGeneration) + (0.15f * instance.attMysticism);
 
+            if (TransientDataScript.transientData.engineState == EngineState.Off)
+            {
+                manaRecovery = manaRecovery * 2f;
+            }
+
+            if (instance.MAU001.isBroken)
+            {
+                manaRecovery = manaRecovery * 0.5f;
+            }
+
+            if (TransientDataScript.transientData.currentMana < TransientDataScript.transientData.manapool)
+            {
+                TransientDataScript.transientData.currentMana = TransientDataScript.transientData.currentMana + manaRecovery;
             }
             else
-                transientData.currentMana = transientData.manapool;
+            {
+                TransientDataScript.transientData.currentMana = TransientDataScript.transientData.manapool;
+            }
         }
-
-        //FREQUENCY
-        var regenFrequency = 0.2f - (0.01f * manaPassiveGeneration);
-        if (regenFrequency < 0.01f)
-            regenFrequency = 0.01f;
-
-        Invoke("PassiveManaRegeneration", regenFrequency);
     }
 
     private void OnMouseDown()
     {
         if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
         {
-            var clickRecovery = 1 + (2 * manaClickPotency) / 10;  //can be expressed as 0.2 * level, but wrong variable type. Allows for +3 at level 10
+            float clickRecovery;
 
-            if (transientData.currentMana < transientData.manapool)
+            if (MAU000.isBroken)
             {
-                transientData.currentMana = transientData.currentMana + clickRecovery;
+                clickRecovery = 0.5f + (manaClickPotency * 0.1f) + (attMysticism * 0.1f);
             }
             else
-                transientData.currentMana = transientData.manapool;
+            {
+                clickRecovery = 1 + (manaClickPotency * 0.2f + (attMysticism * 0.15f));
+            }
+
+            if (TransientDataScript.transientData.currentMana + clickRecovery <= TransientDataScript.transientData.manapool)
+            {
+                TransientDataScript.transientData.currentMana = TransientDataScript.transientData.currentMana + clickRecovery;
+            }
+            else
+            {
+                TransientDataScript.transientData.currentMana = TransientDataScript.transientData.manapool;
+            }
         }
     }
 }
