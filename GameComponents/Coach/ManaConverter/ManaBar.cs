@@ -14,6 +14,7 @@ public class ManaBar : MonoBehaviour
     public Vector3 barPositionEmpty;
     public float manaFraction;
 
+    bool isReady = false;
     void Awake()
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
@@ -28,8 +29,15 @@ public class ManaBar : MonoBehaviour
 
     void Update()
     {
-        manaFraction = transientData.currentMana * 100 / transientData.manapool / 100;
+        if (isReady)
+        {
+            manaFraction = transientData.currentMana * 100 / transientData.manapool / 100;
 
-        barMask.localPosition = Vector3.Lerp(barPositionEmpty, barPositionFull, manaFraction);
+            barMask.localPosition = Vector3.Lerp(barPositionEmpty, barPositionFull, manaFraction);
+        }
+        else if (TransientDataScript.gameManager.manaConverter.isReady)
+        {
+            isReady = true;
+        }
     }
 }
