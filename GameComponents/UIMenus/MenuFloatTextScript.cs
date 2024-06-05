@@ -48,7 +48,7 @@ public class MenuFloatTextScript : MonoBehaviour
     public void PrintFloatText(string content)
     {
         mouseWorldPosition = MouseTracker.GetMouseWorldPosition().x;
-        if (mouseWorldPosition > 12)
+        if (mouseWorldPosition > 10)
         {
             rect.anchorMin = new Vector2(1, rect.anchorMin.y);
             rect.anchorMax = new Vector2(1, rect.anchorMax.y);
