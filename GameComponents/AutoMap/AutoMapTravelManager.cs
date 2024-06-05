@@ -36,7 +36,7 @@ public class AutoMapTravelManager
             {
                 if (playerToken.transform.localPosition == mapMarker.transform.localPosition)
                 {
-                    autoMap.transientData.engineState = EngineState.Off; // STOP WHEN REACHING DESTINATION
+                    autoMap.transientData.engineState = EngineState.Off;
 
                     var location = Locations.FindByCoordinates((int)playerToken.transform.localPosition.x, (int)playerToken.transform.localPosition.y, true);
                     
@@ -98,6 +98,7 @@ public class AutoMapTravelManager
         {
             return true;
         }
+
         return false;
     }
 }
