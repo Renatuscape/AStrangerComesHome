@@ -73,7 +73,7 @@ public class AutoMapTravelManager
                     else
                     {
                         autoMap.transientData.currentLocation = null;
-                        TransientDataScript.PushAlert("I have arrived at my destination.");
+                        LogAlert.QueueTextAlert("I have arrived at my destination.");
                     }
                 }
                 else
@@ -85,7 +85,7 @@ public class AutoMapTravelManager
         else if (autoMap.transientData.engineState != EngineState.Off)
         {
             autoMap.transientData.engineState = EngineState.Off;
-            TransientDataScript.PushAlert("I need to choose a destination.");
+            LogAlert.QueueTextAlert("I need to choose a destination.");
         }
     }
 
