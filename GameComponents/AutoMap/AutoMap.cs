@@ -89,7 +89,7 @@ public class AutoMap : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.MapMenu || TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.JournalMenu)
         {
-            if (transientData.engineState != EngineState.Off && playerToken.transform.localPosition != mapMarker.transform.localPosition && travelManager is not null)
+            if (transientData.engineState != EngineState.Off && playerToken.transform.localPosition != mapMarker.transform.localPosition && travelManager != null)
             {
                 travelManager.Travel();
             }
@@ -102,7 +102,7 @@ public class AutoMap : MonoBehaviour
 
         Region destinationRegion = Regions.FindByID(gate.destinationRegion);
 
-        if (destinationRegion is not null)
+        if (destinationRegion != null)
         {
             Debug.Log($"Travel by gate calling ChangeMap for {destinationRegion.objectID}");
             ChangeMap(destinationRegion, gate.xCoordinate, gate.yCoordinate);
