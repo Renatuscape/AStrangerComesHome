@@ -24,7 +24,6 @@ public class AutoMapTravelManager
             // RETRIEVE POSITION FROM DATAMANAGER
             var tempPosition = new Vector3(autoMap.dataManager.mapPositionX, autoMap.dataManager.mapPositionY, playerToken.transform.localPosition.z);
 
-            // Calculate the new position without moving the player yet
             Vector3 newPosition = Vector3.MoveTowards(tempPosition, mapMarker.transform.localPosition, playerTokenSpeed);
 
             playerToken.transform.localPosition = newPosition;
@@ -53,7 +52,6 @@ public class AutoMapTravelManager
                         {
                             if (location.type == LocationType.Crossing && location.gates.Count == 1)
                             {
-                                //add checks here
                                 Debug.Log("Attempting to travel by gate");
 
                                 Gate gate = location.gates[0];
@@ -86,7 +84,7 @@ public class AutoMapTravelManager
         }
         else if (autoMap.transientData.engineState != EngineState.Off)
         {
-            autoMap.transientData.engineState = EngineState.Off; // STOP WHEN REACHING DESTINATION
+            autoMap.transientData.engineState = EngineState.Off;
             TransientDataScript.PushAlert("I need to choose a destination.");
         }
     }
