@@ -6,6 +6,11 @@ public class DialogueBackgroundManager : MonoBehaviour
 {
     public GameObject backgroundLetterbox;
     public Image backgroundImage;
+    public Image backdrop;
+
+    float fastFade = 0.01f;
+    float slowFade = 0.02f;
+    float extraSlowFade = 0.03f;
 
     private void OnDisable()
     {
@@ -15,23 +20,52 @@ public class DialogueBackgroundManager : MonoBehaviour
 
     public void SetUpBackground(string backgroundID)
     {
-        if (string.IsNullOrEmpty(backgroundID))
+        var spriteID = backgroundID;
+
+        if (string.IsNullOrEmpty(spriteID))
         {
             backgroundLetterbox.SetActive(false);
         }
-        else if (backgroundID.ToLower().Contains("removewithoutfade"))
+        else if (backgroundID.Contains("RemoveWithoutFade"))
         {
             RemoveBackground();
         }
-        else if (backgroundID.ToLower().Contains("remove"))
+        else if (backgroundID.Contains("Remove"))
         {
             RemoveBackgroundWithFade();
         }
         else
         {
-            if (backgroundID.Contains("-WithoutFade"))
+            // CHECK BACKDROP COLOUR
+            if (spriteID.Contains("-OnWhite"))
             {
-                var spriteID = backgroundID.Replace("-WithoutFade", "");
+                backdrop.color = Color.white;
+                spriteID = spriteID.Replace("-OnWhite", "");
+            }
+            else if (backgroundID.Contains("-#"))
+            {
+                var splitString = spriteID.Split("-#");
+                var hexColour = splitString[1];
+                spriteID = splitString[0];
+
+                if (ColorUtility.TryParseHtmlString(hexColour, out Color colour))
+                {
+                    backdrop.color = colour;
+                }
+                else
+                {
+                    Debug.Log("Could not parse hex colour for background. String was " + hexColour + ". Sprite ID after split was " + spriteID);
+                }
+            }
+            else if (backdrop.color != Color.black)
+            {
+                backdrop.color = Color.black;
+            }
+
+            // CHECK FOR FADE
+            if (spriteID.Contains("-WithoutFade"))
+            {
+                spriteID = spriteID.Replace("-WithoutFade", "");
                 var foundSprite = SpriteFactory.GetBackgroundSprite(spriteID);
 
                 if (foundSprite != null)
@@ -46,13 +80,26 @@ public class DialogueBackgroundManager : MonoBehaviour
             }
             else
             {
-                var foundSprite = SpriteFactory.GetBackgroundSprite(backgroundID);
+                float fadeSpeed = fastFade;
+
+                if (spriteID.Contains("-ExSlowFade"))
+                {
+                    fadeSpeed = extraSlowFade;
+                    spriteID = spriteID.Replace("-ExSlowFade", "");
+                }
+                else if (spriteID.Contains("-SlowFade"))
+                {
+                    fadeSpeed = slowFade;
+                    spriteID = spriteID.Replace("-SlowFade", "");
+                }
+
+                var foundSprite = SpriteFactory.GetBackgroundSprite(spriteID);
 
                 if (foundSprite != null)
                 {
                     if (foundSprite != backgroundImage.sprite)
                     {
-                        SetBackgroundWithFade(foundSprite);
+                        SetBackgroundWithFade(foundSprite, fadeSpeed);
                     }
                 }
                 else
@@ -70,14 +117,14 @@ public class DialogueBackgroundManager : MonoBehaviour
         backgroundImage.color = new Color(1, 1, 1, 1);
     }
 
-    void SetBackgroundWithFade(Sprite sprite)
+    void SetBackgroundWithFade(Sprite sprite, float fadeSpeed)
     {
         backgroundImage.color = new Color(1, 1, 1, 0);
 
         backgroundImage.sprite = sprite;
 
         backgroundLetterbox.SetActive(true);
-        StartCoroutine(BackgroundFadeIn());
+        StartCoroutine(BackgroundFadeIn(fadeSpeed));
     }
 
     void RemoveBackgroundWithFade()
@@ -90,7 +137,7 @@ public class DialogueBackgroundManager : MonoBehaviour
         backgroundLetterbox.SetActive(false);
     }
 
-    IEnumerator BackgroundFadeIn()
+    IEnumerator BackgroundFadeIn(float fadeSpeed)
     {
         float alpha = 0;
 
@@ -98,7 +145,7 @@ public class DialogueBackgroundManager : MonoBehaviour
         {
             alpha += 0.03f;
             backgroundImage.color = new Color(1, 1, 1, alpha);
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(fadeSpeed);
         }
     }
 
