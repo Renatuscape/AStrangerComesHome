@@ -55,7 +55,7 @@ public static class Locations
         {
             if (match.CheckIfUnlocked())
             {
-                Debug.Log("Station passed unlock check.");
+                Debug.Log("Station passed unlock check: " + match.objectID);
             }
             else
             {
