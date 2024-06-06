@@ -64,10 +64,10 @@ public class DialogueChoiceManager : MonoBehaviour
     public void MakeChoice(Choice choice)
     {
         bool choiceResult = choice.AttemptAllChecks(true, out bool passedRequirements, out bool passedRestrictions, out List<IdIntPair> missingItems);
-        Debug.Log($"Choice resulted in {choiceResult}." +
-            $"\nRequirements passed: {passedRequirements}." +
-            $"\nRestrictions passed: {passedRestrictions}." +
-            $"\nMissing item count: {missingItems.Count}");
+        //Debug.Log($"Choice resulted in {choiceResult}." +
+        //    $"\nRequirements passed: {passedRequirements}." +
+        //    $"\nRestrictions passed: {passedRestrictions}." +
+        //    $"\nMissing item count: {missingItems.Count}");
 
         dialogueMenu.HandleChoiceResult(choice, choiceResult, missingItems);
 

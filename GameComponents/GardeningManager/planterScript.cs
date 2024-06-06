@@ -54,7 +54,7 @@ public class PlanterScript : MonoBehaviour
 
             if (foundPlanterData && TransientDataScript.CameraView == CameraView.Garden)
             {
-                Debug.Log($"{planterData.planterID} click registered.");
+                // Debug.Log($"{planterData.planterID} click registered.");
                 gardenManager.ClickPlanter(planterData);
             }
         }

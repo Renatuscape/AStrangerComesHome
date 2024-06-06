@@ -70,10 +70,10 @@ public class Choice
 
     public void GrantRewards()
     {
-        Debug.Log($"Delivering reward for successful choice: {optionText}");
+        // Debug.Log($"Delivering reward for successful choice: {optionText}");
         foreach (IdIntPair entry in rewards)
         {
-            Debug.Log($"Delivered {entry.objectID} ({entry.amount})");
+            // Debug.Log($"Delivered {entry.objectID} ({entry.amount})");
 
             var foundObject = GameCodex.GetBaseObject(entry.objectID); // ensure any item ID is trimmed properly
 

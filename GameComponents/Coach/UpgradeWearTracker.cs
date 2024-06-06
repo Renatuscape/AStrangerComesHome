@@ -53,7 +53,7 @@ public static class UpgradeWearTracker
             int upgradeLevel = Player.GetCount(randomUpgrade.objectID, "UpgradeWearTracker");
             float maxWear = CalculateMaxWear(upgradeLevel);
             int wearLevel;
-            Debug.Log("Calculated maxWear: " + maxWear + ". Attempting to check current amount against " + (maxWear * 0.9f));
+            // Debug.Log("Calculated maxWear: " + maxWear + ". Attempting to check current amount against " + (maxWear * 0.9f));
 
             if (upgradeLevel > 0 || randomUpgrade.amount < maxWear * 0.9f)
             {

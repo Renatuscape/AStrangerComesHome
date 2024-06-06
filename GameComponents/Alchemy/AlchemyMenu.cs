@@ -282,7 +282,7 @@ public class AlchemyMenu : MonoBehaviour
         {
             entry.inventoryClass.gameObject.GetComponent<ItemIconData>().Return("AlchemyMenu on disable");
             Destroy(entry.selectedEntryPrefab);//entry.selectedEntryPrefab.GetComponent<ItemIconData>().Return();
-            Debug.Log("Implement object pool for ItemRows!");
+            // Debug.Log("Implement object pool for ItemRows!");
 
             if (entry.draggableObjects != null)
             {
