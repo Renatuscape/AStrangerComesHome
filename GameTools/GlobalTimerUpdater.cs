@@ -62,6 +62,7 @@ public class GlobalTimerUpdater : MonoBehaviour
     void PushSecond()
     {
         ManaConverter.GlobalPushManaRegen();
+        PassengerManager.GlobalPushPassengerSpawn();
     }
     void PushThreeSeconds()
     {
