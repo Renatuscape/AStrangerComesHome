@@ -39,20 +39,23 @@ public class JournalQuestPage : MonoBehaviour
         {
             if (!quest.excludeFromJournal && Player.GetEntry(quest.objectID, name, out var entry))
             {
-                questContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+                if (entry.amount < 100) // Exclude completed quests here for now. Make separate complete and active category later
+                {
+                    questContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
 
-                yield return new WaitForSeconds(delayBetweenQuests); // Add a delay
+                    yield return new WaitForSeconds(delayBetweenQuests); // Add a delay
 
-                GameObject newQuest = Instantiate(questPrefab, questContainer.transform);
-                newQuest.GetComponent<QuestPrefab>().quest = quest;
-                newQuest.GetComponent<QuestPrefab>().journalQuestPage = this;
-                var textMesh = newQuest.transform.Find("QuestTitle").GetComponent<TextMeshProUGUI>();
-                textMesh.text = DialogueTagParser.ParseText(quest.name);
-                textMesh.font = fontManager.subtitle.font;
-                questPrefabs.Add(newQuest);
+                    GameObject newQuest = Instantiate(questPrefab, questContainer.transform);
+                    newQuest.GetComponent<QuestPrefab>().quest = quest;
+                    newQuest.GetComponent<QuestPrefab>().journalQuestPage = this;
+                    var textMesh = newQuest.transform.Find("QuestTitle").GetComponent<TextMeshProUGUI>();
+                    textMesh.text = DialogueTagParser.ParseText(quest.name);
+                    textMesh.font = fontManager.subtitle.font;
+                    questPrefabs.Add(newQuest);
 
-                questContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-                Canvas.ForceUpdateCanvases();
+                    questContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+                    Canvas.ForceUpdateCanvases();
+                }
             }
         }
     }
