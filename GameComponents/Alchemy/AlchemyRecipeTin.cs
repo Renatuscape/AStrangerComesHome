@@ -42,6 +42,24 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         EmptyTin();
     }
 
+    public void RefreshTin()
+    {
+        EmptyTin();
+
+        isStocked = false;
+        pinnedRecipeCard.gameObject.SetActive(false);
+        Debug.Log($"Total of {Recipes.all.Count} recipes found in the game.");
+
+        foreach (Recipe rx in Recipes.all.Where(r => !r.hidden && Player.GetCount(r.objectID, name) > 0))
+        {
+            recipes.Add(rx);
+        }
+
+        recipes.OrderBy(rx => rx.name);
+
+        StockTin();
+    }
+
     void StockTin()
     {
         isStocked = true;
