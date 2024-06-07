@@ -206,7 +206,7 @@ public class DialogueDisplay : MonoBehaviour
 
                 SetDisplayNames(resultEvent);
 
-                if (resultEvent.speaker.objectID != "Traveller" && resultEvent.speaker.objectID != "ARC999")
+                if (resultEvent.speaker.objectID != "ARC000" && resultEvent.speaker.objectID != "ARC999")
                 {
                     portraitManager.SetRightPortrait(resultEvent.speaker.objectID);
                 }
