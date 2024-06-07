@@ -63,7 +63,7 @@ public class AlchemySet : MonoBehaviour
         }
         else
         {
-            LogAlert.QueueTextAlert("I don't know how to use an alchemy set.");
+            LogAlert.QueueTextAlert("I don't have access to this alchemy set.");
         }
     }
 }
