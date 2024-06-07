@@ -1,142 +1,181 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class PassengerManager : MonoBehaviour
 {
-    public TransientDataScript transientData;
     public DataManagerScript dataManager;
+    public static PassengerManager instance;
     public GameObject waitingPrefab;
-    public GameObject passengerA;
-    public GameObject passengerB;
-
-    public List<Sprite> passengerSpriteList;
-
-    public float spawnTimer;
-    public float spawnDelay;
+    public PassengerPrefabScript passengerA;
+    public PassengerPrefabScript passengerB;
 
     public int waitingMax = 5;
     public int waitingCurrent;
+    string[] listOfLastNames = new string[] { "Greene", "Winters", "Fallow", "Graham", "Dale", "Creek", "Shoal", "Carpenter", "Baker", "Forester", "Blake", "River", "Cliff", "Tallow", "Shelligh", "Wyrde", "Crag", "Scree", "Smith", "Cooper", "Mere", "Stahl", "Varde", "Cairn", "Ampersand", "Reed", "Lorn" };
+    string[] listOfFirstNames = new string[] { "Mauve", "Jeremiah", "Aaron", "Chandler", "Preston", "Winston", "Elliott", "Lliam", "Sterling", "Caine", "Chauncey", "Paige", "Winfrey", "Leslie", "Morgan", "Arthur", "Lindsey", "Quinn", "Corin", "Ava", "Harlan", "Elijah", "Francis", "Colin", "Trevor", "Adrian", "Ida", "Hilda", "Marie", "Willow" };
 
-    private void Awake()
+    public bool isReady;
+    public void Initialise()
     {
+        instance = this;
+        waitingCurrent = 0;
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-        spawnDelay = 5;
 
-        passengerA.GetComponent<PassengerPrefabScript>().isPassengerA = true;
-        passengerA.SetActive(false);
-        passengerB.SetActive(false);
+        dataManager.seatA.seatID = "A";
+        passengerA.gameObject.SetActive(false);
+        passengerA.Initialise(dataManager.seatA);
+
+        dataManager.seatB.seatID = "B";
+        passengerB.gameObject.SetActive(false);
+        passengerB.Initialise(dataManager.seatB);
+
+        isReady = true;
     }
     public void ActivateWaitingPassenger(GameObject potentialPassenger)
     {
-        if (dataManager.passengerIsActiveA == false || dataManager.passengerIsActiveB == false)
+        if (dataManager.seatA.isActive == false || dataManager.seatB.isActive == false)
         {
             //GENERATE NAME
-            string[] listOfFirstNames = new string[] { "Mauve", "Jeremiah", "Aaron", "Chandler", "Preston", "Winston", "Elliott", "Lliam", "Sterling", "Caine", "Chauncey", "Paige", "Winfrey", "Leslie", "Morgan", "Arthur", "Lindsey", "Quinn", "Corin", "Ava", "Harlan", "Elijah", "Francis", "Colin", "Trevor", "Adrian", "Ida", "Hilda", "Marie", "Willow" };
             var passengerFirstName = listOfFirstNames[Random.Range(0, listOfFirstNames.Length)];
 
-            string[] listOfLastNames = new string[] { "Greene", "Winters", "Fallow", "Graham", "Dale", "Creek", "Shoal", "Carpenter", "Baker", "Forester", "Blake", "River", "Cliff", "Tallow", "Shelligh", "Wyrde", "Crag", "Scree", "Smith", "Cooper", "Mere", "Stahl", "Varde", "Cairn", "Ampersand", "Reed", "Lorn" };
             var passengerLastName = listOfLastNames[Random.Range(0, listOfLastNames.Length)];
             var generatedName = passengerFirstName + " " + passengerLastName;
 
             //CHOOSE SPRITE
-            var passengerSprite = passengerSpriteList[Random.Range(0, passengerSpriteList.Count - 1)];
+            var passengerSprite = SpriteFactory.GetRandomPassengerSprite();
 
             var origin = potentialPassenger.GetComponent<WaitingNPC>().origin;
             var destination = potentialPassenger.GetComponent<WaitingNPC>().destination;
 
-            var dialogueList = new List<string>(); //grab a random dialogue string
-            dialogueList.Add("Hey!"); //FOR TESTING
-
-            BoardPassenger(generatedName, passengerSprite, origin, destination, dialogueList);
+            BoardPassenger(generatedName, passengerSprite, origin, destination);
             Destroy(potentialPassenger);
             waitingCurrent -= 1;
 
-            TransientDataScript.PushAlert("I picked up " + generatedName + ", who is going to " + destination.name + ".");
+            LogAlert.QueueTextAlert("I picked up " + generatedName + ", who is going to " + destination.name + ".");
         }
         else
-            TransientDataScript.PushAlert("There are no available seats.");
+        {
+            LogAlert.QueueTextAlert("There are no available seats.");
+        }
     }
 
-    public void BoardPassenger(string passengerName, Sprite passengerSprite, Location origin, Location destination, List<string> dialogueList)
+    public void BoardPassenger(string passengerName, Sprite passengerSprite, Location origin, Location destination)
     {
         //DEPLOY SPRITE AND UPDATE DATA MANAGER
-        if (dataManager.passengerIsActiveA == false)
+        if (dataManager.seatA.isActive == false)
         {
-            dataManager.passengerIsActiveA = true;
-            dataManager.passengerNameA = passengerName;
-            dataManager.passengerOriginA = origin;
-            dataManager.passengerDestinationA = destination;
-            dataManager.passengerChatListA = dialogueList;
+            dataManager.seatA.isActive = true;
+            dataManager.seatA.passengerName = passengerName;
+            dataManager.seatA.origin = origin;
+            dataManager.seatA.destination = destination;
+            dataManager.seatA.spriteID = passengerSprite.name;
 
-            passengerA.SetActive(true);
+            passengerA.gameObject.SetActive(true);
+            passengerA.UpdatePassengerData();
         }
-        else if (dataManager.passengerIsActiveB == false)
+        else if (dataManager.seatB.isActive == false)
         {
-            dataManager.passengerIsActiveB = true;
-            dataManager.passengerNameB = passengerName;
-            dataManager.passengerOriginB = origin;
-            dataManager.passengerDestinationB = destination;
-            dataManager.passengerChatListB = dialogueList;
+            dataManager.seatB.isActive = true;
+            dataManager.seatB.passengerName = passengerName;
+            dataManager.seatB.origin = origin;
+            dataManager.seatB.destination = destination;
 
-            passengerB.SetActive(true);
+            while (dataManager.seatA.spriteID == passengerSprite.name)
+            {
+                passengerSprite = SpriteFactory.GetRandomPassengerSprite();
+            }
+
+            dataManager.seatB.spriteID = passengerSprite.name;
+
+            passengerB.gameObject.SetActive(true);
+            passengerA.UpdatePassengerData();
         }
     }
     public void PassengerSpawner()
     {
-        var waitingPassenger = Instantiate(waitingPrefab);
-        var spawnArea = Random.Range(-15f, -4f);
+        if (isReady)
+        {
+            var waitingPassenger = Instantiate(waitingPrefab);
+            var spawnArea = Random.Range(-15f, -4f);
 
-        waitingPassenger.name = "WaitingPassenger";
-        waitingPassenger.transform.position = new Vector3(spawnArea, -4.094f, 0f);
-        waitingPassenger.GetComponent<WaitingNPC>().parent = gameObject;
-
-        spawnDelay = Random.Range(2f, 15f);
-        spawnTimer = 0;
+            waitingPassenger.name = "WaitingPassenger";
+            waitingPassenger.transform.position = new Vector3(spawnArea, -4.094f, 0f);
+            waitingPassenger.GetComponent<WaitingNPC>().parent = gameObject;
+        }
     }
 
-    private void Update()
+    public static void GlobalPushPassengerSpawn()
     {
-        spawnTimer = spawnTimer + Time.deltaTime;
-
-        if (transientData.currentLocation != null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID) && spawnTimer >= spawnDelay)
+        if (instance != null)
         {
-            if (!transientData.currentLocation.noPassengers)
+            instance.PassengerTick();
+        }
+    }
+    void PassengerTick()
+    {
+        if (isReady && TransientDataScript.IsTimeFlowing())
+        {
+            var currentLocation = TransientDataScript.GetCurrentLocation();
+
+            if (currentLocation != null)
             {
-                if (transientData.currentLocation.type == LocationType.City)
+                if (!currentLocation.noPassengers)
                 {
-                    waitingMax = 7;
-                }
-                else if (transientData.currentLocation.type == LocationType.Town)
-                {
-                    waitingMax = 5;
-                }
-                else if (transientData.currentLocation.type == LocationType.Settlement)
-                {
-                    waitingMax = 3;
-                }
-                else
-                {
-                    waitingMax = 2;
-                }
-
-                if (waitingCurrent < waitingMax)
-                {
-                    var randomRoll = Random.Range(0, 100);
-
-                    if (randomRoll >= 90)
+                    if (currentLocation.type == LocationType.City)
                     {
-                        PassengerSpawner();
+                        waitingMax = 7;
+                    }
+                    else if (currentLocation.type == LocationType.Town)
+                    {
+                        waitingMax = 5;
+                    }
+                    else if (currentLocation.type == LocationType.Settlement)
+                    {
+                        waitingMax = 3;
+                    }
+                    else
+                    {
+                        waitingMax = 2;
+                    }
+
+                    if (waitingCurrent < waitingMax)
+                    {
+                        var randomRoll = Random.Range(0, 100);
+
+                        if (randomRoll >= 80)
+                        {
+                            PassengerSpawner();
+                        }
                     }
                 }
             }
-        }
 
-        if (dataManager.passengerIsActiveA == true && passengerA.activeInHierarchy == false)
-            passengerA.SetActive(true);
-        if (dataManager.passengerIsActiveB == true && passengerB.activeInHierarchy == false)
-            passengerB.SetActive(true);
+            if (dataManager.seatA.isActive && passengerA.gameObject.activeInHierarchy == false)
+            {
+                passengerA.UpdatePassengerData();
+                passengerA.gameObject.SetActive(true);
+            }
+            else if(!dataManager.seatA.isActive && passengerA.gameObject.activeInHierarchy)
+            {
+                passengerA.gameObject.SetActive(false);
+            }
+
+            if (dataManager.seatB.isActive && passengerB.gameObject.activeInHierarchy == false)
+            {
+                passengerB.UpdatePassengerData();
+                passengerB.gameObject.SetActive(true);
+            }
+            else if (!dataManager.seatB.isActive && passengerB.gameObject.activeInHierarchy)
+            {
+                passengerB.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void OnDisable()
+    {
+        passengerA.gameObject.SetActive(false);
+        passengerB.gameObject.SetActive(false);
     }
 }
