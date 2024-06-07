@@ -25,6 +25,7 @@ public class AlchemyMenu : MonoBehaviour
     public AlchemyYieldManager yieldManager;
     public AlchemyButtonManager buttonManager;
     public SynthesiserType synthesiserType;
+    public AlchemyRecipeTin recipeTin;
 
     public List<AlchemyObject> alchemyObjects = new();
 
@@ -178,10 +179,30 @@ public class AlchemyMenu : MonoBehaviour
     {
         yieldManager.Clear();
         synthData.synthRecipe.AddYieldToPlayer();
+
+        // Handle recipe learning
+        if (!synthData.synthRecipe.notResearchable && Player.GetCount(synthData.synthRecipe.objectID, "AlchemyMenu Claim()") == 0)
+        {
+            Player.Add(synthData.synthRecipe.objectID);
+            string printName;
+
+            if (synthData.synthRecipe.name.Contains(" Recipe"))
+            {
+                printName = synthData.synthRecipe.name.Replace(" Recipe", "");
+            }
+            else
+            {
+                printName = synthData.synthRecipe.name;
+            }
+
+            LogAlert.QueueTextAlert("Discovered recipe for\n" + printName);
+
+            recipeTin.RefreshTin();
+        }
+
         synthData.isSynthActive = false;
         synthData.progressSynth = 0;
         synthData.synthRecipe = null;
-        // alchemyAnimator.AnimateClaim();
     }
 
     public void HandleCreate()
