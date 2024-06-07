@@ -190,17 +190,6 @@ public class GardenManager : MonoBehaviour
         }
     }
 
-    float CalculateGrowth(PlanterData planter)
-    {
-        float amount = 1.5f + (gardening * 0.2f) + (creation * 0.2f) + (goetia * 0.2f);
-
-        if (planter.weeds > 0)
-        {
-            amount = amount / planter.weeds;
-        }
-
-        return amount;
-    }
     void UpdatePlanterData(GardeningPlanterPackage planter)
     {
         var seed = planter.planterData.seed;
@@ -249,7 +238,7 @@ public class GardenManager : MonoBehaviour
         }
     }
 
-    private void ProcessPlanterClick(GardeningPlanterPackage package)
+    void ProcessPlanterClick(GardeningPlanterPackage package)
     {
         Item seed = package.planterData.seed;
         PlanterData planterData = package.planterData;
@@ -263,7 +252,6 @@ public class GardenManager : MonoBehaviour
         //IF THERE IS A SEED AND THE PLANTER IS ACTIVE
         else if (seed != null && planterData.isActive)
         {
-            int maxGrowth = 100 * seed.health * seed.yield;
             Item outputPlant = seed.GetOutput();
             float deathLevel = 0;
 
@@ -272,76 +260,17 @@ public class GardenManager : MonoBehaviour
                 deathLevel -= Mathf.Floor(goetia * 0.2f);
             }
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
-            if (planterData.progress < maxGrowth && planterData.isActive)
+            if (planterData.progress < planterData.maxGrowth)
             {
-                Debug.Log($"{seed.name} is growing. {planterData.progress}/{maxGrowth}");
-
-                growth = CalculateGrowth(planterData);
-
-                string growthRate = "a poor";
-
-                if (growth >= 7.3)
-                {
-                    growthRate = "a brilliant";
-                }
-                else if (growth >= 6)
-                {
-                    growthRate = "a fantastic";
-                }
-                else if (growth >= 4)
-                {
-                    growthRate = "a great";
-                }
-                else if (growth >= 2.5)
-                {
-                    growthRate = "a good";
-                }
-                else if (growth >= 1.5)
-                {
-                    growthRate = "an average";
-                }
-
-                string growthState = "was just planted.";
-
-                if (planterData.progress > 0)
-                {
-                    float growthPercentage = planterData.progress / maxGrowth * 100;
-
-                    if (growthPercentage >= 90)
-                    {
-                        growthState = "is almost ready!";
-                    }
-                    else if (growthPercentage >= 70)
-                    {
-                        growthState = "needs a little more time.";
-                    }
-                    else if (growthPercentage >= 50)
-                    {
-                        growthState = "is making good progress.";
-                    }
-                    else if (growthPercentage >= 25)
-                    {
-                        growthState = "is showing promise.";
-                    }
-                    else if (growthPercentage >= 1)
-                    {
-                        growthState = "has started sprouting.";
-                    }
-                }
-
-
-                // Display info for the plant currently growing in this planter
-                LogAlert.QueueTextAlert($"This {outputPlant.name} {growthState} It is growing at {growthRate} pace.");
+                PrintPlantInfo(planterData);
             }
-
-            //IF THE PLANTER IS READY TO BE HARVESTED
-            if (planterData.progress >= maxGrowth)
+            else //IF THE PLANTER IS READY TO BE HARVESTED
             {
                 var plantInInventory = Player.GetCount(outputPlant.objectID, name);
 
                 if (plantInInventory + seed.yield <= outputPlant.maxValue)
                 {
-                    Debug.Log($"{seed.name} is ready! {planterData.progress}/{maxGrowth}");
+                    Debug.Log($"{seed.name} is ready! {planterData.progress}/{planterData.maxGrowth}");
 
                     //PLANT YIELD
                     var yield = seed.yield;
@@ -390,7 +319,7 @@ public class GardenManager : MonoBehaviour
                     //CHECK IF PLANT IS DEAD
                     if (planterData.seedHealth > deathLevel)
                     {
-                        planterData.progress = maxGrowth / 3;
+                        planterData.progress = planterData.maxGrowth / 3;
                         UpdatePlanterData(package);
                     }
 
@@ -412,5 +341,92 @@ public class GardenManager : MonoBehaviour
             //Check planters for bugs
             planterData.isActive = false;
         }
+    }
+
+    float CalculateGrowth(PlanterData planter)
+    {
+        float amount = 1.5f + (gardening * 0.2f) + (creation * 0.2f) + (goetia * 0.2f);
+
+        if (planter.weeds > 0)
+        {
+            amount = amount / planter.weeds;
+        }
+
+        return amount;
+    }
+
+    void PrintPlantInfo(PlanterData planterData)
+    {
+        Debug.Log($"{planterData.seed.name} is growing. {planterData.progress}/{planterData.maxGrowth}");
+
+        growth = CalculateGrowth(planterData);
+
+        string growthRate = "a poor";
+
+        if (growth >= 7.3)
+        {
+            growthRate = "a brilliant";
+        }
+        else if (growth >= 6)
+        {
+            growthRate = "a fantastic";
+        }
+        else if (growth >= 4)
+        {
+            growthRate = "a great";
+        }
+        else if (growth >= 2.5)
+        {
+            growthRate = "a good";
+        }
+        else if (growth >= 1.5)
+        {
+            growthRate = "an average";
+        }
+
+        string growthState = "was just planted.";
+
+        if (planterData.progress > 0)
+        {
+            float growthPercentage = planterData.progress / planterData.maxGrowth * 100;
+
+            if (growthPercentage >= 90)
+            {
+                growthState = "is almost ready!";
+            }
+            else if (growthPercentage >= 70)
+            {
+                growthState = "needs a little more time.";
+            }
+            else if (growthPercentage >= 50)
+            {
+                growthState = "is making good progress.";
+            }
+            else if (growthPercentage >= 25)
+            {
+                growthState = "is showing promise.";
+            }
+            else if (growthPercentage >= 1)
+            {
+                growthState = "has started sprouting.";
+            }
+        }
+
+        string nameToPrint = planterData.seed.name;
+
+        if (nameToPrint.Contains(" Seed"))
+        {
+            nameToPrint = nameToPrint.Replace(" Seed", "");
+        }
+        else if (nameToPrint.Contains(" Sprout"))
+        {
+            nameToPrint = nameToPrint.Replace(" Sprout", "");
+        }
+        else if (nameToPrint.Contains(" Sapling"))
+        {
+            nameToPrint = nameToPrint.Replace(" Sapling", "");
+        }
+
+        LogAlert.QueueTextAlert($"This {nameToPrint} {growthState} It is growing at {growthRate} pace.");
     }
 }
