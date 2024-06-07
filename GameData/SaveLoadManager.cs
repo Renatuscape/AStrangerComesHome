@@ -50,19 +50,6 @@ public class SaveLoadManager : MonoBehaviour
         Debug.Log("Game saved at " + fullPath);
     }
 
-    //private string LoadJsonFromFile()
-    //{
-    //    string fullPath = GetSaveFilePath();
-    //    if (File.Exists(fullPath))
-    //    {
-    //        gameManager.LoadRoutine();
-    //        return File.ReadAllText(fullPath);
-    //    }
-
-    //    Debug.LogError("Save file does not exist!");
-    //    return null;
-    //}
-
     private string GetSaveFilePath()
     {
         string saveDirectory = "/SaveData/";
