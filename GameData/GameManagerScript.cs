@@ -47,6 +47,7 @@ public class GameManagerScript : MonoBehaviour
     public SpriteFactory spriteFactory;
     public Engine coachEngine;
     public ManaConverter manaConverter;
+    public PassengerManager passengerManager;
 
     void Awake()
     {
@@ -105,14 +106,14 @@ public class GameManagerScript : MonoBehaviour
         await characterManager.StartLoading();
         Debug.Log("STARTUP: Loading characters async completed");
 
-        await dialogueManager.StartLoading();
-        Debug.Log("STARTUP: Loading dialogue async completed");
-
         await recipeManager.StartLoading();
         Debug.Log("STARTUP: Loading recipes async completed");
 
         await bookManager.StartLoading();
         Debug.Log("STARTUP: Loading books async completed");
+
+        await dialogueManager.StartLoading();
+        Debug.Log("STARTUP: Loading dialogue async completed");
 
         await questManager.StartLoading();
         Debug.Log("STARTUP: Loading quests async completed");
@@ -166,8 +167,8 @@ public class GameManagerScript : MonoBehaviour
         dataManager.currentRegion = "REGION1";
         dataManager.mapPositionX = 0f;
         dataManager.mapPositionY = 0f;
-        dataManager.passengerIsActiveA = false;
-        dataManager.passengerIsActiveB = false;
+        dataManager.seatA = new();
+        dataManager.seatB = new();
         dataManager.postLocationID = "R0-LOCC0-CITY";
 
         Player.inventoryList.Clear();
@@ -192,6 +193,7 @@ public class GameManagerScript : MonoBehaviour
 
         questTracker.StartTracking();
         alchemyTracker.StartTracking();
+        passengerManager.Initialise();
     }
 
     void SetUpUpgradeWear()
@@ -220,6 +222,7 @@ public class GameManagerScript : MonoBehaviour
 
         questTracker.StartTracking();
         alchemyTracker.StartTracking();
+        passengerManager.Initialise();
     }
 
     public void ResetGameComponents()
