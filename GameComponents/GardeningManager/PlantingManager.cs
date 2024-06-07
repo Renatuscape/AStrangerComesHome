@@ -275,6 +275,7 @@ public class PlantingManager : MonoBehaviour
             planterData.seed = Items.FindByID(seedContainer.selectedItem.objectID);
             planterData.seedHealth = seedContainer.selectedItem.health;
             planterData.isActive= true;
+            planterData.maxGrowth = 100 * planterData.seed.health * planterData.seed.yield;
 
             bool isAnyPlanterFree = false;
 
