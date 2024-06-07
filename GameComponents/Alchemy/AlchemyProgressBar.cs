@@ -56,7 +56,16 @@ public class AlchemyProgressBar : MonoBehaviour
         float minValue = 0;
 
         // Calculate the percentage completion
-        float percentage = Mathf.Clamp01((currentValue - minValue) / (maxValue - minValue));
+        float percentage;
+        
+        if (currentValue == 0 || maxValue == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            percentage = Mathf.Clamp01((currentValue - minValue) / (maxValue - minValue));
+        }
         return percentage;
     }
 
