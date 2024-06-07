@@ -52,7 +52,7 @@ public class PassengerManager : MonoBehaviour
             Destroy(potentialPassenger);
             waitingCurrent -= 1;
 
-            LogAlert.QueueTextAlert("I picked up\n" + generatedName + ", who is going to\n" + destination.name + ".");
+            LogAlert.QueueTextAlert("I picked up " + generatedName + ", who is going to " + destination.name + ".");
         }
         else
         {
