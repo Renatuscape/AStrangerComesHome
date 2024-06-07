@@ -50,42 +50,6 @@ public class DataManagerScript : MonoBehaviour
     public PassengerData seatA;
     public PassengerData seatB;
 
-    public bool passengerIsActiveA;
-    public string passengerNameA;
-    public Sprite passengerSpriteA;
-    public Location passengerOriginA;
-    public Location passengerDestinationA;
-    public List<string> passengerChatListA;
-
-    //PASSENGER DATA - B
-    public bool passengerIsActiveB;
-    public string passengerNameB;
-    public Sprite passengerSpriteB;
-    public Location passengerOriginB;
-    public Location passengerDestinationB;
-    public List<string> passengerChatListB;
-
-    ////PLANTER - A
-    //public bool planterIsActiveA;
-    //public int planterSpriteA;
-    //public string seedA;
-    //public float progressSeedA;
-    //public int seedHealthA;
-
-    ////PLANTER - B
-    //public bool planterIsActiveB;
-    //public int planterSpriteB;
-    //public string seedB;
-    //public float progressSeedB;
-    //public int seedHealthB;
-
-    ////PLANTER - C
-    //public bool planterIsActiveC;
-    //public int planterSpriteC;
-    //public string seedC;
-    //public float progressSeedC;
-    //public int seedHealthC;
-
     //ALCHEMY SYNTHESISERS
     public List<SynthesiserData> alchemySynthesisers;
     public List<PlanterData> planters;
@@ -109,6 +73,7 @@ public class PlanterData
     public string planterSpriteID;
     public bool isActive;
     public Item seed;
+    public float maxGrowth;
     public float progress;
     public int seedHealth;
     public int weeds;
