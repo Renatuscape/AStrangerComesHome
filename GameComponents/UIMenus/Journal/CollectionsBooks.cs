@@ -75,4 +75,9 @@ public class CollectionsBooks : MonoBehaviour
         detailDescription.text = shelvedBook.bookItem.description;
         bookDetails.SetActive(true);
     }
+
+    private void OnDisable()
+    {
+        reader.gameObject.SetActive(false);
+    }
 }
