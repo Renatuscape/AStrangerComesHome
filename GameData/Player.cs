@@ -235,7 +235,15 @@ public static class Player
         else if (baseObject.objectType == ObjectType.Skill)
         {
             var skill = (Skill)baseObject;
-            LogAlert.QueueTextAlert($"{skill.name} increased by {value}");
+
+            if (skill.type == SkillType.Attunement)
+            {
+                LogAlert.QueueTextAlert($"Attuned to the\nSphere of {skill.name}.");
+            }
+            else
+            {
+                LogAlert.QueueTextAlert($"{skill.name} increased by {value}");
+            }
         }
         else if (baseObject.objectType == ObjectType.Recipe)
         {
