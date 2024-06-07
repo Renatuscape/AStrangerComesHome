@@ -13,6 +13,8 @@ public class SpriteFactory : MonoBehaviour
     public List<Sprite> backgroundSprites = new();
     public List<Sprite> itemSprites = new();
     public List<Sprite> sproutSprites = new();
+    public List<Sprite> genericPassengerSprites = new();
+    public List<Sprite> uniquePassengerSprites = new();
 
     public List<SpriteCollection> uiSpriteLibrary = new();
 
@@ -26,6 +28,25 @@ public class SpriteFactory : MonoBehaviour
     void Start()
     {
         instance = this;
+    }
+
+    public static Sprite GetPassengerByID(string spriteID)
+    {
+        var foundSprite = instance.uniquePassengerSprites.FirstOrDefault(s => s.name == spriteID);
+
+        if (foundSprite == null)
+        {
+            return instance.genericPassengerSprites.FirstOrDefault(s => s.name == spriteID);
+        }
+        else
+        {
+            return foundSprite;
+        }
+    }
+
+    public static Sprite GetRandomPassengerSprite()
+    {
+        return instance.genericPassengerSprites[Random.Range(0, instance.genericPassengerSprites.Count)];
     }
 
     public static Sprite GetItemSprite(string objectID)
