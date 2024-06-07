@@ -35,7 +35,6 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         }
 
         recipes.OrderBy(rx => rx.name);
-        //StockTin();
     }
     private void OnDisable()
     {
@@ -56,8 +55,6 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         }
 
         recipes.OrderBy(rx => rx.name);
-
-        StockTin();
     }
 
     void StockTin()
