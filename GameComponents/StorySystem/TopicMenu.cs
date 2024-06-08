@@ -51,40 +51,44 @@ public class TopicMenu : MonoBehaviour
             {
                 Dialogue activeDialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
 
-                if (activeDialogue.stageType == StageType.Dialogue) // Make sure this stage is of type dialogue
+                if (activeDialogue != null)
                 {
-                    speaker = activeDialogue.speakerID;
-                    //Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
-                }
-
-                if (string.IsNullOrEmpty(speaker)) // If there is no speaker assigned to this dialogue, default to quest giver ID.
-                {
-                    speaker = quest.questGiver.objectID;
-                    //Debug.Log($"Speaker was null or empty in dialogue. Speaker is set to {quest.questGiver.objectID} ({speaker})");
-                }
-
-                if (speaker == speakerID)
-                {
-                    //Debug.Log($"SPEAKER MATCH FOUND. Checking requirements for dialogue {activeDialogue.objectID}");
-
-                    bool passedChecks = true;
-
-                    if (stage == 0)
+                    if (activeDialogue.stageType == StageType.Dialogue) // Make sure this stage is of type dialogue
                     {
-                        passedChecks = quest.unlockRequirements.CheckRequirements(out var minDaysPassed);
+                        speaker = activeDialogue.speakerID;
+                        //Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
                     }
 
-                    if (passedChecks)
+                    if (string.IsNullOrEmpty(speaker)) // If there is no speaker assigned to this dialogue, default to quest giver ID.
                     {
-                        passedChecks = activeDialogue.CheckRequirements();
+                        speaker = quest.questGiver.objectID;
+                        //Debug.Log($"Speaker was null or empty in dialogue. Speaker is set to {quest.questGiver.objectID} ({speaker})");
+                    }
+
+                    if (speaker == speakerID)
+                    {
+                        //Debug.Log($"SPEAKER MATCH FOUND. Checking requirements for dialogue {activeDialogue.objectID}");
+
+                        bool passedChecks = true;
+
+                        if (stage == 0)
+                        {
+                            passedChecks = quest.unlockRequirements.CheckRequirements(out var minDaysPassed);
+                        }
 
                         if (passedChecks)
                         {
-                            //Debug.Log($"Check for quest and dialogue {activeDialogue.objectID} passed.");
-                            foundQuests.Add(quest);
+                            passedChecks = activeDialogue.CheckRequirements();
+
+                            if (passedChecks)
+                            {
+                                //Debug.Log($"Check for quest and dialogue {activeDialogue.objectID} passed.");
+                                foundQuests.Add(quest);
+                            }
                         }
                     }
                 }
+
             }
         }
 
