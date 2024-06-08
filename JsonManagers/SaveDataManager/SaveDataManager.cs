@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -13,8 +14,9 @@ public class SaveDataManager : MonoBehaviour
     public List<SaveDataInfo> savesInfo;
     public bool allObjectsLoaded = false;
     public List<string> backwardsCompatibleVersions = new();
+    public List<SaveDataPrefab> saveSlotPrefabs = new();
 
-    string fileExtension = ".ren";
+    string fileExtension = ".strange";
     string dir;
     int filesLoaded;
     int numberOfFilesToLoad;
@@ -32,7 +34,7 @@ public class SaveDataManager : MonoBehaviour
 
         if (saveData == null)
         {
-            fileName = (filesLoaded + 1) + "_" + TransientDataScript.gameManager.dataManager.playerName + "_" + Random.Range(0, 1000000) + fileExtension;
+            fileName = "Save_" + TransientDataScript.gameManager.dataManager.saveSlot + "_" + TransientDataScript.gameManager.dataManager.playerName + fileExtension;
         }
         else
         {
@@ -40,6 +42,7 @@ public class SaveDataManager : MonoBehaviour
         }
 
         Debug.Log("Save Game and Play was called.");
+        TransientDataScript.gameManager.dataManager.lastSaveTime = DateTime.Now.ToShortTimeString() + ", " + DateTime.Now.ToShortDateString();
         saveLoadManager.SaveGame(fileName);
         gameObject.SetActive(false);
     }
@@ -73,6 +76,7 @@ public class SaveDataManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
+        saveSlotPrefabs.Clear();
         savesInfo.Clear();
     }
 
@@ -91,28 +95,39 @@ public class SaveDataManager : MonoBehaviour
     {
         int printedSlots = 0;
 
-        foreach (var saveInfo in savesInfo)
+        while (printedSlots < 4)
         {
             var newSlot = Instantiate(saveSlotPrefab);
 
             newSlot.transform.SetParent(saveSlotContainer.transform, false);
 
             var script = newSlot.GetComponent<SaveDataPrefab>();
-            script.InitialiseWithData(saveInfo, this);
+            script.saveSlot = printedSlots;
+            saveSlotPrefabs.Add(script);
             printedSlots++;
         }
 
-        if (printedSlots < 4)
+        var savesFound = new List<SaveDataInfo>(savesInfo);
+
+        foreach (var slot in saveSlotPrefabs)
         {
-            while (printedSlots < 4)
+            bool foundMatchingData = false;
+
+            foreach (var saveInfo in savesFound)
             {
-                var newSlot = Instantiate(saveSlotPrefab);
+                if (saveInfo.saveSlot == slot.saveSlot)
+                {
+                    Debug.Log("Found matching slot!");
+                    savesFound.Remove(saveInfo);
+                    slot.InitialiseWithData(slot.saveSlot, saveInfo, this);
+                    foundMatchingData = true;
+                    break;
+                }
+            }
 
-                newSlot.transform.SetParent(saveSlotContainer.transform, false);
-
-                var script = newSlot.GetComponent<SaveDataPrefab>();
-                script.InitialiseEmpty(this);
-                printedSlots++;
+            if (!foundMatchingData)
+            {
+                slot.InitialiseEmpty(slot.saveSlot, this);
             }
         }
     }
@@ -194,12 +209,15 @@ public class SaveDataManager : MonoBehaviour
 public class SaveDataInfo
 {
     public string fileName;
+    public int saveSlot;
+    public string lastSaveTime;
     public string version;
     public string lastVersionSaved;
     public string playerName;
     public string playerNameColour;
     public int totalGameDays;
 
+    public string currentRegion;
     public float mapPositionX;
     public float mapPositionY;
     public float timeOfDay;
