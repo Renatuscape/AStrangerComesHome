@@ -28,19 +28,57 @@ public class SaveDataManager : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void SaveGameAndPlay(SaveDataInfo saveData)
+    public void QuickSave()
     {
-        string fileName;
+        var dataManager = TransientDataScript.gameManager.dataManager;
 
-        if (saveData == null)
+        if (dataManager.saveSlot < 0)
         {
-            fileName = "Save_" + TransientDataScript.gameManager.dataManager.saveSlot + "_" + TransientDataScript.gameManager.dataManager.playerName + fileExtension;
+            TransientDataScript.PushAlert("Choose a save slot to enable Quick Save.");
+            gameObject.SetActive(true);
         }
         else
         {
-            fileName = saveData.fileName;
+            string saveName = "Save" + dataManager.saveSlot + "_" + dataManager.playerName + "_" + dataManager.saveID + fileExtension;
+            FinaliseSave(saveName);
+            TransientDataScript.ReturnToOverWorld(name, gameObject);
         }
+    }
 
+    public void AttemptSave(SaveDataInfo saveData, SaveDataPrefab slotPrefab, bool overwriteConfirmed)
+    {
+        var dataManager = TransientDataScript.gameManager.dataManager;
+        string saveNameToCheck = "Save" + dataManager.saveSlot + "_" + dataManager.playerName + "_" + dataManager.saveID + fileExtension;
+
+        if (saveData == null)
+        {
+            FinaliseSave(saveNameToCheck);
+        }
+        else
+        { 
+            if (saveData.fileName != saveNameToCheck)
+            {
+                Debug.LogWarning("File does not match. Savedata to overwrite was " + saveData.fileName + " but new file should be named " + saveNameToCheck);
+
+                if (overwriteConfirmed)
+                {
+                    DeleteFileAndRefresh(saveData);
+                    FinaliseSave(saveNameToCheck);
+                }
+                else
+                {
+                    slotPrefab.ConfirmOverwrite();
+                }
+            }
+            else
+            {
+                FinaliseSave(saveData.fileName);
+            }
+        }
+    }
+
+    public void FinaliseSave(string fileName)
+    {
         Debug.Log("Save Game and Play was called.");
         TransientDataScript.gameManager.dataManager.lastSaveTime = DateTime.Now.ToShortTimeString() + ", " + DateTime.Now.ToShortDateString();
         saveLoadManager.SaveGame(fileName);
