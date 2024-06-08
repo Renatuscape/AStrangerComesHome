@@ -23,7 +23,6 @@ public class SaveLoadManager : MonoBehaviour
     public void SaveGame(string fileName)
     {
         dataManager.lastVersionSaved = Application.version;
-        dataManager.fileName = fileName;
 
         string json = JsonUtility.ToJson(dataManager, prettyPrint: true);
         SaveJsonToFile(json, fileName);
