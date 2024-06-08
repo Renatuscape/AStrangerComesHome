@@ -15,6 +15,7 @@ public class Engine : MonoBehaviour
     float baseSpeed = 0.6f;
     float baseFuelConsumption = 0.01f;
 
+    float firstGearMultiplier = 1.4f;
     float secondGearMultiplier = 2.5f;
     float thirdGearMultiplier = 3.5f;
     float reverseMultiplier = 0.8f;
@@ -166,7 +167,7 @@ public class Engine : MonoBehaviour
             switch (transientData.engineState)
             {
                 case EngineState.FirstGear:
-                    targetSpeed = baseSpeed + (currentBoost / 40);
+                    targetSpeed = (baseSpeed * firstGearMultiplier) + (currentBoost / 40);
                     break;
 
                 case EngineState.SecondGear:
