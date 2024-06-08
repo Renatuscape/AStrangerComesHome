@@ -16,7 +16,7 @@ public class AudioManager : MonoBehaviour
     private void Start()
     {
         instance = this;
-        CreateAudioPool(25);
+        CreateAudioPool(200);
     }
 
 
@@ -152,24 +152,27 @@ public class AudioManager : MonoBehaviour
 
             if (sound != null)
             {
-                var audioSource = audioPool[0];
-                audioPool.RemoveAt(0);
-                playersInUse.Add(audioSource);
-
-                audioSource.clip = sound;
-
-                if (type == "ambient")
+                if (audioPool.Count > 0)
                 {
-                    audioSource.volume = GlobalSettings.ambientVolume + volumeAdjustment;
-                }
-                else
-                {
-                    audioSource.volume = GlobalSettings.uiVolume + volumeAdjustment;
+                    var audioSource = audioPool[0];
+                    audioPool.RemoveAt(0);
+                    playersInUse.Add(audioSource);
+
+                    audioSource.clip = sound;
+
+                    if (type == "ambient")
+                    {
+                        audioSource.volume = GlobalSettings.ambientVolume + volumeAdjustment;
+                    }
+                    else
+                    {
+                        audioSource.volume = GlobalSettings.uiVolume + volumeAdjustment;
+                    }
+
+                    audioSource.Play();
                 }
 
-                audioSource.Play();
-
-                if (audioPool.Count < 5)
+                if (audioPool.Count < 10)
                 {
                     RecycleAudio();
                 }
