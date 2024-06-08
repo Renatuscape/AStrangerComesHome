@@ -47,9 +47,10 @@ public static class Locations
 {
     public static List<Location> all = new();
 
-    public static Location FindByCoordinates(int mapX, int mapY, bool excludeLocked)
+    public static Location FindByCoordinates(string region, int mapX, int mapY, bool excludeLocked)
     {
-        var match = all.FirstOrDefault(l => l.mapX == mapX && l.mapY == mapY);
+        var locationList = Regions.FindByID(region).locations;
+        var match = locationList.FirstOrDefault(l => l.mapX == mapX && l.mapY == mapY);
 
         if (excludeLocked && match != null)
         {

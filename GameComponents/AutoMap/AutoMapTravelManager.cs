@@ -38,7 +38,7 @@ public class AutoMapTravelManager
                 {
                     autoMap.transientData.engineState = EngineState.Off;
 
-                    var location = Locations.FindByCoordinates((int)playerToken.transform.localPosition.x, (int)playerToken.transform.localPosition.y, true);
+                    var location = Locations.FindByCoordinates(TransientDataScript.gameManager.dataManager.currentRegion, (int)playerToken.transform.localPosition.x, (int)playerToken.transform.localPosition.y, true);
                     
                     if (location != null)
                     {
