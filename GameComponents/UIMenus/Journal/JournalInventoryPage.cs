@@ -58,7 +58,7 @@ public class JournalInventoryPage : MonoBehaviour
             itemInfo.gameObject.SetActive(true);
             itemName.text = Items.GetEmbellishedItemText(selectedItem, false, false, false);
             itemRarity.text = selectedItem.rarity.ToString();
-            itemDescription.text = selectedItem.description;
+            itemDescription.text =  DialogueTagParser.ParseText(selectedItem.description);
         }
         else
         {
