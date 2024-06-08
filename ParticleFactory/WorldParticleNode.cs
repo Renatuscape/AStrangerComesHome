@@ -14,6 +14,7 @@ public class WorldParticleNode : MonoBehaviour
     public int maxParticles;
     public float tick;
     public float spawnTimer;
+    public List<GameObject> spawnedParticleList = new();
     private void Start()
     {
         tick = Random.Range(minTick, maxTick);
@@ -34,9 +35,12 @@ public class WorldParticleNode : MonoBehaviour
 
                 if (spawnTimer > tick)
                 {
-                    SpawnEachParticleType(gameObject);
-                    spawnTimer = 0;
-                    tick = Random.Range(minTick, maxTick);
+                    if (gameObject != null)
+                    {
+                        SpawnEachParticleType(gameObject);
+                        spawnTimer = 0;
+                        tick = Random.Range(minTick, maxTick);
+                    }
                 }
             }
         }
@@ -52,10 +56,25 @@ public class WorldParticleNode : MonoBehaviour
 
             while (spawned < toSpawn)
             {
-                ParticleFactory.GetParticle(container, particle, gameObject.name);
+                spawnedParticleList.Add(ParticleFactory.GetParticle(container, particle, gameObject.name));
 
                 spawned++;
             }
         }
+    }
+
+    public void DestroySafely()
+    {
+        gameObject.transform.parent = null;
+        Debug.Log("World particle node is attempting to return all particles.");
+        foreach (var particle in spawnedParticleList)
+        {
+            if (particle != null)
+            {
+                particle.transform.parent = null;
+                //ParticleFactory.ReturnParticle(particle);
+            }
+        }
+        Destroy(gameObject);
     }
 }
