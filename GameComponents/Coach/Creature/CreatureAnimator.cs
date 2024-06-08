@@ -16,54 +16,58 @@ public class CreatureAnimator : MonoBehaviour
 
     void LateUpdate()
     {
-        timeLeft -= Time.deltaTime;
-        if (timeLeft < 0)
+        if (TransientDataScript.IsTimeFlowing())
         {
-            //RUN
-            if (transientData.currentSpeed > 3)
+            timeLeft -= Time.deltaTime;
+
+            if (timeLeft < 0)
             {
-                timePerFrame = 0.05f;
-                Animator(runSprites);
+                //RUN
+                if (transientData.currentSpeed > 3)
+                {
+                    timePerFrame = 0.05f;
+                    Animator(runSprites);
+                }
+                else if (transientData.currentSpeed > 2.5f)
+                {
+                    timePerFrame = 0.07f;
+                    Animator(runSprites);
+                }
+                else if (transientData.currentSpeed > 1.5f)
+                {
+                    timePerFrame = 0.1f;
+                    Animator(runSprites);
+                }
+                //WALK
+                else if (transientData.currentSpeed > 1f)
+                {
+                    timePerFrame = 0.07f;
+                    Animator(walkSprites);
+                }
+                else if (transientData.currentSpeed > 0.5)
+                {
+                    timePerFrame = 0.1f;
+                    Animator(walkSprites);
+                }
+                else if (transientData.currentSpeed > 0)
+                {
+                    timePerFrame = 0.15f;
+                    Animator(walkSprites);
+                }
+                //REVERSE
+                else if (transientData.currentSpeed < 0)
+                {
+                    timePerFrame = 0.15f;
+                    Animator(walkSprites, true);
+                }
+                //IDLE
+                else if (transientData.currentSpeed < 0.01f)
+                {
+                    timePerFrame = 0.1f;
+                    Animator(idleSprites);
+                }
+                timeLeft = timePerFrame;
             }
-            else if (transientData.currentSpeed > 2.5f)
-            {
-                timePerFrame = 0.07f;
-                Animator(runSprites);
-            }
-            else if (transientData.currentSpeed > 1.5f)
-            {
-                timePerFrame = 0.1f;
-                Animator(runSprites);
-            }
-            //WALK
-            else if (transientData.currentSpeed > 1f)
-            {
-                timePerFrame = 0.07f;
-                Animator(walkSprites);
-            }
-            else if (transientData.currentSpeed > 0.5)
-            {
-                timePerFrame = 0.1f;
-                Animator(walkSprites);
-            }
-            else if (transientData.currentSpeed > 0)
-            {
-                timePerFrame = 0.15f;
-                Animator(walkSprites);
-            }
-            //REVERSE
-            else if (transientData.currentSpeed < 0)
-            {
-                timePerFrame = 0.15f;
-                Animator(walkSprites, true);
-            }
-            //IDLE
-            else if (transientData.currentSpeed < 0.01f)
-            {
-                timePerFrame = 0.1f;
-                Animator(idleSprites);
-            }
-            timeLeft = timePerFrame;
         }
     }
 
