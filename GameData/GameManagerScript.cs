@@ -48,6 +48,7 @@ public class GameManagerScript : MonoBehaviour
     public Engine coachEngine;
     public ManaConverter manaConverter;
     public PassengerManager passengerManager;
+    public SaveDataManager saveDataManager;
 
     void Awake()
     {
@@ -118,6 +119,9 @@ public class GameManagerScript : MonoBehaviour
         await questManager.StartLoading();
         Debug.Log("STARTUP: Loading quests async completed");
 
+        //await saveDataManager.StartLoading();
+        //Debug.Log("STARTUP: Loading save data completed");
+
         DialogueTagParser.UpdateTags(dataManager);
     }
 
@@ -161,7 +165,6 @@ public class GameManagerScript : MonoBehaviour
 
         ResetGameComponents();
 
-        dataManager.playerGold = 0;
         dataManager.totalGameDays = 0;
         dataManager.timeOfDay = 0.3f;
         dataManager.currentRegion = "REGION1";

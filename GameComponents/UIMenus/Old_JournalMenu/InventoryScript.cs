@@ -29,7 +29,7 @@ public class InventoryScript : MonoBehaviour
     {
         descriptionContainer.SetActive(false);
         itemStatsDisplay.text = "";
-        playerGoldDisplay.text = "Gold: " + dataManager.playerGold;
+        //playerGoldDisplay.text = "Gold: " + dataManager.playerGold;
 
 
         foreach (Item item in Items.all)

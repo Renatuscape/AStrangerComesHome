@@ -15,7 +15,6 @@ public class DataManagerScript : MonoBehaviour
     public string pronounGen;
 
     public string playerNameColour;
-    public int playerGold;
 
     public List<IdIntPair> inventoryList = Player.inventoryList;
     public List<IdIntPair> questProgression = Player.questProgression;
