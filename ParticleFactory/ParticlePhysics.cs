@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public class ParticlePhysics : MonoBehaviour
 {
@@ -176,13 +177,15 @@ public class ParticlePhysics : MonoBehaviour
             // CHECK FOR DEATH
             if (currentParticleLife <= 0)
             {
-                gameObject.SetActive(false);
+                Return();
             }
         }
     }
 
-    private void OnDisable()
+    public void Return()
     {
+        gameObject.transform.SetParent(ParticleFactory.instance.gameObject.transform);
+        gameObject.SetActive(false);
         ParticleFactory.ReturnParticle(gameObject);
     }
 }
