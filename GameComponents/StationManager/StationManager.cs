@@ -52,29 +52,27 @@ public class StationManager : MonoBehaviour
     {
         if (spawnedStation != null && spawnedStationScript != null && transientData.currentLocation == null)
         {
-            if (spawnedStation.transform.position.x < -20 || spawnedStation.transform.position.x > 20)
+            if (spawnedStation.transform.position.x < -20 || spawnedStation.transform.position.x > 20 || TransientDataScript.transientData.engineState == EngineState.Off)
             {
-                transientData.activePrefabs.Remove(spawnedStation);
-
-                if (spawnedStationScript != null && !spawnedStationScript.readyToDestroy)
-                {
-                    spawnedStationScript.RemoveStation();
-                    spawnedStationScript = null;
-                    spawnedStation = null;
-                }
+                RemoveStation();
             }
         }
 
         if (spawnedStation != null && transientData.currentLocation != null && !spawnedStation.name.Contains(transientData.currentLocation.objectID))
         {
+            RemoveStation();
+        }
+    }
+
+    public void RemoveStation()
+    {
+        if (spawnedStationScript != null && !spawnedStationScript.readyToDestroy)
+        {
             transientData.activePrefabs.Remove(spawnedStation);
 
-            if (spawnedStationScript != null && !spawnedStationScript.readyToDestroy)
-            {
-                spawnedStationScript.RemoveStation();
-                spawnedStationScript = null;
-                spawnedStation = null;
-            }
+            spawnedStationScript.RemoveStation();
+            spawnedStationScript = null;
+            spawnedStation = null;
         }
     }
 
