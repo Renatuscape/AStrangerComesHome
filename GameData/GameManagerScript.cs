@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameManagerScript : MonoBehaviour
 {
@@ -158,6 +159,8 @@ public class GameManagerScript : MonoBehaviour
     {
         dataManager.version = Application.version;
         dataManager.lastVersionSaved = "none";
+        dataManager.saveID = Random.Range(100000, 999999).ToString();
+        dataManager.saveSlot = -1;
         dataManager.playerName = "Morgan";
         dataManager.playerNameColour = "597266";
         dataManager.eyesHexColour = "87DF5C";
