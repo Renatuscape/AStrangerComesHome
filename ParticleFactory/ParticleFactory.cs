@@ -66,11 +66,28 @@ public class ParticleFactory : MonoBehaviour
                 }
                 else
                 {
-                    var particle = pool.objectInstances[0];
-                    pool.objectInstances.Remove(particle);
-                    particle.SetActive(true);
-                    particle.GetComponent<ParticlePhysics>().PlayBehaviour(parentObject);
-                    return particle;
+                    if (pool.objectInstances.Count > 0)
+                    {
+                        var particle = pool.objectInstances[0];
+
+                        if (particle != null)
+                        {
+
+                            pool.objectInstances.Remove(particle);
+                            particle.SetActive(true);
+                            particle.GetComponent<ParticlePhysics>().PlayBehaviour(parentObject);
+                            return particle;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Pool was empty: " + pool.accessID);
+                        return null;
+                    }
                 }
             }
             else
