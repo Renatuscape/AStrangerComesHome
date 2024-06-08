@@ -41,6 +41,7 @@ public class PlanterScript : MonoBehaviour
         else
         {
             Debug.LogWarning("Could not find planter data that corresponds to planter ID " + planterID + ". Check ID.");
+            gameObject.SetActive(false);
         }
     }
     private void OnMouseDown()
@@ -63,7 +64,7 @@ public class PlanterScript : MonoBehaviour
 
     private void Update()
     {
-        if (TransientDataScript.IsTimeFlowing())
+        if (TransientDataScript.IsTimeFlowing() && planterData != null)
         {
             weedTimer += Time.deltaTime;
 
