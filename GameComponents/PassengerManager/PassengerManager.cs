@@ -9,6 +9,7 @@ public class PassengerManager : MonoBehaviour
     public GameObject waitingPrefab;
     public PassengerPrefabScript passengerA;
     public PassengerPrefabScript passengerB;
+    public List<GameObject> waitingPassengers = new();
 
     public int waitingMax = 5;
     public int waitingCurrent;
@@ -19,7 +20,6 @@ public class PassengerManager : MonoBehaviour
     public void Initialise()
     {
         instance = this;
-        waitingCurrent = 0;
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
 
         dataManager.seatA.seatID = "A";
@@ -102,6 +102,8 @@ public class PassengerManager : MonoBehaviour
             waitingPassenger.name = "WaitingPassenger";
             waitingPassenger.transform.position = new Vector3(spawnArea, -4.094f, 0f);
             waitingPassenger.GetComponent<WaitingNPC>().parent = gameObject;
+
+            waitingPassengers.Add(waitingPassenger);
         }
     }
 
@@ -118,7 +120,7 @@ public class PassengerManager : MonoBehaviour
         {
             var currentLocation = TransientDataScript.GetCurrentLocation();
 
-            if (currentLocation != null)
+            if (currentLocation != null && !string.IsNullOrEmpty(currentLocation.objectID))
             {
                 if (!currentLocation.noPassengers)
                 {
@@ -156,7 +158,7 @@ public class PassengerManager : MonoBehaviour
                 passengerA.UpdatePassengerData();
                 passengerA.gameObject.SetActive(true);
             }
-            else if(!dataManager.seatA.isActive && passengerA.gameObject.activeInHierarchy)
+            else if (!dataManager.seatA.isActive && passengerA.gameObject.activeInHierarchy)
             {
                 passengerA.gameObject.SetActive(false);
             }
@@ -177,5 +179,13 @@ public class PassengerManager : MonoBehaviour
     {
         passengerA.gameObject.SetActive(false);
         passengerB.gameObject.SetActive(false);
+
+        foreach (var passenger in waitingPassengers)
+        {
+            Destroy(passenger);
+        }
+
+        waitingCurrent = 0;
+        waitingPassengers.Clear();
     }
 }
