@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class DataManagerScript : MonoBehaviour
 {
+    //SAVE META DATA
     public string version;
     public string lastVersionSaved;
     public int saveSlot;
     public string lastSaveTime;
+    public string saveID;
 
 
     //PLAYER DATA
