@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class SaveDataPrefab : MonoBehaviour
 {
+    public int saveSlot;
     public SaveDataInfo saveData;
     public SaveDataManager saveDataManager;
     public TextMeshProUGUI displayInfo;
@@ -13,12 +14,13 @@ public class SaveDataPrefab : MonoBehaviour
     public Button btnLoad;
     public Button btnDelete;
 
-    public void InitialiseWithData(SaveDataInfo saveData, SaveDataManager saveDataManager)
+    public void InitialiseWithData(int saveSlot, SaveDataInfo saveData, SaveDataManager saveDataManager)
     {
+        this.saveSlot = saveSlot;
         this.saveData = saveData;
         this.saveDataManager = saveDataManager;
 
-        Location location = Locations.FindByCoordinates((int)saveData.mapPositionX, (int)saveData.mapPositionY, false);
+        Location location = Locations.FindByCoordinates(saveData.currentRegion, (int)saveData.mapPositionX, (int)saveData.mapPositionY, false);
         string locationName;
 
         if (location != null)
@@ -30,7 +32,10 @@ public class SaveDataPrefab : MonoBehaviour
             locationName = "Wilderness";
         }
 
-        displayInfo.text = $"<color=#{saveData.playerNameColour}><b>{saveData.playerName}</b></color>\nDays passed: {saveData.totalGameDays}\nLocation: {locationName}";
+        displayInfo.text = $"<color=#{saveData.playerNameColour}><b>{saveData.playerName}</b></color>" +
+            $"\n{(saveData.lastSaveTime != null ? saveData.lastSaveTime : "Unknown")}" +
+            $"\nDays passed: {saveData.totalGameDays}" +
+            $"\nLocation: {locationName}";
 
         if (TransientDataScript.GameState == GameState.MainMenu)
         {
@@ -46,9 +51,10 @@ public class SaveDataPrefab : MonoBehaviour
         btnLoad.onClick.AddListener(() => ButtonLoad());
     }
 
-    public void InitialiseEmpty(SaveDataManager saveDataManager)
+    public void InitialiseEmpty(int saveSlot, SaveDataManager saveDataManager)
     {
         this.saveDataManager = saveDataManager;
+        this.saveSlot = saveSlot;
 
         displayInfo.text = $"<b>Free Slot</b>";
         btnLoad.gameObject.SetActive(false);
@@ -103,14 +109,15 @@ public class SaveDataPrefab : MonoBehaviour
     public void ExecuteDelete()
     {
         saveDataManager.DeleteFileAndRefresh(saveData);
-        InitialiseEmpty(saveDataManager);
+        InitialiseEmpty(saveSlot, saveDataManager);
     }
 
     public void ButtonSave()
     {
         if (saveData == null)
         {
-            Debug.Log("Attempting to save game with no saveData.");
+            Debug.Log("Attempting to save game into empty slot.");
+            TransientDataScript.gameManager.dataManager.saveSlot = saveSlot;
         }
         else
         {
