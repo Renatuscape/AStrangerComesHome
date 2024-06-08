@@ -20,19 +20,19 @@ public class SaveLoadManager : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManagerScript>();
     }
 
-    public void SaveGame()
+    public void SaveGame(string fileName)
     {
         dataManager.lastVersionSaved = Application.version;
 
         string json = JsonUtility.ToJson(dataManager, prettyPrint: true);
-        SaveJsonToFile(json);
+        SaveJsonToFile(json, fileName);
     }
 
-    public async void LoadGame()
+    public async void LoadGame(string fileName)
     {
         //TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
 
-        string json = await LoadJsonFromFileAsync();
+        string json = await LoadJsonFromFileAsync(fileName);
 
         // Log the JSON value before loading
         Debug.Log("Loaded JSON data: " + json);
@@ -43,17 +43,17 @@ public class SaveLoadManager : MonoBehaviour
             gameManager.LoadRoutine();
         }
     }
-    private void SaveJsonToFile(string json)
+    private void SaveJsonToFile(string json, string fileName)
     {
-        string fullPath = GetSaveFilePath();
+        string fullPath = GetSaveFilePath(fileName);
         File.WriteAllText(fullPath, json);
         Debug.Log("Game saved at " + fullPath);
     }
 
-    private string GetSaveFilePath()
+    private string GetSaveFilePath(string fileName)
     {
         string saveDirectory = "/SaveData/";
-        string fileName = "SaveData.ran";
+        //string fileName = "SaveData.ran";
         string dir = Application.persistentDataPath + saveDirectory;
 
         if (!Directory.Exists(dir))
@@ -62,9 +62,9 @@ public class SaveLoadManager : MonoBehaviour
         return Path.Combine(dir, fileName);
     }
 
-    private async Task<string> LoadJsonFromFileAsync()
+    private async Task<string> LoadJsonFromFileAsync(string fileName)
     {
-        string fullPath = GetSaveFilePath();
+        string fullPath = GetSaveFilePath(fileName);
         if (File.Exists(fullPath))
         {
             using (StreamReader reader = new StreamReader(fullPath))
