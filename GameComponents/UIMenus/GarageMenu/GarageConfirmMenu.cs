@@ -39,7 +39,7 @@ public class GarageConfirmMenu : MonoBehaviour
             {
                 level++;
                 upgradePrice.text = upgradeIcon.upgrade.GetPrice().ToString();
-                upgradeTitle.text = upgradeIcon.name + $" Lv. {level}";
+                upgradeTitle.text = upgradeIcon.upgrade.name + $" Lv. {level}";
                 AudioManager.PlayUISound("bellCopperHigh");
             }
             else
