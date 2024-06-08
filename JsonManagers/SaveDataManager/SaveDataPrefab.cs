@@ -117,13 +117,25 @@ public class SaveDataPrefab : MonoBehaviour
         if (saveData == null)
         {
             Debug.Log("Attempting to save game into empty slot.");
-            TransientDataScript.gameManager.dataManager.saveSlot = saveSlot;
         }
         else
         {
             Debug.Log("Attempting to save game using " + saveData.fileName);
         }
 
-        saveDataManager.SaveGameAndPlay(saveData);
+        TransientDataScript.gameManager.dataManager.saveSlot = saveSlot;
+        saveDataManager.AttemptSave(saveData, this, false);
+    }
+
+    public void ConfirmOverwrite()
+    {
+        displayInfo.text = $"A different game has been saved in this slot. Click again to confirm overwrite.";
+        btnSave.onClick.RemoveAllListeners();
+        btnSave.onClick.AddListener(() => ExecuteOverwrite());
+    }
+
+    public void ExecuteOverwrite()
+    {
+        saveDataManager.AttemptSave(saveData, this, true);
     }
 }
