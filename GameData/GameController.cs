@@ -43,8 +43,7 @@ public class GameController : MonoBehaviour
                 {
                     ToggleMap(false);
                 }
-                else if (TransientDataScript.GameState == GameState.StartMenu ||
-                        TransientDataScript.GameState == GameState.JournalMenu)
+                else if (TransientDataScript.GameState == GameState.JournalMenu)
                 {
                     TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
                 }
