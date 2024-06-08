@@ -23,6 +23,7 @@ public class SaveLoadManager : MonoBehaviour
     public void SaveGame(string fileName)
     {
         dataManager.lastVersionSaved = Application.version;
+        dataManager.fileName = fileName;
 
         string json = JsonUtility.ToJson(dataManager, prettyPrint: true);
         SaveJsonToFile(json, fileName);
@@ -53,7 +54,6 @@ public class SaveLoadManager : MonoBehaviour
     private string GetSaveFilePath(string fileName)
     {
         string saveDirectory = "/SaveData/";
-        //string fileName = "SaveData.ran";
         string dir = Application.persistentDataPath + saveDirectory;
 
         if (!Directory.Exists(dir))
