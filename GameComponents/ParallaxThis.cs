@@ -10,6 +10,7 @@ public class ParallaxThis : MonoBehaviour
 
     public float parallaxMultiplier;
     public float passiveSpeed = 0;
+    public bool playDespitePause = false;
 
     private float parallaxEffect;
 
@@ -30,7 +31,7 @@ public class ParallaxThis : MonoBehaviour
 
     void LateUpdate()
     {
-        if (TransientDataScript.IsTimeFlowing())
+        if (TransientDataScript.IsTimeFlowing() || playDespitePause)
         {
             timer += Time.deltaTime;
 
