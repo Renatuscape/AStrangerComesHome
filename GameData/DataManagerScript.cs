@@ -7,6 +7,7 @@ public class DataManagerScript : MonoBehaviour
 {
     public string version;
     public string lastVersionSaved;
+    public string fileName;
 
     //PLAYER DATA
     public string playerName;
