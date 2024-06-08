@@ -5,6 +5,7 @@ using UnityEngine;
 public class StationParallax : MonoBehaviour
 {
     public List<ParallaxCluster> clusters = new();
+    public List<WorldParticleNode> particleNodes = new();
     TransientDataScript transientData;
     Vector3 spawnArea;
 
@@ -111,6 +112,14 @@ public class StationParallax : MonoBehaviour
     {
         clustersReady = 0;
         readyToDestroy = true;
+
+        foreach (var particleNode in particleNodes)
+        {
+            if (particleNode != null)
+            {
+                particleNode.DestroySafely();
+            }
+        }
 
         foreach (var cluster in clusters)
         {
