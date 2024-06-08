@@ -24,7 +24,7 @@ public static class CharacterNodeTracker
         {
             if (cNode.updateAtMidnight)
             {
-                cNode.UpdateAtMidnight();
+                cNode.RefreshNode();
             }
         }
     }
