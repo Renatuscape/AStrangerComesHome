@@ -173,7 +173,7 @@ public class BankManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.03f);
         textMesh.gameObject.transform.position = new Vector3(textMesh.transform.position.x - nudgeAmount, textMesh.transform.position.y - nudgeAmount, textMesh.transform.position.z);
-        AudioManager.PlayUISound("handleCoins", -0.2f);
+        AudioManager.PlayUISound("handleCoins", -0.1f);
     }
 
     public void CloseBankMenu()
