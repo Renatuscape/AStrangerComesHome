@@ -77,21 +77,24 @@ public class WaitingNPC : MonoBehaviour
 
     void LateUpdate()
     {
-        var parallaxEffect = transientData.currentSpeed * parallaxMultiplier;
-
-        transform.position = new Vector3(transform.position.x + parallaxEffect, transform.position.y, transform.position.z);
-
-        if ((transform.position.x <= -20 || transform.position.x >= 20) && transientData.currentLocation is null)
+        if (TransientDataScript.IsTimeFlowing())
         {
-            passengerManager.waitingCurrent -= 1;
-            transientData.activePrefabs.Remove(gameObject);
-            Destroy(gameObject);
-        }
-        else if (transform.position.x < -20)
-            transform.position = new Vector3(18, transform.position.y, transform.position.z);
+            var parallaxEffect = transientData.currentSpeed * parallaxMultiplier;
 
-        else if (transform.position.x > 20)
-            transform.position = new Vector3(-18, transform.position.y, transform.position.z);
+            transform.position = new Vector3(transform.position.x + parallaxEffect, transform.position.y, transform.position.z);
+
+            if ((transform.position.x <= -20 || transform.position.x >= 20) && transientData.currentLocation is null)
+            {
+                passengerManager.waitingCurrent -= 1;
+                transientData.activePrefabs.Remove(gameObject);
+                Destroy(gameObject);
+            }
+            else if (transform.position.x < -20)
+                transform.position = new Vector3(18, transform.position.y, transform.position.z);
+
+            else if (transform.position.x > 20)
+                transform.position = new Vector3(-18, transform.position.y, transform.position.z);
+        }
     }
 
     private void OnMouseDown()

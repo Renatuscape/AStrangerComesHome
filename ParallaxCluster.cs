@@ -40,7 +40,7 @@ public class ParallaxCluster : MonoBehaviour
                 script.maxOffsetX = customMaxOffset;
             }
 
-            script.offsetMultiplier = 1.05f + layerAdjustment;
+            script.offsetMultiplier = 1.2f + layerAdjustment;
             script.parallaxFacade = parallaxFacade;
             script.hasNoMaxOffset = hasNoMaxOffset;
 
@@ -209,11 +209,14 @@ public class ParallaxLayer : MonoBehaviour
 
     private void LateUpdate()
     {
-        timer += Time.deltaTime;
-        if (timer >= tick)
+        if (TransientDataScript.IsTimeFlowing())
         {
-            timer = 0;
-            Tick();
+            timer += Time.deltaTime;
+            if (timer >= tick)
+            {
+                timer = 0;
+                Tick();
+            }            
         }
     }
 

@@ -20,12 +20,15 @@ public class Anim_SimpleLoop : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        timeLeft -= Time.deltaTime;
-
-        if (timeLeft < 0)
+        if (TransientDataScript.IsTimeFlowing())
         {
-            Animator(spriteList);
-            timeLeft = secondsPerFrame;
+            timeLeft -= Time.deltaTime;
+
+            if (timeLeft < 0)
+            {
+                Animator(spriteList);
+                timeLeft = secondsPerFrame;
+            }
         }
     }
 

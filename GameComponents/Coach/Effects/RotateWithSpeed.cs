@@ -17,6 +17,8 @@ public class RotateWithSpeed : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if (TransientDataScript.IsTimeFlowing())
+        {
         carriageSpeed = transientData.currentSpeed;
 
         if (!reverseRotationDirection)
@@ -27,5 +29,7 @@ public class RotateWithSpeed : MonoBehaviour
         {
             transform.Rotate(new Vector3(0, 0, ((0 - baseRotationSpeed) - (carriageSpeed * rotationSpeedMultiplier))) * Time.timeScale);
         }
+        }
+
     }
 }

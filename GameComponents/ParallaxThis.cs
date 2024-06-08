@@ -30,12 +30,15 @@ public class ParallaxThis : MonoBehaviour
 
     void LateUpdate()
     {
-        timer += Time.deltaTime;
-
-        if (timer >= tick)
+        if (TransientDataScript.IsTimeFlowing())
         {
-            Tick();
-            timer = 0;
+            timer += Time.deltaTime;
+
+            if (timer >= tick)
+            {
+                Tick();
+                timer = 0;
+            }
         }
     }
 

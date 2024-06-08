@@ -30,11 +30,14 @@ public class StationParallax : MonoBehaviour
 
     void LateUpdate()
     {
-        timer += Time.deltaTime;
-        if (timer >= tick)
+        if (TransientDataScript.IsTimeFlowing())
         {
-            timer = 0;
-            Tick();
+            timer += Time.deltaTime;
+            if (timer >= tick)
+            {
+                timer = 0;
+                Tick();
+            }
         }
     }
 
