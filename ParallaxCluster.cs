@@ -8,6 +8,7 @@ public class ParallaxCluster : MonoBehaviour
     public List<SpriteRenderer> midLayerSprites;
     public List<SpriteRenderer> backLayerSprites;
     public List<GameObject> parallaxLayer = new();
+    public List<CharacterNode> characterNodes;
     public StationParallax parentStation;
     public GameObject parallaxFacade;
     public float customOffsetMultiplier;
@@ -56,11 +57,21 @@ public class ParallaxCluster : MonoBehaviour
     public void StartFadeOut(bool setComplete)
     {
         StartCoroutine(FadeOut(setComplete));
+
+        foreach (var character in characterNodes)
+        {
+            character.TemporarilyHide();
+        }
     }
 
     public void StartFadeIn(bool setComplete)
     {
         StartCoroutine(FadeIn(setComplete));
+
+        foreach (var character in characterNodes)
+        {
+            character.RefreshNode();
+        }
     }
 
     IEnumerator FadeOut(bool setReady)
@@ -149,43 +160,41 @@ public class ParallaxCluster : MonoBehaviour
     {
         List<SpriteRenderer> allRenderersFound = new();
 
-        foreach (SpriteRenderer child in transform.GetComponentsInChildren<SpriteRenderer>())
+        // Traverse all SpriteRenderer components in the current GameObject and its children
+        foreach (SpriteRenderer renderer in transform.GetComponentsInChildren<SpriteRenderer>(true))
         {
-            if (child.gameObject.GetComponent<CharacterNode>() ==  null)
+            // Check if the current GameObject has a CharacterNode component
+            CharacterNode characterNode = renderer.gameObject.GetComponent<CharacterNode>();
+
+            if (characterNode == null)
             {
-                allRenderersFound.Add(child);
+                // If no CharacterNode component is found, add the renderer to the list
+                allRenderersFound.Add(renderer);
             }
-
-            foreach (SpriteRenderer grandChild in child.gameObject.transform.GetComponentsInChildren<SpriteRenderer>())
+            else
             {
-                if (grandChild.gameObject.GetComponent<CharacterNode>() == null)
+                // If a CharacterNode component is found and it's not already in the list, add it
+                if (!characterNodes.Contains(characterNode))
                 {
-                    allRenderersFound.Add(grandChild);
-                }
-
-                foreach (SpriteRenderer greatGrandChild in grandChild.gameObject.transform.GetComponentsInChildren<SpriteRenderer>())
-                {
-                    if (greatGrandChild.gameObject.GetComponent<CharacterNode>() == null)
-                    {
-                        allRenderersFound.Add(greatGrandChild);
-                    }
+                    characterNodes.Add(characterNode);
                 }
             }
         }
 
-        foreach (SpriteRenderer rend in allRenderersFound)
+        // Process the found renderers based on their sorting layer
+        foreach (SpriteRenderer renderer in allRenderersFound)
         {
-            if (rend.sortingLayerName.ToLower().Contains("front"))
+            if (renderer.sortingLayerName.ToLower().Contains("front"))
             {
-                frontLayerSprites.Add(rend);
+                frontLayerSprites.Add(renderer);
             }
-            else if (rend.sortingLayerName.ToLower().Contains("mid"))
+            else if (renderer.sortingLayerName.ToLower().Contains("mid"))
             {
-                midLayerSprites.Add(rend);
+                midLayerSprites.Add(renderer);
             }
             else
             {
-                backLayerSprites.Add(rend);
+                backLayerSprites.Add(renderer);
             }
         }
     }
