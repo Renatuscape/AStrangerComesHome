@@ -50,7 +50,7 @@ public class ParallaxCluster : MonoBehaviour
                 script.offsetMultiplier = customOffsetMultiplier + layerAdjustment;
             }
 
-            layerAdjustment += 0.05f;
+            layerAdjustment += 0.1f;
         }
     }
 
