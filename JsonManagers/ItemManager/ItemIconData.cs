@@ -83,6 +83,18 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             Destroy(alchemyDraggable);
         }
 
+        var inventoryHelper = gameObject.GetComponent<PageinatedInventoryHelper>();
+        if (inventoryHelper != null)
+        {
+            Destroy(inventoryHelper);
+        }
+
+        var alchemyInventory = gameObject.GetComponent<AlchemyInventoryItem>();
+        if (alchemyInventory != null)
+        {
+            Destroy(alchemyInventory);
+        }
+
         var shopDraggable = gameObject.GetComponent<DraggableShopItem>();
         if (shopDraggable != null)
         {
