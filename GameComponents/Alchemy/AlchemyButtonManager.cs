@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class AlchemyButtonManager : MonoBehaviour
 {
     public AlchemyMenu alchemyMenu;
-    public SynthesiserData synthData;
     public GameObject confirmMenu;
     public GameObject buttonContainer;
     public TextMeshProUGUI confirmWarning;
@@ -23,7 +22,6 @@ public class AlchemyButtonManager : MonoBehaviour
 
     private void OnEnable()
     {
-        synthData = alchemyMenu.synthData;
         confirmMenu.SetActive(false);
         buttonContainer.SetActive(true);
 
@@ -56,7 +54,7 @@ public class AlchemyButtonManager : MonoBehaviour
     public void CheckButtons()
     {
 
-        if (synthData != null && synthData.synthRecipe != null && synthData.isSynthActive && synthData.progressSynth >= synthData.synthRecipe.workload)
+        if (AlchemyMenu.synthData != null && AlchemyMenu.synthData.synthRecipe != null && AlchemyMenu.synthData.isSynthActive && AlchemyMenu.synthData.progressSynth >= AlchemyMenu.synthData.synthRecipe.workload)
         {
             claimButton.gameObject.SetActive(true);
             clearButton.gameObject.SetActive(false);
@@ -69,7 +67,7 @@ public class AlchemyButtonManager : MonoBehaviour
         {
             claimButton.gameObject.SetActive(false);
 
-            if (synthData.isSynthActive)
+            if (AlchemyMenu.synthData.isSynthActive)
             {
                 createButton.gameObject.SetActive(false);
                 clearButton.gameObject.SetActive(false);
@@ -84,12 +82,12 @@ public class AlchemyButtonManager : MonoBehaviour
                 cancelButton.gameObject.SetActive(false);
             }
 
-            if (synthData.isSynthActive && synthData.isSynthPaused)
+            if (AlchemyMenu.synthData.isSynthActive && AlchemyMenu.synthData.isSynthPaused)
             {
                 resumeButton.gameObject.SetActive(true);
                 pauseButton.gameObject.SetActive(false);
             }
-            else if (synthData.isSynthActive && !synthData.isSynthPaused)
+            else if (AlchemyMenu.synthData.isSynthActive && !AlchemyMenu.synthData.isSynthPaused)
             {
                 resumeButton.gameObject.SetActive(false);
                 pauseButton.gameObject.SetActive(true);
@@ -148,9 +146,9 @@ public class AlchemyButtonManager : MonoBehaviour
 
     public void Pause()
     {
-        if (synthData.isSynthActive)
+        if (AlchemyMenu.synthData.isSynthActive)
         {
-            synthData.isSynthPaused = true;
+            AlchemyMenu.synthData.isSynthPaused = true;
         }
 
         CheckButtons();
@@ -158,9 +156,9 @@ public class AlchemyButtonManager : MonoBehaviour
 
     public void Resume()
     {
-        if (synthData.isSynthActive)
+        if (AlchemyMenu.synthData.isSynthActive)
         {
-            synthData.isSynthPaused = false;
+            AlchemyMenu.synthData.isSynthPaused = false;
         }
 
         CheckButtons();
@@ -209,8 +207,8 @@ public class AlchemyButtonManager : MonoBehaviour
         confirmMenu.gameObject.SetActive(false);
         buttonContainer.SetActive(true);
         confirmButton.onClick.RemoveAllListeners();
-        synthData.isSynthActive = false;
-        synthData.progressSynth = 0;
+        AlchemyMenu.synthData.isSynthActive = false;
+        AlchemyMenu.synthData.progressSynth = 0;
 
         //Cancel animation and resetting of components goes here
 

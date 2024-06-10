@@ -9,22 +9,21 @@ public enum SynthesiserType
     Capital,
     Magus,
     Home,
-    Coach,
-    Coach2,
-    Coach3
+    Coach
 }
 public class AlchemyMenu : MonoBehaviour
 {
+    public static SynthesiserData synthData;
+    public SynthesiserData synthDataDebug;
+
     public DataManagerScript dataManager;
     public AlchemyTracker alchemyTracker;
     public AlchemyAnimator alchemyAnimator;
-    public SynthesiserData synthData;
     public AlchemySelectedIngredients selectedIngredients;
     public AlchemyInventory inventory;
     public AlchemyProgressBar progressBar;
     public AlchemyYieldManager yieldManager;
     public AlchemyButtonManager buttonManager;
-    public SynthesiserType synthesiserType;
     public AlchemyRecipeTin recipeTin;
 
     public List<AlchemyObject> alchemyObjects = new();
@@ -47,7 +46,6 @@ public class AlchemyMenu : MonoBehaviour
             dataManager = TransientDataScript.gameManager.dataManager;
             SetUpContainers();
         }
-        this.synthesiserType = synthesiserType;
 
         string synthName = synthesiserType.ToString();
 
@@ -86,13 +84,16 @@ public class AlchemyMenu : MonoBehaviour
         Debug.Log($"Received {incomingSynthesiser.synthesiserID} at alchemy menu.");
 
         synthData = incomingSynthesiser;
+        synthDataDebug = synthData;
 
         if (synthData != null)
         {
+
             if (synthData.synthRecipe != null)
             {
                 synthData.synthRecipe.SetWorkload(); // In case the formula has been changed, update workload
             }
+
             gameObject.SetActive(true);
             alchemyObjects = SetUpAlchemyObjects(isDebugging);
             inventory.RenderInventory(ItemType.Catalyst, false);
@@ -100,6 +101,7 @@ public class AlchemyMenu : MonoBehaviour
             progressBar.alchemyMenu = this;
             progressBar.Initialise(synthData);
             yieldManager.Setup(synthData);
+
         }
         else
         {

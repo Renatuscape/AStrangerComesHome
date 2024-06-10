@@ -7,7 +7,7 @@ public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandl
     public Item item;
     public void OnInitializePotentialDrag(PointerEventData eventData)
     {
-        if (alchemyObject.alchemyMenu.synthData != null && !alchemyObject.alchemyMenu.synthData.isSynthActive)
+        if (AlchemyMenu.synthData != null && !AlchemyMenu.synthData.isSynthActive)
         {
             // Here we instantiate the second object, that we want to drag. 
             GameObject go = alchemyObject.SpawnDraggable();

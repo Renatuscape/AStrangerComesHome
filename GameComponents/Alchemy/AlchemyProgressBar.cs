@@ -4,7 +4,6 @@ using UnityEngine;
 public class AlchemyProgressBar : MonoBehaviour
 {
     public AlchemyMenu alchemyMenu;
-    public SynthesiserData synthData;
     public RectTransform fillBar;
     public GameObject containerBG;
     public float percentageFill;
@@ -12,7 +11,6 @@ public class AlchemyProgressBar : MonoBehaviour
 
     public void Initialise(SynthesiserData synthData)
     {
-        this.synthData = synthData;
         percentageFill = CalculatePercentage();
         UpdateFillBarPosition();
         isEnabled = true;
@@ -27,17 +25,17 @@ public class AlchemyProgressBar : MonoBehaviour
     {
         if (isEnabled)
         {
-            if (synthData != null && synthData.synthRecipe != null && synthData.isSynthActive && synthData.synthRecipe.workload > 0)
+            if (AlchemyMenu.synthData != null && AlchemyMenu.synthData.synthRecipe != null && AlchemyMenu.synthData.isSynthActive && AlchemyMenu.synthData.synthRecipe.workload > 0)
             {
                 percentageFill = CalculatePercentage();
                 UpdateFillBarPosition();
 
-                if (synthData.progressSynth >= synthData.synthRecipe.workload)
+                if (AlchemyMenu.synthData.progressSynth >= AlchemyMenu.synthData.synthRecipe.workload)
                 {
                     alchemyMenu.SynthComplete();
                 }
             }
-            else if (synthData != null && !synthData.isSynthActive)
+            else if (AlchemyMenu.synthData != null && !AlchemyMenu.synthData.isSynthActive)
             {
                 percentageFill = 0;
                 UpdateFillBarPosition();
@@ -47,17 +45,17 @@ public class AlchemyProgressBar : MonoBehaviour
 
     float CalculatePercentage()
     {
-        if (synthData == null || synthData.synthRecipe == null)
+        if (AlchemyMenu.synthData == null || AlchemyMenu.synthData.synthRecipe == null)
         {
             return 0;
         }
-        float maxValue = synthData.synthRecipe.workload;
-        float currentValue = synthData.progressSynth;
+        float maxValue = AlchemyMenu.synthData.synthRecipe.workload;
+        float currentValue = AlchemyMenu.synthData.progressSynth;
         float minValue = 0;
 
         // Calculate the percentage completion
         float percentage;
-        
+
         if (currentValue == 0 || maxValue == 0)
         {
             return 0;
@@ -75,7 +73,7 @@ public class AlchemyProgressBar : MonoBehaviour
 
         float xScale = Mathf.Lerp(0, 1, percentageFill);
 
-        if (xScale > -1000 && xScale < 1000)
+        if (xScale > -0.1f && xScale < 1.1f)
         {
             // Smoothly move the fill bar to the target position
             fillBar.localScale = Vector3.Lerp(fillBar.localScale, new Vector3(xScale, 1, 1), Time.deltaTime * smoothness);

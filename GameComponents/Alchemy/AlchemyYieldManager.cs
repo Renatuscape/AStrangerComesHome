@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class AlchemyYieldManager : MonoBehaviour
 {
-    public SynthesiserData synthData;
     public GameObject prefabContainer;
     public List<GameObject> yieldPrefabs = new();
     public bool isYieldPrinted;
@@ -12,9 +11,8 @@ public class AlchemyYieldManager : MonoBehaviour
     public void Setup(SynthesiserData synthData)
     {
         isYieldPrinted = false;
-        this.synthData = synthData;
 
-        if (synthData.isSynthActive && synthData.progressSynth >= synthData.synthRecipe.workload)
+        if (AlchemyMenu.synthData.isSynthActive && AlchemyMenu.synthData.progressSynth >= AlchemyMenu.synthData.synthRecipe.workload)
         {
             prefabContainer.SetActive(true);
             CheckCompletion();
@@ -28,7 +26,7 @@ public class AlchemyYieldManager : MonoBehaviour
 
     public void CheckCompletion()
     {
-        if (!isYieldPrinted && synthData.isSynthActive && synthData.progressSynth >= synthData.synthRecipe.workload)
+        if (!isYieldPrinted && AlchemyMenu.synthData.isSynthActive && AlchemyMenu.synthData.progressSynth >= AlchemyMenu.synthData.synthRecipe.workload)
         {
             prefabContainer.SetActive(true);
 
@@ -45,7 +43,7 @@ public class AlchemyYieldManager : MonoBehaviour
     {
         float timer = 0.1f;
 
-        foreach (var yield in synthData.synthRecipe.yield)
+        foreach (var yield in AlchemyMenu.synthData.synthRecipe.yield)
         {
             for (int i = 0; i < yield.amount; i++)
             {
@@ -66,8 +64,6 @@ public class AlchemyYieldManager : MonoBehaviour
 
         var scaleScript = yieldPrefab.GetComponent<Anim_ScaleOnEnable>();
         scaleScript.startScale = new Vector3 (0, 0, 1f);
-
-        //yieldPrefab.AddComponent<Anim_BobLoop>();
     }
 
     public void Clear()
