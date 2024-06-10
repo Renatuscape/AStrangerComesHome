@@ -184,6 +184,7 @@ public class GameManagerScript : MonoBehaviour
         dataManager.alchemySynthesisers.Clear();
         dataManager.unlockedNames.Clear();
         dataManager.giftedThisWeek.Clear();
+        dataManager.claimedLoot.Clear();
 
         SetUpUpgradeWear();
         dataManager.inventoryList = Player.inventoryList;
