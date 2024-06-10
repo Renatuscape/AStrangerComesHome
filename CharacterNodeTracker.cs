@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 public static class CharacterNodeTracker
@@ -25,6 +27,74 @@ public static class CharacterNodeTracker
             if (cNode.updateAtMidnight)
             {
                 cNode.RefreshNode();
+            }
+        }
+        
+        if (Player.claimedLoot.Count > 0)
+        {
+            CheckLootNodes();
+        }
+    }
+
+    static void CheckLootNodes()
+    {
+        UnityEngine.Debug.Log("Checking loot nodes.");
+
+        var respawningLoot = Player.claimedLoot.Where(e => !e.objectID.Contains("disableRespawn")).ToList();
+
+        foreach (var entry in respawningLoot)
+        {
+            UnityEngine.Debug.Log("Checking node with ID " + entry.objectID);
+            entry.amount++;
+
+            if (entry.objectID.Contains("_CD#")) // By default, roll respawn chance
+            {
+                UnityEngine.Debug.Log("Found _CD#");
+                var data = entry.objectID.Split("_CD#");
+
+                if (int.TryParse(data[1], out var result))
+                {
+                    if (result <= entry.amount)
+                    {
+                        RollForRespawn(entry, result);
+                    }
+                }
+                else
+                {
+                    UnityEngine.Debug.Log("Parsing cooldown failed: " + data[1]);
+                }
+            }
+            else if (entry.objectID.Contains("_ECD#")) // Exact cooldown means no random roll
+            {
+                var data = entry.objectID.Split("_ECD#");
+
+                if (int.TryParse(data[1], out var result))
+                {
+                    if (result <= entry.amount)
+                    {
+                        UnityEngine.Debug.Log("Removing loot with exact cooldown.");
+                        Player.claimedLoot.Remove(entry);
+                    }
+                }
+                else
+                {
+                    UnityEngine.Debug.Log("Parsing exact cooldown failed: " + data[1]);
+                }
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Could not find cooldown data for " + entry.objectID);
+            }
+        }
+
+        static void RollForRespawn(IdIntPair entry, int minCooldown)
+        {
+            UnityEngine.Debug.Log("Rolling for respawn.");
+            int extraTime = entry.amount - minCooldown;
+
+            if (UnityEngine.Random.Range(0, 100) < (10 + (extraTime * 10)))
+            {
+                Player.claimedLoot.Remove(entry);
             }
         }
     }
