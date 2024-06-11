@@ -53,7 +53,7 @@ public static class RequirementChecker
 
         if ((int)currentWeekday == weekDay)
         {
-            Debug.Log("Check against " + weekDay + " returned true.");
+            Debug.Log("Check against " + weekDay + (DayOfWeek)weekDay + " returned true.");
             return true;
         }
         else
