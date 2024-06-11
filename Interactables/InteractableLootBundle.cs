@@ -14,14 +14,14 @@ public class InteractableLootBundle
     public int extraItemPenalty;
     public int coolDown;
     public bool exactCooldown;
-    public RequirementPackage requirements;
-    public List<LootCategory> categories;
-    public List<IdIntPair> customContent;
     public bool yieldAllCustomContent;
     public int maxYieldPerItem;
     public int maxItems;
     public bool alwaysMaxYield;
     public bool alwaysMaxItems;
+    public RequirementPackage requirements;
+    public List<LootCategory> categories;
+    public List<IdIntPair> customContent;
     public List<Item> viableLoot = new();
     public List<IdIntPair> lootOutput = new();
 
@@ -118,7 +118,7 @@ public class InteractableLootBundle
             var itemChance = 100;
             bool rollFailed = false;
 
-            while (!rollFailed)
+            while (!rollFailed && itemsToYield < maxItems)
             {
                 if (UnityEngine.Random.Range(0, 100) < itemChance)
                 {
