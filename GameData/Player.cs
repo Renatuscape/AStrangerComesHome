@@ -214,6 +214,10 @@ public static class Player
                 amountAdded = foundObject.maxValue - entry.amount;
             }
         }
+        else
+        {
+            Debug.LogWarning("No base object found with ID " + objectID);
+        }
 
         if (!doNotLog)
         {
