@@ -31,7 +31,7 @@ public class AlchemyObject
     public bool isMaterial;
     public bool isInfusion;
 
-    public void AddToInventory(ItemIntPair itemEntry, AlchemyMenu alchemyMenu)
+    public void Initialise(ItemIntPair itemEntry, AlchemyMenu alchemyMenu)
     {
         this.alchemyMenu = alchemyMenu;
         this.itemEntry = itemEntry;
@@ -45,37 +45,37 @@ public class AlchemyObject
         infusionList = alchemyMenu.infusionList;
         materialList = alchemyMenu.materialList;
 
-        CreateInventoryPrefab();
+        //CreateInventoryPrefab();
     }
 
-    public void CheckInventoryDisplay(ItemType currentCategory, bool anyCategory = false)
-    {
-        lastInventoryCategory = currentCategory;
+    //public void CheckInventoryDisplay(ItemType currentCategory, bool anyCategory = false)
+    //{
+    //    lastInventoryCategory = currentCategory;
 
-        if ((itemEntry.item.type == currentCategory || anyCategory) && currentlyInBag > 0)
-        {
-            inventoryClass.gameObject.SetActive(true);
-        }
-        else
-        {
-            inventoryClass.gameObject.SetActive(false);
-        }
-    }
+    //    if ((itemEntry.item.type == currentCategory || anyCategory) && currentlyInBag > 0)
+    //    {
+    //        inventoryClass.gameObject.SetActive(true);
+    //    }
+    //    else
+    //    {
+    //        inventoryClass.gameObject.SetActive(false);
+    //    }
+    //}
 
-    public void CreateInventoryPrefab()
-    {
-        var itemIcon = BoxFactory.CreateItemIcon(itemEntry.item, true, 64, 18);
-        itemIcon.gameObject.name = itemEntry.item.name;
-        itemIcon.gameObject.transform.SetParent(inventoryContainer.transform, false);
-        var script = itemIcon.gameObject.AddComponent<AlchemyInventoryItem>();
-        script.item = itemEntry.item;
-        script.alchemyObject = this;
+    //public void CreateInventoryPrefab()
+    //{
+    //    var itemIcon = BoxFactory.CreateItemIcon(itemEntry.item, true, 64, 18);
+    //    itemIcon.gameObject.name = itemEntry.item.name;
+    //    itemIcon.gameObject.transform.SetParent(inventoryContainer.transform, false);
+    //    var script = itemIcon.gameObject.AddComponent<AlchemyInventoryItem>();
+    //    script.item = itemEntry.item;
+    //    script.alchemyObject = this;
 
-        inventoryAmountText = itemIcon.countText;
-        UpdateNumbers();
+    //    inventoryAmountText = itemIcon.countText;
+    //    UpdateNumbers();
 
-        inventoryClass = script;
-    }
+    //    inventoryClass = script;
+    //}
 
     public void UpdateNumbers()
     {
