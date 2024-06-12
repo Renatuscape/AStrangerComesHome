@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public AlchemyObject alchemyObject;
-    public Item item;
+    public ItemIconData itemIconData;
     public void OnInitializePotentialDrag(PointerEventData eventData)
     {
         if (AlchemyMenu.synthData != null && !AlchemyMenu.synthData.isSynthActive)
@@ -27,7 +27,7 @@ public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandl
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        TransientDataScript.PrintFloatText($"{item.name}");
+        TransientDataScript.PrintFloatText($"{alchemyObject.itemEntry.item.name}");
     }
 
     public void OnPointerExit(PointerEventData eventData)
