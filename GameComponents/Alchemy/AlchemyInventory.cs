@@ -80,7 +80,7 @@ public class AlchemyInventory : MonoBehaviour
 
         foreach (var alcObject in alchemyMenu.alchemyObjects)
         {
-            alcObject.CheckInventoryDisplay(pageType, printAll);
+            //alcObject.CheckInventoryDisplay(pageType, printAll);
         }
     }
 }
