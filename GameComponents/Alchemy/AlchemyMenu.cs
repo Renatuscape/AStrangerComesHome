@@ -15,12 +15,12 @@ public class AlchemyMenu : MonoBehaviour
 {
     public static SynthesiserData synthData;
     public SynthesiserData synthDataDebug;
+    public PageinatedContainer pageinatedContainer;
 
     public DataManagerScript dataManager;
     public AlchemyTracker alchemyTracker;
     public AlchemyAnimator alchemyAnimator;
     public AlchemySelectedIngredients selectedIngredients;
-    public AlchemyInventory inventory;
     public AlchemyProgressBar progressBar;
     public AlchemyYieldManager yieldManager;
     public AlchemyButtonManager buttonManager;
@@ -96,7 +96,47 @@ public class AlchemyMenu : MonoBehaviour
 
             gameObject.SetActive(true);
             alchemyObjects = SetUpAlchemyObjects(isDebugging);
-            inventory.RenderInventory(ItemType.Catalyst, false);
+            //inventory.RenderInventory(ItemType.Catalyst, false);
+
+            List<string> availableIngredients = new();
+
+            foreach (var item in Items.all) // exclude seeds, misc, scripts and books, and any unique item
+            {
+                if (item.type == ItemType.Treasure
+                || item.type == ItemType.Plant
+                || item.type == ItemType.Trade
+                || item.type == ItemType.Catalyst
+                || item.type == ItemType.Material)
+                {
+                    if (item.rarity != ItemRarity.Unique)
+                    {
+                        int amount = Player.GetCount(item.objectID, name);
+
+                        if (amount > 0)
+                        {
+                            availableIngredients.Add(item.objectID);
+                        }
+                    }
+                }
+            }
+
+            var inventoryItems = pageinatedContainer.Initialise(availableIngredients, true, true, false);
+
+            foreach (var obj in inventoryItems)
+            {
+                var itemIconScript = obj.GetComponent<ItemIconData>();
+
+                var alcObj = alchemyObjects.FirstOrDefault(o => o.itemEntry.item.objectID == itemIconScript.item.objectID);
+
+                if (alcObj != null)
+                {
+                    var inventoryScript = obj.AddComponent<AlchemyInventoryItem>();
+
+                    inventoryScript.alchemyObject = alcObj;
+                    inventoryScript.itemIconData = itemIconScript;
+                }
+            }
+
             TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
             progressBar.alchemyMenu = this;
             progressBar.Initialise(synthData);
@@ -170,7 +210,7 @@ public class AlchemyMenu : MonoBehaviour
         foreach (ItemIntPair entry in availableIngredients)
         {
             AlchemyObject newObject = new();
-            newObject.AddToInventory(entry, this);
+            newObject.Initialise(entry, this);
             alcObjects.Add(newObject);
         }
 
@@ -301,9 +341,10 @@ public class AlchemyMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        pageinatedContainer.ClearPrefabs();
+
         foreach (var entry in alchemyObjects)
         {
-            entry.inventoryClass.gameObject.GetComponent<ItemIconData>().Return("AlchemyMenu on disable");
             Destroy(entry.selectedEntryPrefab);//entry.selectedEntryPrefab.GetComponent<ItemIconData>().Return();
             // Debug.Log("Implement object pool for ItemRows!");
 
