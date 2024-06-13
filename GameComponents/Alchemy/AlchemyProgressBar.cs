@@ -1,5 +1,7 @@
 ﻿
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class AlchemyProgressBar : MonoBehaviour
 {
@@ -69,19 +71,58 @@ public class AlchemyProgressBar : MonoBehaviour
 
     void UpdateFillBarPosition()
     {
-        float smoothness = 2;
+        // float smoothness = 2;
 
         float xScale = Mathf.Lerp(0, 1, percentageFill);
 
-        if (xScale > -0.1f && xScale < 1.1f)
+        //if (xScale > -0.1f && xScale < 1.1f)
+        //{
+        //    // Smoothly move the fill bar to the target position
+        //    fillBar.localScale = Vector3.Lerp(fillBar.localScale, new Vector3(xScale, 1, 1), Time.deltaTime * smoothness);
+        //}
+        if (xScale >= 0 && xScale <= 1)
         {
-            // Smoothly move the fill bar to the target position
-            fillBar.localScale = Vector3.Lerp(fillBar.localScale, new Vector3(xScale, 1, 1), Time.deltaTime * smoothness);
+            //if (xScale < 0.05)
+            //{
+            //    fillBar.localScale = new Vector3(0.05f, 1, 1);
+            //}
+            //else if (xScale < 1 && xScale > 0.95)
+            //{
+            //    fillBar.localScale = new Vector3(0.95f, 1, 1);
+            //}
+            //else
+            //{
+            //    fillBar.localScale = new Vector3(xScale, 1, 1);
+            //}
+            StopAllCoroutines();
+            StartCoroutine(ScaleBar(percentageFill));
         }
         else
         {
             Debug.Log("Progress bar tried to update to strange position.");
         }
+    }
+
+    IEnumerator ScaleBar(float xGoal)
+    {
+        float duration = 0.5f;
+        float xStart = fillBar.localScale.x;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+
+            float newX = Mathf.Lerp(xStart, xGoal, t);
+
+            float roundedX = Mathf.Round(newX * 1000000f) / 1000000f;
+            fillBar.localScale = new Vector3(roundedX, fillBar.localScale.y, fillBar.localScale.z);
+
+            yield return null; // Wait for the next frame
+        }
+
+        fillBar.localScale = new Vector3(xGoal, fillBar.localScale.y, fillBar.localScale.z);
     }
 
     private void OnDisable()
