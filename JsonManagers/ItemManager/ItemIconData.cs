@@ -77,12 +77,6 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     {
         //Debug.Log("Attempting to return ItemIconData with gameobject name " + gameObject.name);
 
-        var alchemyDraggable = gameObject.GetComponent<AlchemyDraggableItem>();
-        if (alchemyDraggable != null)
-        {
-            Destroy(alchemyDraggable);
-        }
-
         var inventoryHelper = gameObject.GetComponent<PageinatedInventoryHelper>();
         if (inventoryHelper != null)
         {
@@ -93,6 +87,12 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (alchemyInventory != null)
         {
             Destroy(alchemyInventory);
+        }
+
+        var alchemyIngredient = gameObject.GetComponent<AlchemyIngredient>();
+        if (alchemyIngredient != null)
+        {
+            Destroy(alchemyIngredient);
         }
 
         var shopDraggable = gameObject.GetComponent<DraggableShopItem>();
