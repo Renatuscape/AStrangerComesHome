@@ -56,7 +56,6 @@ public class AlchemySet : MonoBehaviour
 
                 if (alchemyMenu != null)
                 {
-                    alchemyMenu.isDebugging = false;
                     alchemyMenu.Initialise(synthesiser);
                 }
             }
