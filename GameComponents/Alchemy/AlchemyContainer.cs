@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class AlchemyContainer : MonoBehaviour, IDropHandler
+public class AlchemyContainer : MonoBehaviour, IPointerMoveHandler, IPointerExitHandler
 {
     public int itemLimit = 30;
     public bool animate = true;
@@ -10,21 +10,14 @@ public class AlchemyContainer : MonoBehaviour, IDropHandler
     public float animationTick = 0.03f;
     RadialLayout radialLayout;
 
-    public void OnDrop(PointerEventData eventData)
+    public void OnPointerExit(PointerEventData eventData)
     {
-        GameObject dropped = eventData.pointerDrag;
-        AlchemyDraggableItem draggableItem = dropped.GetComponent<AlchemyDraggableItem>();
+        AlchemyMenu.lastCollision = null;
+    }
 
-        if (draggableItem != null)
-        {
-            draggableItem.parentContainer = gameObject.transform;
-            //Debug.Log("Dropped item");
-        }
-        else
-        {
-            Debug.Log("Attempted to drop null object on container.");
-        }
-
+    public void OnPointerMove(PointerEventData eventData)
+    {
+        AlchemyMenu.lastCollision = gameObject;
     }
 
     private void Update()
