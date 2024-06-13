@@ -97,11 +97,11 @@ public class AlchemyButtonManager : MonoBehaviour
 
     public void ClearTable()
     {
-        List<AlchemyDraggableItem> allDraggables = new();
+        List<AlchemyIngredient> allDraggables = new();
 
-        foreach (var alchemyObject in alchemyMenu.alchemyObjects)
+        foreach (var inventoryItem in alchemyMenu.inventoryItems)
         {
-            allDraggables.AddRange(alchemyObject.draggableObjects);
+            allDraggables.AddRange(inventoryItem.alchemyIngredients);
         }
 
         for (int i = allDraggables.Count - 1; i >= 0; i--)
@@ -123,24 +123,24 @@ public class AlchemyButtonManager : MonoBehaviour
             StartCoroutine(ClearTableInStyle(allDraggables[i], time));
         }
 
-        IEnumerator ClearTableInStyle(AlchemyDraggableItem prefab, float duration)
+        IEnumerator ClearTableInStyle(AlchemyIngredient ingredient, float duration)
         {
-            prefab.transform.SetParent(alchemyMenu.dragParent.transform);
+            ingredient.transform.SetParent(alchemyMenu.dragParent.transform);
             Vector3 targetLocation = alchemyMenu.pageinatedContainer.gameObject.transform.position;
-            Vector3 startPosition = prefab.transform.position;
+            Vector3 startPosition = ingredient.transform.position;
             float elapsedTime = 0f;
 
             while (elapsedTime < duration)
             {
                 elapsedTime += Time.deltaTime;
                 float t = Mathf.Clamp01(elapsedTime / duration);
-                prefab.transform.position = Vector3.Lerp(startPosition, targetLocation, t);
+                ingredient.transform.position = Vector3.Lerp(startPosition, targetLocation, t);
                 yield return null;
             }
 
             // Ensure the object is exactly at the target position
-            prefab.transform.position = targetLocation;
-            prefab.alchemyObject.ReturnToInventory(prefab);
+            ingredient.transform.position = targetLocation;
+            ingredient.ReturnToInventory(true);
         }
     }
 
