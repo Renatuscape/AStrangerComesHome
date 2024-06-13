@@ -1,37 +1,146 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class AlchemyInventoryItem : MonoBehaviour, IInitializePotentialDragHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class AlchemyInventoryItem : MonoBehaviour, IPointerClickHandler //, IInitializePotentialDragHandler, IDragHandler
 {
-    public AlchemyObject alchemyObject;
+    //public AlchemyObject alchemyObject;
     public ItemIconData itemIconData;
-    public void OnInitializePotentialDrag(PointerEventData eventData)
+    public GameObject selectedEntryPrefab;
+    public List<AlchemyIngredient> alchemyIngredients = new();
+    public GameObject infusionContainer;
+    public GameObject materialContainer;
+    public GameObject inventoryContainer;
+    public GameObject dragParent;
+    public AlchemySelectedIngredients selectedIngredients;
+    public bool isInfusion;
+    public bool isMaterial;
+    public int inventoryCount;
+    public void Initialise(ItemIconData itemIconData, AlchemyMenu alchemyMenu)
     {
-        if (AlchemyMenu.synthData != null && !AlchemyMenu.synthData.isSynthActive)
+        this.itemIconData = itemIconData;
+        selectedIngredients = alchemyMenu.selectedIngredients;
+        infusionContainer = alchemyMenu.infusionContainer;
+        materialContainer = alchemyMenu.materialContainer;
+        inventoryContainer = alchemyMenu.pageinatedContainer.gameObject;
+        dragParent = alchemyMenu.dragParent;
+
+        inventoryCount = Player.GetCount(itemIconData.item.objectID, "Alchemy Inventory Item");
+    }
+
+    public void UseForCreation() //only called on create
+    {
+        Player.Remove(itemIconData.item.objectID, alchemyIngredients.Count);
+        alchemyIngredients.Clear();
+        UpdateNumbers();
+    }
+
+    public void UpdateNumbers()
+    {
+        if (selectedEntryPrefab != null)
         {
-            // Here we instantiate the second object, that we want to drag. 
-            GameObject go = alchemyObject.SpawnDraggable();
+            Destroy(selectedEntryPrefab);
+        }
 
-            if (go != null)
+        if (alchemyIngredients.Count > 0)
+        {
+            var newPrefab = BoxFactory.CreateItemRow(itemIconData.item, alchemyIngredients.Count);
+            newPrefab.name = itemIconData.item.name;
+
+
+            if (isInfusion)
             {
-                go.transform.position = Input.mousePosition;
-
-                eventData.pointerDrag = go; // assign instantiated object
+                newPrefab.transform.SetParent(selectedIngredients.infusionContainer.transform, false);
             }
+            else
+            {
+                newPrefab.transform.SetParent(selectedIngredients.materialContainer.transform, false);
+            }
+
+            var scaleAnimator = newPrefab.GetComponent<Anim_ScaleOnEnable>();
+            scaleAnimator.startScale = new Vector3(0.9f, 1, 1);
+
+            selectedEntryPrefab = newPrefab;
         }
     }
-    public void OnDrag(PointerEventData eventData)
+
+    public void OnPointerClick(PointerEventData eventData)
     {
-        // Required for dragging to work and translate properly to the spawned prefab
+        if (inventoryCount - alchemyIngredients.Count > 0)
+        {
+            if (AlchemyMenu.synthData.isSynthActive)
+            {
+                LogAlert.QueueTextAlert("A synthesis is already in progress.");
+            }
+            else
+            {
+                int ingredientTypes = selectedIngredients.infusionContainer.transform.childCount + selectedIngredients.materialContainer.transform.childCount;
+                
+                if (ingredientTypes >= 12)
+                {
+                    LogAlert.QueueTextAlert("Too many different types of items on the table already.");
+                }
+                else
+                {
+                    int ingredientNumber = infusionContainer.transform.childCount + materialContainer.transform.childCount;
+
+                    if (ingredientNumber >= 60)
+                    {
+                        LogAlert.QueueTextAlert("Too many items on the table already.");
+                    }
+                    else
+                    {
+                        ItemIconData ingredient = BoxFactory.CreateItemIcon(itemIconData.item, false, 98);
+                        AlchemyIngredient ingredientScript = ingredient.gameObject.AddComponent<AlchemyIngredient>();
+
+                        ingredient.disableFloatText = true;
+                        ingredient.gameObject.transform.SetParent(dragParent.transform);
+
+                        alchemyIngredients.Add(ingredientScript);
+                        ingredientScript.Initialise(this);
+                        itemIconData.UpdateCount(inventoryCount - alchemyIngredients.Count);
+
+                        UpdateNumbers();
+                    }
+                }
+            }
+
+        }
+        else
+        {
+            LogAlert.QueueTextAlert("I don't have more of these.");
+        }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public void ReturnItem(AlchemyIngredient alchemyIngredient)
     {
-        TransientDataScript.PrintFloatText($"{alchemyObject.itemEntry.item.name}");
+        alchemyIngredients.Remove(alchemyIngredient);
+        itemIconData.UpdateCount(inventoryCount - alchemyIngredients.Count);
+
+        alchemyIngredient.gameObject.GetComponent<ItemIconData>().Return("Ingredient collision fail");
+
+        UpdateNumbers();
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    public void SetAllPrefabParents(GameObject parent)
     {
-        TransientDataScript.DisableFloatText();
+        if (parent == infusionContainer)
+        {
+            isInfusion = true;
+            isMaterial = false;
+        }
+        else if (parent == materialContainer)
+        {
+            isMaterial = true;
+            isInfusion = false;
+        }
+
+        foreach (var ingredient in alchemyIngredients)
+        {
+            ingredient.gameObject.transform.SetParent(parent.transform);
+        }
+
+        UpdateNumbers();
     }
 }
