@@ -7,10 +7,6 @@ public class AlchemySelectedIngredients : MonoBehaviour
     public TextMeshProUGUI tipText;
     public GameObject materialContainer;
     public GameObject infusionContainer;
-    public List<GameObject> prefabs = new();
-    public List<ItemIntPair> selectedMaterials = new();
-    public List<ItemIntPair> selectedInfusions = new();
-    public List<AlchemyDraggableItem> draggableItems = new();
 
     private void Update()
     {
