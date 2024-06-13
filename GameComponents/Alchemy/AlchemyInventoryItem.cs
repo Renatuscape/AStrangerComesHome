@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 
 public class AlchemyInventoryItem : MonoBehaviour, IPointerClickHandler //, IInitializePotentialDragHandler, IDragHandler
 {
-    //public AlchemyObject alchemyObject;
     public ItemIconData itemIconData;
     public GameObject selectedEntryPrefab;
     public List<AlchemyIngredient> alchemyIngredients = new();
@@ -79,7 +78,7 @@ public class AlchemyInventoryItem : MonoBehaviour, IPointerClickHandler //, IIni
                 
                 if (ingredientTypes >= 12)
                 {
-                    LogAlert.QueueTextAlert("Too many different types of items on the table already.");
+                    LogAlert.QueueTextAlert("Too many different types of ingredients on the table.");
                 }
                 else
                 {
@@ -87,7 +86,7 @@ public class AlchemyInventoryItem : MonoBehaviour, IPointerClickHandler //, IIni
 
                     if (ingredientNumber >= 60)
                     {
-                        LogAlert.QueueTextAlert("Too many items on the table already.");
+                        LogAlert.QueueTextAlert("There is no space for more ingredients.");
                     }
                     else
                     {
