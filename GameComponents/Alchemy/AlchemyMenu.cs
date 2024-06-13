@@ -14,6 +14,7 @@ public enum SynthesiserType
 public class AlchemyMenu : MonoBehaviour
 {
     public static SynthesiserData synthData;
+    public static GameObject lastCollision;
     public SynthesiserData synthDataDebug;
     public PageinatedContainer pageinatedContainer;
 
@@ -25,10 +26,8 @@ public class AlchemyMenu : MonoBehaviour
     public AlchemyYieldManager yieldManager;
     public AlchemyButtonManager buttonManager;
     public AlchemyRecipeTin recipeTin;
+    public List<AlchemyInventoryItem> inventoryItems;
 
-    public List<AlchemyObject> alchemyObjects = new();
-
-    public GameObject inventoryContainer;
     public GameObject materialContainer;
     public GameObject infusionContainer;
     public GameObject dragParent;
@@ -36,7 +35,6 @@ public class AlchemyMenu : MonoBehaviour
     public GameObject infusionList;
     public GameObject materialList;
 
-    public bool isDebugging = false;
     bool containersEnabled;
 
     public void Initialise(SynthesiserType synthesiserType)
@@ -70,10 +68,10 @@ public class AlchemyMenu : MonoBehaviour
             dataManager.alchemySynthesisers.Add(foundSynth);
         }
 
-        InitialiseBySynthesiser(foundSynth, isDebugging);
+        InitialiseBySynthesiser(foundSynth);
     }
 
-    public void InitialiseBySynthesiser(SynthesiserData incomingSynthesiser, bool isDebugging = false)
+    public void InitialiseBySynthesiser(SynthesiserData incomingSynthesiser)
     {
         if (!containersEnabled)
         {
@@ -95,7 +93,6 @@ public class AlchemyMenu : MonoBehaviour
             }
 
             gameObject.SetActive(true);
-            alchemyObjects = SetUpAlchemyObjects(isDebugging);
             //inventory.RenderInventory(ItemType.Catalyst, false);
 
             List<string> availableIngredients = new();
@@ -120,21 +117,14 @@ public class AlchemyMenu : MonoBehaviour
                 }
             }
 
-            var inventoryItems = pageinatedContainer.Initialise(availableIngredients, true, true, false);
+            var spawnedItems = pageinatedContainer.Initialise(availableIngredients, true, true, false);
 
-            foreach (var obj in inventoryItems)
+            foreach (var obj in spawnedItems)
             {
                 var itemIconScript = obj.GetComponent<ItemIconData>();
-
-                var alcObj = alchemyObjects.FirstOrDefault(o => o.itemEntry.item.objectID == itemIconScript.item.objectID);
-
-                if (alcObj != null)
-                {
-                    var inventoryScript = obj.AddComponent<AlchemyInventoryItem>();
-
-                    inventoryScript.alchemyObject = alcObj;
-                    inventoryScript.itemIconData = itemIconScript;
-                }
+                var inventoryScript = obj.AddComponent<AlchemyInventoryItem>();
+                inventoryScript.Initialise(itemIconScript, this);
+                inventoryItems.Add(inventoryScript);
             }
 
             TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
@@ -173,50 +163,6 @@ public class AlchemyMenu : MonoBehaviour
         }
     }
 
-    List<AlchemyObject> SetUpAlchemyObjects(bool isDebugging = false)
-    {
-        var alcObjects = new List<AlchemyObject>();
-
-        List<ItemIntPair> availableIngredients = new();
-
-        foreach (var item in Items.all) // exclude seeds, misc, scripts and books, and any unique item
-        {
-            if (item.type == ItemType.Treasure
-            || item.type == ItemType.Plant
-            || item.type == ItemType.Trade
-            || item.type == ItemType.Catalyst
-            || item.type == ItemType.Material)
-            {
-                if (item.rarity != ItemRarity.Unique)
-                {
-
-                    if (isDebugging)
-                    {
-                        availableIngredients.Add(new() { item = item, amount = 30 });
-                    }
-                    else
-                    {
-                        int amount = Player.GetCount(item.objectID, name);
-
-                        if (amount > 0)
-                        {
-                            availableIngredients.Add(new() { item = item, amount = amount });
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach (ItemIntPair entry in availableIngredients)
-        {
-            AlchemyObject newObject = new();
-            newObject.Initialise(entry, this);
-            alcObjects.Add(newObject);
-        }
-
-        return alcObjects;
-    }
-
     public void HandleClaim()
     {
         yieldManager.Clear();
@@ -251,38 +197,38 @@ public class AlchemyMenu : MonoBehaviour
     {
         float animationTimer = 2;
 
-        var foundCatalyst = alchemyObjects.FirstOrDefault(ob => ob.isInfusion && ob.itemEntry.item.type == ItemType.Catalyst);
-        var foundPlant = alchemyObjects.FirstOrDefault(ob => ob.isInfusion && ob.itemEntry.item.type == ItemType.Plant);
+        var foundCatalyst = inventoryItems.FirstOrDefault(ob => ob.isInfusion && ob.itemIconData.item.type == ItemType.Catalyst);
+        var foundPlant = inventoryItems.FirstOrDefault(ob => ob.isInfusion && ob.itemIconData.item.type == ItemType.Plant);
 
         if (foundCatalyst == null || foundPlant == null)
         {
-            TransientDataScript.PushAlert("I need a catalyst and a type of plant for the infusion.");
+            LogAlert.QueueTextAlert("I need a catalyst and a type of plant for the infusion.");
         }
         else
         {
-            var infusions = alchemyObjects.Where(ob => ob.isInfusion && ob.currentlyOnTable > 0).ToList();
-            List<AlchemyDraggableItem> draggablePrefabs = new();
+            var infusions = inventoryItems.Where(ob => ob.isInfusion && ob.alchemyIngredients.Count > 0).ToList();
 
             if (infusions.Count != 2)
             {
                 //Debug.Log($"Infusions list count was {infusions.Count}");
-                TransientDataScript.PushAlert("The infusion isn't correctly balanced.");
-                TransientDataScript.PushAlert("There should be one type of catalyst and one type of plant in the bowl.");
+                LogAlert.QueueTextAlert("There should be one type of catalyst and one type of plant in the bowl.");
             }
             else
             {
+                List<AlchemyIngredient> draggablePrefabs = new();
                 List<IdIntPair> ingredientList = new();
-                foreach (var ob in alchemyObjects)
+
+                foreach (var ob in inventoryItems)
                 {
-                    if (ob.currentlyOnTable > 0)
+                    if (ob.alchemyIngredients.Count > 0)
                     {
-                        ingredientList.Add(new() { objectID = ob.objectID, amount = ob.currentlyOnTable });
-                        draggablePrefabs.AddRange(ob.draggableObjects);
-                        ob.UseForCreation(isDebugging);
+                        ingredientList.Add(new() { objectID = ob.itemIconData.item.objectID, amount = ob.alchemyIngredients.Count });
+                        draggablePrefabs.AddRange(ob.alchemyIngredients);
+                        ob.UseForCreation();
                     }
                 }
 
-                synthData.synthRecipe = Recipes.AttemptAlchemy(ingredientList, out bool isSuccessful, isDebugging);
+                synthData.synthRecipe = Recipes.AttemptAlchemy(ingredientList, out bool isSuccessful);
                 synthData.isSynthActive = true;
                 synthData.isSynthPaused = false;
 
@@ -301,7 +247,7 @@ public class AlchemyMenu : MonoBehaviour
         }
     }
 
-    void InitialiseAnimateCreate(List<AlchemyDraggableItem> draggablePrefabs, float duration)
+    void InitialiseAnimateCreate(List<AlchemyIngredient> draggablePrefabs, float duration)
     {
         for (int i = draggablePrefabs.Count - 1; i >= 0; i--)
         {
@@ -343,21 +289,21 @@ public class AlchemyMenu : MonoBehaviour
     {
         pageinatedContainer.ClearPrefabs();
 
-        foreach (var entry in alchemyObjects)
-        {
-            Destroy(entry.selectedEntryPrefab);//entry.selectedEntryPrefab.GetComponent<ItemIconData>().Return();
-            // Debug.Log("Implement object pool for ItemRows!");
+        //foreach (var entry in alchemyObjects)
+        //{
+        //    Destroy(entry.selectedEntryPrefab);//entry.selectedEntryPrefab.GetComponent<ItemIconData>().Return();
+        //    // Debug.Log("Implement object pool for ItemRows!");
 
-            if (entry.draggableObjects != null)
-            {
-                foreach (var obj in entry.draggableObjects)
-                {
-                    obj.gameObject.GetComponent<ItemIconData>().Return("AlchemyMenu on disable");
-                }
-            }
-        }
+        //    if (entry.draggableObjects != null)
+        //    {
+        //        foreach (var obj in entry.draggableObjects)
+        //        {
+        //            obj.gameObject.GetComponent<ItemIconData>().Return("AlchemyMenu on disable");
+        //        }
+        //    }
+        //}
 
-        alchemyObjects.Clear();
+        //alchemyObjects.Clear();
     }
 
     public void SynthComplete()
