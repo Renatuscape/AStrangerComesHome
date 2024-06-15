@@ -8,11 +8,11 @@ using UnityEngine;
 public class InteractableLootBundle
 {
     public string bundleID;
-    public bool doNotRespawn;
+    public bool disableRespawn;
     public bool isPrioritised;
     public int spawnChance;
     public int extraItemPenalty;
-    public int coolDown;
+    public int cooldown;
     public bool exactCooldown;
     public bool yieldAllCustomContent;
     public int maxYieldPerItem;
@@ -27,7 +27,7 @@ public class InteractableLootBundle
 
     public bool SetupAndCheck(string crateID)
     {
-        bundleID = crateID + "_" + (doNotRespawn ? "disableRespawn" : "allowRespawn") + (exactCooldown ? "_ECD#" : "_CD#") + coolDown;
+        bundleID = crateID + "_" + (disableRespawn ? "disableRespawn" : "allowRespawn") + (exactCooldown ? "_ECD#" : "_CD#") + cooldown;
 
         if (spawnChance == 0)
         {
@@ -45,8 +45,6 @@ public class InteractableLootBundle
         {
             extraItemPenalty = 100 / maxItems;
         }
-
-        BuildLootList();
 
         if ((categories == null || categories.Count < 1) && (customContent == null || customContent.Count < 1))
         {
@@ -68,6 +66,8 @@ public class InteractableLootBundle
             Debug.Log("Loot bundle did not pass spawn chance.");
             return false;
         }
+
+        BuildLootList();
 
         Debug.Log("Loot bundle passed all checks. Returning true.");
         return true;
