@@ -1,29 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using UnityEngine;
 
 [Serializable]
-public class InteractableLootBundle
+public class InteractableLootBundle : InteractableBundleData
 {
-    public string bundleID;
-    public bool disableRespawn;
-    public bool isPrioritised;
-    public int spawnChance;
-    public int extraItemPenalty;
-    public int cooldown;
-    public bool exactCooldown;
-    public bool yieldAllCustomContent;
-    public int maxYieldPerItem;
-    public int maxItems;
-    public bool alwaysMaxYield;
-    public bool alwaysMaxItems;
-    public RequirementPackage requirements;
     public List<LootCategory> categories;
-    public List<IdIntPair> customContent;
     public List<Item> viableLoot = new();
-    public List<IdIntPair> lootOutput = new();
 
     public bool SetupAndCheck(string crateID)
     {
