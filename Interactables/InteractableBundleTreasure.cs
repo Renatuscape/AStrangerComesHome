@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class InteractableLootBundle : InteractableBundleData
+public class InteractableBundleTreasure : InteractableBundleData
 {
     public List<LootCategory> categories;
     public List<Item> viableLoot = new();

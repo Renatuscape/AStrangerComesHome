@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class InteractableLootCrate : MonoBehaviour
+public class InteractableNodeTreasure : MonoBehaviour
 {
     public string crateID;
     public string animationID;
     public AnimatedSprite animatedSprite;
-    public List<InteractableLootBundle> bundles;
-    public InteractableLootBundle loadedBundle;
+    public List<InteractableBundleTreasure> bundles;
+    public InteractableBundleTreasure loadedBundle;
     public BoxCollider2D col;
     public SpriteRenderer rend;
     public bool neverHideGraphic;
@@ -77,7 +77,7 @@ public class InteractableLootCrate : MonoBehaviour
 
     public void CheckAllBundles()
     {
-        List<InteractableLootBundle> passingBundles = new();
+        List<InteractableBundleTreasure> passingBundles = new();
 
         for (int i = 0; i < bundles.Count; i++)
         {
