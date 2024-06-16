@@ -63,9 +63,10 @@ public class InteractableNodePlant : MonoBehaviour
         if (plantBundle != null && isEnabled)
         {
             Debug.Log("Attempting to yield loot.");
-            // ParticleFactory.ClickEffectWeeds(gameObject);
+            ParticleFactory.ClickEffectWeeds(gameObject);
 
-            // plantBundle.YieldLoot();
+            col.enabled = false;
+            plantBundle.YieldLoot();
             plantRenderer.enabled = false;
 
             if (disableVesselOnLoot)
