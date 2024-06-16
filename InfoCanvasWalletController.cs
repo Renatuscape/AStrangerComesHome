@@ -25,6 +25,36 @@ public class InfoCanvasWalletController : MonoBehaviour
     float timer = 0.0f;
     float tick = 1f;
 
+
+    float cooldownTimer;
+    bool effectAudioCooldown = true;
+    private void OnEnable()
+    {
+        cooldownTimer = 0;
+        effectAudioCooldown = true;
+        StartCoroutine(EffectAudioCooldown());
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        effectAudioCooldown = true;
+    }
+
+    IEnumerator EffectAudioCooldown()
+    {
+
+        while (effectAudioCooldown)
+        {
+            yield return null;
+            cooldownTimer += Time.deltaTime;
+
+            if (cooldownTimer > 3)
+            {
+                effectAudioCooldown = false;
+            }
+        }
+    }
     void Update()
     {
         if (TransientDataScript.IsTimeFlowing() && TransientDataScript.GameState != GameState.BankMenu)
@@ -110,7 +140,11 @@ public class InfoCanvasWalletController : MonoBehaviour
             yield return new WaitForSeconds(0.02f);
 
         }
-        AudioManager.PlayUISound("handleCoins");
+
+        if (!effectAudioCooldown)
+        {
+            AudioManager.PlaySoundEffect("handleCoins");
+        }
     }
 
     IEnumerator TextJump (GameObject container)
