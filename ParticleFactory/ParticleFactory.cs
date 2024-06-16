@@ -39,8 +39,13 @@ public class ParticleFactory : MonoBehaviour
         {
             var pool = objectPools.FirstOrDefault(p => particle.name.Contains(p.accessID));
             pool.objectInstances.Add(particle);
+            if (particle.activeInHierarchy)
+            {
+                particle.gameObject.SetActive(false);
+            }
         }
     }
+
     public GameObject GetWorldParticle(GameObject parentObject, string particleID, string caller)
     {
         if (isReady)
@@ -111,4 +116,47 @@ public class ParticleFactory : MonoBehaviour
     {
         instance.ReturnParticleToPool(particle);
     }
+
+
+    // READY-MADE EFFECTS
+    public static void ClickEffectWeeds(GameObject parentObject, bool playAudio = true, int min = 3, int max = 6, bool randomCount = true)
+    {
+
+        if (playAudio)
+        {
+            AudioManager.PlaySoundEffect("cloth3", 0.05f);
+        }
+
+        ClickEffect("WeedsBurst", parentObject, min, max, randomCount);
+    }
+
+    public static void ClickEffectCoins(GameObject parentObject, bool playAudio = true, int min = 3, int max = 6, bool randomCount = true)
+    {
+        if (playAudio)
+        {
+            AudioManager.PlaySoundEffect("handleCoins");
+        }
+
+        ClickEffect("CoinBurst", parentObject, min, max, randomCount);
+    }
+
+    static void ClickEffect(string particleID, GameObject parentObject, int min = 3, int max = 6, bool randomCount = true)
+    {
+        Debug.Log("Attemtping to spawn particles using ClickEffect with ID " + particleID);
+
+        List<GameObject> spawnedParticles = new();
+
+        int spawnCount = randomCount ? Random.Range(min, max + 1) : min;
+
+        while (spawnCount > 0)
+        {
+            spawnCount--;
+            spawnedParticles.Add(GetParticle(parentObject, particleID, "ClickEffect"));
+        }
+    }
+
+    //void ClickEffectPhysics(List<GameObject> particles)
+    //{
+
+    //}
 }
