@@ -40,18 +40,18 @@ public class GarageConfirmMenu : MonoBehaviour
                 level++;
                 upgradePrice.text = upgradeIcon.upgrade.GetPrice().ToString();
                 upgradeTitle.text = upgradeIcon.upgrade.name + $" Lv. {level}";
-                AudioManager.PlayUISound("bellCopperHigh");
+                AudioManager.PlaySoundEffect("bellCopperHigh");
             }
             else
             {
                 LogAlert.QueueTextAlert("Not enough money!");
-                AudioManager.PlayUISound("knockSmall");
+                AudioManager.PlaySoundEffect("knockSmall");
             }
         }
         else
         {
             LogAlert.QueueTextAlert("There is no room for further improvement.");
-            AudioManager.PlayUISound("pingGlassy");
+            AudioManager.PlaySoundEffect("pingGlassy");
         }
     }
 
@@ -63,12 +63,12 @@ public class GarageConfirmMenu : MonoBehaviour
             repairInfo.gameObject.SetActive(false);
             btnRepair.gameObject.SetActive(false);
             upgradeIcon.UpdateSlider();  //upgradeIcon.wearSlider.value = 0;
-            AudioManager.PlayUISound("pingGlassy");
+            AudioManager.PlaySoundEffect("pingGlassy");
         }
         else
         {
             LogAlert.QueueTextAlert("I don't have enough money to repair this.");
-            AudioManager.PlayUISound("knockSmall");
+            AudioManager.PlaySoundEffect("knockSmall");
         }
     }
 

@@ -153,7 +153,7 @@ public class InteractNode : MonoBehaviour
     }
     private void HandleItemClick()
     {
-        AudioManager.PlayUISound("cloth3");
+        AudioManager.PlaySoundEffect("cloth3");
         animationTimer = 100; //Start animating immediately
         playAnimation = true;
         isClickable = false;

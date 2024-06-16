@@ -113,7 +113,7 @@ public class InfoCanvasGearboxController : MonoBehaviour
         // Ensure the gear stick reaches exactly the target position
         gearStick.transform.localPosition = newPos;
 
-        AudioManager.PlayUISound("metalClick");
+        AudioManager.PlaySoundEffect("metalClick");
         runningCoroutine = false;
     }
 }

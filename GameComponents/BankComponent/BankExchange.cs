@@ -76,7 +76,7 @@ public class BankExchange : MonoBehaviour
 
             if (result)
             {
-                AudioManager.PlayUISound("handleCoins2");
+                AudioManager.PlaySoundEffect("handleCoins2");
                 Player.Remove("MIS000", commissionCost);
             }
         }
@@ -101,7 +101,7 @@ public class BankExchange : MonoBehaviour
 
             if (result)
             {
-                AudioManager.PlayUISound("handleCoins2");
+                AudioManager.PlaySoundEffect("handleCoins2");
                 Player.Remove("MIS001", commissionCost);
             }
         }
@@ -126,7 +126,7 @@ public class BankExchange : MonoBehaviour
 
             if (result)
             {
-                AudioManager.PlayUISound("handleCoins2");
+                AudioManager.PlaySoundEffect("handleCoins2");
                 Player.Remove("MIS002", commissionCost);
             }
         }

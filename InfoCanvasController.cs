@@ -51,7 +51,7 @@ public class InfoCanvasController : MonoBehaviour
 
         GlobalSettings.uiWalletLarge = largeWallet.activeInHierarchy;
         GlobalSettingsManager.SaveSettings();
-        AudioManager.PlayUISound("metalClick");
+        AudioManager.PlaySoundEffect("metalClick");
     }
 
     public void ToggleGearbox()
@@ -69,6 +69,6 @@ public class InfoCanvasController : MonoBehaviour
 
         GlobalSettings.uiGearboxLarge = largeGearbox.activeInHierarchy;
         GlobalSettingsManager.SaveSettings();
-        AudioManager.PlayUISound("metalClick");
+        AudioManager.PlaySoundEffect("metalClick");
     }
 }

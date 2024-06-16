@@ -86,7 +86,7 @@ public class PassengerPrefabScript : MonoBehaviour
                 // Actual fare is added by highest denomination
                 int added = MoneyExchange.AddHighestDenomination(passengerData.fare);
 
-                AudioManager.PlayAmbientSound("handleCoins", -0.2f);
+                AudioManager.PlaySoundEffect("handleCoins", -0.2f);
 
                 // Ensure the player had inventory space for full fare
                 if (added < passengerData.fare)
@@ -108,7 +108,7 @@ public class PassengerPrefabScript : MonoBehaviour
                 {
                     Player.Add(spiritEssence.objectID);
                     TransientDataScript.PushAlert($"{passengerData.passengerName} dropped some Spirit Essence.");
-                    AudioManager.PlayAmbientSound("cloth3");
+                    AudioManager.PlaySoundEffect("cloth3");
                 }
 
                 passengerData.isActive = false;

@@ -229,7 +229,7 @@ public class ShopMenu : MonoBehaviour
                 var itemCost = activeShop.CalculateSellFromInventoryPrice(item);
 
                 Player.Remove(item.objectID);
-                AudioManager.PlayUISound("cloth3", +0.3f);
+                AudioManager.PlaySoundEffect("cloth3", +0.3f);
                 MoneyExchange.AddHighestDenomination(itemCost);
                 LogAlert.QueueTextAlert("Sold for " + itemCost + " shillings.");
                 //TransientDataScript.PushAlert($"Sold {item.name} for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
@@ -252,7 +252,7 @@ public class ShopMenu : MonoBehaviour
                 if (purchase)
                 {
                     Player.Add(item.objectID);
-                    AudioManager.PlayUISound("cloth3", +0.3f);
+                    AudioManager.PlaySoundEffect("cloth3", +0.3f);
                     //Debug.Log($"{activeShop} You purchased {item.name} for {itemCost}.");
                     LogAlert.QueueTextAlert("Paid " + itemCost + " shillings.");
                     //TransientDataScript.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
@@ -261,14 +261,14 @@ public class ShopMenu : MonoBehaviour
                 }
                 else
                 {
-                    AudioManager.PlayUISound("drumDoubleTap");
+                    AudioManager.PlaySoundEffect("drumDoubleTap");
                     LogAlert.QueueTextAlert("I don't have enough money.");
                 }
 
             }
             else
             {
-                AudioManager.PlayUISound("drumDoubleTap");
+                AudioManager.PlaySoundEffect("drumDoubleTap");
                 // Debug.Log("I already have the maximum amount of this item.");
                 LogAlert.QueueTextAlert("I don't have enough space for more of this.");
             }

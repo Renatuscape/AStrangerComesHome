@@ -76,7 +76,7 @@ public static class UpgradeWearTracker
                 if (!upgrade.isBroken)
                 {
                     LogAlert.QueueTextAlert($"{upgrade.name} is broken and needs repairs.");
-                    AudioManager.PlayUISound("tapGlassMuffled", 0.2f);
+                    AudioManager.PlaySoundEffect("tapGlassMuffled", 0.2f);
                     upgrade.isBroken = true;
                 }
 
@@ -87,7 +87,7 @@ public static class UpgradeWearTracker
                     randomUpgrade.amount = 0;
 
                     LogAlert.QueueTextAlert($"{upgrade.name} has degraded by a level.");
-                    AudioManager.PlayUISound("drumDoubleTap");
+                    AudioManager.PlaySoundEffect("drumDoubleTap");
                 }
             }
         }

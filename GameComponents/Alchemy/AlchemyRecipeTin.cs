@@ -116,7 +116,7 @@ public class AlchemyRecipeTin : MonoBehaviour, IPointerClickHandler
         rxScript.pinnedRecipeCard = pinnedRecipeCard;
 
         rxPrefab.name = rx.name;
-        AudioManager.PlayUISound("draw");
+        AudioManager.PlaySoundEffect("draw");
     }
 
     public void OnPointerClick(PointerEventData eventData)
