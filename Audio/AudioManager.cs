@@ -13,12 +13,45 @@ public class AudioManager : MonoBehaviour
 
     public List<AudioSource> audioPool;
     public List<AudioSource> playersInUse;
+
+    float cooldownTimer;
+    bool effectAudioCooldown = true;
+
     private void Start()
     {
         instance = this;
         CreateAudioPool(200);
     }
 
+    private void OnEnable()
+    {
+        musicPlayer.Stop();
+        cooldownTimer = 0;
+        effectAudioCooldown = true;
+        StartCoroutine(EffectAudioCooldown());
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        musicPlayer.Stop();
+        effectAudioCooldown = true;
+    }
+
+    IEnumerator EffectAudioCooldown()
+    {
+
+        while (effectAudioCooldown)
+        {
+            yield return null;
+            cooldownTimer += Time.deltaTime;
+
+            if (cooldownTimer > 1)
+            {
+                effectAudioCooldown = false;
+            }
+        }
+    }
 
     void CreateAudioPool(int amount)
     {
@@ -29,16 +62,6 @@ public class AudioManager : MonoBehaviour
             audioSource.gameObject.transform.SetParent(transform, false);
             audioPool.Add(audioSource);
         }
-    }
-    private void OnEnable()
-    {
-        musicPlayer.Stop();
-    }
-
-    private void OnDisable()
-    {
-        StopAllCoroutines();
-        musicPlayer.Stop();
     }
 
     void Update()
@@ -116,21 +139,21 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static void PlayUISound(string soundName, float volumeAdjustment = 0)
+    public static void PlaySoundEffect(string soundName, float volumeAdjustment = 0)
     {
-        if (instance != null)
+        if (instance != null && !instance.effectAudioCooldown)
         {
             instance.PlaySoundEffect(soundName, "ui", volumeAdjustment);
         }
     }
 
-    public static void PlayAmbientSound(string soundName, float volumeAdjustment = 0)
-    {
-        if (instance != null)
-        {
-            instance.PlaySoundEffect(soundName, "ambient", volumeAdjustment);
-        }
-    }
+    //public static void PlayAmbientSound(string soundName, float volumeAdjustment = 0)
+    //{
+    //    if (instance != null)
+    //    {
+    //        instance.PlaySoundEffect(soundName, "ambient", volumeAdjustment);
+    //    }
+    //}
 
     void PlaySoundEffect(string soundName, string type, float volumeAdjustment)
     {
