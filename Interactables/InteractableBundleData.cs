@@ -19,4 +19,9 @@ public class InteractableBundleData
     public RequirementPackage requirements;
     public List<IdIntPair> customContent;
     public List<IdIntPair> lootOutput = new();
+
+    public void SaveNodeToPlayer()
+    {
+        Player.claimedLoot.Add(new() { objectID = bundleID, amount = 0 });
+    }
 }
