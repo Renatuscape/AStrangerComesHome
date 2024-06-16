@@ -83,6 +83,8 @@ public class InteractableBundlePlant : InteractableBundleData
         {
             Player.Add(entry.objectID, alwaysMaxYield ? entry.amount : Random.Range(1, entry.amount + 1));
         }
+
+        SaveNodeToPlayer();
     }
 
     public bool CheckBundle(string plantNodeID)
