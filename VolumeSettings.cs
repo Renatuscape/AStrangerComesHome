@@ -38,7 +38,7 @@ public class VolumeSettings : MonoBehaviour
         GlobalSettings.uiVolume = value;
         GlobalSettingsManager.SaveSettings();
 
-        PlayAudioSample(() => AudioManager.PlayUISound("Debug"));
+        PlayAudioSample(() => AudioManager.PlaySoundEffect("Debug"));
     }
 
     public void OnAmbientSliderChange(float value)
@@ -46,7 +46,7 @@ public class VolumeSettings : MonoBehaviour
         GlobalSettings.ambientVolume = value;
         GlobalSettingsManager.SaveSettings();
 
-        PlayAudioSample(() => AudioManager.PlayAmbientSound("Debug"));
+        PlayAudioSample(() => AudioManager.PlaySoundEffect("Debug"));
     }
 
     public void PlayAudioSample(Action method)
