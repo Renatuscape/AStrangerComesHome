@@ -162,13 +162,9 @@ public class InteractableBundlePlant : InteractableBundleData
         {
             maxYieldPerItem = 3;
         }
-        if (maxItems == 0)
+        if (extraItemPenalty == 0 && customContent != null && customContent.Count > 0)
         {
-            maxItems = 3;
-        }
-        if (extraItemPenalty == 0)
-        {
-            extraItemPenalty = 100 / (maxItems + 1);
+            extraItemPenalty = 100 / (customContent.Count + 1);
         }
     }
 }
