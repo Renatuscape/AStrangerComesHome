@@ -233,7 +233,7 @@ public class InteractableBundleTreasure : InteractableBundleData
             }
         }
 
-        Player.claimedLoot.Add(new() { objectID = bundleID, amount = 0 });
+        SaveNodeToPlayer();
     }
 
     [Serializable]
