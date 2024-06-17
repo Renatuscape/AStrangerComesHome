@@ -46,7 +46,7 @@ public class AudioManager : MonoBehaviour
             yield return null;
             cooldownTimer += Time.deltaTime;
 
-            if (cooldownTimer > 1)
+            if (cooldownTimer > 1.5f)
             {
                 effectAudioCooldown = false;
             }
