@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Cinemachine.DocumentationSortingAttribute;
-
 public enum UpgradeType
 {
     Mechanical,
@@ -12,12 +10,10 @@ public enum UpgradeType
 [System.Serializable]
 public class Upgrade : BaseObject
 {
-    public string name;
     public int basePrice = 350;
     public UpgradeType type; //automatically from ID
     public Texture2D image; //retrieve from ID + folder
     public Sprite sprite;
-    public string description;
     public bool isBroken = false;
 
     public void AddToPlayer(int amount = 1, bool doNotLog = false)

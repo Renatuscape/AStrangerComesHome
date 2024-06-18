@@ -5,8 +5,6 @@ using System.Linq;
 [System.Serializable]
 public class Quest : BaseObject
 {
-    public string name;
-    public string description;
     public List<RestrictedInfo> dynamicDescriptions;
     public bool excludeFromJournal;
     public Character questGiver; //Set from objectID by QuestManager

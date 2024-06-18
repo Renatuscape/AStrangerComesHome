@@ -21,10 +21,8 @@ public class RestrictedInfo
 public class Character : BaseObject
 {
     public string dialogueTag;
-    public string name;
     public string trueName;
     public string hexColour;
-    public string description;
     public List<RestrictedInfo> dynamicDescriptions;
     public int giftableLevel;
     public bool excludeFromPrint = false;

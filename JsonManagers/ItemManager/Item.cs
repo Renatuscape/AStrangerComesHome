@@ -6,12 +6,10 @@ using UnityEngine;
 [System.Serializable]
 public class Item : BaseObject
 {
-    public string name;
     public int basePrice; //automatically calculated from type, rarity and ID
     public ItemType type; //retrieve from ID
     public ItemRarity rarity; //retrieve from ID
     public Sprite sprite;
-    public string description;
     public bool notBuyable; //from ID, second to last letter N/B (not/buyable)
     public bool notSellable; //from ID, last letter N/S (not/sellable)
 

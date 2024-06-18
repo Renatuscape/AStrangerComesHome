@@ -6,8 +6,6 @@ using UnityEngine;
 [System.Serializable]
 public class Recipe : BaseObject
 {
-    public string name; // custom or set by yield item
-    public string description;
     public ItemRarity rarity; //set by yield item
     public int baseWorkload = 10; // 10 is default. This is multiplied by type and rarity. Reduce or increase in JSON only when an item deviates from standard.
 

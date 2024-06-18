@@ -14,12 +14,10 @@ public enum SkillType
 [System.Serializable]
 public class Skill : BaseObject
 {
-    public string name;
     public int basePrice; //automatically calculated from type, rarity and ID
     public SkillType type; //retrieve from ID
     public Texture2D image; //retrieve from ID + folder
     public Sprite sprite;
-    public string description;
     public List<RestrictedInfo> dynamicDescriptions;
 }
 
