@@ -33,7 +33,7 @@ public class Dialogue
     public string locationID;
     public bool disableAutoNode = false;
     public List<Choice> choices = new(); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
-    public List<IdIntPair> displayProgress = new(); // For quests with multiple, non-chronological requirements that should be tracked in the journal. More responsive and situational than hints.
+    public List<IdIntPair> taskTracking = new(); // For quests with multiple, non-chronological requirements that should be tracked in the journal. More responsive and situational than hints.
     public bool autoProgressStage = false; //automatically go to next stage when step is completed
     public bool noLeaveButton = true; //if this is enabled, it is impossible to leave dialogue until you reach a choice
 
