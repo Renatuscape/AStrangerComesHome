@@ -8,21 +8,28 @@ using UnityEngine.UI;
 public class JournalQuestPage : MonoBehaviour
 {
     public FontManager fontManager;
-    public GameObject questPrefab; // Assign your prefab in the inspector
-    public GameObject questContainer; // Assign your container in the inspector
+    public GameObject questPrefab;
+    public GameObject questContainer;
     public GameObject detailContainer;
-    public float delayBetweenQuests = 0.1f; // Adjust the delay duration as needed
+    public float delayBetweenQuests = 0.1f;
     public List<GameObject> questPrefabs;
     public TextMeshProUGUI displayTitle;
     public TextMeshProUGUI displayTopicName;
     public TextMeshProUGUI displayDescription;
     public TextMeshProUGUI pageTitle;
+    public Button btnTaskToggle;
+    public GameObject taskTrackerPanel;
+    public TextMeshProUGUI taskTrackerText;
 
     private void Awake()
     {
         displayTitle.text = "";
         displayTopicName.text = "";
         displayDescription.text = "";
+        btnTaskToggle.onClick.AddListener(() =>
+        {
+            taskTrackerPanel.SetActive(!taskTrackerPanel.activeInHierarchy);
+        });
     }
     private void OnEnable()
     {
@@ -30,6 +37,9 @@ public class JournalQuestPage : MonoBehaviour
         //displayTopicName.font = fontManager.subtitle.font;
         //displayDescription.font = fontManager.script.font;
         //pageTitle.font = fontManager.header.font;
+
+        btnTaskToggle.gameObject.SetActive(false);
+        taskTrackerPanel.gameObject.SetActive(false);
         StartCoroutine(InstantiateQuests());
     }
 
@@ -98,7 +108,7 @@ public class JournalQuestPage : MonoBehaviour
                         }
                     }
                 }
-                
+
                 if (description == "")
                 {
                     description = DialogueTagParser.ParseText(quest.description);
@@ -118,6 +128,61 @@ public class JournalQuestPage : MonoBehaviour
         {
             displayTopicName.gameObject.SetActive(true);
             displayTopicName.text = DialogueTagParser.ParseText(topicName);
+        }
+
+        if (dialogue.taskTracking.Count > 0)
+        {
+            taskTrackerText.text = "";
+            btnTaskToggle.gameObject.SetActive(true);
+
+            foreach (var task in dialogue.taskTracking)
+            {
+                int inventoryCount = Player.GetCount(task.objectID, "JournalQuestPage");
+                string taskDescription;
+
+                if (string.IsNullOrEmpty(task.description))
+                {
+                    BaseObject obj = GameCodex.GetBaseObject(task.objectID);
+
+                    if (obj.objectType == ObjectType.Item)
+                    {
+                        taskDescription = $"{Items.GetEmbellishedItemText((Item)obj, false, false, false)} {inventoryCount}/{task.amount}";
+                    }
+                    else if (obj.objectType != ObjectType.Quest || obj.objectType != ObjectType.Character)
+                    {
+                        taskDescription = $"{obj.name} {inventoryCount}/{task.amount}";
+                    }
+                    else if (obj.objectType == ObjectType.Character)
+                    {
+                        taskDescription = $"Improve relations with {Characters.FindByID(obj.objectID).NamePlate()}.";
+                    }
+                    else
+                    {
+                        taskDescription = "Progress " + obj.name;
+                    }
+                }
+                else
+                {
+                    taskDescription = DialogueTagParser.ParseText(task.description);
+                }
+
+                if (inventoryCount >= task.amount)
+                {
+                    taskTrackerText.text += "<color=#718c81>" + "<s>" + taskDescription + "</s>" + "</color>";
+                }
+
+                else
+                {
+                    taskTrackerText.text += DialogueTagParser.ParseText(task.description);
+                }
+
+                taskTrackerText.text += "\n\n";
+            }
+        }
+        else
+        {
+            btnTaskToggle.gameObject.SetActive(false);
+            taskTrackerPanel.gameObject.SetActive(false);
         }
 
         displayDescription.text = DialogueTagParser.ParseText(description);
