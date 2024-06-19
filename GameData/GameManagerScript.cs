@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -22,6 +23,7 @@ public class GameManagerScript : MonoBehaviour
     public RegionManager regionManager;
     public RecipeManager recipeManager;
     public BookManager bookManager;
+    public GlobalTimerUpdater globalTimer;
 
     public GameObject gameComponentMaster;
     public GameObject mainMenuComponent;
@@ -151,11 +153,15 @@ public class GameManagerScript : MonoBehaviour
         TransientDataScript.SetGameState(GameState.MainMenu, name, gameObject);
         TransientDataScript.transientData.currentMana = 25;
         menuUIManagerComponent.SetActive(true);
-        // Debug.LogWarning("ATTEMPTING TO ACTIVATE MAIN MENU");
         mainMenuComponent.SetActive(true);
     }
 
     public void NewGameRoutine()
+    {
+        StartCoroutine(SaveCoroutine());
+    }
+
+    private IEnumerator SaveCoroutine()
     {
         dataManager.version = Application.version;
         dataManager.lastVersionSaved = "none";
@@ -166,7 +172,7 @@ public class GameManagerScript : MonoBehaviour
         dataManager.eyesHexColour = "87DF5C";
         dataManager.hairHexColour = "896C5C";
 
-        ResetGameComponents();
+        yield return StartCoroutine(ResetGameComponentsCoroutine());
 
         dataManager.totalGameDays = 0;
         dataManager.timeOfDay = 0.3f;
@@ -216,8 +222,13 @@ public class GameManagerScript : MonoBehaviour
 
     public void LoadRoutine()
     {
+        StartCoroutine(LoadCoroutine());
+    }
+
+    private IEnumerator LoadCoroutine()
+    {
         TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
-        ResetGameComponents();
+        yield return StartCoroutine(ResetGameComponentsCoroutine());
         DialogueTagParser.UpdateTags(dataManager);
 
         if (Player.upgradeWear == null || Player.upgradeWear.Count < 1)
@@ -230,17 +241,22 @@ public class GameManagerScript : MonoBehaviour
         questTracker.StartTracking();
         alchemyTracker.StartTracking();
         passengerManager.Initialise();
+
+        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 
-    public void ResetGameComponents()
+    private IEnumerator ResetGameComponentsCoroutine()
     {
         loadingCanvas.gameObject.SetActive(true);
+        TransientDataScript.isDemoEnabled = false;
 
         CharacterNodeTracker.ClearCharacterNodes();
         foreach (GameObject component in listOfGameComponents)
         {
             component.SetActive(false);
+            yield return null;
             component.SetActive(true);
+            yield return null;
         }
 
         foreach (Upgrade upgrade in Upgrades.all)
@@ -250,7 +266,9 @@ public class GameManagerScript : MonoBehaviour
 
         coachEngine.Enable();
         manaConverter.Enable();
+        globalTimer.Initialise();
 
+        yield return new WaitForSeconds(0.2f);
         loadingCanvas.gameObject.SetActive(false);
     }
 
