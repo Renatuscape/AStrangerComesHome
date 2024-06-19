@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
         var gameState = TransientDataScript.GameState;
 
         if (gameState == GameState.Loading ||
+            gameState == GameState.StartMenu ||
             gameState == GameState.MainMenu ||
             gameState == GameState.ShopMenu ||
             gameState == GameState.CharacterCreation ||
