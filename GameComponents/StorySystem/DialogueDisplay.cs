@@ -155,6 +155,11 @@ public class DialogueDisplay : MonoBehaviour
 
         eventIndex++;
 
+        if (TransientDataScript.isDemoEnabled && eventIndex >= 3)
+        {
+            eventIndex = activeDialogue.dialogueEvents.Count;
+        }
+
         if (eventIndex >= activeDialogue.dialogueEvents.Count)
         {
             continueEnabled = false;

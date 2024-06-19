@@ -7,6 +7,7 @@ public class TransientDataScript : MonoBehaviour
 {
     public static TransientDataScript transientData;
     public static GameManagerScript gameManager;
+    public static bool isDemoEnabled = false;
     public static GameState GameState { get; private set; }
 
     public Language language;

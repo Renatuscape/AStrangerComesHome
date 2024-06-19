@@ -64,6 +64,8 @@ public class DebugMenu : MonoBehaviour
         Player.Add("SCR012", 1, true);
         Player.Add("SCR013", 1, true);
         Player.Add("SCR016", 1, true);
+
+        TransientDataScript.isDemoEnabled = true;
     }
 
     public void SkipPrologue()
