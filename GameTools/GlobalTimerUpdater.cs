@@ -14,15 +14,18 @@ public class GlobalTimerUpdater : MonoBehaviour
 
     float secondTick = 1;
     public float secondTimer;
-    private void Start()
+    bool isRunning = false;
+
+    public void Initialise()
     {
         animationTimer = animationTick;
         threeSecondTimer = threeSecondTick;
         secondTimer = secondTick;
+        isRunning = true;
     }
     void Update()
     {
-        if (TransientDataScript.IsTimeFlowing())
+        if (isRunning && TransientDataScript.IsTimeFlowing())
         {
             animationTimer += Time.deltaTime;
             threeSecondTimer += Time.deltaTime;
