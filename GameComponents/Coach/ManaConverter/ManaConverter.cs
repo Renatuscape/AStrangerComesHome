@@ -58,7 +58,7 @@ public class ManaConverter : MonoBehaviour
 
     public static void GlobalPushManaRegen()
     {
-        if (TransientDataScript.IsTimeFlowing() && instance.isReady)
+        if (instance != null && TransientDataScript.IsTimeFlowing() &&  instance.isReady)
         {
             //REGENERATION AMOUNT
             var manaRecovery = 1.5f + (0.2f * instance.manaPassiveGeneration) + (0.15f * instance.attMysticism);
