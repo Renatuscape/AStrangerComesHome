@@ -23,6 +23,7 @@ public class SettingsMenu : MonoBehaviour
     void ToggleAlwaysHideCoachExterior(bool toggle)
     {
         GlobalSettings.AlwaysHideCoachExterior = toggle;
+        GlobalSettingsManager.SaveSettings();
     }
 
     public void DropDownScaleUI(int index)
