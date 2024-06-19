@@ -51,6 +51,8 @@ public class InteractableNodeTreasure : MonoBehaviour
         {
             if (!looted)
             {
+                AudioManager.PlaySoundEffect("doorClose_2");
+                ParticleFactory.ClickEffectCoins(gameObject, false);
                 loadedBundle.YieldOutput();
                 looted = true;
                 DisableLootCrate(false);
