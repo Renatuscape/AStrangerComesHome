@@ -122,6 +122,9 @@ public class GameManagerScript : MonoBehaviour
         await questManager.StartLoading();
         Debug.Log("STARTUP: Loading quests async completed");
 
+        await GuildRewardLoader.StartLoading(menuSystem.guildMenu.rewardsMenu);
+        Debug.Log("STARTUP: Loading guild rewards async completed");
+
         //await saveDataManager.StartLoading();
         //Debug.Log("STARTUP: Loading save data completed");
 
