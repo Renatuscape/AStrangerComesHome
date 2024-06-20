@@ -168,7 +168,7 @@ public class JournalQuestPage : MonoBehaviour
 
                 if (inventoryCount >= task.amount)
                 {
-                    taskTrackerText.text += "<color=#718c81>" + "<s>" + taskDescription + "</s>" + "</color>";
+                    taskTrackerText.text += "<color=#718c81><s>" + taskDescription + "</s></color>";
                 }
 
                 else
