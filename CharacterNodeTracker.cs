@@ -40,7 +40,7 @@ public static class CharacterNodeTracker
     {
         UnityEngine.Debug.Log("Checking loot nodes.");
 
-        var respawningLoot = Player.claimedLoot.Where(e => !e.objectID.Contains("disableRespawn")).ToList();
+        var respawningLoot = Player.claimedLoot.Where(e => e.objectID.Contains("WorldNodeLoot") && !e.objectID.Contains("disableRespawn")).ToList();
 
         foreach (var entry in respawningLoot)
         {
