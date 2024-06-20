@@ -44,9 +44,14 @@ public class InteractMenu : MonoBehaviour
                 PrintGiftButton(character);
             }
 
-            if (character.runsGarage)
+            if (character.canAccessGarage)
             {
                 PrintGarageButton(character);
+            }
+
+            if (character.canAccessGuild)
+            {
+                PrintGuildButton(character);
             }
 
             prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
@@ -116,16 +121,16 @@ public class InteractMenu : MonoBehaviour
 
     bool PrintGarageButton(Character character)
     {
-        string machinistID = "ARC002";
-        int machinistAffectio = Player.GetCount(machinistID, name);
+        string machinistID = StaticTags.Machinist;
+        int machinistAffection = Player.GetCount(machinistID, name);
         
-        if (machinistAffectio < 1 && character.objectID == machinistID)
+        if (machinistAffection < 1 && character.objectID == machinistID)
         {
             var shopButton = GetButton($"I should speak with my old friend before entering the garage.");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
-        else if (machinistAffectio < 1 && character.objectID != machinistID)
+        else if (machinistAffection < 1 && character.objectID != machinistID)
         {
             var shopButton = GetButton($"I should visit |the Machinist| before entering the garage.");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -135,6 +140,25 @@ public class InteractMenu : MonoBehaviour
         {
             var shopButton = GetButton($"Enter garage");
             shopButton.GetComponent<Button>().onClick.AddListener(() => menuSystem.garageMenu.Initialise(character));
+            return true;
+        }
+    }
+
+    bool PrintGuildButton(Character character)
+    {
+        string guildmasterID = StaticTags.Guildmaster;
+        int guildLicense = Player.GetCount(StaticTags.GuildLicense, name);
+
+        if (guildLicense < 1)
+        {
+            var shopButton = GetButton($"I should ask |the Guildmaster| about a license.");
+            shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
+            return false;
+        }
+        else
+        {
+            var shopButton = GetButton($"Enter guild office");
+            shopButton.GetComponent<Button>().onClick.AddListener(() => menuSystem.guildMenu.Initialise(character));
             return true;
         }
     }
