@@ -38,9 +38,10 @@ public static class StaticTags
     public static string TotalFare { get; } = "SCR001";
     public static string UnlockedPlanters { get; } = "SCR004";
     public static string CoachSynths { get; } = "SCR010";
+    public static string GuildLicense { get; } = "SCR012";
 
     // Misc
-    public static string GuildLicense { get; } = "MIS021";
+    public static string GuildLicenseItem { get; } = "MIS021";
     public static string CausticWaste { get; } = "MAT030";
 
     // Items
