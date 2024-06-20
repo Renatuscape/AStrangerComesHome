@@ -17,7 +17,7 @@ public class InteractableNodeTreasure : MonoBehaviour
     public bool looted;
     private void Start()
     {
-        crateID = gameObject.name;
+        crateID = "WorldNodeLoot_" + gameObject.name;
         loadedBundle = null;
         col = GetComponent<BoxCollider2D>();
         rend = GetComponent<SpriteRenderer>();

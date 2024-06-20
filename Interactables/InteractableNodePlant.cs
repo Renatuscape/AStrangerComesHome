@@ -17,7 +17,7 @@ public class InteractableNodePlant : MonoBehaviour
     {
         col = GetComponent<BoxCollider2D>();
 
-        plantNodeID = gameObject.name;
+        plantNodeID = "WorldNodeLoot_" +  gameObject.name;
 
         if (plantBundle != null && plantBundle.CheckBundle(plantNodeID))
         {
