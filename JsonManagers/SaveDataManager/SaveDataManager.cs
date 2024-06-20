@@ -221,7 +221,7 @@ public class SaveDataManager : MonoBehaviour
 
             savesInfo.Add(saveInfo);
 
-            if (saveInfo.version != Application.version)
+            if (saveInfo.lastVersionSaved != Application.version)
             {
                 Debug.LogWarning($"Save data version mismatch. Save data was created in version {saveInfo.version} and was last saved duing {saveInfo.lastVersionSaved}. Current version is {Application.version}.");
                 saveInfo.versionMismatch = true;
