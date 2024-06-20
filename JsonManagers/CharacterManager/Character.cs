@@ -36,7 +36,8 @@ public class Character : BaseObject
     public string trueNamePlate;
 
     public List<Shop> shops = new();
-    public bool runsGarage;
+    public bool canAccessGarage;
+    public bool canAccessGuild;
     public List<string> giftsDislike;
     public List<string> giftsLike;
     public List<string> giftsLove;
