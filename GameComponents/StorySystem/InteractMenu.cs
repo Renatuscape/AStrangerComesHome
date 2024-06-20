@@ -151,7 +151,7 @@ public class InteractMenu : MonoBehaviour
 
         if (guildLicense < 1)
         {
-            var shopButton = GetButton($"I should ask |the Guildmaster| about a license.");
+            var shopButton = GetButton($"I should ask the Guildmaster about a license.");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
