@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class MenuSystem : MonoBehaviour
 {
     public TransientDataScript transientData;
@@ -15,6 +14,7 @@ public class MenuSystem : MonoBehaviour
     public GameObject journalMenu;
     public AlchemyMenu alchemyMenu;
     public GarageMenu garageMenu;
+    public GuildMenu guildMenu;
 
     void Awake()
     {
