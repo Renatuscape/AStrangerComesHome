@@ -34,14 +34,19 @@ public static class StaticTags
     public static string Destruction { get; } = "ATT008";
 
     // Scripts
+    public static string TotalPassengers { get; } = "SCR000";
+    public static string TotalFare { get; } = "SCR001";
     public static string UnlockedPlanters { get; } = "SCR004";
-    public static string GuildLicense { get; } = "MIS021";
+    public static string CoachSynths { get; } = "SCR010";
 
     // Misc
+    public static string GuildLicense { get; } = "MIS021";
+    public static string CausticWaste { get; } = "MAT030";
+
+    // Items
     public static string WeedItem { get; } = "PLA000";
 
-    public static string CausticWaste { get; } = "MAT030";
+    // Recipes
     public static string CausticWasteRecipe { get; } = "REC001-NN";
 
-    public static string CoachSynths { get; } = "SCR010";
 }
