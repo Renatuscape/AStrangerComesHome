@@ -200,24 +200,3 @@ public static class RequirementChecker
         return true;
     }
 }
-
-[System.Serializable]
-public class RequirementPackage
-{
-    public float minTimeOfDay;
-    public float maxTimeOfDay;
-    public int requiredDaysPassed;
-    public List<int> weekDay;
-    public string requiredLocation;
-    public List<IdIntPair> restrictions;
-    public List<IdIntPair> requirements;
-    public List<IdMinMax> minMaxRequirements;
-}
-
-[System.Serializable]
-public class IdMinMax
-{
-    public string objectID;
-    public int minValue;
-    public int maxValue;
-}
