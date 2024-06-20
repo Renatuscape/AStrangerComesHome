@@ -101,7 +101,7 @@ public class WaitingNPC : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal && TransientDataScript.transientData.currentSpeed == 0)
         {
-            if (Player.GetCount("SCR012", name) > 0)
+            if (Player.GetCount(StaticTags.GuildLicense, name) > 0)
             {
                 passengerManager.ActivateWaitingPassenger(gameObject);
             }
@@ -116,7 +116,7 @@ public class WaitingNPC : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
-            if (Player.GetCount("SCR012", name) > 0)
+            if (Player.GetCount(StaticTags.GuildLicense, name) > 0)
             {
                 TransientDataScript.PrintFloatText("\'I'd like to go to\n" + destination.name + ", please.\'");
             }
