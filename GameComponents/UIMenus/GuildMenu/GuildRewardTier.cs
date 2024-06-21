@@ -27,7 +27,6 @@ public class GuildRewardTier
         {
             UnityEngine.Debug.Log("Reward tier found in claimedLoot: " + tierID);
             SetComplete();
-            button.interactable = false;
         }
         else
         {
@@ -41,7 +40,6 @@ public class GuildRewardTier
         {
             Player.claimedLoot.Add(new() { objectID = tierID, amount = 1 });
             SetComplete();
-            button.interactable = false;
 
             foreach (var entry in rewards)
             {
@@ -52,13 +50,11 @@ public class GuildRewardTier
 
     void SetComplete()
     {
-        if (!claimed)
-        {
-            claimed = true;
-            textMesh.text = $"<color=#718c81><s>{textMesh.text}</s></color>";
-            ColorBlock colorBlock = button.colors;
-            colorBlock.disabledColor = new UnityEngine.Color(0.8071f, 0.9150f, 0.8301f);
-            button.colors = colorBlock;
-        }
+        claimed = true;
+        button.interactable = false;
+        textMesh.text = $"<color=#718c81><s>{textMesh.text}</s></color>";
+        ColorBlock colorBlock = button.colors;
+        colorBlock.disabledColor = new UnityEngine.Color(0.8071f, 0.9150f, 0.8301f);
+        button.colors = colorBlock;
     }
 }
