@@ -47,19 +47,19 @@ public class GuildMenu : MonoBehaviour
 
     void InitialiseRewardsMenu()
     {
-        rewardsMenu.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 1000, 0);
+        rewardsMenu.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 2000, 0);
         rewardsMenu.Initialise(character.objectID == StaticTags.Guildmaster, totalPassengers, totalFare);
     }
 
     public void ToggleRewardsMenu()
     {
-        if (rewardsMenu.transform.localPosition.y > -120)
+        if (rewardsMenu.transform.localPosition.y > -20)
         {
-            rewardsMenu.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, -120, 0);
+            rewardsMenu.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, -20, 0);
         }
         else
         {
-            rewardsMenu.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 1000, 0);
+            rewardsMenu.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 2000, 0);
         }
     }
 
