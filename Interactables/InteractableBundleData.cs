@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 [Serializable]
 public class InteractableBundleData
@@ -23,5 +24,10 @@ public class InteractableBundleData
     public void SaveNodeToPlayer()
     {
         Player.claimedLoot.Add(new() { objectID = bundleID, amount = 0 });
+    }
+
+    public bool CheckIfLootable()
+    {
+        return Player.claimedLoot.FirstOrDefault(e => e.objectID == bundleID) == null;
     }
 }
