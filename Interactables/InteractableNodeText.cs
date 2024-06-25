@@ -32,45 +32,50 @@ public class InteractableNodeText : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing() && isReadable)
         {
-            if (textBundle.type == TextType.LogAlert)
+            ProcessClick();
+        }
+    }
+
+    void ProcessClick()
+    {
+        if (textBundle.type == TextType.LogAlert)
+        {
+            LogAlert.QueueTextAlert(textBundle.loadedText);
+        }
+        else if (textBundle.type == TextType.PushAlert)
+        {
+            TransientDataScript.PushAlert(textBundle.loadedText);
+        }
+        else if (textBundle.type == TextType.Book)
+        {
+            if (!textBundle.disableAddBookToInventory)
             {
-                LogAlert.QueueTextAlert(textBundle.loadedText);
-            }
-            else if (textBundle.type == TextType.PushAlert)
-            {
-                TransientDataScript.PushAlert(textBundle.loadedText);
-            }
-            else if (textBundle.type == TextType.Book)
-            {
-                if (!textBundle.disableAddBookToInventory)
+                Book book = Books.FindByID(textBundle.textTag);
+                if (book != null)
                 {
-                    Book book = Books.FindByID(textBundle.textTag);
-                    if (book != null)
+                    if (textBundle.CheckIfLootable())
                     {
-                        if (textBundle.CheckIfLootable())
-                        {
-                            Player.Add(book.objectID);
-                        }
-
-                        JournalController.ForceReadBook(book);
+                        Player.Add(book.objectID);
                     }
+
+                    JournalController.ForceReadBook(book);
                 }
             }
+        }
 
-            if (!textBundle.lootClaimed)
-            {
-                textBundle.ClaimLoot();
+        if (!textBundle.lootClaimed)
+        {
+            textBundle.ClaimLoot();
 
-                if (textBundle.disableReuse)
-                {
-                    DisableNode();
-                }
-            }
-            else if (textBundle.disableReuse)
+            if (textBundle.disableReuse)
             {
-                textBundle.SaveNodeToPlayer();
                 DisableNode();
             }
+        }
+        else if (textBundle.disableReuse)
+        {
+            textBundle.SaveNodeToPlayer();
+            DisableNode();
         }
     }
 
