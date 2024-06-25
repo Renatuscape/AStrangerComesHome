@@ -15,6 +15,7 @@ public class InteractableNodeText : MonoBehaviour
     public SpriteRenderer rend;
     public BoxCollider2D col;
     public InteractableBundleText textBundle;
+    public bool hideOnLoot;
     bool isReadable;
 
     void Start()
@@ -37,7 +38,23 @@ public class InteractableNodeText : MonoBehaviour
             }
             else if (textBundle.type == TextType.PushAlert)
             {
+                TransientDataScript.PushAlert(textBundle.loadedText);
+            }
+            else if (textBundle.type == TextType.Book)
+            {
+                if (!textBundle.disableAddBookToInventory)
+                {
+                    Book book = Books.FindByID(textBundle.textTag);
+                    if (book != null)
+                    {
+                        if (textBundle.CheckIfLootable())
+                        {
+                            Player.Add(book.objectID);
+                        }
 
+                        JournalController.ForceReadBook(book);
+                    }
+                }
             }
 
             if (!textBundle.lootClaimed)
@@ -61,5 +78,10 @@ public class InteractableNodeText : MonoBehaviour
     {
         isReadable = false;
         col.enabled = false;
+
+        if (hideOnLoot)
+        {
+            gameObject.SetActive(false);
+        }
     }
 }
