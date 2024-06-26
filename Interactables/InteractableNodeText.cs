@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class InteractableNodeText : MonoBehaviour
 {
     public enum TextType
@@ -12,10 +11,13 @@ public class InteractableNodeText : MonoBehaviour
     }
 
     public string animationID;
+    public bool hideOnLoot;
+    public bool hideBobber;
+    public InteractableBobber interactBobber;
     public SpriteRenderer rend;
     public BoxCollider2D col;
+    public AnimatedSprite animatedSprite;
     public InteractableBundleText textBundle;
-    public bool hideOnLoot;
     bool isReadable;
 
     void Start()
@@ -25,6 +27,20 @@ public class InteractableNodeText : MonoBehaviour
         if (!isReadable )
         {
             col.enabled = false;
+        }
+        else
+        {
+            if (!hideBobber && interactBobber != null)
+            {
+                StartCoroutine(PlayBobber());
+            }
+
+            if (!string.IsNullOrEmpty(animationID))
+            {
+                animatedSprite = AnimationLibrary.GetAnimatedObject(animationID);
+                StartCoroutine(Animate(animatedSprite.GetAnimationType(AnimationType.idle), true));
+            }
+
         }
     }
 
@@ -36,6 +52,37 @@ public class InteractableNodeText : MonoBehaviour
         }
     }
 
+    IEnumerator Animate(AnimationData animationData, bool loop, bool startFromCustom = false)
+    {
+        if (animationData != null)
+        {
+            int index = 0;
+
+            if (startFromCustom)
+            {
+                index = animationData.customLoopStart;
+            }
+
+            int maxIndex = animationData.frames.Count - 1;
+
+            while (index < maxIndex)
+            {
+                rend.sprite = animationData.frames[index];
+                index++;
+                yield return new WaitForSeconds(animationData.frameRate);
+            }
+
+            if (loop && !animationData.disallowLooping)
+            {
+                StartCoroutine(Animate(animationData, true));
+            }
+        }
+    }
+
+    IEnumerator PlayBobber()
+    {
+        yield return null;
+    }
     void ProcessClick()
     {
         if (textBundle.type == TextType.LogAlert)
