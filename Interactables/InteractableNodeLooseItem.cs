@@ -41,9 +41,15 @@ public class InteractableNodeLooseItem : InteractableNode
         if (bundle.CheckIfLootable())
         {
             col.enabled = false;
+            ClaimLoot();
             bundle.SaveNodeToPlayer();
             StartCoroutine(FadeOut());
         }
+    }
+    
+    void ClaimLoot()
+    {
+        Player.Add(item.objectID, bundle.alwaysMaxYield ? bundle.maxYieldPerItem : Random.Range(1, bundle.maxYieldPerItem + 1));
     }
 
     IEnumerator FadeOut()
