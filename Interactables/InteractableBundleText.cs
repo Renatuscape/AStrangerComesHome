@@ -1,6 +1,6 @@
 ﻿using static InteractableNodeText;
 
-public class InteractableBundleText : InteractableBundleData
+public class InteractableBundleText : InteractableBundle
 {
     public TextType type;
     public string textTag;
@@ -31,5 +31,11 @@ public class InteractableBundleText : InteractableBundleData
     {
         lootClaimed = true;
         SaveNodeToPlayer();
+
+        foreach (var entry in customContent)
+        {
+            // Allow for RNG rolls at a later time?
+            Player.Add(entry);
+        }
     }
 }
