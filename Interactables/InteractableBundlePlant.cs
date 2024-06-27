@@ -5,7 +5,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [Serializable]
-public class InteractableBundlePlant : InteractableBundleData
+public class InteractableBundlePlant : InteractableBundle
 {
     public string seedID;
     public Item seed;

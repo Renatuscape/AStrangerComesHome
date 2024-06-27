@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 [Serializable]
-public class InteractableBundleData
+public class InteractableBundle
 {
     public string bundleID;
     public int spawnChance;
