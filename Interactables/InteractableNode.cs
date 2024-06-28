@@ -27,4 +27,31 @@ public class InteractableNode : MonoBehaviour
 
         gameObject.SetActive(false);
     }
+
+    internal IEnumerator Animate(AnimationData animationData, bool loop, bool startFromCustom = false)
+    {
+        if (animationData != null)
+        {
+            int index = 0;
+
+            if (startFromCustom)
+            {
+                index = animationData.customLoopStart;
+            }
+
+            int maxIndex = animationData.frames.Count - 1;
+
+            while (index < maxIndex)
+            {
+                rend.sprite = animationData.frames[index];
+                index++;
+                yield return new WaitForSeconds(animationData.frameRate);
+            }
+
+            if (loop && !animationData.disallowLooping)
+            {
+                StartCoroutine(Animate(animationData, true));
+            }
+        }
+    }
 }
