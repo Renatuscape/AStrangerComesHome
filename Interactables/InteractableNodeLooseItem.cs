@@ -27,6 +27,11 @@ public class InteractableNodeLooseItem : InteractableNode
                 if (checkForAnimation)
                 {
                     animatedSprite = AnimationLibrary.GetAnimatedObject(item.objectID);
+
+                    if (animatedSprite != null)
+                    {
+                        // Start idle animation
+                    }
                 }
             }
         }
@@ -43,19 +48,12 @@ public class InteractableNodeLooseItem : InteractableNode
             col.enabled = false;
             ClaimLoot();
             bundle.SaveNodeToPlayer();
-            StartCoroutine(FadeOut());
+            StartCoroutine(FadeOutObject());
         }
     }
     
     void ClaimLoot()
     {
         Player.Add(item.objectID, bundle.alwaysMaxYield ? bundle.maxYieldPerItem : Random.Range(1, bundle.maxYieldPerItem + 1));
-    }
-
-    IEnumerator FadeOut()
-    {
-        yield return null;
-
-        gameObject.SetActive(false);
     }
 }
