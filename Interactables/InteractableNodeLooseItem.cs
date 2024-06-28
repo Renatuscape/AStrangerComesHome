@@ -30,7 +30,7 @@ public class InteractableNodeLooseItem : InteractableNode
 
                     if (animatedSprite != null)
                     {
-                        // Start idle animation
+                        StartCoroutine(Animate(animatedSprite.GetAnimationType(AnimationType.idle), true));
                     }
                 }
             }
