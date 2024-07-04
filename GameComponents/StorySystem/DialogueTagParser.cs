@@ -93,7 +93,7 @@ public static class DialogueTagParser
         }
         else
         {
-            Debug.Log($"Key {key} already exists in tags with value {tags[key]}. Attempted valu was {value}.");
+            Debug.LogError($"Key {key} already exists in tags with value {tags[key]}. Attempted value was {value}.");
         }
     }
     static string Capitalise(string text)
