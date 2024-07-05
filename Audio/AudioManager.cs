@@ -185,7 +185,7 @@ public class AudioManager : MonoBehaviour
 
                     if (type == "ambient")
                     {
-                        audioSource.volume = GlobalSettings.ambientVolume + volumeAdjustment;
+                        audioSource.volume = GlobalSettings.effectVolume + volumeAdjustment;
                     }
                     else
                     {
