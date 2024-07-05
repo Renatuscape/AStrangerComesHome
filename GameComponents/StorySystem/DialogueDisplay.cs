@@ -93,7 +93,7 @@ public class DialogueDisplay : MonoBehaviour
             textSoundEffect.clip = AudioManager.GetSoundEffect("knockSmall");
         }
 
-        textSoundEffect.volume = GlobalSettings.uiVolume - 0.1f;
+        textSoundEffect.volume = GlobalSettings.effectVolume - 0.1f;
 
         if (dialogue.stageType != StageType.Dialogue)
         {
