@@ -24,7 +24,7 @@ public class VolumeSettings : MonoBehaviour
     {
         musicSlider.value = GlobalSettings.musicVolume;
         uiSlider.value = GlobalSettings.uiVolume;
-        ambientSlider.value = GlobalSettings.ambientVolume;
+        ambientSlider.value = GlobalSettings.effectVolume;
     }
 
     public void OnMusicSliderChange(float value)
@@ -43,7 +43,7 @@ public class VolumeSettings : MonoBehaviour
 
     public void OnAmbientSliderChange(float value)
     {
-        GlobalSettings.ambientVolume = value;
+        GlobalSettings.effectVolume = value;
         GlobalSettingsManager.SaveSettings();
 
         PlayAudioSample(() => AudioManager.PlaySoundEffect("Debug"));
