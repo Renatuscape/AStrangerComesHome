@@ -12,6 +12,13 @@ public static class GlobalSettingsManager
     private const string SubtitleFontKey = "SubtitleFont";
     private const string BodyFontKey = "BodyFont";
     private const string ScriptFontKey = "ScriptFont";
+    private const string MusicVolumeKey = "musicVolume";
+    private const string EffectVolume = "effectVolume";
+    private const string UiWalletLarge = "uiWalletLarge";
+    private const string UiGearboxLarge = "uiGearboxLarge";
+    private const string DarkTheme = "darkTheme";
+    private const string DialogueTransparency = "dialogueTransparency";
+
 
     // Call GlobalSettingsManager.SaveSettings() when you want to save the settings(e.g., when they change or when the game exits).
     // Call GlobalSettingsManager.LoadSettings() when the game starts to load the settings.
@@ -27,13 +34,12 @@ public static class GlobalSettingsManager
         PlayerPrefs.SetString(SubtitleFontKey, GlobalSettings.SubtitleFont != null ? GlobalSettings.SubtitleFont : "");
         PlayerPrefs.SetString(BodyFontKey, GlobalSettings.BodyFont != null ? GlobalSettings.BodyFont : "");
         PlayerPrefs.SetString(ScriptFontKey, GlobalSettings.ScriptFont != null ? GlobalSettings.ScriptFont : "");
-        PlayerPrefs.SetFloat("musicVolume", GlobalSettings.musicVolume);
-        PlayerPrefs.SetFloat("ambientVolume", GlobalSettings.ambientVolume);
-        PlayerPrefs.SetFloat("uiVolume", GlobalSettings.uiVolume);
-        PlayerPrefs.SetInt("uiWalletLarge", GlobalSettings.uiWalletLarge ? 1 : 0);
-        PlayerPrefs.SetInt("uiGearboxLarge", GlobalSettings.uiGearboxLarge ? 1 : 0);
-        PlayerPrefs.SetInt("darkTheme", GlobalSettings.darkTheme ? 1 : 0);
-        PlayerPrefs.SetFloat("dialogueTransparency", GlobalSettings.dialogueTransparency);
+        PlayerPrefs.SetFloat(MusicVolumeKey, GlobalSettings.musicVolume);
+        PlayerPrefs.SetFloat(EffectVolume, GlobalSettings.effectVolume);
+        PlayerPrefs.SetInt(UiWalletLarge, GlobalSettings.uiWalletLarge ? 1 : 0);
+        PlayerPrefs.SetInt(UiGearboxLarge, GlobalSettings.uiGearboxLarge ? 1 : 0);
+        PlayerPrefs.SetInt(DarkTheme, GlobalSettings.darkTheme ? 1 : 0);
+        PlayerPrefs.SetFloat(DialogueTransparency, GlobalSettings.dialogueTransparency);
         PlayerPrefs.Save();
 
         Debug.Log("Saved global settings");
@@ -52,15 +58,14 @@ public static class GlobalSettingsManager
         GlobalSettings.BodyFont = PlayerPrefs.GetString(BodyFontKey, "");
         GlobalSettings.ScriptFont = PlayerPrefs.GetString(ScriptFontKey, "");
 
-        GlobalSettings.musicVolume = PlayerPrefs.GetFloat("musicVolume", 0.4f);
-        GlobalSettings.ambientVolume = PlayerPrefs.GetFloat("ambientVolume", 0.6f);
-        GlobalSettings.uiVolume = PlayerPrefs.GetFloat("uiVolume", 0.6f);
+        GlobalSettings.musicVolume = PlayerPrefs.GetFloat(MusicVolumeKey, 0.4f);
+        GlobalSettings.effectVolume = PlayerPrefs.GetFloat(EffectVolume, 0.6f);
 
-        GlobalSettings.uiWalletLarge = PlayerPrefs.GetInt("uiWalletLarge", 1) == 1;
-        GlobalSettings.uiGearboxLarge = PlayerPrefs.GetInt("uiGearboxLarge", 1) == 1;
+        GlobalSettings.uiWalletLarge = PlayerPrefs.GetInt(UiWalletLarge, 1) == 1;
+        GlobalSettings.uiGearboxLarge = PlayerPrefs.GetInt(UiGearboxLarge, 1) == 1;
 
-        GlobalSettings.darkTheme = PlayerPrefs.GetInt("darkTheme", 0) == 1;
-        GlobalSettings.dialogueTransparency = PlayerPrefs.GetFloat("dialogueTransparency", 0.8f);
+        GlobalSettings.darkTheme = PlayerPrefs.GetInt(DarkTheme, 0) == 1;
+        GlobalSettings.dialogueTransparency = PlayerPrefs.GetFloat(DialogueTransparency, 0.8f);
     }
 }
 
@@ -77,8 +82,7 @@ public static class GlobalSettings
     public static string ScriptFont;
 
     public static float musicVolume = 0.4f;
-    public static float ambientVolume = 0.6f;
-    public static float uiVolume = 0.6f;
+    public static float effectVolume = 0.6f;
 
     public static bool uiWalletLarge = true;
     public static bool uiGearboxLarge = true;
