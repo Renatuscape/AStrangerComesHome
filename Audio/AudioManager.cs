@@ -147,14 +147,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    //public static void PlayAmbientSound(string soundName, float volumeAdjustment = 0)
-    //{
-    //    if (instance != null)
-    //    {
-    //        instance.PlaySoundEffect(soundName, "ambient", volumeAdjustment);
-    //    }
-    //}
-
     void PlaySoundEffect(string soundName, string type, float volumeAdjustment)
     {
         if (!gameObject.scene.isLoaded) return;
@@ -183,14 +175,7 @@ public class AudioManager : MonoBehaviour
 
                     audioSource.clip = sound;
 
-                    if (type == "ambient")
-                    {
-                        audioSource.volume = GlobalSettings.effectVolume + volumeAdjustment;
-                    }
-                    else
-                    {
-                        audioSource.volume = GlobalSettings.uiVolume + volumeAdjustment;
-                    }
+                    audioSource.volume = GlobalSettings.effectVolume + volumeAdjustment;
 
                     audioSource.Play();
                 }
