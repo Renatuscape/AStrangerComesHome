@@ -15,6 +15,7 @@ public class DataManagerScript : MonoBehaviour
 
     //PLAYER DATA
     public string playerName;
+    public string playerGender;
     public string pronounSub;
     public string pronounObj;
     public string pronounGen;
@@ -31,6 +32,8 @@ public class DataManagerScript : MonoBehaviour
     public bool alwaysHideCoachExterior;
 
     //PLAYER SPRITE
+    public PlayerSpriteData playerSprite; // transition from old index system to using this class
+
     public int hairIndex;
     public int bodyIndex;
     public int headIndex;
@@ -96,4 +99,29 @@ public class PassengerData
     public Location destination;
     public int fare;
     public List<string> dialogueIDs;
+}
+
+[Serializable]
+public class PlayerSpriteData
+{
+    public string hairID;
+    public string bodyID;
+    public string headID;
+    public string eyesID;
+    public string mouthID;
+
+    public string hairHexColour;
+    public string eyesHexColour;
+
+    public void ResetValues()
+    {
+        hairID = "default";
+        bodyID = "default";
+        headID = "default";
+        eyesID = "default";
+        mouthID = "default";
+
+        hairHexColour = "83695CFF";
+        eyesHexColour = "88DA69FF";
+    }
 }
