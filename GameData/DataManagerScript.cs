@@ -108,10 +108,12 @@ public class PlayerSpriteData
     public string bodyID;
     public string headID;
     public string eyesID;
-    public string mouthID;
+    public string lipTintID;
 
     public string hairHexColour;
     public string eyesHexColour;
+    public string lipTintColour;
+    public float lipTintTransparency;
 
     public void ResetValues()
     {
@@ -119,7 +121,7 @@ public class PlayerSpriteData
         bodyID = "default";
         headID = "default";
         eyesID = "default";
-        mouthID = "default";
+        lipTintID = "none";
 
         hairHexColour = "83695CFF";
         eyesHexColour = "88DA69FF";
