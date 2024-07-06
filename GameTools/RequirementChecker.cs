@@ -3,6 +3,11 @@ using UnityEngine;
 
 public static class RequirementChecker
 {
+    public static bool CheckGender(string gender)
+    {
+        return gender == TransientDataScript.gameManager.dataManager.playerGender;
+    }
+
     public static bool CheckDialogueRequirements(Dialogue dialogue)
     {
         bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
