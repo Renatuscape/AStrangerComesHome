@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class CharacterPronouns : MonoBehaviour
+public class CharacterPersonaliaChoices : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public TMP_Dropdown pronounDropdown;
