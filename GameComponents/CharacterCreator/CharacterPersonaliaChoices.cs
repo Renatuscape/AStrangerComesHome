@@ -84,15 +84,15 @@ public class CharacterPersonaliaChoices : MonoBehaviour
         }
         if (choice == 0)
         {
-            dataManager.playerGender = "GENDERMALE";
+            dataManager.playerGender = "Male";
         }
         else if (choice == 1)
         {
-            dataManager.playerGender = "GENDERFEMALE";
+            dataManager.playerGender = "Female";
         }
         else if (choice >= 2)
         {
-            dataManager.playerGender = "GENDEROTHER";
+            dataManager.playerGender = "Other";
         }
     }
 
