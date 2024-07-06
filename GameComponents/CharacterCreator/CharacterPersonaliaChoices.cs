@@ -13,7 +13,6 @@ public class CharacterPersonaliaChoices : MonoBehaviour
     public TextMeshProUGUI pronounSub;
     public TextMeshProUGUI pronounObj;
     public TextMeshProUGUI pronounGen;
-    public TextMeshProUGUI genderText;
     private void Awake()
     {
         customFields.SetActive(false);
@@ -68,24 +67,32 @@ public class CharacterPersonaliaChoices : MonoBehaviour
 
     public void ChooseGender(int choice = -1)
     {
-        if (choice != -1)
+        if (choice == -1)
         {
             choice = genderDropdown.value;
+        }
+        else
+        {
+            if (choice > 2)
+            {
+                genderDropdown.value = 2;
+            }
+            else
+            {
+                genderDropdown.value = choice;
+            }
         }
         if (choice == 0)
         {
             dataManager.playerGender = "GENDERMALE";
-            genderText.text = "Male";
         }
         else if (choice == 1)
         {
             dataManager.playerGender = "GENDERFEMALE";
-            genderText.text = "Female";
         }
         else if (choice >= 2)
         {
             dataManager.playerGender = "GENDEROTHER";
-            genderText.text = "Other";
         }
     }
 
