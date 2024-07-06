@@ -15,6 +15,7 @@ public class Choice
     public string successText;
     public string failureSpeaker;
     public string failureText;
+    public string genderRequirement;
     public List<IdIntPair> deliveryRequirements;
     public List<IdIntPair> requirements;
     public List<IdIntPair> restrictions;
@@ -38,8 +39,27 @@ public class Choice
     public bool AttemptChecks(out bool passedRequirements, out bool passedRestrictions)
     {
         passedRequirements = RequirementChecker.CheckRequirements(requirements);
+
+        if (!passedRequirements)
+        {
+            passedRestrictions = false;
+            return false;
+        }
+
         passedRestrictions = RequirementChecker.CheckRestrictions(restrictions);
-        return passedRequirements == true && passedRestrictions == true;
+
+        if (!passedRestrictions)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(genderRequirement) || RequirementChecker.CheckGender(genderRequirement))
+        {
+            Debug.Log("Choice failed at gender requirement.");
+            return true;
+        }
+
+        return false;
     }
 
     public bool AttemptDelivery(out List<IdIntPair> missingItems)
