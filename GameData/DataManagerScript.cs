@@ -111,9 +111,11 @@ public class PlayerSpriteData
     public string lipTintID;
 
     public string hairHexColour;
+    public string accessoryHexColour;
     public string eyesHexColour;
-    public string lipTintColour;
+    public string lipTintHexColour;
     public float lipTintTransparency;
+    public bool disableAccessory;
 
     public void ResetValues()
     {
