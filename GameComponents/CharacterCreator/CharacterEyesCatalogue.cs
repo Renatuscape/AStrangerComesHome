@@ -13,10 +13,10 @@ public class CharacterEyesCatalogue : MonoBehaviour
     {
         if (unsortedSprites != null && unsortedSprites.Count > 0)
         {
-            AssembleHairPackages();
+            AssembleEyesPackages();
         }
     }
-    void AssembleHairPackages()
+    void AssembleEyesPackages()
     {
         foreach (var sprite in unsortedSprites)
         {
