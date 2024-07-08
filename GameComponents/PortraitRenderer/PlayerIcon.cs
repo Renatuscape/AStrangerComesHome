@@ -28,15 +28,15 @@ public class PlayerIcon : MonoBehaviour
         portraitRenderer.gameObject.SetActive(false);
 
         head.sprite = playerSprite.head.sprite;
-        eyeColour.color = playerSprite.irises.color;
+        eyeColour.color = playerSprite.eyesIrises.color;
         GetComponent<Image>().color = new Color(eyeColour.color.g - 0.5f, eyeColour.color.b - 0.2f, eyeColour.color.r - 0.2f, 0.5f);
-        eyeLines.sprite = playerSprite.eyes.sprite;
-        mouth.sprite = playerSprite.mouth.sprite;
-        hairOutline.sprite = playerSprite.hairOutline.sprite;
+        eyeLines.sprite = playerSprite.eyesLines.sprite;
+        mouth.sprite = playerSprite.expression.sprite;
 
-        hairLinework.sprite = playerSprite.hairLinework.sprite;
+        hairOutline.sprite = playerSprite.playerHair.outline.sprite;
+        hairLinework.sprite = playerSprite.playerHair.frontLines.sprite;
 
-        hairColour.sprite = playerSprite.hairColour.sprite;
-        hairColour.color = playerSprite.hairColour.color;
+        hairColour.sprite = playerSprite.playerHair.frontColour.sprite;
+        hairColour.color = playerSprite.playerHair.frontColour.color;
     }
 }
