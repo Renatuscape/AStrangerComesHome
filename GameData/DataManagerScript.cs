@@ -34,13 +34,11 @@ public class DataManagerScript : MonoBehaviour
     //PLAYER SPRITE
     public PlayerSpriteData playerSprite; // transition from old index system to using this class
 
-    public int hairIndex;
     public int bodyIndex;
     public int headIndex;
     public int eyesIndex;
     public int mouthIndex;
 
-    public string hairHexColour;
     public string eyesHexColour;
     public string frameID;
 
@@ -115,7 +113,7 @@ public class PlayerSpriteData
     public string eyesHexColour;
     public string lipTintHexColour;
     public float lipTintTransparency;
-    public bool disableAccessory;
+    public bool enableAccessory;
 
     public void ResetValues()
     {
@@ -125,7 +123,11 @@ public class PlayerSpriteData
         eyesID = "default";
         lipTintID = "none";
 
-        hairHexColour = "83695CFF";
-        eyesHexColour = "88DA69FF";
+        hairHexColour = "83695C";
+        eyesHexColour = "88DA69";
+        accessoryHexColour = "85BFB1";
+        lipTintHexColour = "CAAB80";
+        lipTintTransparency = 0;
+        enableAccessory = false;
     }
 }
