@@ -7,14 +7,58 @@ using UnityEngine;
 public class CharacterHairCatalogue : MonoBehaviour
 {
     public List<Sprite> unsortedSprites;
-    public List<PlayerHairPackage> playerHairPackages = new();
+    public List<PlayerHairPackage> hairPackages = new();
     public bool ready = false;
+    public int index = 0;
     void Start()
     {
         if (unsortedSprites != null && unsortedSprites.Count > 0)
         {
             AssembleHairPackages();
         }
+    }
+    public PlayerHairPackage GetPackageByID(string hairID)
+    {
+        if (ready)
+        {
+            var package = hairPackages.FirstOrDefault(p => p.hairID == hairID);
+
+            if (package == null)
+            {
+                return hairPackages[0];
+            }
+            else
+            {
+                return package;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public PlayerHairPackage GetNextPackageByIndex(bool goBack)
+    {
+        if (goBack)
+        {
+            index--;
+
+            if (index < 0)
+            {
+                index = hairPackages.Count - 1;
+            }
+        }
+        else
+        {
+            index++;
+            if (index >= hairPackages.Count)
+            {
+                index = 0;
+            }
+        }
+
+        return hairPackages[index];
     }
 
     void AssembleHairPackages()
@@ -23,12 +67,12 @@ public class CharacterHairCatalogue : MonoBehaviour
         {
             var spriteData = sprite.name.Split('_');
 
-            PlayerHairPackage package = playerHairPackages.FirstOrDefault(p => p.hairID == spriteData[0]);
+            PlayerHairPackage package = hairPackages.FirstOrDefault(p => p.hairID == spriteData[0]);
 
             if (package == null)
             {
                 package = new() { hairID = spriteData[0] };
-                playerHairPackages.Add(package);
+                hairPackages.Add(package);
             }
 
             AddToPackage(package, sprite);
@@ -39,35 +83,35 @@ public class CharacterHairCatalogue : MonoBehaviour
 
     void AddToPackage(PlayerHairPackage package, Sprite sprite)
     {
-        if (sprite.name.Contains("FrontLines"))
+        if (sprite.name.Contains("_FrontLines"))
         {
             package.frontLines = sprite;
         }
-        else if (sprite.name.Contains("FrontColour"))
+        else if (sprite.name.Contains("_FrontColour"))
         {
             package.frontColour = sprite;
         }
-        else if (sprite.name.Contains("BackLines"))
+        else if (sprite.name.Contains("_BackLines"))
         {
             package.backLines = sprite;
         }
-        else if (sprite.name.Contains("BackColour"))
+        else if (sprite.name.Contains("_BackColour"))
         {
             package.backColour = sprite;
         }
-        else if (sprite.name.Contains("Outline"))
+        else if (sprite.name.Contains("_Outline"))
         {
             package.outline = sprite;
         }
-        else if (sprite.name.Contains("AccessoryLines"))
+        else if (sprite.name.Contains("_AccessoryLines"))
         {
             package.accessoryLines = sprite;
         }
-        else if (sprite.name.Contains("AccessoryColour"))
+        else if (sprite.name.Contains("_AccessoryColour"))
         {
             package.accessoryColour = sprite;
         }
-        else if (sprite.name.Contains("AccessoryOutline"))
+        else if (sprite.name.Contains("_AccessoryOutline"))
         {
             package.accessoryOutline = sprite;
         }
