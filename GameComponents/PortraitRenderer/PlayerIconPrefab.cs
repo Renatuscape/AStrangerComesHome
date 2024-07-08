@@ -24,7 +24,7 @@ public class PlayerIconPrefab : MonoBehaviour
         hairColour = transform.Find("Hair_Colour").GetComponent<Image>();
         hairLinework = transform.Find("Hair_Linework").GetComponent<Image>();
 
-        if (playerSprite is not null)
+        if (playerSprite != null)
         {
             UpdateImages();
         }
@@ -32,7 +32,7 @@ public class PlayerIconPrefab : MonoBehaviour
 
     public bool UpdateImages()
     {
-        if (head != null)
+        if (head != null && playerSprite != null)
         {
             head.sprite = playerSprite.head.sprite;
         }
@@ -43,7 +43,7 @@ public class PlayerIconPrefab : MonoBehaviour
 
         if (eyeColour != null)
         {
-            eyeColour.color = playerSprite.irises.color;
+            eyeColour.color = playerSprite.eyesIrises.color;
             GetComponent<Image>().color = new Color(eyeColour.color.g - 0.5f, eyeColour.color.b - 0.2f, eyeColour.color.r - 0.2f, 0.5f);
         }
         else
@@ -53,7 +53,7 @@ public class PlayerIconPrefab : MonoBehaviour
 
         if (eyeLines != null)
         {
-            eyeLines.sprite = playerSprite.eyes.sprite;
+            eyeLines.sprite = playerSprite.eyesLines.sprite;
 
         }
         else
@@ -61,10 +61,10 @@ public class PlayerIconPrefab : MonoBehaviour
             return false;
         }
 
-        if (mouth != null)
+        if (mouth != null && playerSprite.expression != null)
         {
 
-            mouth.sprite = playerSprite.mouth.sprite;
+            mouth.sprite = playerSprite.expression.sprite;
 
         }
         else
@@ -75,7 +75,7 @@ public class PlayerIconPrefab : MonoBehaviour
         if (hairOutline != null)
         {
 
-            hairOutline.sprite = playerSprite.hairOutline.sprite;
+            hairOutline.sprite = playerSprite.playerHair.outline.sprite;
 
         }
         else
@@ -86,7 +86,7 @@ public class PlayerIconPrefab : MonoBehaviour
         if (hairLinework != null)
         {
 
-            hairLinework.sprite = playerSprite.hairLinework.sprite;
+            hairLinework.sprite = playerSprite.playerHair.frontLines.sprite;
 
         }
         else
@@ -97,8 +97,8 @@ public class PlayerIconPrefab : MonoBehaviour
         if (hairColour != null)
         {
 
-            hairColour.sprite = playerSprite.hairColour.sprite;
-            hairColour.color = playerSprite.hairColour.color;
+            hairColour.sprite = playerSprite.playerHair.frontColour.sprite;
+            hairColour.color = playerSprite.playerHair.frontColour.color;
 
         }
         else
