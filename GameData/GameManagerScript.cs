@@ -173,7 +173,7 @@ public class GameManagerScript : MonoBehaviour
         dataManager.playerName = "Morgan";
         dataManager.playerNameColour = "597266";
         dataManager.eyesHexColour = "87DF5C";
-        dataManager.hairHexColour = "896C5C";
+        dataManager.playerSprite.ResetValues();
 
         yield return StartCoroutine(ResetGameComponentsCoroutine());
 
