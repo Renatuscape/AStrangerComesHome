@@ -9,6 +9,7 @@ public class CharacterEyesCatalogue : MonoBehaviour
     public List<Sprite> unsortedSprites;
     public List<PlayerEyesPackage> playerHairPackages = new();
     public bool ready = false;
+    public int index = 0;
     void Start()
     {
         if (unsortedSprites != null && unsortedSprites.Count > 0)
