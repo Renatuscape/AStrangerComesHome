@@ -8,7 +8,7 @@ public class ColourPicker : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public PlayerSprite playerSprite;
-    public PlayerIconPrefab playerIcon;
+    public DialoguePlayerSprite playerIcon;
 
     public Image colourPreview;
     public TextMeshProUGUI hexText;
@@ -16,28 +16,52 @@ public class ColourPicker : MonoBehaviour
     public Slider sliderR;
     public Slider sliderG;
     public Slider sliderB;
+    public Slider sliderA;
 
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI targetText;
 
-    public int targetIndex; //0 = name, 1 = hair, 2 = eyes
+    public int targetIndex; //0 = name, 1 = hair, 2 = eyes, 3 = accessory, 4 = lip tint
 
     private void OnEnable()
     {
-        hexText.text = "Hex #" + dataManager.hairHexColour;
+        hexText.text = "Hex #" + dataManager.playerSprite.hairHexColour;
         AddListeners();
 
-        if (targetIndex == 2)
+        if (targetIndex == 4)
         {
-            SetSlidersFromHex(dataManager.eyesHexColour);
+            sliderA.value = dataManager.playerSprite.lipTintTransparency;
+            sliderA.gameObject.SetActive(true);
+        }
+        else
+        {
+            sliderA.gameObject.SetActive(false);
+        }
+
+        if (targetIndex == 4)
+        {
+            SetSlidersFromHex(dataManager.playerSprite.lipTintHexColour);
+            targetText.text = "Lip Tint Colour";
+        }
+        else if (targetIndex == 3)
+        {
+            SetSlidersFromHex(dataManager.playerSprite.accessoryHexColour);
+            targetText.text = "Accessory Colour";
+        }
+        else if (targetIndex == 2)
+        {
+            SetSlidersFromHex(dataManager.playerSprite.eyesHexColour);
+            targetText.text = "Eye Colour";
         }
         else if (targetIndex == 1)
         {
-            SetSlidersFromHex(dataManager.hairHexColour);
+            SetSlidersFromHex(dataManager.playerSprite.hairHexColour);
+            targetText.text = "Hair Colour";
         }
         else if (targetIndex == 0)
         {
             SetSlidersFromHex(dataManager.playerNameColour);
+            targetText.text = "Name Colour";
         }
 
     }
@@ -46,6 +70,7 @@ public class ColourPicker : MonoBehaviour
         sliderR.onValueChanged.RemoveAllListeners();
         sliderG.onValueChanged.RemoveAllListeners();
         sliderB.onValueChanged.RemoveAllListeners();
+        sliderA.onValueChanged.RemoveAllListeners();
     }
 
     public void SetSlidersFromHex(string hexColor)
@@ -62,7 +87,7 @@ public class ColourPicker : MonoBehaviour
             float gNormalized = g / 255f;
             float bNormalized = b / 255f;
 
-            if (r > sliderR.minValue || g > sliderG.minValue ||  b > sliderB.minValue)
+            if (r > sliderR.minValue || g > sliderG.minValue || b > sliderB.minValue)
             {
                 Debug.Log($"An RGB value exceeded slider minimum value. {hexColor} was not accepted. Colour approximated.");
             }
@@ -81,37 +106,59 @@ public class ColourPicker : MonoBehaviour
         sliderR.onValueChanged.AddListener(OnSliderChange);
         sliderG.onValueChanged.AddListener(OnSliderChange);
         sliderB.onValueChanged.AddListener(OnSliderChange);
+        sliderA.onValueChanged.AddListener(OnSliderChange);
     }
+
+    //private void OnAlphaSliderChange(float value)
+    //{
+
+    //}
 
     private void OnSliderChange(float value)
     {
-        if (targetIndex == 2)
+        if (targetIndex == 4)
         {
-            AdjustImageColour(playerSprite.irises, ref dataManager.eyesHexColour, "Eye Colour");
+            GetSliderColour(ref dataManager.playerSprite.lipTintHexColour, true, out var colour);
+            dataManager.playerSprite.lipTintTransparency = sliderA.value;
+            playerSprite.lipTint.color = new Color (colour.r, colour.g, colour.b, sliderA.value);
         }
-
+        else if (targetIndex == 3)
+        {
+            GetSliderColour(ref dataManager.playerSprite.accessoryHexColour, false, out var colour);
+            playerSprite.playerHair.ApplyAccessoryColour(colour);
+        }
+        else if (targetIndex == 2)
+        {
+            AdjustImageColour(playerSprite.eyesIrises, ref dataManager.eyesHexColour);
+        }
         else if (targetIndex == 1)
         {
-            AdjustImageColour(playerSprite.hairColour, ref dataManager.hairHexColour, "Hair Colour");
+            GetSliderColour(ref dataManager.playerSprite.hairHexColour, false, out var colour);
+            playerSprite.playerHair.ApplyHairColour(colour);
         }
         else if (targetIndex == 0)
         {
-            AdjustTextColour(nameText, ref dataManager.playerNameColour, "Name Colour");
+            AdjustTextColour(nameText, ref dataManager.playerNameColour);
         }
 
-        if(sliderR.value + sliderG.value + sliderB.value < 0.7f)
+        if (sliderR.value + sliderG.value + sliderB.value < 0.7f)
         {
             hexText.color = Color.white;
         }
         else
-            hexText.color = Color.black;
-
-        if (playerIcon is not null)
         {
-            playerIcon.UpdateImages();
+            hexText.color = Color.black;
+        }
+
+
+        if (playerIcon != null)
+        {
+            // Replace with less expensive update menu in the future
+            playerIcon.gameObject.SetActive(false);
+            playerIcon.gameObject.SetActive(true);
         }
     }
-    public void AdjustImageColour(Image targetImage, ref string storedHexString, string targetName)
+    public void AdjustImageColour(Image targetImage, ref string storedHexString)
     {
         //Get the current colour of the target image
         Color origColor = targetImage.color;
@@ -133,10 +180,32 @@ public class ColourPicker : MonoBehaviour
         //Store and display hex value
         storedHexString = hexColour;
         hexText.text = "Hex #" + hexColour;
-        targetText.text = targetName;
     }
 
-    public void AdjustTextColour(TextMeshProUGUI text, ref string storedHexString, string targetName)
+    public void GetSliderColour(ref string storedHexString, bool enableAlpha, out Color adjustedColour)
+    {
+        //Apply adjustments based on slider values
+        float red = sliderR.value;
+        float green = sliderG.value;
+        float blue = sliderB.value;
+        float alpha = enableAlpha ? sliderA.value : 1;
+        Debug.Log("Alpha was stored as " + alpha);
+
+        //Create a new colour with adjusted RGB values
+        adjustedColour = new Color(red, green, blue, alpha);
+
+        //Apply new colour
+        colourPreview.color = adjustedColour;
+
+        //Convert colour to hex
+        string hexColour = ColorUtility.ToHtmlStringRGBA(colourPreview.color);
+        //Store and display hex value
+        storedHexString = hexColour;
+
+        hexText.text = "Hex #" + hexColour;
+    }
+
+    public void AdjustTextColour(TextMeshProUGUI text, ref string storedHexString)
     {
         //Get the current colour of the target image
         Color origColor = text.color;
@@ -158,6 +227,5 @@ public class ColourPicker : MonoBehaviour
         //Store and display hex value
         storedHexString = hexColour;
         hexText.text = "Hex #" + hexColour;
-        targetText.text = targetName;
     }
 }
