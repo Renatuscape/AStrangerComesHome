@@ -10,6 +10,7 @@ public class CharacterCreator : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public CharacterHairCatalogue hairCatalogue;
+    public CharacterEyesCatalogue eyesCatalogue;
     public GameObject portraitRenderer;
     public GameObject portraitCanvas;
 
@@ -27,7 +28,6 @@ public class CharacterCreator : MonoBehaviour
     public DialoguePlayerSprite playerIcon;
     public GameObject accessoryToggleContainer;
     public Toggle accessoryToggle;
-    public Toggle lipTintToggle;
 
     private void OnEnable()
     {
@@ -47,9 +47,7 @@ public class CharacterCreator : MonoBehaviour
             hairStyleNumber.text = "0";
 
             accessoryToggle.isOn = dataManager.playerSprite.enableAccessory;
-            lipTintToggle.isOn = dataManager.playerSprite.lipTintTransparency > 0;
             ToggleAccessory();
-            ToggleLipTint();
         }
     }
 
@@ -105,6 +103,8 @@ public class CharacterCreator : MonoBehaviour
                 accessoryToggleContainer.SetActive(false);
             }
         }
+        
+        UpdatePlayerIcon();
     }
 
     public void ChangeBody(bool isPrevious)
@@ -157,26 +157,16 @@ public class CharacterCreator : MonoBehaviour
 
     public void ChangeEyes(bool isPrevious)
     {
-        if (isPrevious)
+        var package = eyesCatalogue.GetNextPackageByIndex(isPrevious);
+
+        if (package != null)
         {
-            if (dataManager.eyesIndex > 0)
-            {
-                dataManager.eyesIndex--;
-            }
-            else
-                dataManager.eyesIndex = playerSprite.playerEyes.Count - 1;
-        }
-        else
-        {
-            if (dataManager.eyesIndex < playerSprite.playerEyes.Count - 1)
-            {
-                dataManager.eyesIndex++;
-            }
-            else
-                dataManager.eyesIndex = 0;
+            dataManager.playerSprite.eyesID = package.eyesID;
+            playerSprite.playerEyes.ApplyEyesPackage(package);
+            eyesNumber.text = eyesCatalogue.index.ToString();
         }
 
-        UpdateSpriteFromData();
+        UpdatePlayerIcon();
     }
 
     public void ToggleAccessory()
@@ -190,26 +180,6 @@ public class CharacterCreator : MonoBehaviour
         UpdatePlayerIcon();
     }
 
-    public void ToggleLipTint()
-    {
-        if (lipTintToggle.isOn && dataManager.playerSprite.lipTintTransparency <= 0)
-        {
-            dataManager.playerSprite.lipTintTransparency = 0.8f;
-            
-            if (colourPicker.gameObject.activeInHierarchy)
-            {
-                colourPicker.gameObject.SetActive(false);
-            }
-        }
-        if (!lipTintToggle.isOn)
-        {
-            dataManager.playerSprite.lipTintTransparency = 0;
-            colourPicker.gameObject.SetActive(false);
-        }
-        playerSprite.lipTint.color = new UnityEngine.Color(playerSprite.lipTint.color.r, playerSprite.lipTint.color.g, playerSprite.lipTint.color.b, dataManager.playerSprite.lipTintTransparency);
-        UpdatePlayerIcon();
-    }
-
     public void EnableColourPicker(int targetIndex)
     {
         var oldIndex = colourPicker.GetComponent<ColourPicker>().targetIndex;
@@ -220,12 +190,7 @@ public class CharacterCreator : MonoBehaviour
             colourPicker.GetComponent<ColourPicker>().targetIndex = targetIndex;
             colourPicker.SetActive(true);
 
-            if (targetIndex == 4 && !lipTintToggle.isOn)
-            {
-                lipTintToggle.isOn = true;
-                ToggleLipTint();
-            }
-            else if (targetIndex == 3 && !accessoryToggle.isOn)
+            if (targetIndex == 3 && !accessoryToggle.isOn)
             {
                 accessoryToggle.isOn = true;
                 ToggleAccessory();
