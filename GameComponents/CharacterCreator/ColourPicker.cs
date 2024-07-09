@@ -20,6 +20,7 @@ public class ColourPicker : MonoBehaviour
 
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI targetText;
+    public TextMeshProUGUI transparencyText;
 
     public int targetIndex; //0 = name, 1 = hair, 2 = eyes, 3 = accessory, 4 = lip tint
 
@@ -28,12 +29,7 @@ public class ColourPicker : MonoBehaviour
         hexText.text = "Hex #" + dataManager.playerSprite.hairHexColour;
         AddListeners();
 
-        if (targetIndex == 4)
-        {
-            sliderA.value = dataManager.playerSprite.lipTintTransparency;
-            sliderA.gameObject.SetActive(true);
-        }
-        else
+        if (targetIndex != 4)
         {
             sliderA.gameObject.SetActive(false);
         }
@@ -41,7 +37,11 @@ public class ColourPicker : MonoBehaviour
         if (targetIndex == 4)
         {
             SetSlidersFromHex(dataManager.playerSprite.lipTintHexColour);
+            sliderA.value = dataManager.playerSprite.lipTintTransparency;
+
+            sliderA.gameObject.SetActive(true);
             targetText.text = "Lip Tint Colour";
+            transparencyText.text = Mathf.RoundToInt(sliderA.value * 100) + "%";
         }
         else if (targetIndex == 3)
         {
@@ -75,7 +75,7 @@ public class ColourPicker : MonoBehaviour
 
     public void SetSlidersFromHex(string hexColor)
     {
-        //Debug.Log("SetSlidersFromHex called using index " + targetIndex + "and hex colour #" + hexColor);
+        Debug.Log("SetSlidersFromHex called using index " + targetIndex + " and hex colour #" + hexColor);
         if (hexColor.Length >= 6)
         {
             var r = int.Parse(hexColor.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
@@ -87,10 +87,11 @@ public class ColourPicker : MonoBehaviour
             float gNormalized = g / 255f;
             float bNormalized = b / 255f;
 
-            if (r > sliderR.minValue || g > sliderG.minValue || b > sliderB.minValue)
+            if (r < sliderR.minValue || g < sliderG.minValue || b < sliderB.minValue)
             {
                 Debug.Log($"An RGB value exceeded slider minimum value. {hexColor} was not accepted. Colour approximated.");
             }
+
             sliderR.value = rNormalized;
             sliderG.value = gNormalized;
             sliderB.value = bNormalized;
@@ -109,11 +110,6 @@ public class ColourPicker : MonoBehaviour
         sliderA.onValueChanged.AddListener(OnSliderChange);
     }
 
-    //private void OnAlphaSliderChange(float value)
-    //{
-
-    //}
-
     private void OnSliderChange(float value)
     {
         if (targetIndex == 4)
@@ -121,6 +117,8 @@ public class ColourPicker : MonoBehaviour
             GetSliderColour(ref dataManager.playerSprite.lipTintHexColour, true, out var colour);
             dataManager.playerSprite.lipTintTransparency = sliderA.value;
             playerSprite.lipTint.color = new Color (colour.r, colour.g, colour.b, sliderA.value);
+
+            transparencyText.text = Mathf.RoundToInt(sliderA.value * 100) + "%";
         }
         else if (targetIndex == 3)
         {
@@ -129,7 +127,7 @@ public class ColourPicker : MonoBehaviour
         }
         else if (targetIndex == 2)
         {
-            AdjustImageColour(playerSprite.eyesIrises, ref dataManager.eyesHexColour);
+            AdjustImageColour(playerSprite.playerEyes.iris, ref dataManager.eyesHexColour);
         }
         else if (targetIndex == 1)
         {
