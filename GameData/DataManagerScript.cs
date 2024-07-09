@@ -106,24 +106,25 @@ public class PlayerSpriteData
     public string bodyID;
     public string headID;
     public string eyesID;
-    public string lipTintID;
 
     public string hairHexColour;
+    public string hairAccentHexColour;
     public string accessoryHexColour;
     public string eyesHexColour;
     public string lipTintHexColour;
     public float lipTintTransparency;
     public bool enableAccessory;
+    public bool enableAccent;
 
     public void ResetValues()
     {
-        hairID = "default";
-        bodyID = "default";
-        headID = "default";
-        eyesID = "default";
-        lipTintID = "none";
+        hairID = "HairA0";
+        bodyID = "Default";
+        headID = "Default";
+        eyesID = "EyesA0";
 
         hairHexColour = "83695C";
+        hairAccentHexColour = "99825f";
         eyesHexColour = "88DA69";
         accessoryHexColour = "85BFB1";
         lipTintHexColour = "CAAB80";
