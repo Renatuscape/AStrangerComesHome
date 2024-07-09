@@ -6,10 +6,13 @@ using UnityEngine;
 
 public class CharacterEyesCatalogue : MonoBehaviour
 {
+    public Sprite defaultIrises;
+    public Sprite defaultSclera;
     public List<Sprite> unsortedSprites;
-    public List<PlayerEyesPackage> playerHairPackages = new();
+    public List<PlayerEyesPackage> eyePackages = new();
     public bool ready = false;
     public int index = 0;
+
     void Start()
     {
         if (unsortedSprites != null && unsortedSprites.Count > 0)
@@ -17,21 +20,79 @@ public class CharacterEyesCatalogue : MonoBehaviour
             AssembleEyesPackages();
         }
     }
+
+    public PlayerEyesPackage GetPackageByID(string eyesID)
+    {
+        if (ready)
+        {
+            var package = eyePackages.FirstOrDefault(p => p.eyesID == eyesID);
+
+            if (package == null)
+            {
+                return eyePackages[0];
+            }
+            else
+            {
+                return package;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public PlayerEyesPackage GetNextPackageByIndex(bool goBack)
+    {
+        if (goBack)
+        {
+            index--;
+
+            if (index < 0)
+            {
+                index = eyePackages.Count - 1;
+            }
+        }
+        else
+        {
+            index++;
+            if (index >= eyePackages.Count)
+            {
+                index = 0;
+            }
+        }
+
+        return eyePackages[index];
+    }
+
     void AssembleEyesPackages()
     {
         foreach (var sprite in unsortedSprites)
         {
             var spriteData = sprite.name.Split('_');
 
-            PlayerEyesPackage package = playerHairPackages.FirstOrDefault(p => p.eyesID == spriteData[0]);
+            PlayerEyesPackage package = eyePackages.FirstOrDefault(p => p.eyesID == spriteData[0]);
 
             if (package == null)
             {
                 package = new() { eyesID = spriteData[0] };
-                playerHairPackages.Add(package);
+                eyePackages.Add(package);
             }
 
             AddToPackage(package, sprite);
+        }
+
+        foreach (var package in eyePackages)
+        {
+            if (package.sclera == null)
+            {
+                package.sclera = defaultSclera;
+            }
+
+            if (package.iris == null)
+            {
+                package.iris = defaultIrises;
+            }
         }
 
         ready = true;
