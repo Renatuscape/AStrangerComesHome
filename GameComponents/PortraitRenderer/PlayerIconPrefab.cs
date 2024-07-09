@@ -34,7 +34,7 @@ public class PlayerIconPrefab : MonoBehaviour
     {
         if (head != null && playerSprite != null)
         {
-            head.sprite = playerSprite.head.sprite;
+            head.sprite = playerSprite.playerEyes.iris.sprite;
         }
         else
         {
@@ -43,7 +43,7 @@ public class PlayerIconPrefab : MonoBehaviour
 
         if (eyeColour != null)
         {
-            eyeColour.color = playerSprite.eyesIrises.color;
+            eyeColour.color = playerSprite.playerEyes.iris.color;
             GetComponent<Image>().color = new Color(eyeColour.color.g - 0.5f, eyeColour.color.b - 0.2f, eyeColour.color.r - 0.2f, 0.5f);
         }
         else
@@ -53,7 +53,7 @@ public class PlayerIconPrefab : MonoBehaviour
 
         if (eyeLines != null)
         {
-            eyeLines.sprite = playerSprite.eyesLines.sprite;
+            eyeLines.sprite = playerSprite.playerEyes.iris.sprite;
 
         }
         else
@@ -61,10 +61,10 @@ public class PlayerIconPrefab : MonoBehaviour
             return false;
         }
 
-        if (mouth != null && playerSprite.expression != null)
+        if (mouth != null && playerSprite.playerEyes.iris != null)
         {
 
-            mouth.sprite = playerSprite.expression.sprite;
+            mouth.sprite = playerSprite.playerEyes.iris.sprite;
 
         }
         else
