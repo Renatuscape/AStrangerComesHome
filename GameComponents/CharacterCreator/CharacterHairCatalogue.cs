@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
 public class CharacterHairCatalogue : MonoBehaviour
 {
     public List<Sprite> unsortedSprites;
@@ -127,7 +126,9 @@ public class PlayerHairPackage
     public Sprite accessoryOutline;
     public Sprite frontLines;
     public Sprite frontColour;
+    public Sprite frontAccent;
     public Sprite backLines;
     public Sprite backColour;
+    public Sprite backAccent;
     public Sprite outline;
 }
