@@ -9,14 +9,21 @@ public class PlayerSpriteEyes
     public Image iris;
     public Image lines;
 
-    public void LoadPackageWithColours(PlayerEyesPackage eyePackage)
+    public void LoadPackageWithColours(PlayerEyesPackage package)
     {
-        sclera.sprite = eyePackage.sclera;
-        iris.sprite = eyePackage.iris;
-        lines.sprite = eyePackage.lines;
+        if (package == null)
+        {
+            Debug.Log("Eyes package was null.");
+        }
+        else
+        {
+            sclera.sprite = package.sclera;
+            iris.sprite = package.iris;
+            lines.sprite = package.lines;
 
-        var dataManager = TransientDataScript.gameManager.dataManager;
-        iris.color = TransientDataScript.GetColourFromHex(dataManager.playerSprite.eyesHexColour);
+            var dataManager = TransientDataScript.gameManager.dataManager;
+            iris.color = TransientDataScript.GetColourFromHex(dataManager.playerSprite.eyesHexColour);
+        }
     }
 
     public void ApplyEyesPackage(PlayerEyesPackage eyePackage)
