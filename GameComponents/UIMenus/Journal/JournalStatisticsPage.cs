@@ -8,7 +8,6 @@ public class JournalStatisticsPage : MonoBehaviour
 {
     public FontManager fontManager;
     public DataManagerScript dataManager;
-    // public PlayerIcon playerIcon;
     public PlayerSprite playerSprite;
     public GameObject personaliaContainer;
     public TextMeshProUGUI namePlate;
@@ -27,9 +26,7 @@ public class JournalStatisticsPage : MonoBehaviour
     }
     void OnEnable()
     {
-        // playerIcon.playerSprite = playerSprite;
         int licenseGrade = Player.GetCount("SCR012", name);
-        // playerIcon.UpdateImages();
 
         if (Characters.all.Count > 0)
         {
