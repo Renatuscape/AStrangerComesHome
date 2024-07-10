@@ -127,7 +127,7 @@ public class ColourPicker : MonoBehaviour
         }
         else if (targetIndex == 2)
         {
-            AdjustImageColour(playerSprite.playerEyes.iris, ref dataManager.eyesHexColour);
+            AdjustImageColour(playerSprite.playerEyes.iris, ref dataManager.playerSprite.eyesHexColour);
         }
         else if (targetIndex == 1)
         {
@@ -174,7 +174,7 @@ public class ColourPicker : MonoBehaviour
         colourPreview.color = adjustedColour;
 
         //Convert colour to hex
-        string hexColour = ColorUtility.ToHtmlStringRGBA(colourPreview.color);
+        string hexColour = ColorUtility.ToHtmlStringRGBA(adjustedColour);
         //Store and display hex value
         storedHexString = hexColour;
         hexText.text = "Hex #" + hexColour;
