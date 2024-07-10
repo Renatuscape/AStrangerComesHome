@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class PortraitRenderer : MonoBehaviour
 {
+    public PlayerSprite playerSpriteData;
     public GameObject playerSprite;
     float playerDefaultX = -600f;
     public GameObject rightPortraitContainer;
@@ -15,13 +16,6 @@ public class PortraitRenderer : MonoBehaviour
     public GameObject leftPortraitContainer;
     public Image leftCharacterImage;
     float leftDefaultX = -600f;
-
-    public Sprite defaultFrame;
-    public List<Sprite> npcFrames;
-    public List<Sprite> playerFrames;
-    public Image leftFrame;
-    public Image rightFrame;
-    public Image playerFrame;
 
     private void Awake()
     {
@@ -37,44 +31,14 @@ public class PortraitRenderer : MonoBehaviour
         }
     }
 
-    Sprite FindNpcFrame(Character character)
+    public void UpdatePlayerSprite()
     {
-        var frame = npcFrames.FirstOrDefault(f => f.name.Contains(character.objectID));
-
-        if (frame == null)
-        {
-            return defaultFrame;
-        }
-        else
-        {
-            return frame;
-        }
+        playerSpriteData.UpdateAllFromGameData();
     }
 
-    Sprite FindPlayerFrame()
-    {
-        if (playerFrames == null || playerFrames.Count  == 0)
-        {
-            return defaultFrame;
-        }
-
-        string frameID = TransientDataScript.gameManager.dataManager.frameID;
-        Sprite frame = playerFrames.FirstOrDefault(f => f.name.Contains(frameID));
-        
-        if (frame == null)
-        {
-            return playerFrames[0];
-        }
-        else
-        {
-            return frame;
-        }
-    }
 
     public void EnableForGarage(string characterID)
     {
-        rightFrame.enabled = false;
-        playerFrame.enabled = false;
         SetSprite(characterID);
         EnablePlayer();
 
@@ -85,8 +49,6 @@ public class PortraitRenderer : MonoBehaviour
     }
     public void EnableForShop(string characterID)
     {
-        rightFrame.enabled = false;
-        playerFrame.enabled = false;
 
         //SET SPRITE
         SetSprite(characterID);
@@ -141,7 +103,6 @@ public class PortraitRenderer : MonoBehaviour
     void EnablePlayer()
     {
         playerSprite.SetActive(true);
-        playerFrame.sprite = FindPlayerFrame();
     }
 
     void SetSprite(string characterID, bool isRight = true)
@@ -154,23 +115,19 @@ public class PortraitRenderer : MonoBehaviour
     void SetSprite(Character character, bool isRight = true)
     {
         Image characterImage;
-        Image frameImage;
 
         if (isRight)
         {
             rightPortraitContainer.SetActive(true);
             characterImage = rightCharacterImage;
-            frameImage = rightFrame;
         }
         else
         {
             leftPortraitContainer.SetActive(true);
             characterImage = leftCharacterImage;
-            frameImage = leftFrame;
         }
 
         characterImage.sprite = character.sprite;
-        frameImage.sprite = FindNpcFrame(character);
     }
 
     void MoveSprite(GameObject spriteObject, float positionX, bool transition = true)
@@ -252,9 +209,6 @@ public class PortraitRenderer : MonoBehaviour
 
     void ResetValues()
     {
-        leftFrame.enabled = true;
-        rightFrame.enabled = true;
-        playerFrame.enabled = true;
         playerSprite.SetActive(false);
         MoveSprite(playerSprite, playerDefaultX, false);
         rightPortraitContainer.SetActive(false);
