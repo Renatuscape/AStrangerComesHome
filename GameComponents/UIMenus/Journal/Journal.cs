@@ -73,7 +73,7 @@ public class Journal : MonoBehaviour
 
     private void OnEnable()
     {
-        AudioManager.PlaySoundEffect("bookPlace1");
+        AudioManager.PlaySoundEffect("bookPlace1", -0.1f);
         foreach (var card in cards)
         {
             // Access the TextMeshPro objects within the child components of each card
@@ -84,7 +84,7 @@ public class Journal : MonoBehaviour
 
     private void OnDisable()
     {
-        AudioManager.PlaySoundEffect("bookPlace1");
+        AudioManager.PlaySoundEffect("bookPlace1", -0.1f);
     }
 
     private void Update()
@@ -134,7 +134,7 @@ public class Journal : MonoBehaviour
         }
         mainPage = (JournalMainPage)mainPageIndex;
         
-        AudioManager.PlaySoundEffect("bookFlip2");
+        AudioManager.PlaySoundEffect("bookFlip2", -0.1f);
 
         foreach (var card in cards)
         {
