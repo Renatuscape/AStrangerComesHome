@@ -174,6 +174,7 @@ public class GameManagerScript : MonoBehaviour
         dataManager.playerNameColour = "597266";
         dataManager.eyesHexColour = "87DF5C";
         dataManager.playerSprite.ResetValues();
+        portraitRenderer.UpdatePlayerSprite();
 
         yield return StartCoroutine(ResetGameComponentsCoroutine());
 
@@ -244,6 +245,7 @@ public class GameManagerScript : MonoBehaviour
         questTracker.StartTracking();
         alchemyTracker.StartTracking();
         passengerManager.Initialise();
+        portraitRenderer.UpdatePlayerSprite();
 
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
