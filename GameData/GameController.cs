@@ -149,7 +149,7 @@ public class GameController : MonoBehaviour
         if (TransientDataScript.GameState == GameState.Overworld)
         {
             TransientDataScript.SetGameState(GameState.JournalMenu, name, gameObject);
-            TransientDataScript.gameManager.menuSystem.journalMenu.SetActive(true);
+            TransientDataScript.gameManager.menuSystem.journalMenu.gameObject.SetActive(true);
         }
         else if (TransientDataScript.GameState == GameState.JournalMenu)
         {
