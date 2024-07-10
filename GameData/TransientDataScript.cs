@@ -327,24 +327,32 @@ public class TransientDataScript : MonoBehaviour
 
     public static Color GetColourFromHex(string hexColour)
     {
-        var r = int.Parse(hexColour.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-        var g = int.Parse(hexColour.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-        var b = int.Parse(hexColour.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-
-        // Convert the RGB values from the range of 0-255 to 0-1
-        float rNormalized = r / 255f;
-        float gNormalized = g / 255f;
-        float bNormalized = b / 255f;
-
-        if (hexColour.Length >= 8)
+        if (hexColour.Length >= 6)
         {
-            var a = int.Parse(hexColour.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
-            float aNormalized = a / 255f;
+            var r = int.Parse(hexColour.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            var g = int.Parse(hexColour.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            var b = int.Parse(hexColour.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
 
-            return new Color(rNormalized, gNormalized, bNormalized, aNormalized);
+            // Convert the RGB values from the range of 0-255 to 0-1
+            float rNormalized = r / 255f;
+            float gNormalized = g / 255f;
+            float bNormalized = b / 255f;
+
+            if (hexColour.Length >= 8)
+            {
+                var a = int.Parse(hexColour.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+                float aNormalized = a / 255f;
+
+                return new Color(rNormalized, gNormalized, bNormalized, aNormalized);
+            }
+
+            return new Color(rNormalized, gNormalized, bNormalized, 1);
         }
-
-        return new Color(rNormalized, gNormalized, bNormalized);
+        else
+        {
+            Debug.Log("String not recognised as hex.");
+            return Color.white;
+        }
     }
 }
 
