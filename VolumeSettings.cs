@@ -9,19 +9,19 @@ using Random = UnityEngine.Random;
 public class VolumeSettings : MonoBehaviour
 {
     public Slider musicSlider;
-    public Slider ambientSlider;
+    public Slider effectSlider;
     bool sampleCooldown = false;
     
     void Start()
     {
         musicSlider.onValueChanged.AddListener(OnMusicSliderChange);
-        ambientSlider.onValueChanged.AddListener(OnAmbientSliderChange);
+        effectSlider.onValueChanged.AddListener(OnAmbientSliderChange);
     }
 
     private void OnEnable()
     {
         musicSlider.value = GlobalSettings.musicVolume;
-        ambientSlider.value = GlobalSettings.effectVolume;
+        effectSlider.value = GlobalSettings.effectVolume;
     }
 
     public void OnMusicSliderChange(float value)
