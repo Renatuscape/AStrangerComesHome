@@ -172,7 +172,6 @@ public class GameManagerScript : MonoBehaviour
         dataManager.saveSlot = -1;
         dataManager.playerName = "Morgan";
         dataManager.playerNameColour = "597266";
-        dataManager.eyesHexColour = "87DF5C";
         dataManager.playerSprite.ResetValues();
         portraitRenderer.UpdatePlayerSprite();
 
