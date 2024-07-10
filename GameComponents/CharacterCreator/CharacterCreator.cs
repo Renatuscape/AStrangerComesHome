@@ -78,7 +78,6 @@ public class CharacterCreator : MonoBehaviour
     {
         bodyTypeNumber.text = dataManager.bodyIndex.ToString();
         bodyToneNumber.text = dataManager.headIndex.ToString();
-        eyesNumber.text = dataManager.eyesIndex.ToString();
 
         playerSprite.UpdateAllFromGameData();
         UpdatePlayerIcon();
@@ -91,7 +90,7 @@ public class CharacterCreator : MonoBehaviour
         if (package != null)
         {
             dataManager.playerSprite.hairID = package.hairID;
-            playerSprite.playerHair.ApplyHairPackage(package, dataManager.playerSprite.enableAccessory);
+            playerSprite.playerHair.ApplyHairPackage(package, dataManager.playerSprite.enableAccessory, dataManager.playerSprite.enableAccent);
             hairStyleNumber.text = hairCatalogue.index.ToString();
 
             if (package.accessoryLines != null)
