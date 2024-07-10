@@ -22,33 +22,37 @@ public class PlayerSpriteHair
     {
         var dataManager = TransientDataScript.gameManager.dataManager;
 
-        ApplyHairPackage(hairPackage, dataManager.playerSprite.enableAccessory);
+        ApplyHairPackage(hairPackage, dataManager.playerSprite.enableAccessory, dataManager.playerSprite.enableAccent);
         ApplyHairColour(TransientDataScript.GetColourFromHex(dataManager.playerSprite.hairHexColour));
         ApplyAccessoryColour(TransientDataScript.GetColourFromHex(dataManager.playerSprite.accessoryHexColour));
     }
 
-    public void ApplyHairPackage(PlayerHairPackage hairPackage, bool enableAccessory)
+    public void ApplyHairPackage(PlayerHairPackage package, bool enableAccessory, bool enableAccent)
     {
-        if (hairPackage != null)
+        if (package == null)
+        {
+            Debug.Log("Hair package was null.");
+        }
+        else
         {
             Color existingHairColour = frontColour.color;
             Debug.Log("Stored hair colour is " + existingHairColour.ToString());
 
-            frontLines.sprite = hairPackage.frontLines;
-            frontColour.sprite = hairPackage.frontColour;
-            outline.sprite = hairPackage.outline;
+            frontLines.sprite = package.frontLines;
+            frontColour.sprite = package.frontColour;
+            outline.sprite = package.outline;
 
-            if (hairPackage.frontAccent != null)
+            if (package.frontAccent != null && enableAccent)
             {
-                frontAccent.sprite = hairPackage.frontAccent;
-                backAccent.gameObject.SetActive(true);
+                frontAccent.sprite = package.frontAccent;
+                frontAccent.gameObject.SetActive(true);
             }
             else
             {
-                backAccent.gameObject.SetActive(true);
+                frontAccent.gameObject.SetActive(false);
             }
 
-            if (hairPackage.backLines == null)
+            if (package.backLines == null)
             {
                 backLines.gameObject.SetActive(false);
                 backColour.gameObject.SetActive(false);
@@ -56,8 +60,8 @@ public class PlayerSpriteHair
             }
             else
             {
-                backLines.sprite = hairPackage.backLines;
-                backColour.sprite = hairPackage.backColour;
+                backLines.sprite = package.backLines;
+                backColour.sprite = package.backColour;
 
                 if (!backLines.gameObject.activeInHierarchy)
                 {
@@ -65,16 +69,20 @@ public class PlayerSpriteHair
                     backColour.gameObject.SetActive(true);
                 }
 
-                if (hairPackage.backAccent != null)
+                if (package.backAccent != null && enableAccent)
                 {
-                    backAccent.sprite = hairPackage.backAccent;
+                    backAccent.sprite = package.backAccent;
                     backAccent.gameObject.SetActive(true);
+                }
+                else
+                {
+                    backAccent.gameObject.SetActive(false);
                 }
             }
 
             ApplyHairColour(existingHairColour);
 
-            if (hairPackage.accessoryLines == null)
+            if (package.accessoryLines == null)
             {
                 accessoryLines.gameObject.SetActive(false);
                 accessoryColour.gameObject.SetActive(false);
@@ -84,9 +92,9 @@ public class PlayerSpriteHair
             {
                 Color existingAccessoryColour = accessoryColour.color;
 
-                accessoryLines.sprite = hairPackage.accessoryLines;
-                accessoryColour.sprite = hairPackage.accessoryColour;
-                accessoryOutline.sprite = hairPackage.accessoryOutline;
+                accessoryLines.sprite = package.accessoryLines;
+                accessoryColour.sprite = package.accessoryColour;
+                accessoryOutline.sprite = package.accessoryOutline;
 
                 if (!accessoryLines.gameObject.activeInHierarchy && enableAccessory)
                 {
