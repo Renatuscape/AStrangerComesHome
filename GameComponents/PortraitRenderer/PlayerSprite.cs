@@ -61,23 +61,13 @@ public class PlayerSprite : MonoBehaviour
             playerEyes.iris.color = Color.white;
         }
     }
-    public void UpdateSpriteIndexFromGameData()
-    {
-        // playerHair.ApplyHairPackage(hairCatalogue.GetPackageByID(dataManager.playerSprite.hairID), dataManager.playerSprite.enableAccessory);
-
-        ChangeBody(dataManager.bodyIndex);
-        ChangeHead(dataManager.headIndex);
-    }
-
-    public void UpdateSpriteColourFromGameData()
-    {
-        ColourEyes(dataManager.eyesHexColour);
-    }
 
     public void UpdateAllFromGameData()
     {
-        UpdateSpriteIndexFromGameData();
-        UpdateSpriteColourFromGameData();
+        Debug.Log("Attempting to update Player Sprite from game data.");
+
+        ChangeBody(dataManager.bodyIndex);
+        ChangeHead(dataManager.headIndex);
 
         Color lipColour = TransientDataScript.GetColourFromHex(dataManager.playerSprite.lipTintHexColour);
         lipTint.color = new Color(lipColour.r, lipColour.g, lipColour.b, dataManager.playerSprite.lipTintTransparency);
