@@ -89,7 +89,7 @@ public class PassengerManager : MonoBehaviour
             dataManager.seatB.spriteID = passengerSprite.name;
 
             passengerB.gameObject.SetActive(true);
-            passengerA.UpdatePassengerData();
+            passengerB.UpdatePassengerData();
         }
     }
     public void PassengerSpawner()
