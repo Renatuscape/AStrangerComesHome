@@ -15,7 +15,7 @@ public class PlayerSpriteExpression
         Color currentLipColour = lipTint.color;
 
         expression.sprite = package.expression;
-        eyebrowColour.sprite = package.eyebrowColour;
+        eyebrowColour.sprite = package.browColour;
         lipTint.sprite = package.lipTint;
 
         eyebrowColour.color = currentBrowColour;
