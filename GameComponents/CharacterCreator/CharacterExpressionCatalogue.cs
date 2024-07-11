@@ -20,7 +20,7 @@ public class CharacterExpressionCatalogue : MonoBehaviour
     {
         if (ready)
         {
-            var package = expressionPackages.FirstOrDefault(p => p.expressionID == expressionID);
+            var package = expressionPackages.FirstOrDefault(p => p.expressionID == "Ex" + expressionID);
 
             if (package == null)
             {
@@ -88,7 +88,7 @@ public class CharacterExpressionCatalogue : MonoBehaviour
         }
         else if (sprite.name.Contains("BrowColour"))
         {
-            package.eyebrowColour = sprite;
+            package.browColour = sprite;
         }
         else if (sprite.name.Contains("LipTint"))
         {
@@ -102,6 +102,6 @@ public class PlayerExpressionPackage
 {
     public string expressionID;
     public Sprite expression;
-    public Sprite eyebrowColour;
+    public Sprite browColour;
     public Sprite lipTint;
 }
