@@ -36,11 +36,7 @@ public class DataManagerScript : MonoBehaviour
 
     public int bodyIndex;
     public int headIndex;
-    public int eyesIndex;
     public int mouthIndex;
-
-    public string eyesHexColour;
-    public string frameID;
 
     //JOURNEY DATA - SAVE READY
     public string postLocationID;
