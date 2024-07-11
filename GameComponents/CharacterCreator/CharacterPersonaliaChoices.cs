@@ -70,6 +70,23 @@ public class CharacterPersonaliaChoices : MonoBehaviour
         if (choice == -1)
         {
             choice = genderDropdown.value;
+
+            if (choice == 0)
+            {
+                dataManager.playerGender = "Male";
+            }
+            else if (choice == 1)
+            {
+                dataManager.playerGender = "Female";
+            }
+            else if (choice == 2)
+            {
+                dataManager.playerGender = "Other";
+            }
+            else if (choice == 3)
+            {
+                dataManager.playerGender = "None";
+            }
         }
         else
         {
@@ -81,18 +98,19 @@ public class CharacterPersonaliaChoices : MonoBehaviour
             {
                 genderDropdown.value = choice;
             }
-        }
-        if (choice == 0)
-        {
-            dataManager.playerGender = "Male";
-        }
-        else if (choice == 1)
-        {
-            dataManager.playerGender = "Female";
-        }
-        else if (choice >= 2)
-        {
-            dataManager.playerGender = "Other";
+
+            if (choice == 0)
+            {
+                dataManager.playerGender = "Male";
+            }
+            else if (choice == 1)
+            {
+                dataManager.playerGender = "Female";
+            }
+            else if (choice == 2)
+            {
+                dataManager.playerGender = "Other";
+            }
         }
     }
 
