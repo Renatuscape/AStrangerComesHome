@@ -7,11 +7,9 @@ public class PlayerSprite : MonoBehaviour
 {
     public CharacterEyesCatalogue eyeCatalogue;
     public CharacterHairCatalogue hairCatalogue;
+    public CharacterExpressionCatalogue expressionCatalogue;
 
     public DataManagerScript dataManager;
-    public List<Sprite> playerHairColours;
-    public List<Sprite> playerHairLineworks;
-    public List<Sprite> playerHairOutlines;
     public List<Sprite> playerBodyTypes;
     public List<Sprite> playerHeads;
 
@@ -26,7 +24,26 @@ public class PlayerSprite : MonoBehaviour
 
     private void OnEnable()
     {
-        UpdateAllFromGameData();
+        UpdateAllFromGameData(out var hair, out var eyes);
+    }
+
+    public void SetExpressionToDefault()
+    {
+        var defaultPackage = expressionCatalogue.GetPackageByID("DEFAULT");
+        expressionCatalogue.index = expressionCatalogue.expressionPackages.IndexOf(defaultPackage);
+        SetExpression(defaultPackage);
+    }
+
+    public void SetExpression(PlayerExpressionPackage package)
+    {
+        expression.sprite = package.expression;
+        Color lipColour = lipTint.color;
+        lipTint.sprite = package.lipTint;
+        lipTint.color = lipColour;
+
+        Color browColor = playerHair.browColour.color;
+        playerHair.browColour.sprite = package.browColour;
+        playerHair.browColour.color = browColor;
     }
 
     public void ChangeBody(int index)
@@ -62,7 +79,7 @@ public class PlayerSprite : MonoBehaviour
         }
     }
 
-    public void UpdateAllFromGameData()
+    public void UpdateAllFromGameData(out PlayerHairPackage hairPackage, out PlayerEyesPackage eyePackage)
     {
         Debug.Log("Attempting to update Player Sprite from game data.");
 
@@ -72,7 +89,10 @@ public class PlayerSprite : MonoBehaviour
         Color lipColour = TransientDataScript.GetColourFromHex(dataManager.playerSprite.lipTintHexColour);
         lipTint.color = new Color(lipColour.r, lipColour.g, lipColour.b, dataManager.playerSprite.lipTintTransparency);
 
-        playerHair.LoadPackageWithColours(hairCatalogue.GetPackageByID(dataManager.playerSprite.hairID));
-        playerEyes.LoadPackageWithColours(eyeCatalogue.GetPackageByID(dataManager.playerSprite.eyesID));
+        hairPackage = hairCatalogue.GetPackageByID(dataManager.playerSprite.hairID);
+        eyePackage = eyeCatalogue.GetPackageByID(dataManager.playerSprite.eyesID);
+
+        playerHair.LoadPackageWithColours(hairPackage);
+        playerEyes.LoadPackageWithColours(eyePackage);
     }
 }
