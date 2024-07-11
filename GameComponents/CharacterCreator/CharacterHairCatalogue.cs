@@ -90,6 +90,10 @@ public class CharacterHairCatalogue : MonoBehaviour
         {
             package.frontColour = sprite;
         }
+        else if (sprite.name.Contains("_FrontAccent"))
+        {
+            package.frontAccent = sprite;
+        }
         else if (sprite.name.Contains("_BackLines"))
         {
             package.backLines = sprite;
@@ -97,6 +101,10 @@ public class CharacterHairCatalogue : MonoBehaviour
         else if (sprite.name.Contains("_BackColour"))
         {
             package.backColour = sprite;
+        }
+        else if (sprite.name.Contains("_BackAccent"))
+        {
+            package.backAccent = sprite;
         }
         else if (sprite.name.Contains("_Outline"))
         {
