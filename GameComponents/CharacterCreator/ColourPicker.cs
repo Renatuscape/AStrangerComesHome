@@ -22,7 +22,7 @@ public class ColourPicker : MonoBehaviour
     public TextMeshProUGUI targetText;
     public TextMeshProUGUI transparencyText;
 
-    public int targetIndex; //0 = name, 1 = hair, 2 = eyes, 3 = accessory, 4 = lip tint
+    public int targetIndex; //0 = name, 1 = hair, 2 = eyes, 3 = accessory, 4 = lip tint, 5 = hair accent
 
     private void OnEnable()
     {
@@ -62,6 +62,11 @@ public class ColourPicker : MonoBehaviour
         {
             SetSlidersFromHex(dataManager.playerNameColour);
             targetText.text = "Name Colour";
+        }
+        else if (targetIndex == 5)
+        {
+            SetSlidersFromHex(dataManager.playerSprite.hairAccentHexColour);
+            targetText.text = "Hair Accent";
         }
 
     }
@@ -137,6 +142,11 @@ public class ColourPicker : MonoBehaviour
         else if (targetIndex == 0)
         {
             AdjustTextColour(nameText, ref dataManager.playerNameColour);
+        }
+        else if (targetIndex == 5)
+        {
+            GetSliderColour(ref dataManager.playerSprite.hairAccentHexColour, false, out var colour);
+            playerSprite.playerHair.ApplyAccentColour(colour);
         }
 
         if (sliderR.value + sliderG.value + sliderB.value < 0.7f)
