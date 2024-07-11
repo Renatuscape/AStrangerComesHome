@@ -46,6 +46,7 @@ public static class StaticTags
 
     // Items
     public static string WeedItem { get; } = "PLA000";
+    public static string ResurrectionEssence { get; } = "CAT009";
 
     // Recipes
     public static string CausticWasteRecipe { get; } = "REC001-NN";
