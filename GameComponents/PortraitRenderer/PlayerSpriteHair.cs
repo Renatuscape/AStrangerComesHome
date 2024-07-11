@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [Serializable]
 public class PlayerSpriteHair
 {
-    public Image eyebrowColour;
+    public Image browColour;
     public Image accessoryLines;
     public Image accessoryColour;
     public Image accessoryOutline;
@@ -25,6 +25,7 @@ public class PlayerSpriteHair
         ApplyHairPackage(hairPackage, dataManager.playerSprite.enableAccessory, dataManager.playerSprite.enableAccent);
         ApplyHairColour(TransientDataScript.GetColourFromHex(dataManager.playerSprite.hairHexColour));
         ApplyAccessoryColour(TransientDataScript.GetColourFromHex(dataManager.playerSprite.accessoryHexColour));
+        ApplyAccentColour(TransientDataScript.GetColourFromHex(dataManager.playerSprite.hairAccentHexColour));
     }
 
     public void ApplyHairPackage(PlayerHairPackage package, bool enableAccessory, bool enableAccent)
@@ -42,16 +43,7 @@ public class PlayerSpriteHair
             frontColour.sprite = package.frontColour;
             outline.sprite = package.outline;
 
-            if (package.frontAccent != null && enableAccent)
-            {
-                frontAccent.sprite = package.frontAccent;
-                frontAccent.gameObject.SetActive(true);
-            }
-            else
-            {
-                frontAccent.gameObject.SetActive(false);
-            }
-
+            // CHECK FOR ANY BACK MATERIAL
             if (package.backLines == null)
             {
                 backLines.gameObject.SetActive(false);
@@ -82,6 +74,7 @@ public class PlayerSpriteHair
 
             ApplyHairColour(existingHairColour);
 
+            // CHECK FOR ACCESSORIES
             if (package.accessoryLines == null)
             {
                 accessoryLines.gameObject.SetActive(false);
@@ -105,11 +98,35 @@ public class PlayerSpriteHair
 
                 ApplyAccessoryColour(existingAccessoryColour);
             }
+
+            // APPLY ACCENTS
+            frontAccent.sprite = package.frontAccent;
+            backAccent.sprite = package.frontAccent;
+
+            if (package.frontAccent != null && enableAccent)
+            {
+                frontAccent.gameObject.SetActive(true);
+            }
+            else
+            {
+                frontAccent.gameObject.SetActive(false);
+            }
+
+            // APPLY BACK ACCENT
+
+            if (package.backAccent != null && enableAccent)
+            {
+                backAccent.gameObject.SetActive(true);
+            }
+            else
+            {
+                backAccent.gameObject.SetActive(false);
+            }
         }
     }
     public void ApplyHairColour(Color color)
     {
-        eyebrowColour.color = color;
+        browColour.color = color;
         frontColour.color = color;
         if (backColour != null)
         { backColour.color = color; }
@@ -119,6 +136,23 @@ public class PlayerSpriteHair
     {
         if (accessoryColour != null)
         { accessoryColour.color = color; }
+    }
+
+    public void ApplyAccentColour(Color colour)
+    {
+        if (backAccent != null) { backAccent.color = colour; }
+        else
+        {
+            backAccent.gameObject.SetActive(false);
+        }
+        if (frontAccent != null)
+        {
+            frontAccent.color = colour;
+        }
+        else
+        {
+            frontAccent.gameObject.SetActive(false);
+        }
     }
 
     public void ToggleAccessory(bool isEnabled)
@@ -134,6 +168,18 @@ public class PlayerSpriteHair
         if (accessoryOutline != null)
         {
             accessoryOutline.gameObject.SetActive(isEnabled);
+        }
+    }
+
+    public void ToggleAccent(bool isEnabled)
+    {
+        if (backAccent != null)
+        {
+            backAccent.gameObject.SetActive(isEnabled);
+        }
+        if (frontAccent != null)
+        {
+            frontAccent.gameObject.SetActive(isEnabled);
         }
     }
 }
