@@ -8,6 +8,7 @@ public class InteractMenu : MonoBehaviour
     public static InteractMenu instance;
     public StorySystem storySystem;
     public MenuSystem menuSystem;
+    public CharacterCreator characterCreator;
     public List<GameObject> buttons;
     public GameObject prefabContainer;
 
@@ -39,11 +40,6 @@ public class InteractMenu : MonoBehaviour
                 PrintShopButton(character, shop);
             }
 
-            if (character.type != CharacterType.Generic)
-            {
-                PrintGiftButton(character);
-            }
-
             if (character.canAccessGarage)
             {
                 PrintGarageButton(character);
@@ -52,6 +48,16 @@ public class InteractMenu : MonoBehaviour
             if (character.canAccessGuild)
             {
                 PrintGuildButton(character);
+            }
+
+            if (character.canEditCharacter)
+            {
+                PrintEditCharacterButton(character);
+            }
+
+            if (character.type != CharacterType.Generic)
+            {
+                PrintGiftButton(character);
             }
 
             prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
@@ -100,13 +106,13 @@ public class InteractMenu : MonoBehaviour
     {
         if (character.type == CharacterType.Arcana && Player.GetCount(character.objectID, name) < 1)
         {
-            var shopButton = GetButton($"I should speak with my old friend before shopping.");
+            var shopButton = GetButton($"I should speak with my old friend before shopping");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
         else if (character.type == CharacterType.Unique && Player.GetCount(character.objectID, name) < 1)
         {
-            var shopButton = GetButton($"I should introduce myself before shopping.");
+            var shopButton = GetButton($"I should introduce myself before shopping");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
@@ -126,13 +132,13 @@ public class InteractMenu : MonoBehaviour
         
         if (machinistAffection < 1 && character.objectID == machinistID)
         {
-            var shopButton = GetButton($"I should speak with my old friend before entering the garage.");
+            var shopButton = GetButton($"I should speak with my old friend before entering the garage");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
         else if (machinistAffection < 1 && character.objectID != machinistID)
         {
-            var shopButton = GetButton($"I should visit |the Machinist| before entering the garage.");
+            var shopButton = GetButton($"I should visit |the Machinist| before entering the garage");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
@@ -151,7 +157,7 @@ public class InteractMenu : MonoBehaviour
 
         if (guildLicense < 1)
         {
-            var shopButton = GetButton($"I should ask the Guildmaster about a license.");
+            var shopButton = GetButton($"I should ask the Guildmaster about a license");
             shopButton.GetComponent<Button>().onClick.RemoveAllListeners();
             return false;
         }
@@ -179,6 +185,29 @@ public class InteractMenu : MonoBehaviour
                 giftButton.GetComponent<Button>().onClick.AddListener(() => menuSystem.giftMenu.Setup(character));
             }
         }
+    }
+
+    void PrintEditCharacterButton(Character character)
+    {
+        if (RequirementChecker.CheckRequirements(character.editRequirements))
+        {
+            if (Player.GetCount(StaticTags.ResurrectionEssence, name) >= 1)
+            {
+                var editCharButton = GetButton("Use Resurrection Essence to change appearance");
+                editCharButton.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    TransientDataScript.SetGameState(GameState.CharacterCreation, "Interact Menu", gameObject);
+                    characterCreator.gameObject.SetActive(true);
+                });
+            }
+            else
+            {
+                var editCharButton = GetButton($"{character.NamePlate()} wants Resurrection Essence");
+                editCharButton.GetComponent<Button>().enabled = false;
+            }
+        }
+
+        // Print nothing if checks fail
     }
 
     void PrintLeaveButton()
