@@ -27,12 +27,17 @@ public class CharacterCreator : MonoBehaviour
     public GameObject iconContainer;
     public DialoguePlayerSprite playerIcon;
     public GameObject accessoryToggleContainer;
+    public GameObject placeholderDotAccessory;
     public Toggle accessoryToggle;
+    public GameObject accentToggleContainer;
+    public GameObject placeholderDotAccent;
+    public Toggle accentToggle;
 
     private void OnEnable()
     {
         if (TransientDataScript.GameState == GameState.CharacterCreation)
         {
+            playerSprite.SetExpressionToDefault();
             UpdatePlayerIcon();
 
             colourPicker.SetActive(false);
@@ -70,8 +75,10 @@ public class CharacterCreator : MonoBehaviour
     void UpdatePlayerIcon()
     {
         // Replace with less expensive update menu in the future
-        playerIcon.gameObject.SetActive(false);
-        playerIcon.gameObject.SetActive(true);
+        //playerIcon.gameObject.SetActive(false);
+        //playerIcon.gameObject.SetActive(true);
+
+        playerIcon.RefreshAllImages();
     }
 
     public void UpdateSpriteFromData()
@@ -79,7 +86,15 @@ public class CharacterCreator : MonoBehaviour
         bodyTypeNumber.text = dataManager.bodyIndex.ToString();
         bodyToneNumber.text = dataManager.headIndex.ToString();
 
-        playerSprite.UpdateAllFromGameData();
+        playerSprite.UpdateAllFromGameData(out var hair, out var eyes);
+        CheckHairToggles(hair);
+        
+        int hairIndex = hairCatalogue.hairPackages.IndexOf(hair);
+        int eyeIndex = eyesCatalogue.eyePackages.IndexOf(eyes);
+
+        hairStyleNumber.text = hairIndex.ToString();
+        eyesNumber.text = eyeIndex.ToString();
+
         UpdatePlayerIcon();
     }
 
@@ -93,17 +108,35 @@ public class CharacterCreator : MonoBehaviour
             playerSprite.playerHair.ApplyHairPackage(package, dataManager.playerSprite.enableAccessory, dataManager.playerSprite.enableAccent);
             hairStyleNumber.text = hairCatalogue.index.ToString();
 
-            if (package.accessoryLines != null)
-            {
-                accessoryToggleContainer.SetActive(true);
-            }
-            else
-            {
-                accessoryToggleContainer.SetActive(false);
-            }
+            CheckHairToggles(package);
         }
         
         UpdatePlayerIcon();
+    }
+
+    void CheckHairToggles(PlayerHairPackage package)
+    {
+        if (package.accessoryLines != null)
+        {
+            accessoryToggleContainer.SetActive(true);
+            placeholderDotAccessory.SetActive(false);
+        }
+        else
+        {
+            accessoryToggleContainer.SetActive(false);
+            placeholderDotAccessory.SetActive(true);
+        }
+
+        if (package.backAccent == null && package.frontAccent == null)
+        {
+            accentToggleContainer.SetActive(false);
+            placeholderDotAccent.SetActive(true);
+        }
+        else
+        {
+            accentToggleContainer.SetActive(true);
+            placeholderDotAccent.SetActive(false);
+        }
     }
 
     public void ChangeBody(bool isPrevious)
@@ -179,6 +212,17 @@ public class CharacterCreator : MonoBehaviour
         UpdatePlayerIcon();
     }
 
+    public void ToggleAccent()
+    {
+        dataManager.playerSprite.enableAccent = accentToggle.isOn;
+        playerSprite.playerHair.ToggleAccent(dataManager.playerSprite.enableAccent);
+        if (!accentToggle.isOn)
+        {
+            colourPicker.gameObject.SetActive(false);
+        }
+        UpdatePlayerIcon();
+    }
+
     public void EnableColourPicker(int targetIndex)
     {
         var oldIndex = colourPicker.GetComponent<ColourPicker>().targetIndex;
@@ -194,6 +238,11 @@ public class CharacterCreator : MonoBehaviour
                 accessoryToggle.isOn = true;
                 ToggleAccessory();
             }
+            else if (targetIndex == 5 && !accentToggle.isOn)
+            {
+                accentToggle.isOn = true;
+                ToggleAccent();
+            }
         }
         else
         {
@@ -203,6 +252,7 @@ public class CharacterCreator : MonoBehaviour
 
     public void FinaliseButton()
     {
+        playerSprite.SetExpressionToDefault();
         Character player = Characters.FindByTag("Traveller", gameObject.name);
         player.trueName = dataManager.playerName;
         player.hexColour = dataManager.playerNameColour;
