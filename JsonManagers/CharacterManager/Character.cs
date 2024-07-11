@@ -38,6 +38,8 @@ public class Character : BaseObject
     public List<Shop> shops = new();
     public bool canAccessGarage;
     public bool canAccessGuild;
+    public bool canEditCharacter;
+    public List<IdIntPair> editRequirements;
     public List<string> giftsDislike;
     public List<string> giftsLike;
     public List<string> giftsLove;
