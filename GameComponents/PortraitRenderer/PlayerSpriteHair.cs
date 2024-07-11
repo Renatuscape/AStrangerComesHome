@@ -101,7 +101,7 @@ public class PlayerSpriteHair
 
             // APPLY ACCENTS
             frontAccent.sprite = package.frontAccent;
-            backAccent.sprite = package.frontAccent;
+            backAccent.sprite = package.backAccent;
 
             if (package.frontAccent != null && enableAccent)
             {
