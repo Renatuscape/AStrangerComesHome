@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public static class CharacterNodeTracker
+public static class WorldNodeTracker
 {
     public static List<CharacterNode> allExistingNodes = new();
     static List<CharacterNode> spawnedCharacterNodes = new();
@@ -147,10 +147,9 @@ public static class CharacterNodeTracker
         return spawnedCharacterNodes.FirstOrDefault(c => c.characterID == charID) != null;
     }
 
-    public static void RemoveWorldCharacterFromList(string charID)
+    public static void RemoveNodeFromList(CharacterNode cNode)
     {
-        var foundCharacter = spawnedCharacterNodes.FirstOrDefault(c => c.characterID == charID);
-        spawnedCharacterNodes.Remove(foundCharacter);
+        spawnedCharacterNodes.Remove(cNode);
     }
 
     public static void PrintAllCharacterNodes()

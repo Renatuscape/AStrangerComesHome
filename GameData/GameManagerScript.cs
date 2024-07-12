@@ -255,7 +255,7 @@ public class GameManagerScript : MonoBehaviour
         loadingCanvas.gameObject.SetActive(true);
         TransientDataScript.isDemoEnabled = false;
 
-        CharacterNodeTracker.ClearCharacterNodes();
+        WorldNodeTracker.ClearCharacterNodes();
         foreach (GameObject component in listOfGameComponents)
         {
             component.SetActive(false);

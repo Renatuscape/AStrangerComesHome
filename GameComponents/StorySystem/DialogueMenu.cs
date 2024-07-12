@@ -91,7 +91,7 @@ public class DialogueMenu : MonoBehaviour
                 Debug.LogWarning("Set speaker ID for " + choice.optionText + " to use removeSpeakerNode feature.");
             }
 
-            CharacterNodeTracker.DisableNodeWithFade(speaker);
+            WorldNodeTracker.DisableNodeWithFade(speaker);
         }
         dialogueDisplay.gameObject.SetActive(false);
 

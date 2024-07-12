@@ -297,7 +297,7 @@ public class TransientDataScript : MonoBehaviour
     {
         QuestResetter.Tick();
         Player.CheckTimers();
-        CharacterNodeTracker.UpdateNodesOnDayTick();
+        WorldNodeTracker.UpdateNodesOnDayTick();
 
         if (GetDaysPassed() % 7 == 0)
         {

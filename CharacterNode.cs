@@ -25,7 +25,7 @@ public class CharacterNode : MonoBehaviour
     void Start()
     {
         nodeID = (string.IsNullOrEmpty(characterID) ? "overrideNode" : characterID) + Random.Range(100000, 999999);
-        CharacterNodeTracker.AddCharacterNode(this);
+        WorldNodeTracker.AddCharacterNode(this);
 
         rend = GetComponent<SpriteRenderer>();
         col = GetComponent<CapsuleCollider2D>();
@@ -134,7 +134,7 @@ public class CharacterNode : MonoBehaviour
     {
         bool passedCustomRequirements;
         bool passedDialogueRequirements;
-        bool isAlreadySpawned = CharacterNodeTracker.CheckIfCharacterExistsInDifferentNode(this);
+        bool isAlreadySpawned = WorldNodeTracker.CheckIfCharacterExistsInDifferentNode(this);
 
         if (customRequirements == null)
         {
@@ -200,7 +200,7 @@ public class CharacterNode : MonoBehaviour
             textToDisplay = character.NamePlate();
         }
 
-        Debug.Log("Display text configured to " + textToDisplay);
+        //Debug.Log("Display text configured to " + textToDisplay);
     }
 
     void FindAnyViableSpeaker()
@@ -231,7 +231,7 @@ public class CharacterNode : MonoBehaviour
                             speaker = dialogue.speakerID;
                         }
 
-                        if (!CharacterNodeTracker.CheckIfCharacterExistsInWorld(speaker))
+                        if (!WorldNodeTracker.CheckIfCharacterExistsInWorld(speaker))
                         {
                             characterID = speaker;
                             Debug.Log("Found viable dialogue and speaker for location.");
@@ -278,8 +278,7 @@ public class CharacterNode : MonoBehaviour
     void OnDestroy()
     {
         StopAllCoroutines();
-        CharacterNodeTracker.allExistingNodes.Remove(this);
-        CharacterNodeTracker.RemoveWorldCharacterFromList(character.objectID);
+        WorldNodeTracker.RemoveNodeFromList(this);
     }
 
     IEnumerator ContinuouslyCheckRequirements()
