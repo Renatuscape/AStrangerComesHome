@@ -22,8 +22,8 @@ public class Dialogue
     public string topicName;
     public string hint;
     public string backgroundID;
-    public int startTime = 0;
-    public int endTime = 0;
+    public float startTime = 0;
+    public float endTime = 0;
     public int minimumDaysPassed;
 
     public List<string> content;
@@ -39,86 +39,7 @@ public class Dialogue
 
     public bool CheckRequirements()
     {
-        if (startTime != 0 && endTime != 0)
-        {
-            float currentTime = TransientDataScript.GetTimeOfDay();
-
-            if (currentTime < startTime || currentTime > endTime)
-            {
-                Debug.Log($"Time of day {currentTime} was not between {startTime} and {endTime}");
-                return false;
-            }
-        }
-
-        if (TransientDataScript.GetDaysPassed() < minimumDaysPassed)
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrEmpty(locationID))
-        {
-            var location = TransientDataScript.GetCurrentLocation();
-
-            if (location == null || location.objectID != locationID)
-            {
-                // Debug.Log("Quest tracker returned false on locationID " + locationID);
-                return false;
-            }
-        }
-
-        if (requirements != null && requirements.Count > 0)
-        {
-            // Debug.Log($"Checking requirements for {objectID}.");
-
-            foreach (IdIntPair requirement in requirements)
-            {
-                int amount;
-                
-                if (requirement.objectID.Length > 8 && requirement.objectID.Contains("-Q"))
-                {
-                    amount = Player.GetQuestStage(requirement.objectID);
-                }
-                else
-                {
-                    amount = Player.GetCount(requirement.objectID, "Choice Requirement Check");
-                } 
-
-                // Debug.Log($"{requirement.amount} {requirement.objectID} is required. Player has {amount}");
-
-                if (amount < requirement.amount)
-                {
-                    return false;
-                }
-
-                // Debug.Log("Returned true.");
-            }
-        }
-
-        if (restrictions != null && restrictions.Count > 0) //don't run if checks already failed
-        {
-            foreach (IdIntPair restriction in restrictions)
-            {
-                int amount;
-
-                if (restriction.objectID.Length > 8 && restriction.objectID.Contains("-Q"))
-                {
-                    amount = Player.GetQuestStage(restriction.objectID);
-                }
-                else
-                {
-                    amount = Player.GetCount(restriction.objectID, "Choice Requirement Check");
-                }
-
-                if (amount > restriction.amount)
-                {
-                    //Debug.Log("Amount was higher than restricted amount. Returned false.");
-                    return false;
-                }
-            }
-            Debug.Log("Returned true.");
-        }
-
-        return true;
+        return RequirementChecker.CheckDialogueRequirements(this);
     }
 }
 
