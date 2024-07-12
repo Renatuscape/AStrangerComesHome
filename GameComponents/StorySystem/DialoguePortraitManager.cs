@@ -9,7 +9,7 @@ public class DialoguePortraitManager : MonoBehaviour
     public DialoguePortraitHelper portraitAnimator;
     public Image spriteLeft;
     public Image spriteRight;
-    public PlayerSprite playerSprite;
+    public DialoguePlayerSprite playerSprite;
 
     private void OnEnable()
     {
