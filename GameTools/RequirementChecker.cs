@@ -10,10 +10,17 @@ public static class RequirementChecker
 
     public static bool CheckDialogueRequirements(Dialogue dialogue)
     {
+        //Debug.Log("Attempting to check requirements for dialogue " + dialogue.objectID);
+
         bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
         bool locationCheck = CheckAgainstCurrentLocation(dialogue.locationID);
         bool requirementCheck = CheckRequirements(dialogue.requirements);
         bool restrictionCheck = CheckRestrictions(dialogue.restrictions);
+
+        //Debug.Log("Time check was " + timeCheck);
+        //Debug.Log("Location check was " + locationCheck);
+        //Debug.Log("Requirement check was " + requirementCheck);
+        //Debug.Log("Restriction check was " + restrictionCheck);
 
         if (timeCheck && locationCheck && requirementCheck && restrictionCheck)
         {
@@ -31,21 +38,36 @@ public static class RequirementChecker
         {
             float currentTime = TransientDataScript.GetTimeOfDay();
 
-            if (currentTime > endTime)
+            if (startTime < endTime) // DAYTIME EVENT
             {
-                return false;
+                if (currentTime > startTime && currentTime < endTime)
+                {
+                    //Debug.Log($"Daytime check returned true. Current time was {currentTime}, which checked out as less than {endTime} and more than {startTime}");
+                    return true;
+                }
+                else
+                {
+                    //Debug.Log($"Daytime check returned false. Current time ({currentTime}) was less than ({startTime}) OR more than ({endTime}).");
+                    return false;
+                }
             }
-            else if (currentTime < startTime)
+            else // NIGHT TIME EVENT
             {
-                return false;
-            }
-            else
-            {
-                return true;
+                if (currentTime < endTime || currentTime > startTime)
+                {
+                    //Debug.Log($"Nighttime check returned true. Current time was {currentTime}, which checked out as less than {endTime} and more than {startTime}");
+                    return true;
+                }
+                else
+                {
+                    //Debug.Log($"Nighttime check returned false. Current time ({currentTime}) was less than ({startTime}) AND more than ({endTime}).");
+                    return false;
+                }
             }
         }
         else
         {
+            //Debug.Log($"Time check returned true because {endTime} and {startTime} was the same.");
             return true;
         }
 
