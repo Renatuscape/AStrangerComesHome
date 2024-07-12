@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 public static class CharacterNodeTracker
@@ -107,11 +106,13 @@ public static class CharacterNodeTracker
 
     public static bool AddCharacterNode(CharacterNode cNode)
     {
-        var foundCharacter = spawnedCharacterNodes.FirstOrDefault(c => c.characterID == cNode.characterID);
+        var foundNode = spawnedCharacterNodes.FirstOrDefault(n => n.nodeID == cNode.nodeID);
+        PrintAllCharacterNodes();
 
-        if (foundCharacter == null)
+        if (foundNode == null)
         {
             spawnedCharacterNodes.Add(cNode);
+
             return true;
         }
         else
@@ -120,6 +121,27 @@ public static class CharacterNodeTracker
         }
     }
 
+    public static bool CheckIfCharacterExistsInDifferentNode(CharacterNode cNode)
+    {
+        var matchingNode = spawnedCharacterNodes.FirstOrDefault(n => n.character.objectID == cNode.characterID);
+        PrintAllCharacterNodes();
+
+        if (matchingNode == null)
+        {
+            UnityEngine.Debug.Log("No node was found with the same character object ID as " + cNode.characterID);
+            return false;
+        }
+        else if (matchingNode.nodeID != cNode.nodeID)
+        {
+            UnityEngine.Debug.Log("Matching node was found, but nodeID was not the same.");
+            return true;
+        }
+        else
+        {
+            UnityEngine.Debug.Log("Matching node was found, nodeID was identical.");
+            return false;
+        }
+    }
     public static bool CheckIfCharacterExistsInWorld(string charID)
     {
         return spawnedCharacterNodes.FirstOrDefault(c => c.characterID == charID) != null;
@@ -129,5 +151,14 @@ public static class CharacterNodeTracker
     {
         var foundCharacter = spawnedCharacterNodes.FirstOrDefault(c => c.characterID == charID);
         spawnedCharacterNodes.Remove(foundCharacter);
+    }
+
+    public static void PrintAllCharacterNodes()
+    {
+        UnityEngine.Debug.Log($"List of nodes had {spawnedCharacterNodes.Count} nodes.");
+        foreach (var node in spawnedCharacterNodes)
+        {
+            UnityEngine.Debug.Log($"Node {node.nodeID}");
+        }
     }
 }
