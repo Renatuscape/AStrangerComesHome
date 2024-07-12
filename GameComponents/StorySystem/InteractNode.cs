@@ -43,7 +43,7 @@ public class InteractNode : MonoBehaviour
     private void OnDestroy()
     {
         Debug.Log($"Removing {character.objectID} from activeWalkingNpcs.");
-        CharacterNodeTracker.RemoveWorldCharacterFromList(character.objectID);
+        //CharacterNodeTracker.RemoveCharacterFromList(character.objectID);
     }
 
     private void Update()
