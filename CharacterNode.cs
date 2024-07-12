@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CharacterNode : MonoBehaviour
 {
+    public string nodeID;
     public bool allowOverride = false; // replaces node with speaker from a viable dialogue where location is explicitly set.
-    public bool ignoreCustomReqOnOverride = false;
     public bool updateAtMidnight = false;
     public Character character;
     public string characterID;
@@ -13,67 +13,106 @@ public class CharacterNode : MonoBehaviour
     public string alternativeSpriteID;
     public string activeDialogueID; // Character only appears if all dialogue requirements are met
     public int randomSpawnChance; // Leave at 0 to always spawn
-    public bool ornamentalOnly; // Will not be changed by checks. Prevents any re-enabling. Never applied to overrides.
-    public bool disableFloatText; // Will not display float text. Enforced if character is unlinked and there is no alternative.
-    public bool doNotLinkCharacterData; // Node is not linked to an actual character object. Interaction disabled
     public bool continuouslyCheckRequirements; // If false, checks will not be reevaluated until destroyed
     public RequirementPackage customRequirements;
-    public bool isDormant = true;
+    public bool isDormant = false; // allows other classes know not to enable the node
+    public string textToDisplay;
 
     SpriteRenderer rend;
     CapsuleCollider2D col;
-    string textToDisplay;
-    bool isReadyToRetest;
-    float readyTimer = 0;
-    float readyTick = 2;
-    bool fadeIn = true;
+    bool failedRNG = false;
 
     void Start()
     {
-        CharacterNodeTracker.allExistingNodes.Add(this);
+        nodeID = (string.IsNullOrEmpty(characterID) ? "overrideNode" : characterID) + Random.Range(100000, 999999);
+        CharacterNodeTracker.AddCharacterNode(this);
+
         rend = GetComponent<SpriteRenderer>();
         col = GetComponent<CapsuleCollider2D>();
-        SetupNode();
-        fadeIn = true;
-    }
 
-    private void OnMouseOver()
-    {
-        if (!disableFloatText && TransientDataScript.GameState == GameState.Overworld)
+        if (randomSpawnChance == 0 || Random.Range(0, 100) <= randomSpawnChance)
         {
-            TransientDataScript.PrintFloatText(textToDisplay);
+            AttemptSpawn();
+        }
+        else
+        {
+            failedRNG = true;
+            HideNode();
         }
     }
 
-    private void OnMouseExit()
+    void AttemptSpawn()
     {
-        if (!disableFloatText)
+        if (allowOverride)
         {
-            TransientDataScript.DisableFloatText();
+            FindAnyViableSpeaker();
         }
-    }
 
-    private void OnMouseDown()
-    {
-        if (character != null && TransientDataScript.transientData.currentSpeed == 0)
+        if ((character == null || string.IsNullOrEmpty(character.objectID)) && !string.IsNullOrEmpty(characterID))
         {
-            if (TransientDataScript.GameState == GameState.Overworld)
+            character = Characters.FindByID(characterID);
+        }
+
+        if (character != null && !string.IsNullOrEmpty(character.objectID))
+        {
+            if (AttemptChecks())
             {
-                // Debug.Log($"Opening interact menu with {character.name}");
-                InteractMenu.Open(character);
+                EnableCharacter();
             }
+            else
+            {
+                Debug.Log("Checks failed. Attempting to hide node.");
+                HideNode();
+            }
+
+            if (continuouslyCheckRequirements)
+            {
+                StartCoroutine(ContinuouslyCheckRequirements());
+            }
+        }
+        else
+        {
+            HideNode();
         }
     }
 
     public void RefreshNode()
     {
-        Debug.Log("Refresh node was called for " + this);
-        SetupNode();
+        if (!failedRNG && AttemptChecks())
+        {
+            //Debug.Log("Checks succeeded. Attempting setup if alpha is 0.");
+            if (isDormant)
+            {
+                isDormant = false;
+                ConfigureDisplayText();
+                FindSprite();
+                StartCoroutine(FadeInAndEnable());
+            }
+        }
+        else
+        {
+            Debug.Log("Checks failed. Attempting fade and hide if not already dormant.");
+
+            if (!isDormant)
+            {
+                StartCoroutine(FadeOutNode(true));
+            }
+        }
+    }
+
+    public void FadeInAfterTemporaryDisable()
+    {
+        if (!isDormant)
+        {
+            ConfigureDisplayText();
+            FindSprite();
+            StartCoroutine(FadeInAndEnable());
+        }
     }
 
     public void DisableWithFade()
     {
-        Debug.Log("Disable with fade was called for " + this);
+        //Debug.Log("Disable with fade was called for " + this);
         col.enabled = false;
         StartCoroutine(FadeOutNode(true));
     }
@@ -81,116 +120,21 @@ public class CharacterNode : MonoBehaviour
     public void TemporarilyHide()
     {
         StartCoroutine(FadeOutNode(false));
-        if (character != null && !string.IsNullOrEmpty(character.objectID))
-        {
-            CharacterNodeTracker.RemoveWorldCharacterFromList(character.objectID);
-        }
-    }
-
-    IEnumerator FadeOutNode(bool hide)
-    {
-        Debug.Log("Fade Node And Hide Called");
-        float alpha = rend.color.a;
-        float fadeValue = 0.001f;
-
-        while (alpha > 0)
-        {
-            yield return new WaitForSeconds(0.005f);
-            alpha -= fadeValue;
-            fadeValue += 0.0005f;
-
-            rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha);
-        }
-
-        if (hide)
-        {
-            HideNode();
-        }
-    }
-
-    IEnumerator FadeInAndEnable()
-    {
-        Debug.Log("Fade In And Enable Called");
-        float alpha = 0;
-        float fadeValue = 0.01f;
-
-        while (alpha < 1)
-        {
-            alpha += fadeValue;
-            fadeValue += 0.005f;
-
-            rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha);
-
-            yield return new WaitForSeconds(0.05f);
-        }
-
-        if (!ornamentalOnly)
-        {
-            col.enabled = true;
-        }
-    }
-
-    void SetupNode()
-    {
-        Debug.Log("Attempting to set up node.");
-        isReadyToRetest = false;
-
-        if (allowOverride)
-        {
-            if (ignoreCustomReqOnOverride)
-            {
-                FindAnyViableSpeaker();
-            }
-            else if (AttemptChecks())
-            {
-                FindAnyViableSpeaker();
-            }
-            else
-            {
-                Debug.Log("Hide node was called.");
-                HideNode();
-            }
-        }
-        else if (!string.IsNullOrEmpty(characterID))
-        {
-            Debug.Log("Attempting to set up character " + characterID);
-            bool checksPassed = AttemptChecks();
-
-            if (checksPassed)
-            {
-                if (randomSpawnChance == 0 || Random.Range(0, 100) <= randomSpawnChance)
-                {
-                    col.enabled = false;
-                    EnableCharacter();
-                }
-            }
-            else
-            {
-                Debug.Log("Hide node was called.");
-                HideNode();
-            }
-        }
-        else
-        {
-            Debug.Log("Hide node was called.");
-            HideNode();
-        }
     }
 
     void HideNode()
     {
         isDormant = true;
-        Debug.Log("Hiding character " + characterID);
+        //Debug.Log("Hiding character " + characterID);
         rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, 0);
         col.enabled = false;
-        Debug.Log("Alpha value is set to " + rend.color.a);
     }
 
     bool AttemptChecks()
     {
         bool passedCustomRequirements;
         bool passedDialogueRequirements;
-        bool isAlreadySpawned = CharacterNodeTracker.CheckIfCharacterExistsInWorld(characterID);
+        bool isAlreadySpawned = CharacterNodeTracker.CheckIfCharacterExistsInDifferentNode(this);
 
         if (customRequirements == null)
         {
@@ -211,7 +155,7 @@ public class CharacterNode : MonoBehaviour
             passedDialogueRequirements = RequirementChecker.CheckDialogueRequirements(dialogue);
         }
 
-        Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}. Is already spawned: {isAlreadySpawned}");
+        //Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}. Is already spawned: {isAlreadySpawned}");
         return passedCustomRequirements && passedDialogueRequirements && !isAlreadySpawned;
     }
 
@@ -219,68 +163,20 @@ public class CharacterNode : MonoBehaviour
     {
         // Debug.Log("Attempting to enable character " + characterID);
 
-        if (doNotLinkCharacterData)
+        if (character != null)
         {
-            NullCharacterConfiguration();
+            isDormant = false;
+            ConfigureDisplayText();
+            FindSprite();
+            StartCoroutine(FadeInAndEnable());
         }
         else
         {
-            character = Characters.FindByID(characterID);
-
-            if (character != null)
-            {
-                if (CharacterNodeTracker.AddCharacterNode(this))
-                {
-                    isDormant = false;
-                    ConfigureDisplayText();
-                    FindSprite();
-
-                    if (fadeIn)
-                    {
-                        // Debug.Log("Fading in node (" + characterID + "). Override is " + allowOverride);
-                        StartCoroutine(FadeInAndEnable());
-                    }
-                    else
-                    {
-                        rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, 1);
-
-                        if (!ornamentalOnly)
-                        {
-                            col.enabled = true;
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Attempted to spawn already existing character. Hiding node.");
-                    HideNode();
-                }
-            }
-            else
-            {
-                if (allowOverride)
-                {
-                    HideNode();
-                }
-                else
-                {
-                    Debug.LogWarning($"Character with ID {characterID} not found. Node is set to uninteractable.");
-                    NullCharacterConfiguration();
-                }
-            }
+            Debug.LogWarning("No character found with ID " + characterID + ". Use different class for decorative NPCs.");
+            HideNode();
         }
     }
 
-    void NullCharacterConfiguration()
-    {
-        col.enabled = false;
-        ConfigureDisplayText();
-
-        if (!string.IsNullOrEmpty(alternativeSpriteID))
-        {
-            FindSprite();
-        }
-    }
     void FindSprite()
     {
         if (!string.IsNullOrEmpty(alternativeSpriteID))
@@ -292,28 +188,23 @@ public class CharacterNode : MonoBehaviour
             rend.sprite = SpriteFactory.GetWorldCharacterSprite(character.objectID);
         }
     }
+
     void ConfigureDisplayText()
     {
-        if (!disableFloatText)
+        if (!string.IsNullOrEmpty(alternateFloatText))
         {
-            if (!string.IsNullOrEmpty(alternateFloatText))
-            {
-                textToDisplay = alternateFloatText;
-            }
-            else if (character != null)
-            {
-                textToDisplay = character.NamePlate();
-            }
-            else
-            {
-                disableFloatText = true;
-            }
+            textToDisplay = alternateFloatText;
         }
+        else if (character != null)
+        {
+            textToDisplay = character.NamePlate();
+        }
+
+        Debug.Log("Display text configured to " + textToDisplay);
     }
 
     void FindAnyViableSpeaker()
     {
-        bool foundSpeaker = false;
         foreach (Quest quest in Quests.all)
         {
             if (quest.dialogues != null && quest.dialogues.Count > 0)
@@ -344,7 +235,6 @@ public class CharacterNode : MonoBehaviour
                         {
                             characterID = speaker;
                             Debug.Log("Found viable dialogue and speaker for location.");
-                            foundSpeaker = true;
                             break;
                         }
                         else
@@ -355,44 +245,93 @@ public class CharacterNode : MonoBehaviour
                 }
             }
         }
+    }
 
-        if (!foundSpeaker)
+    void OnMouseOver()
+    {
+        if (!string.IsNullOrEmpty(textToDisplay) && TransientDataScript.GameState == GameState.Overworld)
         {
-            Debug.Log("No viable speaker found for location. Hiding node.");
-            HideNode();
-        }
-        else
-        {
-            EnableCharacter();
+            TransientDataScript.PrintFloatText(textToDisplay);
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnMouseExit()
     {
-        if (continuouslyCheckRequirements && TransientDataScript.GameState == GameState.Overworld)
+        if (!string.IsNullOrEmpty(textToDisplay))
         {
-            if (isReadyToRetest)
-            {
-                SetupNode();
-            }
-            else
-            {
-                readyTimer += Time.deltaTime;
+            TransientDataScript.DisableFloatText();
+        }
+    }
 
-                if (readyTimer >= readyTick)
-                {
-                    Debug.Log("Retried character node check");
-                    readyTimer = 0;
-                    isReadyToRetest = true;
-                }
+    void OnMouseDown()
+    {
+        if (character != null && TransientDataScript.transientData.currentSpeed == 0)
+        {
+            if (TransientDataScript.GameState == GameState.Overworld)
+            {
+                // Debug.Log($"Opening interact menu with {character.name}");
+                InteractMenu.Open(character);
             }
         }
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
+        StopAllCoroutines();
         CharacterNodeTracker.allExistingNodes.Remove(this);
         CharacterNodeTracker.RemoveWorldCharacterFromList(character.objectID);
+    }
+
+    IEnumerator ContinuouslyCheckRequirements()
+    {
+        Debug.Log("Started requirement checker for continuous spawn checks.");
+        while (true)
+        {
+            yield return new WaitForSeconds(5);
+
+            if (continuouslyCheckRequirements && TransientDataScript.GameState == GameState.Overworld)
+            {
+                RefreshNode();
+            }
+        }
+    }
+
+    IEnumerator FadeOutNode(bool hide)
+    {
+        //Debug.Log("Fade Node And Hide Called");
+        float alpha = rend.color.a;
+        float fadeValue = 0.001f;
+
+        while (alpha > 0)
+        {
+            yield return new WaitForSeconds(0.005f);
+            alpha -= fadeValue;
+            fadeValue += 0.0005f;
+
+            rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha);
+        }
+
+        if (hide)
+        {
+            HideNode();
+        }
+    }
+
+    IEnumerator FadeInAndEnable()
+    {
+        //Debug.Log("Fade In And Enable Called");
+        float alpha = 0;
+        float fadeValue = 0.01f;
+
+        while (alpha < 1)
+        {
+            alpha += fadeValue;
+            fadeValue += 0.005f;
+
+            rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha);
+            col.enabled = true;
+
+            yield return new WaitForSeconds(0.05f);
+        }
     }
 }
