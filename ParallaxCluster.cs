@@ -70,7 +70,7 @@ public class ParallaxCluster : MonoBehaviour
 
         foreach (var character in characterNodes)
         {
-            character.RefreshNode();
+            character.FadeInAfterTemporaryDisable();
         }
     }
 
