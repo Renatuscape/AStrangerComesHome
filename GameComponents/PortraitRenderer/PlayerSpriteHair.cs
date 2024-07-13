@@ -173,11 +173,11 @@ public class PlayerSpriteHair
 
     public void ToggleAccent(bool isEnabled)
     {
-        if (backAccent != null)
+        if (backAccent.sprite != null)
         {
             backAccent.gameObject.SetActive(isEnabled);
         }
-        if (frontAccent != null)
+        if (frontAccent.sprite != null)
         {
             frontAccent.gameObject.SetActive(isEnabled);
         }
