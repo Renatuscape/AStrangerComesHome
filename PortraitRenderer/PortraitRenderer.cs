@@ -33,7 +33,7 @@ public class PortraitRenderer : MonoBehaviour
 
     public void UpdatePlayerSprite()
     {
-        playerSpriteData.UpdateAllFromGameData(out var hair, out var eyes);
+        playerSpriteData.UpdateAllFromGameData(out var hair, out var eyes, out var body);
     }
 
     public void EnableForGarage(string characterID)
