@@ -9,8 +9,7 @@ using UnityEngine.UI;
 public class CharacterCreator : MonoBehaviour
 {
     public DataManagerScript dataManager;
-    public CharacterHairCatalogue hairCatalogue;
-    public CharacterEyesCatalogue eyesCatalogue;
+    public SpriteFactory spriteFactory;
     public GameObject portraitRenderer;
     public GameObject portraitCanvas;
 
@@ -74,10 +73,6 @@ public class CharacterCreator : MonoBehaviour
 
     void UpdatePlayerIcon()
     {
-        // Replace with less expensive update menu in the future
-        //playerIcon.gameObject.SetActive(false);
-        //playerIcon.gameObject.SetActive(true);
-
         playerIcon.RefreshAllImages();
     }
 
@@ -86,31 +81,33 @@ public class CharacterCreator : MonoBehaviour
         bodyTypeNumber.text = dataManager.bodyIndex.ToString();
         bodyToneNumber.text = dataManager.headIndex.ToString();
 
-        playerSprite.UpdateAllFromGameData(out var hair, out var eyes);
+        playerSprite.UpdateAllFromGameData(out var hair, out var eyes, out var body);
         CheckHairToggles(hair);
-        
-        int hairIndex = hairCatalogue.hairPackages.IndexOf(hair);
-        int eyeIndex = eyesCatalogue.eyePackages.IndexOf(eyes);
+
+        int hairIndex = spriteFactory.hairCatalogue.hairPackages.IndexOf(hair);
+        int eyeIndex = spriteFactory.eyesCatalogue.eyePackages.IndexOf(eyes);
+        int bodyIndex = spriteFactory.bodyCatalogue.bodyPackages.IndexOf(body);
 
         hairStyleNumber.text = hairIndex.ToString();
         eyesNumber.text = eyeIndex.ToString();
+        bodyTypeNumber.text = bodyIndex.ToString();
 
         UpdatePlayerIcon();
     }
 
     public void ChangeHair(bool isPrevious)
     {
-        var package = hairCatalogue.GetNextPackageByIndex(isPrevious);
+        var package = spriteFactory.hairCatalogue.GetNextPackageByIndex(isPrevious);
 
         if (package != null)
         {
             dataManager.playerSprite.hairID = package.hairID;
             playerSprite.playerHair.ApplyHairPackage(package, dataManager.playerSprite.enableAccessory, dataManager.playerSprite.enableAccent);
-            hairStyleNumber.text = hairCatalogue.index.ToString();
+            hairStyleNumber.text = spriteFactory.hairCatalogue.index.ToString();
 
             CheckHairToggles(package);
         }
-        
+
         UpdatePlayerIcon();
     }
 
@@ -141,26 +138,16 @@ public class CharacterCreator : MonoBehaviour
 
     public void ChangeBody(bool isPrevious)
     {
-        if (isPrevious)
+        var package = spriteFactory.bodyCatalogue.GetNextPackageByIndex(isPrevious);
+
+        if (package != null)
         {
-            if (dataManager.bodyIndex > 0)
-            {
-                dataManager.bodyIndex--;
-            }
-            else
-                dataManager.bodyIndex = playerSprite.playerBodyTypes.Count - 1;
-        }
-        else
-        {
-            if (dataManager.bodyIndex < playerSprite.playerBodyTypes.Count - 1)
-            {
-                dataManager.bodyIndex++;
-            }
-            else
-                dataManager.bodyIndex = 0;
+            dataManager.playerSprite.bodyID = package.bodyID;
+            playerSprite.playerBody.ApplyBodyPackage(package);
+            bodyTypeNumber.text = spriteFactory.bodyCatalogue.index.ToString();
         }
 
-        UpdateSpriteFromData();
+        UpdatePlayerIcon();
     }
 
     public void ChangeTone(bool isPrevious)
@@ -189,13 +176,13 @@ public class CharacterCreator : MonoBehaviour
 
     public void ChangeEyes(bool isPrevious)
     {
-        var package = eyesCatalogue.GetNextPackageByIndex(isPrevious);
+        var package = spriteFactory.eyesCatalogue.GetNextPackageByIndex(isPrevious);
 
         if (package != null)
         {
             dataManager.playerSprite.eyesID = package.eyesID;
             playerSprite.playerEyes.ApplyEyesPackage(package);
-            eyesNumber.text = eyesCatalogue.index.ToString();
+            eyesNumber.text = spriteFactory.eyesCatalogue.index.ToString();
         }
 
         UpdatePlayerIcon();
@@ -252,13 +239,20 @@ public class CharacterCreator : MonoBehaviour
 
     public void FinaliseButton()
     {
-        playerSprite.SetExpressionToDefault();
-        Character player = Characters.FindByTag("Traveller", gameObject.name);
-        player.trueName = dataManager.playerName;
-        player.hexColour = dataManager.playerNameColour;
-        player.NameSetup();
-        DialogueTagParser.UpdateTags(dataManager);
-        portraitRenderer.SetActive(false);
-        TransientDataScript.ReturnToOverWorld("Character Creator", gameObject);
+        if (!string.IsNullOrEmpty(dataManager.playerName) && dataManager.playerName.Length > 1)
+        {
+            playerSprite.SetExpressionToDefault();
+            Character player = Characters.FindByTag("Traveller", gameObject.name);
+            player.trueName = dataManager.playerName;
+            player.hexColour = dataManager.playerNameColour;
+            player.NameSetup();
+            DialogueTagParser.UpdateTags(dataManager);
+            portraitRenderer.SetActive(false);
+            TransientDataScript.ReturnToOverWorld("Character Creator", gameObject);
+        }
+        else
+        {
+            LogAlert.QueueTextAlert("Name cannot be blank.");
+        }
     }
 }
