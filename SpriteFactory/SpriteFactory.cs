@@ -8,6 +8,11 @@ public class SpriteFactory : MonoBehaviour
 {
     public static SpriteFactory instance;
 
+    public CharacterExpressionCatalogue expressionCatalogue;
+    public CharacterEyesCatalogue eyesCatalogue;
+    public CharacterHairCatalogue hairCatalogue;
+    public CharacterBodyCatalogue bodyCatalogue;
+
     public List<Sprite> unsortedUiSprites = new();
     public List<Sprite> unsortedWorldSprites = new();
     public List<Sprite> backgroundSprites = new();
