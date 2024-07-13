@@ -25,7 +25,7 @@ public class LogAlert : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (TransientDataScript.IsTimeFlowing())
+        if (TransientDataScript.IsTimeFlowing() || TransientDataScript.GameState == GameState.CharacterCreation)
         {
             queueTimer += Time.deltaTime;
 
