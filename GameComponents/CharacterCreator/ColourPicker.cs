@@ -22,7 +22,7 @@ public class ColourPicker : MonoBehaviour
     public TextMeshProUGUI targetText;
     public TextMeshProUGUI transparencyText;
 
-    public int targetIndex; //0 = name, 1 = hair, 2 = eyes, 3 = accessory, 4 = lip tint, 5 = hair accent
+    public int targetIndex; //0 = name, 1 = hair, 2 = eyes, 3 = accessory, 4 = lip tint, 5 = hair accent, 6 = cloak, 7 = vest, 8 = tights
 
     private void OnEnable()
     {
@@ -68,7 +68,21 @@ public class ColourPicker : MonoBehaviour
             SetSlidersFromHex(dataManager.playerSprite.hairAccentHexColour);
             targetText.text = "Hair Accent";
         }
-
+        else if (targetIndex == 6)
+        {
+            SetSlidersFromHex(dataManager.playerSprite.cloakHexColour);
+            targetText.text = "Cloak Colour";
+        }
+        else if (targetIndex == 7)
+        {
+            SetSlidersFromHex(dataManager.playerSprite.vestHexColour);
+            targetText.text = "Vest Colour";
+        }
+        else if (targetIndex == 8)
+        {
+            SetSlidersFromHex(dataManager.playerSprite.tightsHexColour);
+            targetText.text = "Tights Colour";
+        }
     }
     private void OnDisable()
     {
@@ -147,6 +161,18 @@ public class ColourPicker : MonoBehaviour
         {
             GetSliderColour(ref dataManager.playerSprite.hairAccentHexColour, false, out var colour);
             playerSprite.playerHair.ApplyAccentColour(colour);
+        }
+        else if (targetIndex == 6)
+        {
+            AdjustImageColour(playerSprite.playerBody.cloak, ref dataManager.playerSprite.cloakHexColour);
+        }
+        else if (targetIndex == 7)
+        {
+            AdjustImageColour(playerSprite.playerBody.vest, ref dataManager.playerSprite.vestHexColour);
+        }
+        else if (targetIndex == 8)
+        {
+            AdjustImageColour(playerSprite.playerBody.tights, ref dataManager.playerSprite.tightsHexColour);
         }
 
         if (sliderR.value + sliderG.value + sliderB.value < 0.7f)
