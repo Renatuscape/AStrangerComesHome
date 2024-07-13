@@ -106,8 +106,14 @@ public class PlayerSpriteData
     public string hairHexColour;
     public string hairAccentHexColour;
     public string accessoryHexColour;
+
     public string eyesHexColour;
     public string lipTintHexColour;
+
+    public string cloakHexColour;
+    public string vestHexColour;
+    public string tightsHexColour;
+
     public float lipTintTransparency;
     public bool enableAccessory;
     public bool enableAccent;
@@ -120,10 +126,14 @@ public class PlayerSpriteData
         eyesID = "EyesA0";
 
         hairHexColour = "83695C";
-        hairAccentHexColour = "99825f";
+        hairAccentHexColour = "C3AA75";
         eyesHexColour = "88DA69";
         accessoryHexColour = "85BFB1";
         lipTintHexColour = "CAAB80";
+        cloakHexColour = "808E94";
+        vestHexColour = "BDA8A7";
+        tightsHexColour = "919F98";
+
         lipTintTransparency = 0;
         enableAccessory = false;
     }
