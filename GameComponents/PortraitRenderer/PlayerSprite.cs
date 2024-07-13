@@ -5,18 +5,15 @@ using UnityEngine.UI;
 
 public class PlayerSprite : MonoBehaviour
 {
-    public CharacterEyesCatalogue eyeCatalogue;
-    public CharacterHairCatalogue hairCatalogue;
-    public CharacterExpressionCatalogue expressionCatalogue;
+    public SpriteFactory spriteFactory;
 
     public DataManagerScript dataManager;
-    public List<Sprite> playerBodyTypes;
     public List<Sprite> playerHeads;
 
-    public Image body;
     public Image head;
     public Image expression;
 
+    public PlayerSpriteBody playerBody;
     public PlayerSpriteEyes playerEyes;
     public PlayerSpriteHair playerHair;
 
@@ -24,13 +21,13 @@ public class PlayerSprite : MonoBehaviour
 
     private void OnEnable()
     {
-        UpdateAllFromGameData(out var hair, out var eyes);
+        UpdateAllFromGameData(out var hair, out var eyes, out var body);
     }
 
     public void SetExpressionToDefault()
     {
-        var defaultPackage = expressionCatalogue.GetPackageByID("DEFAULT");
-        expressionCatalogue.index = expressionCatalogue.expressionPackages.IndexOf(defaultPackage);
+        var defaultPackage = spriteFactory.expressionCatalogue.GetPackageByID("DEFAULT");
+        spriteFactory.expressionCatalogue.index = spriteFactory.expressionCatalogue.expressionPackages.IndexOf(defaultPackage);
         SetExpression(defaultPackage);
     }
 
@@ -46,10 +43,6 @@ public class PlayerSprite : MonoBehaviour
         playerHair.browColour.color = browColor;
     }
 
-    public void ChangeBody(int index)
-    {
-        body.sprite = playerBodyTypes[index];
-    }
     public void ChangeHead(int index)
     {
         head.sprite = playerHeads[index];
@@ -79,20 +72,21 @@ public class PlayerSprite : MonoBehaviour
         }
     }
 
-    public void UpdateAllFromGameData(out PlayerHairPackage hairPackage, out PlayerEyesPackage eyePackage)
+    public void UpdateAllFromGameData(out PlayerHairPackage hairPackage, out PlayerEyesPackage eyePackage, out PlayerBodyPackage bodyPackage)
     {
         Debug.Log("Attempting to update Player Sprite from game data.");
 
-        ChangeBody(dataManager.bodyIndex);
         ChangeHead(dataManager.headIndex);
 
         Color lipColour = TransientDataScript.GetColourFromHex(dataManager.playerSprite.lipTintHexColour);
         lipTint.color = new Color(lipColour.r, lipColour.g, lipColour.b, dataManager.playerSprite.lipTintTransparency);
 
-        hairPackage = hairCatalogue.GetPackageByID(dataManager.playerSprite.hairID);
-        eyePackage = eyeCatalogue.GetPackageByID(dataManager.playerSprite.eyesID);
+        hairPackage = spriteFactory.hairCatalogue.GetPackageByID(dataManager.playerSprite.hairID);
+        eyePackage = spriteFactory.eyesCatalogue.GetPackageByID(dataManager.playerSprite.eyesID);
+        bodyPackage = spriteFactory.bodyCatalogue.GetPackageByID(dataManager.playerSprite.bodyID);
 
         playerHair.LoadPackageWithColours(hairPackage);
         playerEyes.LoadPackageWithColours(eyePackage);
+        playerBody.LoadPackageWithColours(bodyPackage);
     }
 }
