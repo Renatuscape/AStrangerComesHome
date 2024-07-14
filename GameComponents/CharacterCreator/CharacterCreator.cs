@@ -31,6 +31,7 @@ public class CharacterCreator : MonoBehaviour
     public GameObject accentToggleContainer;
     public GameObject placeholderDotAccent;
     public Toggle accentToggle;
+    public Toggle trueNameToggle;
 
     private void OnEnable()
     {
@@ -208,6 +209,11 @@ public class CharacterCreator : MonoBehaviour
             colourPicker.gameObject.SetActive(false);
         }
         UpdatePlayerIcon();
+    }
+
+    public void ToggleTrueName()
+    {
+        GlobalSettings.AlwaysTrueNamePlate = trueNameToggle.isOn;
     }
 
     public void EnableColourPicker(int targetIndex)
