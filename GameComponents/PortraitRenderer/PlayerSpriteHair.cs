@@ -75,29 +75,49 @@ public class PlayerSpriteHair
             ApplyHairColour(existingHairColour);
 
             // CHECK FOR ACCESSORIES
-            if (package.accessoryLines == null)
+            Color existingAccessoryColour = accessoryColour.color;
+
+            accessoryLines.sprite = package.accessoryLines;
+            accessoryColour.sprite = package.accessoryColour;
+            accessoryOutline.sprite = package.accessoryOutline;
+
+            if (enableAccessory)
+            {
+                if (accessoryLines.sprite != null)
+                {
+                    accessoryLines.gameObject.SetActive(true);
+                }
+                else
+                {
+                    accessoryLines.gameObject.SetActive(false);
+                }
+
+                if (accessoryColour.sprite != null)
+                {
+                    accessoryColour.gameObject.SetActive(true);
+                }
+                else
+                {
+                    accessoryColour.gameObject.SetActive(false);
+                }
+
+                if (accessoryOutline.sprite != null)
+                {
+                    accessoryOutline.gameObject.SetActive(true);
+                }
+                else
+                {
+                    accessoryOutline.gameObject.SetActive(false);
+                }
+            }
+            else
             {
                 accessoryLines.gameObject.SetActive(false);
                 accessoryColour.gameObject.SetActive(false);
                 accessoryOutline.gameObject.SetActive(false);
             }
-            else
-            {
-                Color existingAccessoryColour = accessoryColour.color;
 
-                accessoryLines.sprite = package.accessoryLines;
-                accessoryColour.sprite = package.accessoryColour;
-                accessoryOutline.sprite = package.accessoryOutline;
-
-                if (!accessoryLines.gameObject.activeInHierarchy && enableAccessory)
-                {
-                    accessoryLines.gameObject.SetActive(true);
-                    accessoryColour.gameObject.SetActive(true);
-                    accessoryOutline.gameObject.SetActive(true);
-                }
-
-                ApplyAccessoryColour(existingAccessoryColour);
-            }
+            ApplyAccessoryColour(existingAccessoryColour);
 
             // APPLY ACCENTS
             frontAccent.sprite = package.frontAccent;
@@ -157,15 +177,15 @@ public class PlayerSpriteHair
 
     public void ToggleAccessory(bool isEnabled)
     {
-        if (accessoryLines != null)
+        if (accessoryLines.sprite != null)
         {
             accessoryLines.gameObject.SetActive(isEnabled);
         }
-        if (accessoryColour != null)
+        if (accessoryColour.sprite != null)
         {
             accessoryColour.gameObject.SetActive(isEnabled);
         }
-        if (accessoryOutline != null)
+        if (accessoryOutline.sprite != null)
         {
             accessoryOutline.gameObject.SetActive(isEnabled);
         }
