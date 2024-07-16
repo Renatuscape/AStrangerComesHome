@@ -21,12 +21,11 @@ public class CharacterCreatorMiniTheme : MonoBehaviour
             GlobalSettings.dialogueTransparency = transparencySlider.value;
             UpdateBackground();
         });
-
-        UpdateBackground();
     }
     void OnEnable()
     {
         transparencySlider.value = GlobalSettings.dialogueTransparency;
+        UpdateBackground();
     }
 
     public void UpdateBackground()
