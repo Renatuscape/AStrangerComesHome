@@ -42,17 +42,24 @@ public class CharacterCreator : MonoBehaviour
 
             colourPicker.SetActive(false);
             portraitRenderer.SetActive(true);
+
             foreach (Transform child in portraitCanvas.transform)
             {
                 child.gameObject.SetActive(false);
             }
+
             portraitCanvas.transform.Find("PlayerPortrait").gameObject.SetActive(true);
             UpdateSpriteFromData();
 
             hairStyleNumber.text = "0";
 
+            accentToggle.isOn = dataManager.playerSprite.enableAccent;
+            ToggleAccent();
+
             accessoryToggle.isOn = dataManager.playerSprite.enableAccessory;
             ToggleAccessory();
+
+            trueNameToggle.isOn = GlobalSettings.AlwaysTrueNamePlate;
         }
     }
 
@@ -247,6 +254,7 @@ public class CharacterCreator : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(dataManager.playerName) && dataManager.playerName.Length > 1)
         {
+            GlobalSettingsManager.SaveSettings();
             playerSprite.SetExpressionToDefault();
             Character player = Characters.FindByTag("Traveller", gameObject.name);
             player.trueName = dataManager.playerName;
