@@ -223,7 +223,7 @@ public class ColourPicker : MonoBehaviour
         float green = sliderG.value;
         float blue = sliderB.value;
         float alpha = enableAlpha ? sliderA.value : 1;
-        Debug.Log("Alpha was stored as " + alpha);
+        //Debug.Log("Alpha was stored as " + alpha);
 
         //Create a new colour with adjusted RGB values
         adjustedColour = new Color(red, green, blue, alpha);
