@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public static class DialogueTagParser
@@ -70,16 +69,6 @@ public static class DialogueTagParser
                 AddNewTag(Tag(c.objectID), c.PersonaliseText(c.GetNameOnly()));
                 AddNewTag(Tag(c.dialogueTag), c.PersonaliseText(c.GetNameOnly()));
             }
-        }
-
-        //SET CORRECT PLAYER NAME
-        if (GlobalSettings.AlwaysTrueNameEverywhere)
-        {
-            Character player = Characters.FindByTag("Traveller", nameof(This));
-
-            tags["|Traveller|"] = player.PersonaliseText(player.trueName);
-            tags["|the Traveller|"] = player.PersonaliseText(player.trueName);
-            tags["|The Traveller|"] = player.PersonaliseText(player.trueName);
         }
 
         Debug.Log($"Tags contain {tags.Count} entries:");
