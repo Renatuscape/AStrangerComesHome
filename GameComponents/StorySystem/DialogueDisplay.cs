@@ -318,7 +318,15 @@ public class DialogueDisplay : MonoBehaviour
         {
             if (dEvent.isLeft || dEvent.speaker.objectID == "ARC000")
             {
-                leftNameText.text = dEvent.speaker.NamePlate();
+                if (dEvent.speaker.objectID == "ARC000" && GlobalSettings.AlwaysTrueNamePlate)
+                {
+                    leftNameText.text = dEvent.speaker.ForceTrueNamePlate();
+                }
+                else
+                {
+                    leftNameText.text = dEvent.speaker.NamePlate();
+                }
+
                 leftNameDisplay.gameObject.SetActive(true);
                 rightNameDisplay.gameObject.SetActive(false);
             }
