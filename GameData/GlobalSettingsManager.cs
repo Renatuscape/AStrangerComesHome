@@ -4,7 +4,6 @@ using TMPro;
 public static class GlobalSettingsManager
 {
     private const string AlwaysTrueNamePlateKey = "AlwaysTrueNamePlate";
-    private const string AlwaysTrueNameEverywhereKey = "AlwaysTrueNameEverywhere";
     private const string AlwaysHideCoachExteriorKey = "AlwaysHideCoachExterior";
     private const string IsScriptEnabledKey = "IsScriptEnabled";
     private const string TextSizeKey = "TextSize";
@@ -26,7 +25,6 @@ public static class GlobalSettingsManager
     public static void SaveSettings()
     {
         PlayerPrefs.SetInt(AlwaysTrueNamePlateKey, GlobalSettings.AlwaysTrueNamePlate ? 1 : 0);
-        PlayerPrefs.SetInt(AlwaysTrueNameEverywhereKey, GlobalSettings.AlwaysTrueNameEverywhere ? 1 : 0);
         PlayerPrefs.SetInt(AlwaysHideCoachExteriorKey, GlobalSettings.AlwaysHideCoachExterior ? 1 : 0);
         PlayerPrefs.SetInt(IsScriptEnabledKey, GlobalSettings.IsScriptEnabled ? 1 : 0);
         PlayerPrefs.SetInt(TextSizeKey, GlobalSettings.TextSize);
@@ -48,7 +46,6 @@ public static class GlobalSettingsManager
     public static void LoadSettings()
     {
         GlobalSettings.AlwaysTrueNamePlate = PlayerPrefs.GetInt(AlwaysTrueNamePlateKey, 0) == 1;
-        GlobalSettings.AlwaysTrueNameEverywhere = PlayerPrefs.GetInt(AlwaysTrueNameEverywhereKey, 0) == 1;
         GlobalSettings.AlwaysHideCoachExterior = PlayerPrefs.GetInt(AlwaysHideCoachExteriorKey, 0) == 1;
         GlobalSettings.IsScriptEnabled = PlayerPrefs.GetInt(IsScriptEnabledKey, 1) == 1; // Default value is true
         GlobalSettings.TextSize = PlayerPrefs.GetInt(TextSizeKey, 0); // Default value is 0
@@ -72,7 +69,6 @@ public static class GlobalSettingsManager
 public static class GlobalSettings
 {
     public static bool AlwaysTrueNamePlate = false; //the traveller's nameplate always uses their True Name
-    public static bool AlwaysTrueNameEverywhere = false; //characters will use the traveller's True Name in dialogue
     public static bool AlwaysHideCoachExterior = false; //The coach's exterior wall will never appear
     public static bool IsScriptEnabled = true; //whether the script font is enabled
     public static int TextSize = 0; //increase or decrease text default size by this number
@@ -82,7 +78,7 @@ public static class GlobalSettings
     public static string ScriptFont;
 
     public static float musicVolume = 0.4f;
-    public static float effectVolume = 0.6f;
+    public static float effectVolume = 0.4f;
 
     public static bool uiWalletLarge = true;
     public static bool uiGearboxLarge = true;
