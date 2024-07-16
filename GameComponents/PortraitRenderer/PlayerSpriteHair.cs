@@ -37,7 +37,6 @@ public class PlayerSpriteHair
         else
         {
             Color existingHairColour = frontColour.color;
-            Debug.Log("Stored hair colour is " + existingHairColour.ToString());
 
             frontLines.sprite = package.frontLines;
             frontColour.sprite = package.frontColour;
