@@ -18,13 +18,24 @@ public class CharacterExpressionCatalogue : MonoBehaviour
     }
     public PlayerExpressionPackage GetPackageByID(string expressionID)
     {
+        string trimmedID;
+        
+        if (expressionID.Contains("ARC000-"))
+        {
+            trimmedID = expressionID.Replace("ARC000-", "");
+        }
+        else
+        {
+            trimmedID = expressionID;
+        }
+
         if (ready)
         {
-            var package = expressionPackages.FirstOrDefault(p => p.expressionID == "Ex" + expressionID);
+            var package = expressionPackages.FirstOrDefault(p => p.expressionID.Contains(trimmedID));
 
             if (package == null)
             {
-                return expressionPackages[0];
+                return expressionPackages.FirstOrDefault(p => p.expressionID.Contains("DEFAULT"));
             }
             else
             {
