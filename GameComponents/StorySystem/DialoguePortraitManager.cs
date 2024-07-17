@@ -36,6 +36,17 @@ public class DialoguePortraitManager : MonoBehaviour
         if (dEvent.speaker.objectID == "ARC000")
         {
             spriteLeft.gameObject.SetActive(false);
+
+            // Set player expression
+            if (!string.IsNullOrEmpty(dEvent.spriteID))
+            {
+                playerSprite.SetExpression(dEvent.spriteID);
+            }
+            else
+            {
+                playerSprite.SetExpressionToDefault();
+            }
+
             spriteObject = playerSprite.gameObject;
         }
         else if (dEvent.speaker.objectID == "ARC999")
