@@ -247,6 +247,12 @@ public class GameManagerScript : MonoBehaviour
         passengerManager.Initialise();
         portraitRenderer.UpdatePlayerSprite();
 
+        Character player = Characters.FindByTag("Traveller", gameObject.name);
+        player.trueName = dataManager.playerName;
+        player.hexColour = dataManager.playerNameColour;
+        player.NameSetup();
+        DialogueTagParser.UpdateTags(dataManager);
+
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 
