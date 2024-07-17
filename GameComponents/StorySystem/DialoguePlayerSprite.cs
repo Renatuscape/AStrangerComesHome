@@ -53,6 +53,18 @@ public class DialoguePlayerSprite : MonoBehaviour
         SetExpression(expressionCatalogue.GetPackageByID("DEFAULT"));
     }
 
+    public void SetExpression(string expressionID)
+    {
+        var package = expressionCatalogue.GetPackageByID(expressionID);
+        if (package != null)
+        {
+            SetExpression(package);
+        }
+        else
+        {
+            SetExpressionToDefault();
+        }
+    }
     public void SetExpression(PlayerExpressionPackage package)
     {
         Image expression = images.FirstOrDefault(i => i.name.Contains("Expression"));
@@ -68,6 +80,7 @@ public class DialoguePlayerSprite : MonoBehaviour
         {
             Debug.Log("Expression Image was not found in list.");
         }
+
         if (lipTint != null)
         {
             Color color = lipTint.color;
@@ -79,6 +92,7 @@ public class DialoguePlayerSprite : MonoBehaviour
         {
             Debug.Log("LipTint Image was not found in list.");
         }
+
         if (browColour != null)
         {
             Color color = browColour.color;
