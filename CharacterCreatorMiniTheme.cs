@@ -13,30 +13,30 @@ public class CharacterCreatorMiniTheme : MonoBehaviour
     {
         btnToggleTheme.onClick.AddListener(() =>
         {
-            GlobalSettings.darkTheme = !GlobalSettings.darkTheme;
+            GlobalSettings.DarkTheme = !GlobalSettings.DarkTheme;
             UpdateBackground();
         });
         transparencySlider.onValueChanged.AddListener((float x) =>
         {
-            GlobalSettings.dialogueTransparency = transparencySlider.value;
+            GlobalSettings.DialogueTransparency = transparencySlider.value;
             UpdateBackground();
         });
     }
     void OnEnable()
     {
-        transparencySlider.value = GlobalSettings.dialogueTransparency;
+        transparencySlider.value = GlobalSettings.DialogueTransparency;
         UpdateBackground();
     }
 
     public void UpdateBackground()
     {
-        if (GlobalSettings.darkTheme)
+        if (GlobalSettings.DarkTheme)
         {
-            chatBackground.color = new Color(StaticGameValues.darkThemeBackground.r, StaticGameValues.darkThemeBackground.g, StaticGameValues.darkThemeBackground.b, GlobalSettings.dialogueTransparency); 
+            chatBackground.color = new Color(StaticGameValues.darkThemeBackground.r, StaticGameValues.darkThemeBackground.g, StaticGameValues.darkThemeBackground.b, GlobalSettings.DialogueTransparency); 
         }
         else
         {
-            chatBackground.color = new Color(StaticGameValues.lightThemeBackground.r, StaticGameValues.lightThemeBackground.g, StaticGameValues.lightThemeBackground.b, GlobalSettings.dialogueTransparency);
+            chatBackground.color = new Color(StaticGameValues.lightThemeBackground.r, StaticGameValues.lightThemeBackground.g, StaticGameValues.lightThemeBackground.b, GlobalSettings.DialogueTransparency);
         }
     }
 }

@@ -68,7 +68,7 @@ public class AudioManager : MonoBehaviour
     {
         if (TransientDataScript.GameState != GameState.MainMenu && TransientDataScript.GameState != GameState.Loading)
         {
-            musicPlayer.volume = GlobalSettings.musicVolume;
+            musicPlayer.volume = GlobalSettings.MusicVolume;
 
             if (!musicPlayer.isPlaying)
             {
@@ -175,7 +175,7 @@ public class AudioManager : MonoBehaviour
 
                     audioSource.clip = sound;
 
-                    audioSource.volume = GlobalSettings.effectVolume + volumeAdjustment;
+                    audioSource.volume = GlobalSettings.EffectVolume + volumeAdjustment;
 
                     audioSource.Play();
                 }

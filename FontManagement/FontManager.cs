@@ -233,7 +233,7 @@ public class FontManager : MonoBehaviour
         GlobalSettings.BodyFont = body.font.name;
         GlobalSettings.ScriptFont = script.font.name;
         GlobalSettings.TextSize = fontSize;
-        GlobalSettingsManager.SaveSettings();
+        GlobalSettings.SaveSettings();
 
         gameObject.SetActive(false);
     }

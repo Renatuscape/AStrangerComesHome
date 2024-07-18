@@ -43,7 +43,7 @@ public class InfoCanvasGearboxController : MonoBehaviour
     }
     void PositionCheck()
     {
-        if (GlobalSettings.uiGearboxLarge)
+        if (GlobalSettings.UiGearboxLarge)
         {
             if (transientData.engineState == EngineState.Reverse)
             {

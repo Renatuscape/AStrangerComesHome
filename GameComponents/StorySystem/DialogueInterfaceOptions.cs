@@ -44,14 +44,14 @@ public class DialogueInterfaceOptions : MonoBehaviour
         chatLogCanvas.gameObject.SetActive(false);
         chatHistory.text = "";
 
-        GlobalSettingsManager.LoadSettings();
+        GlobalSettings.LoadSettings();
 
         if (backgroundImages != null && backgroundImages.Count > 0)
         {
-            opacitySlider.value = GlobalSettings.dialogueTransparency;
+            opacitySlider.value = GlobalSettings.DialogueTransparency;
         }
 
-        if (GlobalSettings.darkTheme)
+        if (GlobalSettings.DarkTheme)
         {
             SetDarkTheme();
         }
@@ -63,7 +63,7 @@ public class DialogueInterfaceOptions : MonoBehaviour
     void SetLightTheme()
     {
         // Debug.Log("Chat theme set to light");
-        Color newBGColour = new Color(lightThemeBackground.r, lightThemeBackground.g, lightThemeBackground.b, GlobalSettings.dialogueTransparency);
+        Color newBGColour = new Color(lightThemeBackground.r, lightThemeBackground.g, lightThemeBackground.b, GlobalSettings.DialogueTransparency);
 
         foreach (Image img in backgroundImages)
         {
@@ -76,7 +76,7 @@ public class DialogueInterfaceOptions : MonoBehaviour
     void SetDarkTheme()
     {
         // Debug.Log("Chat theme set to dark");
-        Color newBGColour = new Color(darkThemeBackground.r, darkThemeBackground.g, darkThemeBackground.b, GlobalSettings.dialogueTransparency);
+        Color newBGColour = new Color(darkThemeBackground.r, darkThemeBackground.g, darkThemeBackground.b, GlobalSettings.DialogueTransparency);
 
         foreach (Image img in backgroundImages)
         {
@@ -90,16 +90,16 @@ public class DialogueInterfaceOptions : MonoBehaviour
     {
         if (backgroundImages != null && backgroundImages.Count > 0)
         {
-            GlobalSettings.dialogueTransparency = opacitySlider.value;
+            GlobalSettings.DialogueTransparency = opacitySlider.value;
 
-            Color newBGColour = new Color(backgroundImages[0].color.r, backgroundImages[0].color.g, backgroundImages[0].color.b, GlobalSettings.dialogueTransparency);
+            Color newBGColour = new Color(backgroundImages[0].color.r, backgroundImages[0].color.g, backgroundImages[0].color.b, GlobalSettings.DialogueTransparency);
 
             foreach (Image img in backgroundImages)
             {
                 img.color = newBGColour;
             }
 
-            GlobalSettingsManager.SaveSettings();
+            GlobalSettings.SaveSettings();
         }
         else
         {
@@ -114,10 +114,10 @@ public class DialogueInterfaceOptions : MonoBehaviour
 
     public void ToggleTheme()
     {
-        GlobalSettings.darkTheme = !GlobalSettings.darkTheme;
-        GlobalSettingsManager.SaveSettings();
+        GlobalSettings.DarkTheme = !GlobalSettings.DarkTheme;
+        GlobalSettings.SaveSettings();
 
-        if (GlobalSettings.darkTheme)
+        if (GlobalSettings.DarkTheme)
         {
             SetDarkTheme();
         }

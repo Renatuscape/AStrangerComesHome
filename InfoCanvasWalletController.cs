@@ -77,7 +77,7 @@ public class InfoCanvasWalletController : MonoBehaviour
         var playerHellers = Player.GetCount("MIS000", name);
         var playerTotal = MoneyExchange.GetPlayerMoney();
 
-        if (GlobalSettings.uiWalletLarge)
+        if (GlobalSettings.UiWalletLarge)
         {
             if (guilders != playerGuilders)
             {

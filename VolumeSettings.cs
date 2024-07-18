@@ -20,20 +20,20 @@ public class VolumeSettings : MonoBehaviour
 
     private void OnEnable()
     {
-        musicSlider.value = GlobalSettings.musicVolume;
-        effectSlider.value = GlobalSettings.effectVolume;
+        musicSlider.value = GlobalSettings.MusicVolume;
+        effectSlider.value = GlobalSettings.EffectVolume;
     }
 
     public void OnMusicSliderChange(float value)
     {
-        GlobalSettings.musicVolume = value;
-        GlobalSettingsManager.SaveSettings();
+        GlobalSettings.MusicVolume = value;
+        GlobalSettings.SaveSettings();
     }
 
     public void OnAmbientSliderChange(float value)
     {
-        GlobalSettings.effectVolume = value;
-        GlobalSettingsManager.SaveSettings();
+        GlobalSettings.EffectVolume = value;
+        GlobalSettings.SaveSettings();
 
         PlayAudioSample(() => AudioManager.PlaySoundEffect("Debug"));
     }

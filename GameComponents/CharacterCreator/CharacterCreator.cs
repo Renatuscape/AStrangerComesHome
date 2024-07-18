@@ -254,7 +254,7 @@ public class CharacterCreator : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(dataManager.playerName) && dataManager.playerName.Length > 1)
         {
-            GlobalSettingsManager.SaveSettings();
+            GlobalSettings.SaveSettings();
             playerSprite.SetExpressionToDefault();
             Character player = Characters.FindByTag("Traveller", gameObject.name);
             player.trueName = dataManager.playerName;

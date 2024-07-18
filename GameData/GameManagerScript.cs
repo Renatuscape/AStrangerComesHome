@@ -65,7 +65,7 @@ public class GameManagerScript : MonoBehaviour
     {
         loadingCanvas.gameObject.SetActive(true);
 
-        GlobalSettingsManager.LoadSettings();
+        GlobalSettings.LoadSettings();
 
         await InitiateJsonManagers(); // Ensure all json files are loaded before doing anything else
 
@@ -133,7 +133,7 @@ public class GameManagerScript : MonoBehaviour
 
     public void CreateGameController()
     {
-        GlobalSettingsManager.LoadSettings();
+        GlobalSettings.LoadSettings();
         fontManager.enabled = true;
         fontManager.LoadFonts();
         fontManager.enabled = false;

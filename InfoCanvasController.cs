@@ -14,16 +14,16 @@ public class InfoCanvasController : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld)
         {
-            largeWallet.SetActive(GlobalSettings.uiWalletLarge);
-            smallWallet.SetActive(!GlobalSettings.uiWalletLarge);
+            largeWallet.SetActive(GlobalSettings.UiWalletLarge);
+            smallWallet.SetActive(!GlobalSettings.UiWalletLarge);
 
-            largeGearbox.SetActive(GlobalSettings.uiGearboxLarge);
-            smallGearbox.SetActive(!GlobalSettings.uiGearboxLarge);
+            largeGearbox.SetActive(GlobalSettings.UiGearboxLarge);
+            smallGearbox.SetActive(!GlobalSettings.UiGearboxLarge);
         }
         else if (TransientDataScript.GameState == GameState.ShopMenu)
         {
-            largeWallet.SetActive(GlobalSettings.uiWalletLarge);
-            smallWallet.SetActive(!GlobalSettings.uiWalletLarge);
+            largeWallet.SetActive(GlobalSettings.UiWalletLarge);
+            smallWallet.SetActive(!GlobalSettings.UiWalletLarge);
 
             largeGearbox.SetActive(false);
             smallGearbox.SetActive(false);
@@ -49,8 +49,8 @@ public class InfoCanvasController : MonoBehaviour
             smallWallet.SetActive(false);
         }
 
-        GlobalSettings.uiWalletLarge = largeWallet.activeInHierarchy;
-        GlobalSettingsManager.SaveSettings();
+        GlobalSettings.UiWalletLarge = largeWallet.activeInHierarchy;
+        GlobalSettings.SaveSettings();
         AudioManager.PlaySoundEffect("metalClick");
     }
 
@@ -67,8 +67,8 @@ public class InfoCanvasController : MonoBehaviour
             smallGearbox.SetActive(false);
         }
 
-        GlobalSettings.uiGearboxLarge = largeGearbox.activeInHierarchy;
-        GlobalSettingsManager.SaveSettings();
+        GlobalSettings.UiGearboxLarge = largeGearbox.activeInHierarchy;
+        GlobalSettings.SaveSettings();
         AudioManager.PlaySoundEffect("metalClick");
     }
 }
