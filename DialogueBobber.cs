@@ -10,7 +10,7 @@ public class DialogueBobber : MonoBehaviour
 
     void Update()
     {
-        if (!dialogueDisplay.autoEnabled && dialogueDisplay.continueEnabled && !continueBobber.activeInHierarchy)
+        if (!dialogueDisplay.waitingForChoice && !dialogueDisplay.autoEnabled && !dialogueDisplay.endConversation && !continueBobber.activeInHierarchy)
         {
             continueBobber.SetActive(true);
             endBobber.SetActive(false);
@@ -22,11 +22,11 @@ public class DialogueBobber : MonoBehaviour
         }
         else
         {
-            if ((dialogueDisplay.autoEnabled || !dialogueDisplay.continueEnabled) && continueBobber.activeInHierarchy)
+            if ((dialogueDisplay.waitingForChoice || dialogueDisplay.autoEnabled || dialogueDisplay.endConversation) && continueBobber.activeInHierarchy)
             {
                 continueBobber.SetActive(false);
             }
-            if ((dialogueDisplay.autoEnabled || !dialogueDisplay.endConversation) && endBobber.activeInHierarchy)
+            if (!dialogueDisplay.isPrinting && !dialogueDisplay.endConversation && endBobber.activeInHierarchy)
             {
                 endBobber.SetActive(false);
             }
