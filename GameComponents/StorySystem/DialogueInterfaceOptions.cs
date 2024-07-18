@@ -23,6 +23,7 @@ public class DialogueInterfaceOptions : MonoBehaviour
 
     public Button btnToggleSettings;
     public Button btnToggleTheme;
+    public Button btnToggleSound;
     public Button btnCloseHistory;
     public Button btnOpenHistory;
 
@@ -35,6 +36,7 @@ public class DialogueInterfaceOptions : MonoBehaviour
 
         btnToggleSettings.onClick.AddListener(() => ToggleSettings());
         btnToggleTheme.onClick.AddListener(() => ToggleTheme());
+        btnToggleSound.onClick.AddListener(() => ToggleSound());
 
         btnCloseHistory.onClick.AddListener(() => CloseHistory());
         btnOpenHistory.onClick.AddListener(() => OpenHistory());
@@ -58,6 +60,15 @@ public class DialogueInterfaceOptions : MonoBehaviour
         else
         {
             SetLightTheme();
+        }
+
+        if (GlobalSettings.DisableTextSound)
+        {
+            btnToggleSound.image.color = Color.gray;
+        }
+        else
+        {
+            btnToggleSound.image.color = Color.white;
         }
     }
     void SetLightTheme()
@@ -124,6 +135,21 @@ public class DialogueInterfaceOptions : MonoBehaviour
         else
         {
             SetLightTheme();
+        }
+    }
+
+    public void ToggleSound()
+    {
+        GlobalSettings.DisableTextSound = !GlobalSettings.DisableTextSound;
+        GlobalSettings.SaveSettings();
+
+        if (GlobalSettings.DisableTextSound)
+        {
+            btnToggleSound.image.color = Color.gray;
+        }
+        else
+        {
+            btnToggleSound.image.color = Color.white;
         }
     }
 
