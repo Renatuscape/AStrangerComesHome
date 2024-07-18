@@ -26,7 +26,7 @@ public class DialogueBobber : MonoBehaviour
             {
                 continueBobber.SetActive(false);
             }
-            if (!dialogueDisplay.isPrinting && !dialogueDisplay.endConversation && endBobber.activeInHierarchy)
+            if (!dialogueDisplay.endConversation && endBobber.activeInHierarchy)
             {
                 endBobber.SetActive(false);
             }
