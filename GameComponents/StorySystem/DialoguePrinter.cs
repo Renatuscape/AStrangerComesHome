@@ -72,7 +72,7 @@ public class DialoguePrinter : MonoBehaviour
             textIndex++;
         }
 
-        if (dialogueParent.textSoundEffect.clip != null)
+        if (!GlobalSettings.DisableTextSound && dialogueParent.textSoundEffect.clip != null)
         {
             dialogueParent.textSoundEffect.Play();
         }
