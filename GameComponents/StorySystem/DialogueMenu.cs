@@ -81,6 +81,20 @@ public class DialogueMenu : MonoBehaviour
         }
     }
 
+    public void StartNextStageForAutoPlay()
+    {
+        Dialogue dialogue = GetDialogue(activeQuest);
+
+        if (dialogue != null)
+        {
+            dialogueDisplay.StartDialogue(dialogue, false);
+        }
+        else
+        {
+            Debug.Log("Auto-play tried to advance to next dialogue step, but no step was found.");
+        }
+    }
+
     public void EndDialogue(Choice choice)
     {
         if (choice != null && choice.nodeData.removeSpeakerNode)
