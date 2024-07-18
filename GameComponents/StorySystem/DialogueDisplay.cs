@@ -24,10 +24,8 @@ public class DialogueDisplay : MonoBehaviour
     public TextMeshProUGUI leftNameText;
     public TextMeshProUGUI rightNameText;
 
-    public Anim_BobLoop continueBobber;
-
     public Button btnAutoPlay;
-
+    public bool waitingForChoice;
 
     public Dialogue activeDialogue;
     public DialogueEvent activeEvent;
@@ -41,6 +39,8 @@ public class DialogueDisplay : MonoBehaviour
 
     public float autoDelay = 2;
     public float autoTimer;
+
+    bool waitingForAutoPlayCoroutine = false;
     private void Start()
     {
         btnAutoPlay.onClick.AddListener(() => ToggleAuto());
@@ -51,7 +51,7 @@ public class DialogueDisplay : MonoBehaviour
 
     private void Update()
     {
-        if (autoEnabled && !isPrinting && continueEnabled)
+        if (autoEnabled && !isPrinting && continueEnabled && !waitingForChoice)
         {
             autoTimer += Time.deltaTime;
             autoDelay = 4.5f - GlobalSettings.TextSpeed;
@@ -63,11 +63,6 @@ public class DialogueDisplay : MonoBehaviour
                     autoTimer = 0;
                     PrintEvent();
                 }
-                else
-                {
-                    autoTimer = 0;
-                    dialogueMenu.StartNextStageForAutoPlay();
-                }
             }
         }
 
@@ -78,16 +73,17 @@ public class DialogueDisplay : MonoBehaviour
             readyToPrintChoices = false;
             continueEnabled = false;
             continueAfterChoice = false;
+            waitingForChoice = true;
         }
+    }
 
-        if (continueEnabled && continueBobber.paused)
-        {
-            continueBobber.paused = false;
-        }
-        else if (!continueEnabled && !continueBobber.paused)
-        {
-            continueBobber.PauseAtOrigin();
-        }
+    IEnumerator StartNextStageForAutoPlay()
+    {
+        waitingForAutoPlayCoroutine = true;
+        yield return new WaitForSeconds(autoDelay);
+        autoTimer = 0;
+        dialogueMenu.StartNextStageForAutoPlay();
+        waitingForAutoPlayCoroutine = false;
     }
 
     public void StartDialogue(Dialogue dialogue, bool isInitialStep)
@@ -112,6 +108,7 @@ public class DialogueDisplay : MonoBehaviour
             readyToPrintChoices = false;
             continueAfterChoice = false;
             isPrinting = false;
+            waitingForChoice = false;
 
             gameObject.SetActive(true);
 
@@ -268,7 +265,11 @@ public class DialogueDisplay : MonoBehaviour
                 }
                 else
                 {
-                    continueEnabled = true;
+                    if (autoEnabled)
+                    {
+                        StartCoroutine(StartNextStageForAutoPlay());
+                    }
+
                     continueAfterChoice = true;
                 }
             }
@@ -299,6 +300,7 @@ public class DialogueDisplay : MonoBehaviour
             }
         }
 
+        waitingForChoice = false;
         Debug.Log($"Speaker was {speakerTag} and whether it has text returned {hasResultText}.");
     }
 
@@ -369,17 +371,20 @@ public class DialogueDisplay : MonoBehaviour
 
     public void ToggleAuto()
     {
-        autoEnabled = !autoEnabled;
+        if (!waitingForAutoPlayCoroutine)
+        {
+            autoEnabled = !autoEnabled;
 
-        if (autoEnabled)
-        {
-            autoTimer = autoDelay / 2;
-            btnAutoPlay.image.color = Color.gray;
-        }
-        else
-        {
-            autoTimer = 0;
-            btnAutoPlay.image.color = Color.white;
+            if (autoEnabled)
+            {
+                autoTimer = autoDelay / 2;
+                btnAutoPlay.image.color = Color.gray;
+            }
+            else
+            {
+                autoTimer = 0;
+                btnAutoPlay.image.color = Color.white;
+            }
         }
     }
 
