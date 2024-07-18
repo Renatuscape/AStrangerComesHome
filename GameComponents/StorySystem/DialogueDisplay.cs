@@ -26,7 +26,6 @@ public class DialogueDisplay : MonoBehaviour
 
     public Anim_BobLoop continueBobber;
 
-    public Button btnSpeed;
     public Button btnAutoPlay;
 
 
@@ -40,22 +39,22 @@ public class DialogueDisplay : MonoBehaviour
     public bool continueAfterChoice;
     public int eventIndex;
 
-    public float printSpeed = 0.05f;
-
     public float autoDelay = 2;
     public float autoTimer;
     private void Start()
     {
         btnAutoPlay.onClick.AddListener(() => ToggleAuto());
         chatHistory.text = "<b>Conversation History</b>\n";
+        autoDelay = 4.5f - GlobalSettings.TextSpeed;
         printer.Initialise(this);
     }
 
     private void Update()
     {
-        if (autoEnabled && !isPrinting)
+        if (autoEnabled && !isPrinting && continueEnabled)
         {
             autoTimer += Time.deltaTime;
+            autoDelay = 4.5f - GlobalSettings.TextSpeed;
 
             if (autoTimer > autoDelay)
             {
@@ -63,6 +62,11 @@ public class DialogueDisplay : MonoBehaviour
                 {
                     autoTimer = 0;
                     PrintEvent();
+                }
+                else
+                {
+                    autoTimer = 0;
+                    dialogueMenu.StartNextStageForAutoPlay();
                 }
             }
         }
@@ -93,7 +97,7 @@ public class DialogueDisplay : MonoBehaviour
             textSoundEffect.clip = AudioManager.GetSoundEffect("knockSmall");
         }
 
-        textSoundEffect.volume = GlobalSettings.effectVolume - 0.1f;
+        textSoundEffect.volume = GlobalSettings.EffectVolume - 0.1f;
 
         if (dialogue.stageType != StageType.Dialogue)
         {
@@ -264,6 +268,7 @@ public class DialogueDisplay : MonoBehaviour
                 }
                 else
                 {
+                    continueEnabled = true;
                     continueAfterChoice = true;
                 }
             }
@@ -350,7 +355,7 @@ public class DialogueDisplay : MonoBehaviour
         else if (!autoEnabled && isPrinting)
         {
             //AudioManager.PlayAmbientSound("smallSnap");
-            printSpeed = 0;
+            printer.printSpeed = 0;
         }
         else if (endConversation)
         {
@@ -368,10 +373,12 @@ public class DialogueDisplay : MonoBehaviour
 
         if (autoEnabled)
         {
+            autoTimer = autoDelay / 2;
             btnAutoPlay.image.color = Color.gray;
         }
         else
         {
+            autoTimer = 0;
             btnAutoPlay.image.color = Color.white;
         }
     }
