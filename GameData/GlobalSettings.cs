@@ -9,6 +9,7 @@ public static class GlobalSettings
     public static bool IsScriptEnabled = true; //whether the script font is enabled
     public static int TextSize = 0; //increase or decrease text default size by this number
     public static int TextSpeed = 1;
+    public static bool DisableTextSound = false;
 
     public static string HeaderFont;
     public static string SubtitleFont;
@@ -30,6 +31,7 @@ public static class GlobalSettings
     private const string IsScriptEnabledKey = "IsScriptEnabled";
     private const string TextSizeKey = "TextSize";
     private const string TextSpeedKey = "TextSpeed";
+    private const string DisableTextSoundKey = "TextSound";
 
     private const string HeaderFontKey = "HeaderFont";
     private const string SubtitleFontKey = "SubtitleFont";
@@ -56,6 +58,7 @@ public static class GlobalSettings
         PlayerPrefs.SetInt(IsScriptEnabledKey, IsScriptEnabled ? 1 : 0);
         PlayerPrefs.SetInt(TextSizeKey, TextSize);
         PlayerPrefs.SetInt(TextSpeedKey, TextSpeed);
+        PlayerPrefs.SetInt(DisableTextSoundKey, DisableTextSound ? 1 : 0);
 
         PlayerPrefs.SetString(HeaderFontKey, HeaderFont != null ? HeaderFont : "");
         PlayerPrefs.SetString(SubtitleFontKey, SubtitleFont != null ? SubtitleFont : "");
@@ -82,6 +85,7 @@ public static class GlobalSettings
         IsScriptEnabled = PlayerPrefs.GetInt(IsScriptEnabledKey, 1) == 1; // Default value is true
         TextSize = PlayerPrefs.GetInt(TextSizeKey, 0); // Default value is 0
         TextSpeed = PlayerPrefs.GetInt(TextSpeedKey, 1);
+        DisableTextSound = PlayerPrefs.GetInt(DisableTextSoundKey, 0) == 1;
 
         HeaderFont = PlayerPrefs.GetString(HeaderFontKey, "");
         SubtitleFont = PlayerPrefs.GetString(SubtitleFontKey, "");
