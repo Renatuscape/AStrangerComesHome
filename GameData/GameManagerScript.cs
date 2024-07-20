@@ -161,10 +161,10 @@ public class GameManagerScript : MonoBehaviour
 
     public void NewGameRoutine()
     {
-        StartCoroutine(SaveCoroutine());
+        StartCoroutine(NewGameSetup());
     }
 
-    private IEnumerator SaveCoroutine()
+    private IEnumerator NewGameSetup()
     {
         dataManager.version = Application.version;
         dataManager.lastVersionSaved = "none";
@@ -203,6 +203,9 @@ public class GameManagerScript : MonoBehaviour
         //Add skills to the player inventory from the start
         Player.Add(StaticTags.Wandering, 10, true); // Wandering
         Player.Add(StaticTags.Fate, 8, true); // Fate
+
+        //Starting debt
+        Player.Add(StaticTags.CurrentDebt, 5000, true);
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
         characterCreatorComponent.SetActive(true);
