@@ -20,9 +20,9 @@ public class CharacterExpressionCatalogue : MonoBehaviour
     {
         string trimmedID;
         
-        if (expressionID.Contains("ARC000-"))
+        if (expressionID.Contains("-"))
         {
-            trimmedID = expressionID.Replace("ARC000-", "");
+            trimmedID = expressionID.Split("-")[1];
         }
         else
         {
