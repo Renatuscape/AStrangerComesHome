@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class InfoCanvasWalletController : MonoBehaviour
 {
+    public bool disregardState = false;
+    public bool includeName = false;
+    public bool ignoreSmallWallet = false;
+
     public int guilders;
     public GameObject guilderObject;
 
@@ -57,7 +61,7 @@ public class InfoCanvasWalletController : MonoBehaviour
     }
     void Update()
     {
-        if (TransientDataScript.IsTimeFlowing() && TransientDataScript.GameState != GameState.BankMenu)
+        if (disregardState || (TransientDataScript.IsTimeFlowing() && TransientDataScript.GameState != GameState.BankMenu))
         {
             timer += Time.deltaTime;
 
@@ -81,35 +85,40 @@ public class InfoCanvasWalletController : MonoBehaviour
         {
             if (guilders != playerGuilders)
             {
-                StartCoroutine(UpdateMoney(guilders, playerGuilders, guilderObject));
+                StartCoroutine(UpdateMoney(Currency.Guilder, guilders, playerGuilders, guilderObject));
                 guilders = playerGuilders;
             }
             if (crowns != playerCrowns)
             {
-                StartCoroutine(UpdateMoney(crowns, playerCrowns, crownObject));
+                StartCoroutine(UpdateMoney(Currency.Crown, crowns, playerCrowns, crownObject));
                 crowns = playerCrowns;
             }
             if (shillings != playerShillings)
             {
-                StartCoroutine(UpdateMoney(shillings, playerShillings, shillingObject));
+                StartCoroutine(UpdateMoney(Currency.Shilling, shillings, playerShillings, shillingObject));
                 shillings = playerShillings;
             }
             if (hellers != playerHellers)
             {
-                StartCoroutine(UpdateMoney(hellers, playerHellers, hellerObject));
+                StartCoroutine(UpdateMoney(Currency.Heller, hellers, playerHellers, hellerObject));
                 hellers = playerHellers;
             }
         }
 
         if (total != playerTotal)
         {
-            StartCoroutine(UpdateMoney(total, playerTotal, totalObject));
-            StartCoroutine(UpdateMoney(total, playerTotal, smallWalletTotal));
+            StartCoroutine(UpdateMoney(Currency.Total, total, playerTotal, totalObject));
+
+            if (!ignoreSmallWallet)
+            {
+                StartCoroutine(UpdateMoney(Currency.Total, total, playerTotal, smallWalletTotal));
+            }
+
             total = playerTotal;
         }
     }
 
-    IEnumerator UpdateMoney(int oldSum, int newSum, GameObject container)
+    IEnumerator UpdateMoney(Currency currency, int oldSum, int newSum, GameObject container)
     {
         var text = container.GetComponentInChildren<TextMeshProUGUI>();
         int displaySum;
@@ -123,6 +132,21 @@ public class InfoCanvasWalletController : MonoBehaviour
             displaySum = newSum + 20;
         }
 
+        var startPosition = container.transform.localPosition;
+        var extra = "";
+
+        if (includeName)
+        {
+            if (currency != Currency.Total)
+            {
+                extra = currency + (newSum > 1 ? "s: " : ": ");
+            }
+            else
+            {
+                extra = "Total: ";
+            }
+        }
+
         while (displaySum != newSum)
         {
             if (displaySum < newSum)
@@ -134,12 +158,16 @@ public class InfoCanvasWalletController : MonoBehaviour
                 displaySum--;
             }
 
-            text.text = displaySum.ToString();
+            text.text = extra + displaySum.ToString();
+
             StartCoroutine(TextJump(container));
 
             yield return new WaitForSeconds(0.02f);
 
         }
+
+        yield return new WaitForSeconds(0.1f);
+        container.transform.localPosition = startPosition;
 
         if (!effectAudioCooldown)
         {
