@@ -1,23 +1,71 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
+[Serializable]
+public class CurrencyData
+{
+    public Currency type;
+    public string objectID;
+    public float value;
+    public int max;
+}
 public static class MoneyExchange
 {
+    public static List<CurrencyData> currencyManifest = new()
+    {
+        new ()
+        {
+            type = Currency.Heller,
+            objectID = StaticTags.Heller,
+            value = 0.01f,
+            max = 10000
+        },
+        new ()
+        {
+            type = Currency.Shilling,
+            objectID = StaticTags.Shilling,
+            value = 1,
+            max = 10000
+
+        },
+        new ()
+        {
+            type = Currency.Crown,
+            objectID = StaticTags.Crown,
+            value = 100,
+            max = 100
+        },
+        new ()
+        {
+            type = Currency.Guilder,
+            objectID = StaticTags.Guilder,
+            value = 10000,
+            max = 10
+        }
+    };
+
+    public static CurrencyData GetCurrency(Currency currency)
+    {
+        var foundData = currencyManifest.FirstOrDefault(c => c.type == currency);
+
+        if (foundData == null)
+        {
+            Debug.Log("Found data for currency returned null: " + currency.ToString());
+        }
+
+        return foundData;
+    }
+
     public static Character teller;
     public static DayOfWeek freeExchangeDay = DayOfWeek.Solden;
-    public static float hellerValue = 0.01f;
-    public static int shillingValue = 1;
-    public static int crownValue = 100;
-    public static int guilderValue = 10000;
 
     public static int playerHellers;
     public static int playerShillings;
     public static int playerCrowns;
     public static int playerGuilders;
-
-    public static int maxHellers = 9999;
-    public static int maxShillings = 9999;
-    public static int maxCrowns = 999;
-    public static int maxGuilders = 999;
 
     public static float commission = 0.3f;
 
@@ -42,14 +90,14 @@ public static class MoneyExchange
     public static int GetPlayerMoney()
     {
         int total = 0;
-        playerHellers = Player.GetCount("MIS000", "Money Manager, GetPlayerMoney()"); // get copper
-        playerShillings = Player.GetCount("MIS001", "Money Manager, GetPlayerMoney()"); // get silver
-        playerCrowns = Player.GetCount("MIS002", "Money Manager, GetPlayerMoney()");
-        playerGuilders = Player.GetCount("MIS003", "Money Manager, GetPlayerMoney()");
+        playerHellers = Player.GetCount(StaticTags.Heller, "Money Manager, GetPlayerMoney()"); // get copper
+        playerShillings = Player.GetCount(StaticTags.Shilling, "Money Manager, GetPlayerMoney()"); // get silver
+        playerCrowns = Player.GetCount(StaticTags.Crown, "Money Manager, GetPlayerMoney()");
+        playerGuilders = Player.GetCount(StaticTags.Guilder, "Money Manager, GetPlayerMoney()");
 
         total += playerShillings; // get silver
-        total += playerCrowns * crownValue;
-        total += playerGuilders * guilderValue;
+        total += playerCrowns * (int)GetCurrency(Currency.Crown).value;
+        total += playerGuilders * (int)GetCurrency(Currency.Guilder).value;
 
         return total;
     }
@@ -181,14 +229,14 @@ public static class MoneyExchange
 
         while (valueToAddInShillings > 0)
         {
-            if (valueToAddInShillings >= guilderValue)
+            if (valueToAddInShillings >= GetCurrency(Currency.Guilder).value)
             {
-                valueToAddInShillings -= guilderValue;
+                valueToAddInShillings -= (int)GetCurrency(Currency.Guilder).value;
                 guilders++;
             }
-            else if (valueToAddInShillings >= crownValue)
+            else if (valueToAddInShillings >= GetCurrency(Currency.Crown).value)
             {
-                valueToAddInShillings -= crownValue;
+                valueToAddInShillings -= (int)GetCurrency(Currency.Crown).value;
                 crowns++;
             }
             else
@@ -198,9 +246,9 @@ public static class MoneyExchange
             }
         }
 
-        var guildersAdded = Player.Add("MIS003", guilders, true);
-        var crownsAdded = Player.Add("MIS002", crowns, true);
-        var shillingsAdded = Player.Add("MIS001", shillings, true);
+        var guildersAdded = Player.Add(StaticTags.Guilder, guilders, true);
+        var crownsAdded = Player.Add(StaticTags.Crown, crowns, true);
+        var shillingsAdded = Player.Add(StaticTags.Shilling, shillings, true);
         var totalAdded = (guildersAdded * 10000) + (crownsAdded * 100) + shillingsAdded;
         Debug.Log($"Attempted to add {valueToAddInShillings} using highest denomination. The equivalent of {totalAdded} shillings was added total.");
         return totalAdded;
@@ -220,30 +268,30 @@ public static class MoneyExchange
             switch (randomDenomination)
             {
                 case 1: // Sovereign
-                    if (valueToAddInShillings >= guilderValue)
+                    if (valueToAddInShillings >= GetCurrency(Currency.Shilling).value)
                     {
-                        valueToAddInShillings -= guilderValue;
+                        valueToAddInShillings -= (int)GetCurrency(Currency.Guilder).value;
                         guilder++;
                     }
                     break;
                 case 2: // Gold crown
-                    if (valueToAddInShillings >= crownValue)
+                    if (valueToAddInShillings >= GetCurrency(Currency.Crown).value)
                     {
-                        valueToAddInShillings -= crownValue;
+                        valueToAddInShillings -= (int)GetCurrency(Currency.Crown).value;
                         crown++;
                     }
                     break;
                 case 3: // Silver crown
-                    valueToAddInShillings -= shillingValue;
+                    valueToAddInShillings -= (int)GetCurrency(Currency.Shilling).value;
                     shilling++;
                     break;
             }
         }
 
         // Add coins to player's inventory
-        Player.Add("MIS003", guilder, true);
-        Player.Add("MIS002", crown, true);
-        Player.Add("MIS001", shilling, true);
+        Player.Add(StaticTags.Guilder, guilder, true);
+        Player.Add(StaticTags.Crown, crown, true);
+        Player.Add(StaticTags.Shilling, shilling, true);
     }
 
     #endregion
@@ -284,8 +332,8 @@ public static class MoneyExchange
 
     public static bool ExchangeHellersToShillings(int hellers, out int shillings)
     {
-        int hellersInventory = Player.GetCount("MIS000", "Money Manager, ExchangeCopperToSilver()");
-        int shillingsInventory = Player.GetCount("MIS001", "Money Manager, ExchangeSilverToGold()");
+        int hellersInventory = Player.GetCount(StaticTags.Heller, "Money Manager, ExchangeCopperToSilver()");
+        int shillingsInventory = Player.GetCount(StaticTags.Shilling, "Money Manager, ExchangeSilverToGold()");
         shillings = 0;
 
         if (hellersInventory < hellers)
@@ -296,26 +344,26 @@ public static class MoneyExchange
 
         if (hellers % 100 == 0)
         {
-            var valueInSilver = hellers * hellerValue;
+            var valueInSilver = hellers * GetCurrency(Currency.Heller).value;
             shillings = (int)valueInSilver;
 
-            if (shillingsInventory + shillings < maxShillings)
+            if (shillingsInventory + shillings < GetCurrency(Currency.Shilling).max)
             {
-                Player.Remove("MIS000", hellers, true);
-                Player.Add("MIS001", shillings, true);
+                Player.Remove(StaticTags.Heller, hellers, true);
+                Player.Add(StaticTags.Shilling, shillings, true);
 
                 Debug.Log($"{hellers} hellers exchanged for {shillings} shillings.");
                 return true;
             }
         }
-        Debug.Log($"Hellers ({hellers}) were not divisble by {hellerValue}, or inventory was full.");
+        Debug.Log($"Hellers ({hellers}) were not divisble by {GetCurrency(Currency.Heller).value}, or inventory was full.");
         return false;
     }
 
     public static bool ExchangeShillingsToCrowns(int shillings, out int crowns)
     {
-        int shillingsInventory = Player.GetCount("MIS001", "Money Manager, ExchangeSilverToGold()");
-        int crownsInventory = Player.GetCount("MIS002", "Money Manager, ExchangeSilverToGold()");
+        int shillingsInventory = Player.GetCount(StaticTags.Shilling, "Money Manager, ExchangeSilverToGold()");
+        int crownsInventory = Player.GetCount(StaticTags.Crown, "Money Manager, ExchangeSilverToGold()");
         crowns = 0;
 
         if (shillingsInventory < shillings)
@@ -326,9 +374,9 @@ public static class MoneyExchange
 
         if (shillings % 100 == 0)
         {
-            crowns = shillings / crownValue;
+            crowns = shillings / (int)GetCurrency(Currency.Crown).value;
 
-            if (crowns + crownsInventory < maxCrowns)
+            if (crowns + crownsInventory < GetCurrency(Currency.Crown).max)
             {
                 Player.Remove("MIS001", shillings, true);
                 Player.Add("MIS002", crowns, true);
@@ -338,7 +386,7 @@ public static class MoneyExchange
             }
         }
 
-        Debug.Log($"Shillings ({shillings}) were not divisble by {crownValue}, or inventory was full.");
+        Debug.Log($"Shillings ({shillings}) were not divisble by {GetCurrency(Currency.Crown).value}, or inventory was full.");
         return false;
     }
 
@@ -356,16 +404,16 @@ public static class MoneyExchange
 
         if (crowns % 100 == 0)
         {
-            guilders = crowns * 10 / guilderValue;
+            guilders = crowns * 10 / (int)GetCurrency(Currency.Guilder).value;
 
-            if (guildersInventory + guilders < maxGuilders)
+            if (guildersInventory + guilders < (int)GetCurrency(Currency.Guilder).max)
             {
                 Player.Remove("MIS002", crowns, true);
                 Player.Add("MIS003", guilders, true);
                 return true;
             }
         }
-        Debug.Log($"Crowns ({crowns}) were not divisble by {guilderValue}, or inventory was full.");
+        Debug.Log($"Crowns ({crowns}) were not divisble by {GetCurrency(Currency.Guilder).value}, or inventory was full.");
         return false;
     }
     #endregion
