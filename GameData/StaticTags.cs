@@ -36,6 +36,8 @@ public static class StaticTags
     // Scripts
     public static string TotalPassengers { get; } = "SCR000";
     public static string TotalFare { get; } = "SCR001";
+    public static string AccountBalance { get; } = "SCR002";
+    public static string CurrentDebt { get; } = "SCR003";
     public static string UnlockedPlanters { get; } = "SCR004";
     public static string CoachSynths { get; } = "SCR010";
     public static string GuildLicense { get; } = "SCR012";
@@ -47,6 +49,10 @@ public static class StaticTags
     // Items
     public static string WeedItem { get; } = "PLA000";
     public static string ResurrectionEssence { get; } = "CAT009";
+    public static string Heller { get; } = "MIS000";
+    public static string Shilling { get; } = "MIS001";
+    public static string Crown { get; } = "MIS002";
+    public static string Guilder { get; } = "MIS003";
 
     // Recipes
     public static string CausticWasteRecipe { get; } = "REC001-NN";
