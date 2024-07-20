@@ -51,6 +51,13 @@ public class DialoguePortraitManager : MonoBehaviour
         }
         else if (dEvent.speaker.objectID == "ARC999")
         {
+            // Set player expression
+            if (!string.IsNullOrEmpty(dEvent.spriteID))
+            {
+                playerSprite.SetExpression(dEvent.spriteID);
+            }
+            // Do not override expression if empty
+
             spriteObject = null;
         }
         else if (dEvent.isLeft)
