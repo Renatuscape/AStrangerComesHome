@@ -27,10 +27,6 @@ public class DataManagerScript : MonoBehaviour
     public List<IdIntPair> upgradeWear = Player.upgradeWear;
     public List<IdIntPair> claimedLoot = Player.claimedLoot;
 
-    //GAME SETTINGS
-    public float autoPlaySpeed;
-    public bool alwaysHideCoachExterior;
-
     //PLAYER SPRITE
     public PlayerSpriteData playerSprite; // transition from old index system to using this class
 
@@ -38,7 +34,7 @@ public class DataManagerScript : MonoBehaviour
     public int headIndex;
     public int mouthIndex;
 
-    //JOURNEY DATA - SAVE READY
+    //JOURNEY DATA
     public string postLocationID;
     public string currentRegion;
     public float mapPositionX;
@@ -48,11 +44,11 @@ public class DataManagerScript : MonoBehaviour
     public List<string> giftedThisWeek;
     public List<string> unlockedNames;
 
-    //PASSENGER DATA - A
+    //PASSENGER DATA
     public PassengerData seatA;
     public PassengerData seatB;
 
-    //ALCHEMY SYNTHESISERS
+    //CRAFTING DATA
     public List<SynthesiserData> alchemySynthesisers;
     public List<PlanterData> planters;
 }
