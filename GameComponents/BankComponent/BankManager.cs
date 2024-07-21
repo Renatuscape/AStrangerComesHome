@@ -13,6 +13,7 @@ public enum Currency
 public class BankManager : MonoBehaviour
 {
     public GameObject bankMenu;
+    public GameObject dialogueBox;
 
     public GameObject leaveButton;
     public GameObject exchangeButton;
@@ -66,6 +67,7 @@ public class BankManager : MonoBehaviour
         TransientDataScript.SetGameState(GameState.BankMenu, name, gameObject);
 
         bankMenu.SetActive(true);
+        dialogueBox.SetActive(false);
         exchangeMenu.SetActive(false);
         accountMenu.SetActive(false);
         rewardsButton.SetActive(false);
