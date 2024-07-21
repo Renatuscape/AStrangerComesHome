@@ -16,7 +16,12 @@ public class ReusableDialogueBox : MonoBehaviour
 
     private void Start()
     {
-        btnClose.onClick.AddListener(() => gameObject.SetActive(false));
+        btnClose.onClick.AddListener(() =>
+        {
+            StopAllCoroutines();
+            gameObject.SetActive(false);
+        });
+
         printedText.AddComponent<Button>().onClick.AddListener(() => ForceCompletePrint());
     }
 
