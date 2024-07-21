@@ -43,7 +43,8 @@ public class WaitingNPC : MonoBehaviour
         if (parent != null)
         {
             passengerManager = parent.GetComponent<PassengerManager>();
-            transform.parent = parent.transform;
+            //transform.parent = parent.transform;
+            ParallaxController.ParallaxThis(gameObject, "Road");
             passengerManager.waitingCurrent += 1;
         }
         else if (parent == null)
@@ -79,21 +80,12 @@ public class WaitingNPC : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            var parallaxEffect = transientData.currentSpeed * parallaxMultiplier;
-
-            transform.position = new Vector3(transform.position.x + parallaxEffect, transform.position.y, transform.position.z);
-
-            if ((transform.position.x <= -20 || transform.position.x >= 20) && transientData.currentLocation is null)
+            if ((transform.position.x <= -20 || transform.position.x >= 20) && transientData.currentLocation == null)
             {
                 passengerManager.waitingCurrent -= 1;
                 transientData.activePrefabs.Remove(gameObject);
                 Destroy(gameObject);
             }
-            else if (transform.position.x < -20)
-                transform.position = new Vector3(18, transform.position.y, transform.position.z);
-
-            else if (transform.position.x > 20)
-                transform.position = new Vector3(-18, transform.position.y, transform.position.z);
         }
     }
 
