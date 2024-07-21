@@ -90,7 +90,7 @@ public class ItemManager : MonoBehaviour
         // Set item-specific values
         ItemIDReader(ref item);
 
-        if (item.type != ItemType.Misc)
+        if (item.type != ItemType.Misc && item.type != ItemType.Script)
         {
             item.basePrice = CalculatePrice(ref item);
         }
@@ -119,16 +119,7 @@ public class ItemManager : MonoBehaviour
     {
         item.type = TypeFinder(ref item);
         item.rarity = RarityFinder(ref item);
-        item.sprite = SpriteFactory.GetItemSprite(item.objectID);// item.image = ImageFinder(ref item.objectID);
-
-        //if (item.image != null)
-        //{
-        //    item.sprite = SpriteCreator(ref item.image);
-        //}
-        //else
-        //{
-        //    Debug.LogError($"{item.objectID}.image was null. Could not create sprite.");
-        //}
+        item.sprite = SpriteFactory.GetItemSprite(item.objectID);
 
         if (item.objectID[11] == 'N')
         {
@@ -224,122 +215,72 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    //public static void SproutFinder(ref Item seed)
-    //{
-    //    seed.stage1 = FindSprite(1, seed.objectID);
-    //    seed.stage2 = FindSprite(2, seed.objectID);
-    //    seed.stage3 = FindSprite(3, seed.objectID);
-
-    //    Sprite FindSprite(int frame, string objectID)
-    //    {
-    //        string fileDirectory = Application.streamingAssetsPath + "/Sprites/Items/Sprouts/";
-    //        string filePath = fileDirectory + objectID.Substring(0, 6) + $"-{frame}.png";
-    //        Texture2D texture;
-
-    //        if (!File.Exists(filePath))
-    //        {
-    //            //Debug.LogWarning($"Sprout not found for {objectID} stage {frame}. Using default.");
-    //            filePath = fileDirectory + objectID.Substring(0, 3) + $"000-{frame}.png";
-
-    //            if (!File.Exists(filePath))
-    //            {
-    //                Debug.LogError($"Default image not found for type {objectID.Substring(0, 3)}! No image set for {objectID}");
-    //                return null;
-    //            }
-    //        }
-
-    //        byte[] imageBytes = File.ReadAllBytes(filePath);
-    //        texture = new Texture2D(2, 2); // Create an empty texture
-    //        texture.filterMode = FilterMode.Point; // Set filter mode to Point for pixel-perfect clarity. PREVENTS BLURRINESS
-    //        texture.LoadImage(imageBytes); // Load the image bytes
-
-    //        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-    //    }
-    //}
-
-    //public static Texture2D ImageFinder (ref string objectID)
-    //{
-    //    string fileDirectory = Application.streamingAssetsPath + "/Sprites/Items/";
-    //    string filePath = fileDirectory + objectID.Substring(0, 6) + ".png";
-    //    Texture2D imageTexture;
-
-    //    if (!File.Exists(filePath))
-    //    {
-    //        //Debug.LogWarning($"Image not found for {objectID}. Using default.");
-    //        filePath = fileDirectory + objectID.Substring(0, 3) + "000.png";
-
-    //        if (!File.Exists(filePath))
-    //        {
-    //            Debug.LogError($"Default image not found for type {objectID.Substring(0, 3)}! No image set for {objectID}");
-    //            return null;
-    //        }
-    //    }
-
-    //    byte[] imageBytes = File.ReadAllBytes(filePath);
-    //    imageTexture = new Texture2D(2, 2); // Create an empty texture
-    //    imageTexture.filterMode = FilterMode.Point; // Set filter mode to Point for pixel-perfect clarity. PREVENTS BLURRINESS
-    //    imageTexture.LoadImage(imageBytes); // Load the image bytes
-
-    //    return imageTexture;
-    //}
-
-    //public static Sprite SpriteCreator(ref Texture2D texture)
-    //{
-    //    return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-    //}
-
     public static int CalculatePrice(ref Item item)
+    {
+        return ValueIndex.CalculateItemPrice(ref item);
+    }
+}
+
+public static class ValueIndex
+{
+    public static int CalculateItemPrice(ref Item item)
     {
         float price = 5;
 
         int seedPrice = 1;
-        int plantPrice = 30;
-        int materialPrice = 35;
-        int catalystPrice = 40;
-        int tradePrice = 50;
-        int bookPrice = 100;
-        int treasurePrice = 250;
-
-        float rarityMultiplier = 0.3f;
-
-        if ((int)item.rarity >= 0)
-        {
-            rarityMultiplier = (int)Mathf.Pow((int)item.rarity + 1, 4);
-        }
+        int plantPrice = 5;
+        int materialPrice = 7;
+        int catalystPrice = 20;
+        int tradePrice = 35;
+        int bookPrice = 50;
+        int treasurePrice = 80;
 
         switch (item.type)
         {
             case ItemType.Seed:
-                price = seedPrice * rarityMultiplier * item.health * item.yield;
+                if (item.health != 0 && item.yield != 0)
+                {
+                    price = seedPrice * (item.health + item.yield);
+                }
                 break;
             case ItemType.Plant:
-                price = plantPrice * rarityMultiplier;
+                price = plantPrice;
                 break;
             case ItemType.Material:
-                price = materialPrice * rarityMultiplier;
+                price = materialPrice;
                 break;
             case ItemType.Catalyst:
-                price = catalystPrice * rarityMultiplier;
+                price = catalystPrice;
                 break;
             case ItemType.Trade:
-                price = tradePrice * rarityMultiplier;
+                price = tradePrice;
                 break;
             case ItemType.Book:
-                price = bookPrice * rarityMultiplier;
+                price = bookPrice;
                 break;
             case ItemType.Treasure:
-                price = treasurePrice * rarityMultiplier;
+                price = treasurePrice;
                 break;
             default:
                 break;
         }
 
+        float rarityMultiplier = 0.3f;
+
+        if ((int)item.rarity >= 0)
+        {
+            rarityMultiplier = (((float)item.rarity * (float)item.rarity) + 1) * 10;
+        }
+
+        price = price * rarityMultiplier;
+
         // Create pricing variety
         int itemNumber = ExtractItemNumberFromID(item.objectID);
-        float numberModifier = itemNumber * 10 * (2 + (int)item.rarity);
+        float numberModifier = itemNumber * 3;
         float uniquePrice = price + numberModifier;
 
-        return  (int)uniquePrice;
+        // Debug.Log($"{item.type} {item.name} ({item.rarity}) priced at " + (int)uniquePrice);
+        return (int)uniquePrice;
 
         static int ExtractItemNumberFromID(string itemID)
         {
