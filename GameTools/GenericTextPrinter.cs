@@ -9,8 +9,13 @@ public class GenericTextPrinter : MonoBehaviour
     public int textIndex;
     public float printSpeed;
     public bool isPrinting = false;
+    AudioSource textSoundEffect;
     public void StartPrint(string textToPrint, TextMeshProUGUI textMesh)
     {
+        if (textSoundEffect.clip == null)
+        {
+            textSoundEffect.clip = AudioManager.GetSoundEffect("knockSmall");
+        }
 
         this.textToPrint = textToPrint;
         textArray = textToPrint.Split(' ');
@@ -55,10 +60,10 @@ public class GenericTextPrinter : MonoBehaviour
             textIndex++;
         }
 
-        //if (!GlobalSettings.DisableTextSound && dialogueParent.textSoundEffect.clip != null)
-        //{
-        //    dialogueParent.textSoundEffect.Play();
-        //}
+        if (!GlobalSettings.DisableTextSound && textSoundEffect.clip != null)
+        {
+            textSoundEffect.Play();
+        }
     }
 
     void UpdatePrintSpeed()
