@@ -87,7 +87,7 @@ public class BankAccountMenu : MonoBehaviour
 
         if (debt == 0)
         {
-            PrintMessage("Congratulations!\nYou have repaid your loan in full.");
+            PrintMessage("DELIGHTED", "Congratulations!\nYou have repaid your loan in full.");
         }
     }
 
@@ -104,7 +104,7 @@ public class BankAccountMenu : MonoBehaviour
         {
             withdrawal = Mathf.CeilToInt(balance);
 
-            PrintMessage("The requested withdrawal exceeded account balance. Withdrew all.");
+            PrintMessage("ANNOYED", "You cannot withdraw more money than you have in your account. I took the liberty of withdrawing everything for you.");
         }
         else
         {
@@ -112,7 +112,7 @@ public class BankAccountMenu : MonoBehaviour
 
             withdrawal = Mathf.CeilToInt(balanceSlider.value - difference);
 
-            PrintMessage("No room in inventory for the requested withdrawal. Withdrew all possible guilders.");
+            PrintMessage("THINKING", $"You do not have the space for that many guilders in your wallet. I can only give you {balanceSlider.value - difference} at the moment.");
         }
 
         Player.Remove(StaticTags.AccountBalance, withdrawal);
@@ -132,7 +132,7 @@ public class BankAccountMenu : MonoBehaviour
         else
         {
             deposit = guilders;
-            PrintMessage("The requested deposit exceeded guilders in inventory. Deposited all guilders.");
+            PrintMessage("DISGUSTED", $"It would be wonderful if you had that many guilders to deposit, but you do not. Let us deposit all {guilders} guilders in your wallet.");
         }
 
         Player.Remove(StaticTags.Guilder, deposit);
@@ -140,9 +140,9 @@ public class BankAccountMenu : MonoBehaviour
         UpdateBalanceValues();
     }
 
-    void PrintMessage(string message)
+    void PrintMessage(string expression, string message)
     {
-        tellerDialogue.OpenAndPrintText(message);
+        tellerDialogue.OpenAndPrintText(message, expression);
     }
 
     void UpdateDebtValues()
