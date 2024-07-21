@@ -9,13 +9,15 @@ public class GenericTextPrinter : MonoBehaviour
     public int textIndex;
     public float printSpeed;
     public bool isPrinting = false;
-    AudioSource textSoundEffect;
+    public AudioSource textSoundEffect;
     public void StartPrint(string textToPrint, TextMeshProUGUI textMesh)
     {
         if (textSoundEffect.clip == null)
         {
             textSoundEffect.clip = AudioManager.GetSoundEffect("knockSmall");
         }
+
+        textSoundEffect.volume = GlobalSettings.EffectVolume - 0.1f;
 
         this.textToPrint = textToPrint;
         textArray = textToPrint.Split(' ');
