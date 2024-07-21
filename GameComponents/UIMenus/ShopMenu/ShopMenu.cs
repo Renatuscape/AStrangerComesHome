@@ -228,13 +228,20 @@ public class ShopMenu : MonoBehaviour
             {
                 var itemCost = activeShop.CalculateSellFromInventoryPrice(item);
 
-                Player.Remove(item.objectID);
-                AudioManager.PlaySoundEffect("cloth3", +0.3f);
-                MoneyExchange.AddHighestDenomination(itemCost);
-                LogAlert.QueueTextAlert("Sold for " + itemCost + " shillings.");
-                //TransientDataScript.PushAlert($"Sold {item.name} for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
+                if (MoneyExchange.AddHighestDenomination(itemCost, false, out var totalAdded))
+                {
+                    Player.Remove(item.objectID);
+                    AudioManager.PlaySoundEffect("cloth3", +0.3f);
+                    LogAlert.QueueTextAlert($"Sold for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
+                    //TransientDataScript.PushAlert($"Sold {item.name} for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
 
-                shopItem.UpdateInventoryCount();
+                    shopItem.UpdateInventoryCount();
+                }
+                else
+                {
+                    LogAlert.QueueTextAlert("Not enough space in wallet.");
+                    AudioManager.PlaySoundEffect("drumDoubleTap");
+                }
             }
             else
             {
@@ -254,7 +261,7 @@ public class ShopMenu : MonoBehaviour
                     Player.Add(item.objectID);
                     AudioManager.PlaySoundEffect("cloth3", +0.3f);
                     //Debug.Log($"{activeShop} You purchased {item.name} for {itemCost}.");
-                    LogAlert.QueueTextAlert("Paid " + itemCost + " shillings.");
+                    LogAlert.QueueTextAlert($"Paid { itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
                     //TransientDataScript.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
 
                     shopItem.UpdateInventoryCount();
