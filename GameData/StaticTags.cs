@@ -42,10 +42,6 @@ public static class StaticTags
     public static string CoachSynths { get; } = "SCR010";
     public static string GuildLicense { get; } = "SCR012";
 
-    // Misc
-    public static string GuildLicenseItem { get; } = "MIS021";
-    public static string CausticWaste { get; } = "MAT030";
-
     // Items
     public static string WeedItem { get; } = "PLA000";
     public static string ResurrectionEssence { get; } = "CAT009";
