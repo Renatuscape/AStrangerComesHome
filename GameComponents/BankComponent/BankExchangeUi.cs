@@ -10,14 +10,11 @@ public class BankExchangeUi : MonoBehaviour
     public TextMeshProUGUI commissionRate;
     public TextMeshProUGUI exchangePriceText;
     public TextMeshProUGUI valueToBuy;
-    public TextMeshProUGUI confirmText;
     public TextMeshProUGUI hellersToSellText;
     public TextMeshProUGUI shillingsForHellersText;
-    public GameObject confirmMenu;
+    public ReusableDialogueBox tellerDialogue;
 
     public Button btnAttemptExchange;
-    public Button btnConfirmExchange;
-    public Button btnCancelConfirm;
     public Button btnHellerMaxExchange;
 
     public TMP_Dropdown dropdownBuy;
@@ -44,8 +41,6 @@ public class BankExchangeUi : MonoBehaviour
         });
 
         btnAttemptExchange.onClick.AddListener(() => AttemptExchange());
-        btnCancelConfirm.onClick.AddListener(() => CancelConfirm());
-        btnConfirmExchange.onClick.AddListener(() => ConfirmExchange());
         btnHellerMaxExchange.onClick.AddListener(() => ExchangeAllHellers());
 
         dropdownBuy.value = 1;
@@ -62,7 +57,6 @@ public class BankExchangeUi : MonoBehaviour
             Setup();
         }
 
-        confirmMenu.SetActive(false);
         exchangeController.commission = MoneyExchange.CalculateCommission();
         commissionRate.text = exchangeController.commission + "%";
 
@@ -161,12 +155,12 @@ public class BankExchangeUi : MonoBehaviour
 
     public void AttemptExchange()
     {
-        confirmText.text = $"Exchange {exchangeController.adjustedExchangePrice} {exchangeController.currencyToSell.ToString().ToLower()}" +
+        tellerDialogue.OpenAndPrintText($"Exchange {exchangeController.adjustedExchangePrice} {exchangeController.currencyToSell.ToString().ToLower()}" +
             $"{(exchangeController.adjustedExchangePrice > 1 ? "s" : "")}" +
             $" for {exchangeController.amountToBuy} {exchangeController.currencyToBuy.ToString().ToLower()}" +
             $"{(exchangeController.amountToBuy > 1 ? "s" : "")}?" +
-            $"\n\nCommission is not applied when exchanging for a lower denomination.";
-        confirmMenu.SetActive(true);
+            $"\n\nCommission is not applied when exchanging for a lower denomination.",
+            ConfirmExchange);
     }
 
     public void ConfirmExchange()
@@ -174,11 +168,10 @@ public class BankExchangeUi : MonoBehaviour
         if (exchangeController.PerformExchange(out var errorMessage))
         {
             Debug.Log("Exchange returned true.");
-            confirmMenu.SetActive(false);
         }
         else
         {
-            confirmText.text = errorMessage;
+            tellerDialogue.OpenAndPrintText(errorMessage);
         }
     }
 
@@ -186,10 +179,5 @@ public class BankExchangeUi : MonoBehaviour
     {
         exchangeController.ExchangeMaxHellers();
         UpdateHellerInfo();
-    }
-
-    public void CancelConfirm()
-    {
-        confirmMenu.SetActive(false);
     }
 }
