@@ -65,7 +65,7 @@ public class PassengerPrefabScript : MonoBehaviour
     {
         float distance = CalculateDistance(passengerData.origin, passengerData.destination);
         Debug.Log("Distance between A and B: " + distance);
-        passengerData.fare = (int)(distance * distance) * (int)Mathf.Ceil(Player.GetCount("SCR012", name) * 0.5f);
+        passengerData.fare = (int)(distance * distance) * (int)Mathf.Ceil(Player.GetCount(StaticTags.GuildLicense, name) * 0.2f);
         Debug.Log("Fare calculated to " + passengerData.fare);
     }
 
@@ -81,15 +81,12 @@ public class PassengerPrefabScript : MonoBehaviour
         {
             if (passengerData.destination.objectID == TransientDataScript.GetCurrentLocation().objectID)
             {
-                int fortune = Player.GetCount("ATT000", "PassengerPrefabScript");
+                int fate = Player.GetCount(StaticTags.Fate, "PassengerPrefabScript");
 
-                // Actual fare is added by highest denomination
-                int added = MoneyExchange.AddHighestDenomination(passengerData.fare);
-
+                MoneyExchange.AddHighestDenomination(passengerData.fare, true, out var totalAdded);
                 AudioManager.PlaySoundEffect("handleCoins", -0.2f);
 
-                // Ensure the player had inventory space for full fare
-                if (added < passengerData.fare)
+                if (passengerData.fare < totalAdded)
                 {
                     TransientDataScript.PushAlert("I was unable to accept the total fare. Better go to the bank!");
                 }
@@ -99,12 +96,12 @@ public class PassengerPrefabScript : MonoBehaviour
                 }
 
                 // Tip is paid out in hellers and scripted items are updated to track
-                Player.Add("MIS000", Random.Range(0, passengerData.fare), true);
-                Player.Add("SCR000");
-                Player.Add("SCR001", passengerData.fare);
+                Player.Add(StaticTags.Heller, Random.Range(0, passengerData.fare), true);
+                Player.Add(StaticTags.TotalPassengers);
+                Player.Add(StaticTags.TotalFare, passengerData.fare);
 
                 // Spirit Essence drop
-                if (Random.Range(0, 100) > 80 - (fortune * 4))
+                if (Random.Range(0, 100) > 80 - (fate * 4))
                 {
                     Player.Add(spiritEssence.objectID);
                     TransientDataScript.PushAlert($"{passengerData.passengerName} dropped some Spirit Essence.");
