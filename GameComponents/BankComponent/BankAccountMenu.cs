@@ -4,8 +4,7 @@ using UnityEngine.UI;
 
 public class BankAccountMenu : MonoBehaviour
 {
-    public GameObject subMenu;
-    public TextMeshProUGUI subMenuText;
+    public ReusableDialogueBox tellerDialogue;
     public TextMeshProUGUI accountBalanceText;
     public TextMeshProUGUI currentDebtText;
     public TextMeshProUGUI balanceSliderText;
@@ -88,7 +87,7 @@ public class BankAccountMenu : MonoBehaviour
 
         if (debt == 0)
         {
-            OpenSubmenu("Congratulations!\nYou have repaid your loan in full.");
+            PrintMessage("Congratulations!\nYou have repaid your loan in full.");
         }
     }
 
@@ -105,7 +104,7 @@ public class BankAccountMenu : MonoBehaviour
         {
             withdrawal = Mathf.CeilToInt(balance);
 
-            OpenSubmenu("The requested withdrawal exceeded account balance. Withdrew all.");
+            PrintMessage("The requested withdrawal exceeded account balance. Withdrew all.");
         }
         else
         {
@@ -113,7 +112,7 @@ public class BankAccountMenu : MonoBehaviour
 
             withdrawal = Mathf.CeilToInt(balanceSlider.value - difference);
 
-            OpenSubmenu("No room in inventory for the requested withdrawal. Withdrew all possible guilders.");
+            PrintMessage("No room in inventory for the requested withdrawal. Withdrew all possible guilders.");
         }
 
         Player.Remove(StaticTags.AccountBalance, withdrawal);
@@ -133,7 +132,7 @@ public class BankAccountMenu : MonoBehaviour
         else
         {
             deposit = guilders;
-            OpenSubmenu("The requested deposit exceeded guilders in inventory. Deposited all guilders.");
+            PrintMessage("The requested deposit exceeded guilders in inventory. Deposited all guilders.");
         }
 
         Player.Remove(StaticTags.Guilder, deposit);
@@ -141,10 +140,9 @@ public class BankAccountMenu : MonoBehaviour
         UpdateBalanceValues();
     }
 
-    void OpenSubmenu(string message)
+    void PrintMessage(string message)
     {
-        subMenuText.text = message;
-        subMenu.SetActive(true);
+        tellerDialogue.OpenAndPrintText(message);
     }
 
     void UpdateDebtValues()
