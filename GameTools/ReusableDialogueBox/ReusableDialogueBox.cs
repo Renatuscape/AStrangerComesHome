@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -9,10 +10,13 @@ using UnityEngine.UI;
 public class ReusableDialogueBox : MonoBehaviour
 {
     public TextMeshProUGUI printedText;
+    public Character character;
+    public SpriteCollection spriteData;
     public Image portrait;
     public GenericTextPrinter printer;
     public Button btnConfirm;
     public Button btnClose;
+    bool portraitIsReady = false;
 
     private void Start()
     {
@@ -33,7 +37,32 @@ public class ReusableDialogueBox : MonoBehaviour
         }
     }
 
-    public void SetPortrait(string characterID, string eventID = "", float newX = -1, float newY = -1)
+    public void SetExpression(string eventID)
+    {
+        if (portraitIsReady)
+        {
+            portrait.sprite = spriteData.GetFirstFrameFromEvent(eventID);
+        }
+    }
+
+    public void SetupPortrait(string characterID, bool setSpriteToDefault = true, float newX = -1, float newY = -1)
+    {
+        character = Characters.FindByID(characterID);
+        spriteData = SpriteFactory.GetUiSprite(characterID);
+
+        if (setSpriteToDefault)
+        {
+            portrait.sprite = spriteData.GetDefaultFrame();
+        }
+
+        if (newX != -1 && newY != -1)
+        {
+            portrait.gameObject.transform.localPosition = new Vector3(newX, newY, 0);
+        }
+
+        portraitIsReady = true;
+    }
+    public void ForceAnyPortrait(string characterID, string eventID = "", float newX = -1, float newY = -1)
     {
         var newSprite = SpriteFactory.GetUiSprite(characterID);
 
@@ -55,7 +84,7 @@ public class ReusableDialogueBox : MonoBehaviour
         }
     }
 
-    public void OpenAndPrintText(string text, UnityAction confirmAction = null)
+    public void OpenAndPrintText(string text, string eventID = "", UnityAction confirmAction = null)
     {
         gameObject.SetActive(true);
         printer.StartPrint(text, printedText);
@@ -63,6 +92,18 @@ public class ReusableDialogueBox : MonoBehaviour
         if (confirmAction != null)
         {
             StartCoroutine(WaitAndConfigureConfirm(confirmAction));
+        }
+
+        if (portraitIsReady && spriteData != null)
+        {
+            if (string.IsNullOrEmpty(eventID))
+            {
+                portrait.sprite = spriteData.GetDefaultFrame();
+            }
+            else
+            {
+                SetExpression(eventID);
+            }
         }
     }
 
