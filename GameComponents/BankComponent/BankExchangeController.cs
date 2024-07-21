@@ -31,13 +31,13 @@ public class BankExchangeController : MonoBehaviour
             else
             {
                 Debug.Log("Puchase failed due to max inventory.");
-                errorMessage = "Not enough inventory space for that many " + currencyToBuy.ToString().ToLower() + "s. Cannot hold more than " + buyData.max + ".";
+                errorMessage = "You do not have enough inventory space for that many " + currencyToBuy.ToString().ToLower() + "s. Your wallet will only hold " + buyData.max + ".";
                 return false;
             }
         }
 
         Debug.Log("Puchase failed due to low amount.");
-        errorMessage = "Not enough " + currencyToSell.ToString().ToLower() + "s to complete exchange.";
+        errorMessage = "You do not have enough " + currencyToSell.ToString().ToLower() + "s to complete this exchange.";
         return false;
     }
 
@@ -54,7 +54,9 @@ public class BankExchangeController : MonoBehaviour
 
             //No commission when exchanging for a lower denomination
 
-            adjustedExchangePrice = Mathf.CeilToInt(priceOfPurchase / currencyToBuyData.value);
+            // adjustedExchangePrice = Mathf.CeilToInt(priceOfPurchase / currencyToBuyData.value);
+            // adjustedExchangePrice = Mathf.CeilToInt(priceOfPurchase * currencyToSellData.value / currencyToBuyData.value);
+            adjustedExchangePrice = Mathf.CeilToInt(priceOfPurchase);
         }
         else
         {
