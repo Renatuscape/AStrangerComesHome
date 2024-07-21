@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -23,9 +24,6 @@ public class BankExchangeUi : MonoBehaviour
     bool isReady = false;
     private void Setup()
     {
-        //PopulateDropdown(dropdownBuy);
-        //PopulateDropdown(dropdownSell);
-
         dropdownBuy.onValueChanged.AddListener(delegate
         {
             SelectCurrency(dropdownBuy);
@@ -126,10 +124,6 @@ public class BankExchangeUi : MonoBehaviour
             {
                 valueToBuy.text = toBuySlider.value.ToString();
                 exchangeController.amountToBuy = Mathf.CeilToInt(toBuySlider.value);
-
-                //int calculatedValue = Mathf.CeilToInt(toBuySlider.value * (currencyToBuyData.value / currencyToSellData.value));
-                //valueToBuy.text = calculatedValue.ToString();
-                //exchangeController.amountToBuy = Mathf.CeilToInt(calculatedValue);
             }
 
             CalculateExchangePrice();
@@ -155,12 +149,12 @@ public class BankExchangeUi : MonoBehaviour
 
     public void AttemptExchange()
     {
-        tellerDialogue.OpenAndPrintText($"Exchange {exchangeController.adjustedExchangePrice} {exchangeController.currencyToSell.ToString().ToLower()}" +
+        tellerDialogue.OpenAndPrintText($"Do you wish to exchange {exchangeController.adjustedExchangePrice} {exchangeController.currencyToSell.ToString().ToLower()}" +
             $"{(exchangeController.adjustedExchangePrice > 1 ? "s" : "")}" +
             $" for {exchangeController.amountToBuy} {exchangeController.currencyToBuy.ToString().ToLower()}" +
             $"{(exchangeController.amountToBuy > 1 ? "s" : "")}?" +
             $"\n\nCommission is not applied when exchanging for a lower denomination.",
-            ConfirmExchange);
+            "DEFAULT", ConfirmExchange);
     }
 
     public void ConfirmExchange()
@@ -171,8 +165,15 @@ public class BankExchangeUi : MonoBehaviour
         }
         else
         {
-            tellerDialogue.OpenAndPrintText(errorMessage);
+            StartCoroutine(PrintErrorAfterDelay(errorMessage));
         }
+    }
+
+    IEnumerator PrintErrorAfterDelay(string errorMessage)
+    {
+        yield return null;
+        yield return new WaitForSeconds(0.1f);
+        tellerDialogue.OpenAndPrintText(errorMessage, "ANNOYED");
     }
 
     public void ExchangeAllHellers()
