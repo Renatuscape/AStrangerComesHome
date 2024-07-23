@@ -125,9 +125,6 @@ public class GameManagerScript : MonoBehaviour
         await GuildRewardLoader.StartLoading(menuSystem.guildMenu.rewardsMenu);
         Debug.Log("STARTUP: Loading guild rewards async completed");
 
-        //await saveDataManager.StartLoading();
-        //Debug.Log("STARTUP: Loading save data completed");
-
         DialogueTagParser.UpdateTags(dataManager);
     }
 
@@ -200,11 +197,11 @@ public class GameManagerScript : MonoBehaviour
         dataManager.inventoryList = Player.inventoryList;
         dataManager.questProgression = Player.questProgression;
 
-        //Add skills to the player inventory from the start
+        // Add skills to the player inventory from the start
         Player.Add(StaticTags.Wandering, 10, true); // Wandering
         Player.Add(StaticTags.Fate, 8, true); // Fate
 
-        //Starting debt
+        // Add initial debt
         Player.Add(StaticTags.CurrentDebt, 5000, true);
 
         TransientDataScript.SetGameState(GameState.CharacterCreation, name, gameObject);
