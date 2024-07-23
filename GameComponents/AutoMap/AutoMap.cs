@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class AutoMap : MonoBehaviour
 {
+    public ParallaxManager parallaxManager;
     public GameObject mapContainer;
     public GameObject tilePrefab;
     public GameObject mapMarker;
@@ -143,6 +144,8 @@ public class AutoMap : MonoBehaviour
         playerToken.transform.localPosition = new Vector3(dataManager.mapPositionX, dataManager.mapPositionY, 0);
         CheckCurrentLocation();
         mapCanvas.ChangeRegion();
+
+        parallaxManager.LoadRegion(region.objectID);
     }
 
     public Location CheckCurrentLocation()
