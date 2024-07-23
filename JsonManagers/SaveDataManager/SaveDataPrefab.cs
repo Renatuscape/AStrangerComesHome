@@ -29,7 +29,7 @@ public class SaveDataPrefab : MonoBehaviour
         }
         else
         {
-            locationName = "Wilderness";
+            locationName = Regions.FindByID(saveData.currentRegion).name;
         }
 
         displayInfo.text = $"<color=#{saveData.playerNameColour}><b>{saveData.playerName}</b></color>" +
