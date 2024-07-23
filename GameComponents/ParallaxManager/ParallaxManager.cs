@@ -24,14 +24,21 @@ public class ParallaxManager : MonoBehaviour
     public void LoadRegion(string regionID)
     {
         var package = layerPackages.FirstOrDefault(p => p.regionID == regionID);
+        if (package == null)
+        {
+            package = layerPackages[0];
+        }
         StopAllCoroutines();
         StartCoroutine(LoadSpritePackage(package));
     }
 
     IEnumerator LoadSpritePackage(ParallaxLayerPackage package)
     {
+        Debug.Log("Attempting to load sprite package for " + package.regionID);
+
         fadeCurtain.gameObject.SetActive(true);
         fadeCurtain.color = Color.black;
+        TransientDataScript.transientData.currentSpeed = 0;
         yield return null;
         layerRenderer.ApplyPackage(package);
 
@@ -73,10 +80,21 @@ public class ParallaxManager : MonoBehaviour
             controller.UpdateSpriteSizes();
         }
 
+        StartCoroutine(FadeCurtainAndDisable());
+    }
+
+    IEnumerator FadeCurtainAndDisable()
+    {
+        Debug.Log("Attempting to fade curtain.");
+        float alpha = fadeCurtain.color.a;
+        
+        yield return new WaitForSeconds(0.3f);
+
         while (fadeCurtain.color.a > 0)
         {
-            yield return new WaitForSeconds(0.1f);
-            fadeCurtain.color = new Color(0, 0, 0, fadeCurtain.color.a + 0.05f);
+            alpha -= 0.015f;
+            yield return new WaitForSeconds(0.01f);
+            fadeCurtain.color = new Color(0, 0, 0, alpha);
         }
 
         fadeCurtain.gameObject.SetActive(false);
@@ -100,7 +118,7 @@ public class ParallaxManager : MonoBehaviour
         CreateRenderer(ref layerRenderer.fg2, "FG2");
 
         SetUpController();
-        LoadRegion("REGION1");
+        LoadRegion("REGION0");
         isReady = true;
 
         void CreateRenderer(ref SpriteRenderer initialiseThisRenderer, string layerName)
