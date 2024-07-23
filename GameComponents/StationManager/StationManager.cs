@@ -12,6 +12,7 @@ public class StationManager : MonoBehaviour
     public float parallaxMultiplier;
     public List<GameObject> customStations;
     public List<GameObject> defaultStations;
+    public List<GameObject> defaultStationsByRegion;
 
     void Awake()
     {
@@ -98,8 +99,22 @@ public class StationManager : MonoBehaviour
 
         if (foundStation == null)
         {
-            foundStation = defaultStations.FirstOrDefault(s => s.name.ToLower().Contains(transientData.currentLocation.type.ToString().ToLower()));
+            var searchType = transientData.currentLocation.type.ToString().ToLower();
+            var searchRegion = transientData.currentRegion.ToString().ToLower();
 
+            // CHECK FOR LOCATION TYPE AND REGION
+            if (foundStation == null && searchRegion != "region0") // REGION0 uses the defaultStations list
+            {
+                foundStation = defaultStationsByRegion.FirstOrDefault(s => s.name.ToLower().Contains(searchType) && s.name.ToLower().Contains(searchRegion));
+            }
+
+            // CHECK FOR LOCATION TYPE ONLY
+            if (foundStation == null)
+            {
+                foundStation = defaultStations.FirstOrDefault(s => s.name.ToLower().Contains(searchType));
+            }
+
+            // USE FALLBACK
             if (foundStation == null)
             {
                 foundStation = defaultStation;
