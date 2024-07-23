@@ -80,7 +80,7 @@ public class WaitingNPC : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            if ((transform.position.x <= -20 || transform.position.x >= 20) && transientData.currentLocation == null)
+            if ((transform.position.x <= -19 || transform.position.x >= 19) && transientData.currentLocation == null)
             {
                 passengerManager.waitingCurrent -= 1;
                 transientData.activePrefabs.Remove(gameObject);
