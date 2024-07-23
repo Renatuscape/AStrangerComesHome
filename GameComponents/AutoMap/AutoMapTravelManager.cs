@@ -67,7 +67,7 @@ public class AutoMapTravelManager
                                 }
                             }
 
-                            TransientDataScript.PushAlert($"{autoMap.transientData.currentRegion.name} Region.");
+                            TransientDataScript.PushAlert($"{autoMap.transientData.currentRegion.name}");
                         }
                     }
                     else
