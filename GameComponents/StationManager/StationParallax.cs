@@ -16,6 +16,9 @@ public class StationParallax : MonoBehaviour
     public List<CharacterNode> characterNodes;
     public StationPrefab parentStation;
     public StationParallaxData dataPackage;
+    public float maxOffsetCentre;
+    float offsetIncrement;
+    int offsetMultiplier;
 
     private void Awake()
     {
@@ -23,55 +26,80 @@ public class StationParallax : MonoBehaviour
         StartCoroutine(FadeIn(false));
 
         parentStation = GetComponent<StationPrefab>();
-    }
-    void Start()
-    {
+
+        offsetIncrement = 3f;
+        offsetMultiplier = (midParallaxLayers.Count > 0 ? 1: 0) + (backParallaxLayers.Count > 0 ? 3 : 0) + (back2ParallaxLayers.Count > 0 ? 3 : 0);
+        maxOffsetCentre = 32 + (offsetIncrement * offsetMultiplier);
+
         PackageParallaxData();
     }
 
     void PackageParallaxData()
     {
         dataPackage = new();
+        dataPackage.layers = new();
+        dataPackage.maxOffsetCentre = maxOffsetCentre;
+
         dataPackage.parentStation = parentStation;
+        dataPackage.facade = frontParallaxLayers[0];
+
+        if (dataPackage.facade == null)
+        {
+            dataPackage.facade = midParallaxLayers[0];
+        }
+
+        if (dataPackage.facade == null)
+        {
+            dataPackage.facade = backParallaxLayers[0];
+        }
 
         float maxOffsetFacade = 0;
-        float offsetIncrement = 1;
-        float maxOffsetCentre = 30;
 
         foreach (var layer in frontParallaxLayers)
         {
-            SetUpParallaxData("Station Front", dataPackage.frontParallaxLayers, layer, maxOffsetFacade, maxOffsetCentre);
+            var data = SetUpParallaxData("Station Front", layer, maxOffsetFacade, maxOffsetCentre);
+            if (data != null)
+            {
+                dataPackage.layers.Add(data);
+            }
+            else
+            {
+                Debug.Log($"Data for {layer} was null.");
+            }
         }
 
         maxOffsetFacade += offsetIncrement;
         foreach (var layer in midParallaxLayers)
         {
-            SetUpParallaxData("Station Mid", dataPackage.midParallaxLayers, layer, maxOffsetFacade, maxOffsetCentre);
+            var data = SetUpParallaxData("Station Mid", layer, maxOffsetFacade, maxOffsetCentre);
+            dataPackage.layers.Add(data);
         }
 
         maxOffsetFacade += offsetIncrement;
         foreach (var layer in backParallaxLayers)
         {
-            SetUpParallaxData("Station Back", dataPackage.backParallaxLayers, layer, maxOffsetFacade, maxOffsetCentre);
+            var data = SetUpParallaxData("Station Back", layer, maxOffsetFacade, maxOffsetCentre);
+            dataPackage.layers.Add(data);
         }
 
         maxOffsetFacade += offsetIncrement;
         foreach (var layer in back2ParallaxLayers)
         {
-            SetUpParallaxData("BG1", dataPackage.back2ParallaxLayers, layer, maxOffsetFacade, maxOffsetCentre);
+            var data = SetUpParallaxData("BG1", layer, maxOffsetFacade, maxOffsetCentre);
+            dataPackage.layers.Add(data);
         }
 
-        ParallaxController.ParallaxThisStation(dataPackage);
+        ParallaxControllerHelper.AddStationToParallax(dataPackage);
     }
 
-    StationParallaxDataLayer SetUpParallaxData( string layerName, List<StationParallaxDataLayer> list, GameObject layer, float maxOffsetFacade, float maxOffsetCentre)
+    StationParallaxDataLayer SetUpParallaxData(string layerName, GameObject layer, float maxOffsetFacade, float maxOffsetCentre)
     {
-        var data = layer.AddComponent<StationParallaxDataLayer>();
-        data.layerName = layerName;
-        data.maxOffsetFromCentre = maxOffsetCentre;
-        data.maxOffsetFromFacade = maxOffsetFacade;
-        list.Add(data);
-        return data;
+        var layerData = layer.AddComponent<StationParallaxDataLayer>();
+        layerData.layerName = layerName;
+        layerData.maxOffsetFromCentre = maxOffsetCentre;
+        layerData.maxOffsetFromFacade = maxOffsetFacade;
+        layerData.layer = layer;
+        return layerData;
     }
 
     public void StartFadeOut(bool setComplete)
@@ -224,11 +252,10 @@ public class StationParallax : MonoBehaviour
 public class StationParallaxData
 {
     public StationPrefab parentStation;
+    public float maxOffsetCentre;
 
-    public List<StationParallaxDataLayer> frontParallaxLayers;
-    public List<StationParallaxDataLayer> midParallaxLayers;
-    public List<StationParallaxDataLayer> backParallaxLayers;
-    public List<StationParallaxDataLayer> back2ParallaxLayers;
+    public GameObject facade;
+    public List<StationParallaxDataLayer> layers;
 }
 
 public class StationParallaxDataLayer : MonoBehaviour
@@ -237,4 +264,9 @@ public class StationParallaxDataLayer : MonoBehaviour
     public string layerName;
     public float maxOffsetFromFacade; // Stop moving when this limit is reached
     public float maxOffsetFromCentre; // Ready to swap sides when this limit is reached
+    public float speedMultiplier; // Set by controller using layerName
+    public bool readyToMoveLeft;
+    public bool readyToMoveRight;
+
+    public float lastMoveAmount;
 }
