@@ -8,4 +8,6 @@ public class ParallaxRenderPackage
     public float passiveSpeed;
     public float parallaxMultiplier;
     public Vector3 spriteSize;
+
+    public float lastMoveAmount;
 }
