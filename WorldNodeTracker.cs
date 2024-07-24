@@ -106,7 +106,7 @@ public static class WorldNodeTracker
 
     public static bool AddCharacterNode(CharacterNode cNode)
     {
-        var foundNode = spawnedCharacterNodes.FirstOrDefault(n => n.nodeID == cNode.nodeID);
+        var foundNode = spawnedCharacterNodes.FirstOrDefault(n => n.generatedNodeID == cNode.generatedNodeID);
         PrintAllCharacterNodes();
 
         if (foundNode == null)
@@ -131,7 +131,7 @@ public static class WorldNodeTracker
             UnityEngine.Debug.Log("No node was found with the same character object ID as " + cNode.characterID);
             return false;
         }
-        else if (matchingNode.nodeID != cNode.nodeID)
+        else if (matchingNode.generatedNodeID != cNode.generatedNodeID)
         {
             UnityEngine.Debug.Log("Matching node was found, but nodeID was not the same.");
             return true;
@@ -157,7 +157,7 @@ public static class WorldNodeTracker
         UnityEngine.Debug.Log($"List of nodes had {spawnedCharacterNodes.Count} nodes.");
         foreach (var node in spawnedCharacterNodes)
         {
-            UnityEngine.Debug.Log($"Node {node.nodeID}");
+            UnityEngine.Debug.Log($"Node {node.generatedNodeID}");
         }
     }
 }

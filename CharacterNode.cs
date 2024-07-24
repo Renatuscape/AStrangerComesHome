@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class CharacterNode : MonoBehaviour
 {
-    public string nodeID;
+    public string characterID;
     public bool allowOverride = false; // replaces node with speaker from a viable dialogue where location is explicitly set.
     public bool updateAtMidnight = false;
-    public Character character;
-    public string characterID;
     public string alternateFloatText; // Display this text instead of character name
     public string alternativeSpriteID;
     public string activeDialogueID; // Character only appears if all dialogue requirements are met
     public int randomSpawnChance; // Leave at 0 to always spawn
     public bool continuouslyCheckRequirements; // If false, checks will not be reevaluated until destroyed
     public RequirementPackage customRequirements;
+    public Character character;
     public bool isDormant = false; // allows other classes know not to enable the node
     public string textToDisplay;
+    public string generatedNodeID;
 
     SpriteRenderer rend;
     CapsuleCollider2D col;
@@ -24,7 +24,7 @@ public class CharacterNode : MonoBehaviour
 
     void Start()
     {
-        nodeID = (string.IsNullOrEmpty(characterID) ? "overrideNode" : characterID) + Random.Range(100000, 999999);
+        generatedNodeID = (string.IsNullOrEmpty(characterID) ? "overrideNode" : characterID) + Random.Range(100000, 999999);
         WorldNodeTracker.AddCharacterNode(this);
 
         rend = GetComponent<SpriteRenderer>();
