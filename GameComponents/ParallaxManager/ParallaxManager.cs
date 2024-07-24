@@ -26,6 +26,7 @@ public class ParallaxManager : MonoBehaviour
 
     public void LoadRegion(string regionID)
     {
+        Debug.Log("Loading region " + regionID);
         var package = layerPackages.FirstOrDefault(p => p.regionID == regionID);
         if (package == null)
         {
