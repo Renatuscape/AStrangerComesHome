@@ -6,13 +6,10 @@ using Random = UnityEngine.Random;
 
 public class SalvageBoxMechanics : MonoBehaviour
 {
-    TransientDataScript transientData;
     private SpriteRenderer sprite;
     private BoxCollider2D objectCollider;
     private Animator anim;
 
-    public float parallaxMultiplier;
-    private float parallaxEffect;
     private float alphaSetting = 1;
 
     public List<Item> coins;
@@ -29,12 +26,8 @@ public class SalvageBoxMechanics : MonoBehaviour
 
     public List<ItemIntPair> loot = new();
 
-    public int fortune;
+    public int fate;
 
-    private void Awake()
-    {
-        transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-    }
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
@@ -47,11 +40,6 @@ public class SalvageBoxMechanics : MonoBehaviour
 
     void LateUpdate()
     {
-        parallaxEffect = transientData.currentSpeed * parallaxMultiplier;
-
-        sprite.color = new Color(1, 1, 1, alphaSetting);
-        transform.position = new Vector2(transform.position.x + parallaxEffect, transform.position.y);
-
         if (transform.position.x <= -28 || transform.position.x >= 28)
         {
             Destroy(gameObject);
@@ -67,7 +55,7 @@ public class SalvageBoxMechanics : MonoBehaviour
     {
         slotA = RollLoot();
 
-        var slotRoll = Random.Range(0 + (fortune * 2), 100);
+        var slotRoll = Random.Range(0 + (fate * 2), 100);
 
         if (slotRoll >= 35)
         {
@@ -92,12 +80,12 @@ public class SalvageBoxMechanics : MonoBehaviour
 
     ItemIntPair RollLoot(bool rareSlot = false)
     {
-        var rarityRoll = Random.Range(0 + (fortune * 2), 100);
-        var coinRoll = Random.Range(0 + (fortune * 2), 100);
+        var rarityRoll = Random.Range(0 + (fate * 2), 100);
+        var coinRoll = Random.Range(0 + (fate * 2), 100);
 
         if (rareSlot)
         {
-            rarityRoll += 30 + (fortune * 2);
+            rarityRoll += 30 + (fate * 2);
         }
 
         if (coinRoll < 65)
