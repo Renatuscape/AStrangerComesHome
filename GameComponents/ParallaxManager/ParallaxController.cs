@@ -50,7 +50,7 @@ public class ParallaxController : MonoBehaviour
         {
             if (layer.rend.sprite != null && TransientDataScript.transientData.currentSpeed != 0 || layer.passiveSpeed > 0)
             {
-                ParallaxBackgrounds(layer);
+                MoveBackground(layer);
             }
         }
 
@@ -60,7 +60,7 @@ public class ParallaxController : MonoBehaviour
         {
             if (looseObject != null && looseObject.parallaxObject != null)
             {
-                ParallaxLooseObjects(looseObject);
+                MoveLooseObject(looseObject);
             }
             else
             {
@@ -76,62 +76,55 @@ public class ParallaxController : MonoBehaviour
 
     public static void ParallaxThis(GameObject parallaxObject, string layerName, float minX = -20, float maxX = 20, float passiveSpeed = 0)
     {
-        if (instance != null)
+        if (instance != null && parallaxObject != null)
         {
             instance.AddParallaxObjectToLayer(parallaxObject, layerName, minX, maxX, passiveSpeed);
         }
     }
+
+    public static void ParallaxThisStation(StationParallaxData package)
+    {
+
+    }
+
     public void AddParallaxObjectToLayer(GameObject parallaxObject, string layerName, float minX = -20, float maxX = 20, float passiveSpeed = 0)
     {
         var layerData = backgroundLayers.FirstOrDefault(l => l.rend.sortingLayerName.Contains(layerName));
-        LooseParallaxObject looseObject = new() { parallaxObject = parallaxObject, layerPackage = layerData,yAxis = parallaxObject.transform.position.y, minX = minX, maxX = maxX, passiveSpeed = passiveSpeed };
-        looseObjects.Add(looseObject);
-    }
 
-    public void AddLayer(ref SpriteRenderer rend, float pMultiplier)
-    {
-        if (rend != null)
+        if (layerData != null)
         {
-            Debug.Log("Creating renderer layer for " + rend.name);
-            if (rend.sprite != null)
-            {
-                Debug.Log("Created layer using sprite " + rend.sprite.name);
-            }
-
-            ParallaxRenderPackage newPackage = new() { parallaxMultiplier = pMultiplier };
-
-            newPackage.rend = rend;
-
-            backgroundLayers.Add(newPackage);
+            LooseParallaxObject looseObject = new() { parallaxObject = parallaxObject, layerPackage = layerData, yAxis = parallaxObject.transform.position.y, minX = minX, maxX = maxX, passiveSpeed = passiveSpeed };
+            looseObjects.Add(looseObject);
+        }
+        else
+        {
+            Debug.LogWarning("Could not find layer data. Layer name " + layerName + " could be wrong.");
         }
     }
 
-    public void UpdateSpriteSizes()
+    void MoveLooseObject(LooseParallaxObject looseObject)
     {
-        foreach (var layer in backgroundLayers)
+        if (looseObject != null)
         {
-            if (layer.rend.sprite != null)
+            ExecuteParallax(looseObject.parallaxObject, CalculateSpeed(looseObject.layerPackage.parallaxMultiplier, looseObject.passiveSpeed), looseObject.yAxis);
+
+            if (looseObject.parallaxObject.transform.position.x <= looseObject.minX)
             {
-                layer.spriteSize = layer.rend.sprite.bounds.size;
+                looseObject.parallaxObject.transform.position = new Vector2(looseObject.maxX - 1, transform.position.y);
+            }
+            else if (looseObject.parallaxObject.transform.position.x >= looseObject.maxX)
+            {
+                looseObject.parallaxObject.transform.position = new Vector2(looseObject.minX + 1, transform.position.y);
             }
         }
-    }
-
-    void ParallaxLooseObjects(LooseParallaxObject looseObject)
-    {
-        ExecuteParallax(looseObject.parallaxObject, CalculateSpeed(looseObject.layerPackage.parallaxMultiplier, looseObject.passiveSpeed), looseObject.yAxis);
-
-        if (looseObject.parallaxObject.transform.position.x <= looseObject.minX)
+        else
         {
-            looseObject.parallaxObject.transform.position = new Vector2(looseObject.maxX - 1, transform.position.y);
-        }
-        else if (looseObject.parallaxObject.transform.position.x >= looseObject.maxX)
-        {
-            looseObject.parallaxObject.transform.position = new Vector2(looseObject.minX + 1, transform.position.y);
+            looseObjects.Remove(looseObject);
+            Debug.Log("Loose object was null. Removing from list.");
         }
     }
 
-    void ParallaxBackgrounds(ParallaxRenderPackage layerData)
+    void MoveBackground(ParallaxRenderPackage layerData)
     {
         var parallaxObject = layerData.rend.gameObject;
 
@@ -158,5 +151,16 @@ public class ParallaxController : MonoBehaviour
     {
         var currentPosition = target.transform.position;
         target.transform.position = new Vector3(currentPosition.x + parallaxAmount, yAxis, 0);
+    }
+
+    public void UpdateSpriteSizes()
+    {
+        foreach (var layer in backgroundLayers)
+        {
+            if (layer.rend.sprite != null)
+            {
+                layer.spriteSize = layer.rend.sprite.bounds.size;
+            }
+        }
     }
 }
