@@ -5,6 +5,7 @@ public class ParallaxSetupHelper
     public ParallaxManager parallaxManager;
     public void Initialise()
     {
+        Debug.Log("Initialising parallax manager.");
         var layerRenderer = parallaxManager.layerRenderer = new();
 
         CreateRenderer(ref layerRenderer.sky, "Sky");
@@ -35,6 +36,7 @@ public class ParallaxSetupHelper
 
     public void SetUpController()
     {
+        Debug.Log("Setting up parallax controller.");
         float baseSpeed = 0.07f;
         var controller = parallaxManager.controller;
         var layerRenderer = parallaxManager.layerRenderer;
@@ -59,7 +61,7 @@ public class ParallaxSetupHelper
     {
         if (rend != null)
         {
-            //Debug.Log("Creating layer controller for " + rend.name);
+            Debug.Log("Creating layer controller for " + rend.name);
             //if (rend.sprite != null)
             //{
             //    Debug.Log("Created layer using sprite " + rend.sprite.name);
