@@ -29,11 +29,11 @@ public class DialoguePrinter : MonoBehaviour
 
             if (isNarration)
             {
-                dialogueParent.contentText.color = new Color(dialogueParent.contentText.color.r, dialogueParent.contentText.color.g, dialogueParent.contentText.color.b, 0.7f);
+                dialogueParent.contentText.color = StaticGameValues.narrationText;
             }
             else
             {
-                dialogueParent.contentText.color = new Color(dialogueParent.contentText.color.r, dialogueParent.contentText.color.g, dialogueParent.contentText.color.b, 1);
+                dialogueParent.contentText.color = GlobalSettings.DarkTheme ? StaticGameValues.lightText : StaticGameValues.darkText;
             }
 
             StartCoroutine(PrintContent());
