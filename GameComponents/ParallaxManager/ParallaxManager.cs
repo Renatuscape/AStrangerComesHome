@@ -7,9 +7,10 @@ using UnityEngine;
 
 public class ParallaxManager : MonoBehaviour
 {
+    ParallaxSetupHelper setupHelper;
     public ParallaxController controller;
-    public ParallaxRenderer layerRenderer;
-    public List<ParallaxLayerPackage> layerPackages;
+    public ParallaxBackgroundRenderer layerRenderer;
+    public List<ParallaxBackgroundPackage> layerPackages;
     public SpriteRenderer fadeCurtain;
     public bool isReady = false;
 
@@ -17,7 +18,9 @@ public class ParallaxManager : MonoBehaviour
     {
         if (!isReady)
         {
-            Initialise();
+            setupHelper = new();
+            setupHelper.parallaxManager = this;
+            setupHelper.Initialise();
         }
     }
 
@@ -29,10 +32,10 @@ public class ParallaxManager : MonoBehaviour
             package = layerPackages[0];
         }
         StopAllCoroutines();
-        StartCoroutine(LoadSpritePackage(package));
+        StartCoroutine(LoadBackgroundPackage(package));
     }
 
-    IEnumerator LoadSpritePackage(ParallaxLayerPackage package)
+    IEnumerator LoadBackgroundPackage(ParallaxBackgroundPackage package)
     {
         Debug.Log("Attempting to load sprite package for " + package.regionID);
 
@@ -98,54 +101,5 @@ public class ParallaxManager : MonoBehaviour
         }
 
         fadeCurtain.gameObject.SetActive(false);
-    }
-
-    public void Initialise()
-    {
-        layerRenderer = new();
-        CreateRenderer(ref layerRenderer.sky, "Sky");
-        CreateRenderer(ref layerRenderer.bg6, "BG6");
-        CreateRenderer(ref layerRenderer.bg5, "BG5");
-        CreateRenderer(ref layerRenderer.bg4, "BG4");
-        CreateRenderer(ref layerRenderer.bg3, "BG3");
-        CreateRenderer(ref layerRenderer.bg2, "BG2");
-        CreateRenderer(ref layerRenderer.bg1, "BG1");
-        CreateRenderer(ref layerRenderer.stationBack, "StationBack");
-        CreateRenderer(ref layerRenderer.stationMid, "StationMid");
-        CreateRenderer(ref layerRenderer.stationFront, "StationFront");
-        CreateRenderer(ref layerRenderer.road, "Road");
-        CreateRenderer(ref layerRenderer.fg1, "FG1");
-        CreateRenderer(ref layerRenderer.fg2, "FG2");
-
-        SetUpController();
-        LoadRegion("REGION0");
-        isReady = true;
-
-        void CreateRenderer(ref SpriteRenderer initialiseThisRenderer, string layerName)
-        {
-            initialiseThisRenderer = new GameObject(layerName).AddComponent<SpriteRenderer>();
-            initialiseThisRenderer.sortingLayerName = layerName;
-            initialiseThisRenderer.gameObject.transform.SetParent(gameObject.transform, false);
-        }
-    }
-
-    public void SetUpController()
-    {
-        float baseSpeed = 0.07f;
-
-        controller.AddLayer(ref layerRenderer.bg6, (baseSpeed * 0.1f));
-        controller.AddLayer(ref layerRenderer.bg5, (baseSpeed * 0.2f));
-        controller.AddLayer(ref layerRenderer.bg4, (baseSpeed * 0.3f));
-        controller.AddLayer(ref layerRenderer.bg3, (baseSpeed * 0.4f));
-        controller.AddLayer(ref layerRenderer.bg2, (baseSpeed * 0.5f));
-        controller.AddLayer(ref layerRenderer.bg1, (baseSpeed * 0.6f));
-        controller.AddLayer(ref layerRenderer.stationBack, (baseSpeed * 0.7f));
-        controller.AddLayer(ref layerRenderer.stationMid, (baseSpeed * 0.8f));
-        controller.AddLayer(ref layerRenderer.stationFront, (baseSpeed * 0.9f));
-        controller.AddLayer(ref layerRenderer.road, baseSpeed);
-        controller.AddLayer(ref layerRenderer.fg1, (baseSpeed * 1.1f));
-        controller.AddLayer(ref layerRenderer.fg2, (baseSpeed * 1.2f));
-
-        controller.isPlaying = true;
     }
 }
