@@ -43,8 +43,8 @@ public class WaitingNPC : MonoBehaviour
         if (parent != null)
         {
             passengerManager = parent.GetComponent<PassengerManager>();
-            //transform.parent = parent.transform;
-            ParallaxController.ParallaxThis(gameObject, "Road");
+            transform.parent = parent.transform;
+            ParallaxControllerHelper.AddObjectToParallax(gameObject, "Road");
             passengerManager.waitingCurrent += 1;
         }
         else if (parent == null)
