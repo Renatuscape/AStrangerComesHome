@@ -8,7 +8,7 @@ public class StationManager : MonoBehaviour
     public TransientDataScript transientData;
     public GameObject defaultStation;
     public GameObject spawnedStation;
-    public StationParallax spawnedStationScript;
+    public StationPrefab spawnedStationScript;
     public float parallaxMultiplier;
     public List<GameObject> customStations;
     public List<GameObject> defaultStations;
@@ -124,7 +124,7 @@ public class StationManager : MonoBehaviour
         spawnedStation = Instantiate(foundStation);
         spawnedStation.name = "spawnedStation-" + TransientDataScript.GetCurrentLocation().objectID;
         transientData.activePrefabs.Add(spawnedStation);
-        spawnedStationScript = spawnedStation.GetComponent<StationParallax>();
+        spawnedStationScript = spawnedStation.GetComponent<StationPrefab>();
     }
 
     private void OnDisable()
