@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class ParallaxLayerPackage
+public class ParallaxBackgroundPackage
 {
     public string regionID;
     public Region region;
