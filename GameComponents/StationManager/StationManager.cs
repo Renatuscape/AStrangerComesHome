@@ -8,7 +8,7 @@ public class StationManager : MonoBehaviour
     public TransientDataScript transientData;
     public GameObject defaultStation;
     public GameObject spawnedStation;
-    public StationPrefab spawnedStationScript;
+    public StationPrefab spawnedStationData;
     public float parallaxMultiplier;
     public List<GameObject> customStations;
     public List<GameObject> defaultStations;
@@ -31,11 +31,23 @@ public class StationManager : MonoBehaviour
         }
     }
 
+    bool StationIsNull()
+    {
+        if (spawnedStationData == null || spawnedStationData.gameObject == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     void CheckIfReadyToSpawn()
     {
         if (transientData.currentLocation != null && !string.IsNullOrWhiteSpace(transientData.currentLocation.objectID))
         {
-            if (spawnedStation == null)
+            if (StationIsNull())
             {
                 if (transientData.currentLocation.type == LocationType.Crossing && transientData.currentLocation.gates.Count == 1)
                 {
@@ -51,7 +63,7 @@ public class StationManager : MonoBehaviour
 
     void CheckIfReadyToRemove()
     {
-        if (spawnedStation != null && spawnedStationScript != null && transientData.currentLocation == null)
+        if (!StationIsNull() && transientData.currentLocation == null)
         {
             if (spawnedStation.transform.position.x < -20 || spawnedStation.transform.position.x > 20 || TransientDataScript.transientData.engineState == EngineState.Off)
             {
@@ -59,7 +71,7 @@ public class StationManager : MonoBehaviour
             }
         }
 
-        if (spawnedStation != null && transientData.currentLocation != null && !spawnedStation.name.Contains(transientData.currentLocation.objectID))
+        if (!StationIsNull() && transientData.currentLocation != null && !spawnedStation.name.Contains(transientData.currentLocation.objectID))
         {
             RemoveStation();
         }
@@ -67,28 +79,28 @@ public class StationManager : MonoBehaviour
 
     public void RemoveStation()
     {
-        if (spawnedStationScript != null && !spawnedStationScript.readyToDestroy)
+        if (!StationIsNull() && !spawnedStationData.readyToDestroy)
         {
             transientData.activePrefabs.Remove(spawnedStation);
 
-            spawnedStationScript.RemoveStation();
-            spawnedStationScript = null;
+            spawnedStationData.RemoveStation();
+            spawnedStationData = null;
             spawnedStation = null;
         }
     }
 
     void CheckIfOutOfBounds()
     {
-        if (spawnedStation != null && spawnedStationScript != null && transientData.currentLocation != null)
+        if (!StationIsNull() && transientData.currentLocation != null)
         {
-            if (spawnedStation.transform.position.x < -30 && !spawnedStationScript.movingRight)
+            if (spawnedStation.transform.position.x < -30 && !spawnedStationData.movingRight)
             {
-                spawnedStationScript.MoveRight();
+                spawnedStationData.MoveRight();
             }
 
-            else if (spawnedStation.transform.position.x > 30 && !spawnedStationScript.movingLeft)
+            else if (spawnedStation.transform.position.x > 30 && !spawnedStationData.movingLeft)
             {
-                spawnedStationScript.MoveLeft();
+                spawnedStationData.MoveLeft();
             }
         }
     }
@@ -124,7 +136,7 @@ public class StationManager : MonoBehaviour
         spawnedStation = Instantiate(foundStation);
         spawnedStation.name = "spawnedStation-" + TransientDataScript.GetCurrentLocation().objectID;
         transientData.activePrefabs.Add(spawnedStation);
-        spawnedStationScript = spawnedStation.GetComponent<StationPrefab>();
+        spawnedStationData = spawnedStation.GetComponent<StationPrefab>();
     }
 
     private void OnDisable()
@@ -136,7 +148,7 @@ public class StationManager : MonoBehaviour
         }
 
         spawnedStation = null;
-        spawnedStationScript = null;
+        spawnedStationData = null;
         transientData.currentLocation = null;
     }
 }
