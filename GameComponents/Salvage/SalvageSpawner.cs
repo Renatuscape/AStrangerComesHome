@@ -8,7 +8,7 @@ public class SalvageSpawner : MonoBehaviour
 {
     TransientDataScript transientData;
     public GameObject salvageBox;
-    public int fortune;
+    public int fate;
 
     public int salvageRNG;
     public float waitingTime;
@@ -34,7 +34,7 @@ public class SalvageSpawner : MonoBehaviour
             {
                 SyncSkills();
                 timer = 0;
-                waitingTime = Random.Range(120, 500 - (fortune * 10));
+                waitingTime = Random.Range(120, 500 - (fate * 10));
                 SalvageSpawn();
             }
         }
@@ -42,7 +42,7 @@ public class SalvageSpawner : MonoBehaviour
 
     void SyncSkills()
     {
-        fortune = Player.GetCount("ATT006", "SalvageSpawner");
+        fate = Player.GetCount(StaticTags.Fate, "SalvageSpawner");
     }
 
     void SalvageSpawn()
@@ -60,7 +60,7 @@ public class SalvageSpawner : MonoBehaviour
 
             var salvageScript = newSalvage.GetComponent<SalvageBoxMechanics>();
 
-            salvageScript.fortune = fortune;
+            salvageScript.fate = fate;
 
             salvageScript.coins = coins;
             salvageScript.junkItems = junkItems;
@@ -69,6 +69,7 @@ public class SalvageSpawner : MonoBehaviour
             salvageScript.rareItems = rareItems;
 
             transientData.activePrefabs.Add(newSalvage);
+            ParallaxControllerHelper.AddObjectToParallax(newSalvage, "Road", -30, 30);
         }
     }
 
