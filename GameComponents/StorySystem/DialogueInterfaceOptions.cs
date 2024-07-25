@@ -81,7 +81,10 @@ public class DialogueInterfaceOptions : MonoBehaviour
             img.color = newBGColour;
         }
 
-        contentText.color = new Color(darkText.r, darkText.g, darkText.b, contentText.color.a);
+        if (contentText.color != StaticGameValues.narrationText)
+        {
+            contentText.color = new Color(darkText.r, darkText.g, darkText.b, contentText.color.a);
+        }
     }
 
     void SetDarkTheme()
@@ -94,7 +97,10 @@ public class DialogueInterfaceOptions : MonoBehaviour
             img.color = newBGColour;
         }
 
-        contentText.color = new Color(lightText.r, lightText.g, lightText.b, contentText.color.a);
+        if (contentText.color != StaticGameValues.narrationText)
+        {
+            contentText.color = new Color(lightText.r, lightText.g, lightText.b, contentText.color.a);
+        }
     }
 
     public void SliderValueChange()
