@@ -26,6 +26,7 @@ public class Character : BaseObject
     public List<RestrictedInfo> dynamicDescriptions;
     public int giftableLevel;
     public bool excludeFromPrint = false;
+    public bool excludeFromDating = false; // for characters that may gain romance points, but should not appear in dating features
 
     public CharacterType type;
     public Sprite sprite;
