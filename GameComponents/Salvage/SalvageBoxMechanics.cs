@@ -6,9 +6,8 @@ using Random = UnityEngine.Random;
 
 public class SalvageBoxMechanics : MonoBehaviour
 {
-    private SpriteRenderer sprite;
+    private SpriteRenderer rend;
     private BoxCollider2D objectCollider;
-    private Animator anim;
 
     private float alphaSetting = 1;
 
@@ -25,17 +24,25 @@ public class SalvageBoxMechanics : MonoBehaviour
     public ItemIntPair slotE = null;
 
     public List<ItemIntPair> loot = new();
+    public List<string> spriteOptions = new() { "Crate_Small", "Trunk_Small" };
+    public AnimatedSprite animationData;
 
     public int fate;
 
     void Start()
     {
-        sprite = GetComponent<SpriteRenderer>();
+        rend = GetComponent<SpriteRenderer>();
         objectCollider = GetComponent<BoxCollider2D>();
-        anim = GetComponent<Animator>();
 
         RollSlots();
         loot = ConsolidateLoot();
+
+        animationData = AnimationLibrary.GetAnimatedObject(spriteOptions[Random.Range(0, spriteOptions.Count - 1)]);
+        
+        if (animationData != null)
+        {
+            rend.sprite = animationData.still;
+        }
     }
 
     void LateUpdate()
@@ -215,7 +222,22 @@ public class SalvageBoxMechanics : MonoBehaviour
         if (TransientDataScript.GameState == GameState.Overworld)
         {
             Destroy(objectCollider);
-            anim.SetTrigger("Active");
+            if (animationData != null)
+            {
+                var openAnim = animationData.GetAnimationType(AnimationType.open);
+                if (openAnim != null)
+                {
+                    StartCoroutine(Animate(openAnim));
+                }
+                else
+                {
+                    StartCoroutine(AlphaFade());
+                }
+            }
+            else
+            {
+                StartCoroutine(AlphaFade());
+            }
 
 
             foreach (ItemIntPair entry in loot)
@@ -223,9 +245,24 @@ public class SalvageBoxMechanics : MonoBehaviour
                 if (entry.item != null && entry.amount > 0)
                 {
                     Player.Add(entry.item.objectID, entry.amount);
-
-                    TransientDataScript.PushAlert($"Found {entry.item.name} ({entry.amount})!");
                 }
+            }
+        }
+    }
+
+    public IEnumerator Animate(AnimationData animationData)
+    {
+        if (animationData != null)
+        {
+            int index = 0;
+
+            int maxIndex = animationData.frames.Count - 1;
+
+            while (index < maxIndex)
+            {
+                rend.sprite = animationData.frames[index];
+                index++;
+                yield return new WaitForSeconds(animationData.frameRate);
             }
 
             StartCoroutine(AlphaFade());
@@ -234,13 +271,17 @@ public class SalvageBoxMechanics : MonoBehaviour
 
     IEnumerator AlphaFade()
     {
-        yield return new WaitForSeconds(.08f);
-        alphaSetting = alphaSetting - 0.05f;
+        float alpha = rend.color.a;
+        float fadeAmount = 0.001f;
 
-        if (alphaSetting > 0)
-            StartCoroutine(AlphaFade());
+        while (rend.color.a > 0)
+        {
+            alpha -= fadeAmount;
+            rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, alpha);
+            fadeAmount += 0.001f;
+            yield return new WaitForSeconds(0.01f);
+        }
 
-        else if (alphaSetting <= 0)
-            Destroy(gameObject);
+        Destroy(gameObject);
     }
 }
