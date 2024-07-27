@@ -54,8 +54,9 @@ public class SalvageSpawner : MonoBehaviour
                 PopulateItemList();
             }
 
+            float salvagePositionY = TransientDataScript.transientData.currentRegion.salvagePosition;
             var newSalvage = Instantiate(salvageBox);
-            newSalvage.transform.localPosition = new Vector3(-20f, -6f, 0);
+            newSalvage.transform.localPosition = new Vector3(-20f, salvagePositionY, 0);
             newSalvage.name = "spawnedSalvage";
 
             var salvageScript = newSalvage.GetComponent<SalvageBoxMechanics>();
