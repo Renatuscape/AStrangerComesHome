@@ -21,6 +21,7 @@ public class ParallaxSetupHelper
         CreateRenderer(ref layerRenderer.road, "Road");
         CreateRenderer(ref layerRenderer.fg1, "FG1");
         CreateRenderer(ref layerRenderer.fg2, "FG2");
+        CreateRenderer(ref layerRenderer.fg3, "FG3");
 
         SetUpController();
         parallaxManager.LoadRegion("REGION0");

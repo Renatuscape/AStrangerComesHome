@@ -18,6 +18,7 @@ public class ParallaxBackgroundRenderer
     public SpriteRenderer road;
     public SpriteRenderer fg1;
     public SpriteRenderer fg2;
+    public SpriteRenderer fg3;
 
     public void ApplyPackage(ParallaxBackgroundPackage package)
     {
@@ -33,6 +34,7 @@ public class ParallaxBackgroundRenderer
             road.sprite = package.road;
             fg1.sprite = package.fg1;
             fg2.sprite = package.fg2;
+            fg3.sprite = package.fg3;
 
             if (sky.sprite == null)
             {
@@ -53,6 +55,7 @@ public class ParallaxBackgroundRenderer
 
             if (fg1.sprite == null) { fg1.gameObject.SetActive(false); } else { fg1.gameObject.SetActive(true); }
             if (fg2.sprite == null) { fg2.gameObject.SetActive(false); } else { fg2.gameObject.SetActive(true); }
+            if (fg3.sprite == null) { fg3.gameObject.SetActive(false); } else { fg3.gameObject.SetActive(true); }
 
             ResetAllLayerPositions();
         }

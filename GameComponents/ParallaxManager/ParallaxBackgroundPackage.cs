@@ -26,4 +26,6 @@ public class ParallaxBackgroundPackage
     public float passiveSpeedFg1;
     public Sprite fg2;
     public float passiveSpeedFg2;
+    public Sprite fg3;
+    public float passiveSpeedFg3;
 }

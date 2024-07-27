@@ -80,6 +80,10 @@ public class ParallaxManager : MonoBehaviour
             {
                 data.passiveSpeed = package.passiveSpeedFg2;
             }
+            else if (data.rend.sprite == package.fg3)
+            {
+                data.passiveSpeed = package.passiveSpeedFg3;
+            }
 
             controller.UpdateSpriteSizes();
         }
