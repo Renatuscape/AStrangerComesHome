@@ -54,6 +54,7 @@ public class ParallaxSetupHelper
         AddLayerController(ref layerRenderer.road, baseSpeed);
         AddLayerController(ref layerRenderer.fg1, (baseSpeed * 1.1f));
         AddLayerController(ref layerRenderer.fg2, (baseSpeed * 1.2f));
+        AddLayerController(ref layerRenderer.fg3, (baseSpeed * 1.3f));
 
         controller.isPlaying = true;
     }
