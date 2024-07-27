@@ -13,6 +13,7 @@ public class Region
     public List<AutoMapData> mapLayout = new();
     public List<Location> locations = new();
     public Vector3 defaultStartingPosition = new Vector3(0,0,0);
+    public float salvagePosition;
 }
 
 public static class Regions
