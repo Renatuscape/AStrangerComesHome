@@ -9,8 +9,6 @@ public class SalvageBoxMechanics : MonoBehaviour
     private SpriteRenderer rend;
     private BoxCollider2D objectCollider;
 
-    private float alphaSetting = 1;
-
     public List<Item> coins;
     public List<Item> junkItems;
     public List<Item> commonItems;
