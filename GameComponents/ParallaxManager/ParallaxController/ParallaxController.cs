@@ -157,31 +157,31 @@ public class ParallaxController : MonoBehaviour
             dataLayer.readyToMoveRight = true;
         }
 
-        bool CheckPositionAgainstFacade()
-        {
-            if (speedToMove < 0)
-            {
-                if (position.x - facadeX + speedToMove > -dataLayer.maxOffsetFromFacade)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                if (position.x + facadeX + speedToMove < dataLayer.maxOffsetFromFacade)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        //bool CheckPositionAgainstFacade()
+        //{
+        //    if (speedToMove < 0)
+        //    {
+        //        if (position.x - facadeX + speedToMove > -dataLayer.maxOffsetFromFacade)
+        //        {
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (position.x + facadeX + speedToMove < dataLayer.maxOffsetFromFacade)
+        //        {
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //}
     }
 
     void MoveLooseObjects()
