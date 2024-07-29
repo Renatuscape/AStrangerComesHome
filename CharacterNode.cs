@@ -215,7 +215,7 @@ public class CharacterNode : MonoBehaviour
 
                 if (dialogue != null &&
                     !dialogue.disableAutoNode &&
-                    !string.IsNullOrEmpty(dialogue.locationID) &&
+                    !string.IsNullOrEmpty(dialogue.checks.locationID) &&
                     dialogue.stageType == StageType.Dialogue)
                 {
                     if (RequirementChecker.CheckDialogueRequirements(dialogue))
