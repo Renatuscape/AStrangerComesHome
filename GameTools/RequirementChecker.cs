@@ -10,26 +10,28 @@ public static class RequirementChecker
 
     public static bool CheckDialogueRequirements(Dialogue dialogue)
     {
-        //Debug.Log("Attempting to check requirements for dialogue " + dialogue.objectID);
+        ////Debug.Log("Attempting to check requirements for dialogue " + dialogue.objectID);
 
-        bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
-        bool locationCheck = CheckAgainstCurrentLocation(dialogue.locationID);
-        bool requirementCheck = CheckRequirements(dialogue.requirements);
-        bool restrictionCheck = CheckRestrictions(dialogue.restrictions);
+        //bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
+        //bool locationCheck = CheckAgainstCurrentLocation(dialogue.locationID);
+        //bool requirementCheck = CheckRequirements(dialogue.requirements);
+        //bool restrictionCheck = CheckRestrictions(dialogue.restrictions);
 
-        //Debug.Log("Time check was " + timeCheck);
-        //Debug.Log("Location check was " + locationCheck);
-        //Debug.Log("Requirement check was " + requirementCheck);
-        //Debug.Log("Restriction check was " + restrictionCheck);
+        ////Debug.Log("Time check was " + timeCheck);
+        ////Debug.Log("Location check was " + locationCheck);
+        ////Debug.Log("Requirement check was " + requirementCheck);
+        ////Debug.Log("Restriction check was " + restrictionCheck);
 
-        if (timeCheck && locationCheck && requirementCheck && restrictionCheck)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        //if (timeCheck && locationCheck && requirementCheck && restrictionCheck)
+        //{
+        //    return true;
+        //}
+        //else
+        //{
+        //    return false;
+        //}
+
+        return CheckPackage(dialogue.checks);
     }
 
     public static bool CheckTime(float startTime, float endTime)
@@ -151,13 +153,14 @@ public static class RequirementChecker
         return true;
     }
 
-    public static bool CheckMinMax(IdMinMax objectCheck)
+    public static bool CheckConditions(List<IdIntOr> conditions)
     {
-        int inventoryAmount = Player.GetCount(objectCheck.objectID, "RequirementChecker");
-
-        if (inventoryAmount < objectCheck.minValue || inventoryAmount > objectCheck.maxValue)
+        foreach (var condition  in conditions)
         {
-            return false;
+            if (!condition.Check())
+            {
+                return false;
+            }
         }
 
         return true;
@@ -180,7 +183,7 @@ public static class RequirementChecker
             Debug.Log("Package failed at time of day.");
             return false;
         }
-        else if (!CheckAgainstCurrentLocation(package.requiredLocation))
+        else if (!CheckAgainstCurrentLocation(package.locationID))
         {
             Debug.Log("Package failed at location check.");
             return false;
@@ -190,16 +193,9 @@ public static class RequirementChecker
             Debug.Log("Package failed at required days passed.");
             return false;
         }
-        else if (package.minMaxRequirements != null && package.minMaxRequirements.Count > 0)
+        else if (!CheckConditions(package.conditions))
         {
-            foreach (var entry in package.minMaxRequirements)
-            {
-                if (!CheckMinMax(entry))
-                {
-                    Debug.Log("Package failed at minMax check.");
-                    return false;
-                }
-            }
+            return false;
         }
         else
         {
