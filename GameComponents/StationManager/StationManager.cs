@@ -89,6 +89,21 @@ public class StationManager : MonoBehaviour
         }
     }
 
+    public void ForceRemoveStation()
+    {
+        if (spawnedStation != null)
+        {
+            transientData.activePrefabs.Remove(spawnedStation);
+        }
+        if (spawnedStationData != null)
+        {
+            spawnedStationData.RemoveStation();
+        }
+
+        spawnedStationData = null;
+        spawnedStation = null;
+    }
+
     void CheckIfOutOfBounds()
     {
         if (!StationIsNull() && transientData.currentLocation != null)
