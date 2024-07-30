@@ -51,6 +51,7 @@ public class GameManagerScript : MonoBehaviour
     public Engine coachEngine;
     public ManaConverter manaConverter;
     public PassengerManager passengerManager;
+    public StationManager stationManager;
     public SaveDataManager saveDataManager;
 
     void Awake()
@@ -231,6 +232,7 @@ public class GameManagerScript : MonoBehaviour
 
     private IEnumerator LoadCoroutine()
     {
+        TransientDataScript.ForceClearWorldSpawns();
         TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
         yield return StartCoroutine(ResetGameComponentsCoroutine());
         DialogueTagParser.UpdateTags(dataManager);
