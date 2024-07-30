@@ -12,6 +12,9 @@ public class DataManagerScript : MonoBehaviour
     public string lastSaveTime;
     public string saveID;
 
+    //SETTINGS
+    public bool randomiseOnDeath;
+    public bool saveOnDeath;
 
     //PLAYER DATA
     public string playerName;
