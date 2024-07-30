@@ -243,7 +243,14 @@ public static class Player
 
             if (skill.type == SkillType.Attunement)
             {
-                LogAlert.QueueTextAlert($"Attuned to the\nSphere of {skill.name}.");
+                if (value < 1)
+                {
+                    LogAlert.QueueTextAlert($"A discordant note of {skill.name} echoes.");
+                }
+                else
+                {
+                    LogAlert.QueueTextAlert($"Attuned to the\nSphere of {skill.name}.");
+                }
             }
             else
             {
