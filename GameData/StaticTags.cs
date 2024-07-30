@@ -41,6 +41,7 @@ public static class StaticTags
     public static string UnlockedPlanters { get; } = "SCR004";
     public static string CoachSynths { get; } = "SCR010";
     public static string GuildLicense { get; } = "SCR012";
+    public static string PlayerDeath { get; } = "SCR017";
 
     // Items
     public static string WeedItem { get; } = "PLA000";
