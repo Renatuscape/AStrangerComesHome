@@ -16,7 +16,8 @@ public enum GameState
     Dialogue,
     MapMenu,
     BankMenu,
-    AlchemyMenu
+    AlchemyMenu,
+    Death
 }
 
 public enum Language
