@@ -66,7 +66,7 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
-        if (TransientDataScript.GameState != GameState.MainMenu && TransientDataScript.GameState != GameState.Loading)
+        if (TransientDataScript.GameState != GameState.MainMenu && TransientDataScript.GameState != GameState.Loading && TransientDataScript.GameState != GameState.Death)
         {
             musicPlayer.volume = GlobalSettings.MusicVolume;
 
@@ -122,6 +122,14 @@ public class AudioManager : MonoBehaviour
         if (instance != null)
         {
             instance.FadeVolume();
+        }
+    }
+
+    public static void ForceStopBackgroundMusic()
+    {
+        if (instance != null)
+        {
+            instance.musicPlayer.Stop();
         }
     }
 
