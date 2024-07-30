@@ -5,7 +5,15 @@ public static class RequirementChecker
 {
     public static bool CheckGender(string gender)
     {
-        return gender == TransientDataScript.gameManager.dataManager.playerGender;
+        if (string.IsNullOrEmpty(gender))
+        {
+                return true;
+        }
+        else
+        {
+            return gender == TransientDataScript.gameManager.dataManager.playerGender;
+        }
+
     }
 
     public static bool CheckDialogueRequirements(Dialogue dialogue)
@@ -155,13 +163,17 @@ public static class RequirementChecker
 
     public static bool CheckConditions(List<IdIntOr> conditions)
     {
-        foreach (var condition  in conditions)
+        if (conditions != null && conditions.Count > 0)
         {
-            if (!condition.Check())
+            foreach (var condition  in conditions)
             {
-                return false;
+                if (!condition.Check())
+                {
+                    return false;
+                }
             }
         }
+
 
         return true;
     }
@@ -194,6 +206,10 @@ public static class RequirementChecker
             return false;
         }
         else if (!CheckConditions(package.conditions))
+        {
+            return false;
+        }
+        else if (!CheckGender(package.gender))
         {
             return false;
         }
