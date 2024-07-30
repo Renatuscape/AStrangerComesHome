@@ -11,6 +11,7 @@ public class RequirementPackage
     public List<IdIntPair> restrictions;
     public List<IdIntPair> requirements;
     public List<IdIntOr> conditions;
+    public string gender;
 }
 
 [System.Serializable]
@@ -35,7 +36,8 @@ public class IdIntCondition
 [System.Serializable]
 public class IdIntOr
 {
-    public List<IdIntCondition> tests;
+    public List<IdIntCondition> testRange = new();
+    public List<IdIntPair> testExact = new();
     public int minPasses = 1;
     public int maxPasses = 99;
 
@@ -43,9 +45,17 @@ public class IdIntOr
     {
         int checksPassed = 0;
 
-        foreach (var test in tests)
+        foreach (var test in testRange)
         {
             if (test.Check())
+            {
+                checksPassed++;
+            }
+        }
+
+        foreach (var test in testExact)
+        {
+            if (Player.GetCount(test.objectID, "IdIntOr") == test.amount)
             {
                 checksPassed++;
             }
