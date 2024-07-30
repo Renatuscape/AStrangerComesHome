@@ -118,6 +118,9 @@ public class AutoMap : MonoBehaviour
 
     public void ChangeMap(Region region, float x = 9999, float y = 9999)
     {
+        TransientDataScript.ForceClearWorldSpawns();
+        TransientDataScript.transientData.currentLocation = null;
+
         Debug.Log($"Change map method received {region.objectID}.");
         transientData.currentRegion = region;
         dataManager.currentRegion = region.objectID;
