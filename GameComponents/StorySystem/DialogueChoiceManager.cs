@@ -29,9 +29,7 @@ public class DialogueChoiceManager : MonoBehaviour
 
             if (choice.hiddenOnFail)
             {
-                allowPrint = choice.AttemptAllChecks(false, out bool passedRequirements, out bool passedRestrictions, out var missingItems);
-                Debug.Log($"Attempted checks for hidden choice. No rewards should be granted." +
-                    $"\nRequirements: {passedRequirements}, restrictions: {passedRestrictions}, missingItems: {missingItems.Count}");
+                allowPrint = choice.AttemptAllChecks(false, out var missingItems);
                 Debug.Log($"Option {choice.optionText} returned {allowPrint}.");
             }
 
@@ -63,7 +61,7 @@ public class DialogueChoiceManager : MonoBehaviour
     }
     public void MakeChoice(Choice choice)
     {
-        bool choiceResult = choice.AttemptAllChecks(true, out bool passedRequirements, out bool passedRestrictions, out List<IdIntPair> missingItems);
+        bool choiceResult = choice.AttemptAllChecks(true, out List<IdIntPair> missingItems);
         //Debug.Log($"Choice resulted in {choiceResult}." +
         //    $"\nRequirements passed: {passedRequirements}." +
         //    $"\nRestrictions passed: {passedRestrictions}." +
