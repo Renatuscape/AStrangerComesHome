@@ -91,6 +91,12 @@ public class TransientDataScript : MonoBehaviour
         SetGameState(GameState.Overworld, name, gameObject);
     }
 
+    public static void ForceClearWorldSpawns()
+    {
+        gameManager.passengerManager.ForceRemoveWaiters();
+        gameManager.stationManager.ForceRemoveStation();
+    }
+
     public static void SetGameState(GameState newState, string callerScript, GameObject callerObject)
     {
         if (NullCheck())
