@@ -15,6 +15,7 @@ public class SaveDataManager : MonoBehaviour
     public bool allObjectsLoaded = false;
     public List<string> backwardsCompatibleVersions = new();
     public List<SaveDataPrefab> saveSlotPrefabs = new();
+    public FileInfo[] loadedFiles;
 
     string fileExtension = ".strange";
     string dir;
@@ -39,8 +40,11 @@ public class SaveDataManager : MonoBehaviour
         }
         else
         {
-            string saveName = "Save" + dataManager.saveSlot + "_" + dataManager.playerName + "_" + dataManager.saveID + fileExtension;
-            FinaliseSave(saveName);
+            string savePrefix = "Save" + dataManager.saveSlot + "_";
+            string saveName = savePrefix + dataManager.playerName + "_" + dataManager.saveID + fileExtension;
+
+            ClearSlotAndFinalise(savePrefix, saveName);
+
             TransientDataScript.ReturnToOverWorld(name, gameObject);
         }
     }
@@ -48,14 +52,16 @@ public class SaveDataManager : MonoBehaviour
     public void AttemptSave(SaveDataInfo saveData, SaveDataPrefab slotPrefab, bool overwriteConfirmed)
     {
         var dataManager = TransientDataScript.gameManager.dataManager;
-        string saveNameToCheck = "Save" + dataManager.saveSlot + "_" + dataManager.playerName + "_" + dataManager.saveID + fileExtension;
+        string savePrefix = "Save" + dataManager.saveSlot + "_";
+
+        string saveNameToCheck = savePrefix + dataManager.playerName + "_" + dataManager.saveID + fileExtension;
 
         if (saveData == null)
         {
             FinaliseSave(saveNameToCheck);
         }
         else
-        { 
+        {
             if (saveData.fileName != saveNameToCheck)
             {
                 Debug.LogWarning("File does not match. Savedata to overwrite was " + saveData.fileName + " but new file should be named " + saveNameToCheck);
@@ -72,7 +78,55 @@ public class SaveDataManager : MonoBehaviour
             }
             else
             {
-                FinaliseSave(saveData.fileName);
+                if (savesInfo.FirstOrDefault(s => s.fileName.Contains(savePrefix)) != null)
+                {
+                    ClearSlotAndFinalise(savePrefix, saveData.fileName);
+                }
+                else
+                {
+                    FinaliseSave(saveData.fileName);
+                }
+
+            }
+        }
+    }
+
+    async void ClearSlotAndFinalise(string saveSlotName, string fileName)
+    {
+        if (gameObject.activeInHierarchy && savesInfo.Count > 0)
+        {
+            ClearSlot();
+        }
+        else
+        {
+            await StartLoading();
+
+            if (savesInfo.Count > 0)
+            {
+                ClearSlot();
+            }
+        }
+
+        FinaliseSave(fileName);
+
+        void ClearSlot()
+        {
+            List<SaveDataInfo> filesToDelete = new();
+
+            foreach (var file in savesInfo)
+            {
+                Debug.Log("Checking file to clear: " + file.fileName);
+
+                if (file.fileName.Contains(saveSlotName))
+                {
+                    filesToDelete.Add(file);
+                }
+            }
+
+            foreach (var file in filesToDelete)
+            {
+                Debug.Log("Deleting " + file.fileName);
+                DeleteFileAndRefresh(file);
             }
         }
     }
@@ -93,11 +147,11 @@ public class SaveDataManager : MonoBehaviour
         // check if file exists
         if (!File.Exists(filePath))
         {
-            Debug.Log( "no " + saveData.fileName + " file exists" );
+            Debug.Log("no " + saveData.fileName + " file exists");
         }
         else
         {
-            Debug.Log( saveData.fileName + " file exists, deleting..." );
+            Debug.Log(saveData.fileName + " file exists, deleting...");
 
             File.Delete(filePath);
 
@@ -107,6 +161,16 @@ public class SaveDataManager : MonoBehaviour
         }
     }
 
+    void ClearOldData()
+    {
+        foreach (Transform child in saveSlotContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        saveSlotPrefabs.Clear();
+        savesInfo.Clear();
+    }
     private void OnDisable()
     {
         foreach (Transform child in saveSlotContainer.transform)
@@ -172,6 +236,7 @@ public class SaveDataManager : MonoBehaviour
 
     public Task StartLoading()
     {
+        ClearOldData();
         List<Task> loadingTasks = new List<Task>();
 
         gameObject.SetActive(true);
@@ -183,9 +248,9 @@ public class SaveDataManager : MonoBehaviour
         dir = Application.persistentDataPath + saveDirectory;
         Debug.Log("Looking for save files in " + dir);
         var info = new DirectoryInfo(dir);
-        var fileInfo = info.GetFiles();
+        loadedFiles = info.GetFiles();
 
-        foreach (var file in fileInfo)
+        foreach (var file in loadedFiles)
         {
             Debug.Log("Found file named " + file.Name);
             if (file.Extension == fileExtension)
