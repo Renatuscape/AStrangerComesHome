@@ -246,7 +246,7 @@ public class ParallaxController : MonoBehaviour
 
         if (layerData.rend.gameObject.transform.position.x <= 0 - (layerData.spriteSize.x / 3) || layerData.rend.gameObject.transform.position.x >= (layerData.spriteSize.x / 3))
         {
-            Debug.Log($"Attempting to set layer back to zero. Checked current position {layerData.rend.gameObject.transform.position.x} against size {layerData.spriteSize.x}");
+            // Debug.Log($"Attempting to set layer back to zero. Checked current position {layerData.rend.gameObject.transform.position.x} against size {layerData.spriteSize.x}");
             layerData.rend.gameObject.transform.position = new Vector2(0, transform.position.y);
         }
     }
