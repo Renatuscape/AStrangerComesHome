@@ -129,7 +129,7 @@ public class SaveDataPrefab : MonoBehaviour
 
     public void ConfirmOverwrite()
     {
-        displayInfo.text = $"A different game has been saved in this slot. Click again to confirm overwrite.";
+        displayInfo.text = $"A different game has been saved in this slot, or name has been changed. Click again to confirm overwrite.";
         btnSave.onClick.RemoveAllListeners();
         btnSave.onClick.AddListener(() => ExecuteOverwrite());
     }
