@@ -6,6 +6,7 @@ using UnityEngine;
 public class DialogueMenu : MonoBehaviour
 {  
     public StorySystem storySystem;
+    public DeathManager deathManager;
     public DialogueDisplay dialogueDisplay;
     public DialogueChoiceManager choiceManager;
     public DialogueBackgroundManager backgroundManager;
@@ -63,7 +64,17 @@ public class DialogueMenu : MonoBehaviour
         }
 
         choiceManager.gameObject.SetActive(false);
-        dialogueDisplay.PrintChoiceResult(choice, isSuccess, missingItems);
+
+        if ((choice.dieOnFailure && !isSuccess) || (choice.dieOnSuccess && isSuccess))
+        {
+            deathManager.InitiateDeath(choice, isSuccess);
+            dialogueDisplay.gameObject.SetActive(false);
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            dialogueDisplay.PrintChoiceResult(choice, isSuccess, missingItems);
+        }
     }
 
     public void ContinueAfterChoice()
