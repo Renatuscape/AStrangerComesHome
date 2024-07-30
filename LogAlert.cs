@@ -137,7 +137,23 @@ public class LogAlert : MonoBehaviour
     {
         if (character != null && !character.excludeFromPrint)
         {
-            if (amount < 0)
+            if (amount <= -5)
+            {
+                QueueTextAlert($"{character.NamePlate()} seethes with loathing.");
+            }
+            else if (amount == -4)
+            {
+                QueueTextAlert($"{character.NamePlate()} hates that.");
+            }
+            else if (amount == -3)
+            {
+                QueueTextAlert($"{character.NamePlate()} is disgusted.");
+            }
+            else if (amount == -2)
+            {
+                QueueTextAlert($"{character.NamePlate()}\ndislikes that a lot.");
+            }
+            else if (amount == -1)
             {
                 QueueTextAlert($"{character.NamePlate()} disapproves.");
             }
