@@ -8,7 +8,8 @@ public class Choice
     public bool endConversation = false;
     public bool endConversationOnFailure = true;
     public bool hiddenOnFail = false;
-    public bool initiatesBadEnding = false;
+    public bool dieOnFailure = false;
+    public bool dieOnSuccess = false;
     public int advanceTo; //set to 100 to complete quest
     public int advanceToOnFailure = -1;
     public string optionText;
@@ -16,51 +17,28 @@ public class Choice
     public string successText;
     public string failureSpeaker;
     public string failureText;
-    public string genderRequirement;
-    public List<IdIntPair> deliveryRequirements;
-    public List<IdIntPair> requirements;
-    public List<IdIntPair> restrictions;
+
+    public RequirementPackage checks;
+    //public List<IdIntPair> requirements;
+    //public List<IdIntPair> restrictions;
+
+    public List<IdIntPair> deliveries; // deliveryRequirements;
     public List<IdIntPair> rewards;
+
     public ChoiceNodeData nodeData;
     public DialogueEvent successEvent;
     public DialogueEvent failureEvent;
 
-    public bool AttemptAllChecks(bool grantRewards, out bool passedRequirements, out bool passedRestrictions, out List<IdIntPair> missingItems)
+    public bool AttemptAllChecks(bool grantRewards, out List<IdIntPair> missingItems)
     {
-        bool checks = AttemptChecks(out passedRequirements, out passedRestrictions);
+        bool testResults = RequirementChecker.CheckPackage(checks);
         bool delivery = AttemptDelivery(out missingItems);
 
-        if (checks && delivery && grantRewards)
+        if (testResults && delivery && grantRewards)
         {
             GrantRewards();
         }
-        return checks && delivery;
-    }
-
-    public bool AttemptChecks(out bool passedRequirements, out bool passedRestrictions)
-    {
-        passedRequirements = RequirementChecker.CheckRequirements(requirements);
-
-        if (!passedRequirements)
-        {
-            passedRestrictions = false;
-            return false;
-        }
-
-        passedRestrictions = RequirementChecker.CheckRestrictions(restrictions);
-
-        if (!passedRestrictions)
-        {
-            return false;
-        }
-
-        if (string.IsNullOrEmpty(genderRequirement) || RequirementChecker.CheckGender(genderRequirement))
-        {
-            Debug.Log("Choice failed at gender requirement.");
-            return true;
-        }
-
-        return false;
+        return testResults && delivery;
     }
 
     public bool AttemptDelivery(out List<IdIntPair> missingItems)
@@ -68,7 +46,7 @@ public class Choice
         bool successfulDelivery = true;
         missingItems = new();
 
-        foreach (IdIntPair entry in deliveryRequirements)
+        foreach (IdIntPair entry in deliveries)
         {
             int amount = Player.GetCount(entry.objectID, "Choice Delivery Check");
             if (amount < entry.amount)
@@ -81,7 +59,7 @@ public class Choice
 
         if (successfulDelivery == true)
         {
-            foreach(IdIntPair entry in deliveryRequirements)
+            foreach(IdIntPair entry in deliveries)
             {
                 Player.Remove(entry);
             }
