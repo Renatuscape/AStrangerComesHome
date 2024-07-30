@@ -175,11 +175,8 @@ public class PassengerManager : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    public void ForceRemoveWaiters()
     {
-        passengerA.gameObject.SetActive(false);
-        passengerB.gameObject.SetActive(false);
-
         foreach (var passenger in waitingPassengers)
         {
             Destroy(passenger);
@@ -187,5 +184,12 @@ public class PassengerManager : MonoBehaviour
 
         waitingCurrent = 0;
         waitingPassengers.Clear();
+    }
+    private void OnDisable()
+    {
+        passengerA.gameObject.SetActive(false);
+        passengerB.gameObject.SetActive(false);
+
+        ForceRemoveWaiters();
     }
 }
