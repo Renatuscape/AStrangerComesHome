@@ -239,7 +239,7 @@ public class SpriteCollection
 
         if (dEvent == null)
         {
-            Debug.Log($"Event ID {eventID} returned null. Using default.");
+            Debug.LogWarning($"Event ID {eventID} returned null. Using default.");
             return GetDefaultFrame();
         }
 
