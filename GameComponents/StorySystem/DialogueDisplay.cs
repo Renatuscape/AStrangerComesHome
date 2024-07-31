@@ -217,10 +217,10 @@ public class DialogueDisplay : MonoBehaviour
                     portraitManager.SetRightPortrait(resultEvent.speaker.objectID);
                 }
 
-                var parsedText = DialogueTagParser.ParseText(content);
-                PrintContent(parsedText, speakerTag == "Narration");
+                var parsedContent = DialogueTagParser.ParseText(content);
+                PrintContent(parsedContent, speakerTag == "Narration");
                 PrintToChatLog(resultEvent.speaker.NamePlate(), true, false);
-                PrintToChatLog(parsedText, false, false);
+                PrintToChatLog(parsedContent, speakerTag == "Narration", speakerTag == "Narration");
             }
         }
 
