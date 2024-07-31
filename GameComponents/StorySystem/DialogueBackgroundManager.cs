@@ -1,165 +1,161 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DialogueBackgroundManager : MonoBehaviour
 {
-    public GameObject backgroundLetterbox;
-    public Image backgroundImage;
-    public Image backdrop;
+    readonly Dictionary<string, Action> behaviour = new();
+    public Image bgImage;
+    public Image bgSolid;
 
     float fastFade = 0.01f;
-    float slowFade = 0.02f;
-    float extraSlowFade = 0.03f;
+    float normalFade = 0.02f;
+    float slowFade = 0.03f;
+
+    float fadeSpeed;
+
+    private void Start()
+    {
+        fadeSpeed = normalFade;
+        InitialiseTags();
+    }
+    private void InitialiseTags()
+    {
+        behaviour["SolidBlack"] = () => SolidBlack();
+        behaviour["SolidWhite"] = () => SolidWhite();
+        behaviour["FadeSolidIn"] = () => StartCoroutine(FadeIn(bgSolid));
+        behaviour["FadeSolidOut"] = () => StartCoroutine(FadeOut(bgSolid));
+        behaviour["FadeImageOut"] = () => StartCoroutine(FadeOut(bgImage));
+        behaviour["FadeImageIn"] = () => StartCoroutine(FadeIn(bgImage));
+        behaviour["OnWhite"] = () => { bgSolid.color = Color.white; };
+    }
+
+    void SolidBlack()
+    {
+        bgSolid.color = Color.black;
+        bgImage.color = new Color(0, 0, 0, 0);
+    }
+
+    void SolidWhite()
+    {
+        bgSolid.color = Color.white;
+        bgImage.color = new Color(0, 0, 0, 0);
+    }
 
     private void OnDisable()
     {
         StopAllCoroutines();
-        backgroundLetterbox.SetActive(false);
+        bgSolid.color = new Color(0, 0, 0, 0);
+        bgImage.color = new Color(1, 1, 1, 0);
+        bgImage.sprite = null;
     }
 
     public void SetUpBackground(string backgroundID)
     {
-        var spriteID = backgroundID;
+        Debug.Log("Attempting to set up background with ID " + backgroundID);
 
-        if (string.IsNullOrEmpty(spriteID))
+        if (string.IsNullOrEmpty(backgroundID))
         {
-            backgroundLetterbox.SetActive(false);
+
         }
-        else if (backgroundID.Contains("RemoveWithoutFade"))
+        else if (backgroundID.Contains('-'))
         {
-            RemoveBackground();
-        }
-        else if (backgroundID.Contains("Remove"))
-        {
-            RemoveBackgroundWithFade();
+            BuildBgFromTags(backgroundID.Split('-'));
         }
         else
         {
-            // CHECK BACKDROP COLOUR
-            if (spriteID.Contains("-OnWhite"))
-            {
-                backdrop.color = Color.white;
-                spriteID = spriteID.Replace("-OnWhite", "");
-            }
-            else if (backgroundID.Contains("-#"))
-            {
-                var splitString = spriteID.Split("-#");
-                var hexColour = splitString[1];
-                spriteID = splitString[0];
+            Sprite background = SpriteFactory.GetBackgroundSprite(backgroundID);
 
-                if (ColorUtility.TryParseHtmlString(hexColour, out Color colour))
-                {
-                    backdrop.color = colour;
-                }
-                else
-                {
-                    Debug.Log("Could not parse hex colour for background. String was " + hexColour + ". Sprite ID after split was " + spriteID);
-                }
-            }
-            else if (backdrop.color != Color.black)
+            if (background != null)
             {
-                backdrop.color = Color.black;
+                fadeSpeed = normalFade;
+                SetBackground(background);
+                StartCoroutine(FadeIn(bgImage));
             }
 
-            // CHECK FOR FADE
-            if (spriteID.Contains("-WithoutFade"))
-            {
-                spriteID = spriteID.Replace("-WithoutFade", "");
-                var foundSprite = SpriteFactory.GetBackgroundSprite(spriteID);
+            // Do nothing if the background is null. Leave current background as is
+        }
+    }
 
-                if (foundSprite != null)
-                {
-                    SetBackground(foundSprite);
-                }
-                else
-                {
-                    backgroundLetterbox.SetActive(false);
-                    Debug.Log("Background was not found with ID " + spriteID + ". Check that it exists in SpriteFactory background list.");
-                }
-            }
-            else
-            {
-                float fadeSpeed = fastFade;
+    void BuildBgFromTags(string[] tags)
+    {
+        Sprite background = SpriteFactory.GetBackgroundSprite(tags[0]);
 
-                if (spriteID.Contains("-ExSlowFade"))
+        if (background != null)
+        {
+            SetBackground(background);
+        }
+
+        bool speedFound = false;
+
+        foreach (string tag in tags)
+        {
+            if (!speedFound)
+            {
+                if (tag == "Fast")
                 {
-                    fadeSpeed = extraSlowFade;
-                    spriteID = spriteID.Replace("-ExSlowFade", "");
+                    fadeSpeed = fastFade;
+                    speedFound = true;
+                    break;
                 }
-                else if (spriteID.Contains("-SlowFade"))
+                else if (tag == "Slow")
                 {
                     fadeSpeed = slowFade;
-                    spriteID = spriteID.Replace("-SlowFade", "");
+                    speedFound = true;
+                    break;
                 }
+            }
+        }
 
-                var foundSprite = SpriteFactory.GetBackgroundSprite(spriteID);
+        if (!speedFound) { fadeSpeed = normalFade; }
 
-                if (foundSprite != null)
-                {
-                    if (foundSprite != backgroundImage.sprite)
-                    {
-                        SetBackgroundWithFade(foundSprite, fadeSpeed);
-                    }
-                }
-                else
-                {
-                    backgroundLetterbox.SetActive(false);
-                    Debug.Log("Background was not found with ID " + backgroundID + ". Check that it exists in SpriteFactory background list.");
-                }
+        foreach (string tag in tags)
+        {
+            if (behaviour.TryGetValue(tag, out var value))
+            {
+                value.Invoke();
+            }
+            else if (tag.Contains("Image_HEX#"))
+            {
+                bgImage.color = TransientDataScript.GetColourFromHex(tag.Replace("Image_HEX#", ""));
+            }
+            else if (tag.Contains("Solid_HEX#"))
+            {
+                bgSolid.color = TransientDataScript.GetColourFromHex(tag.Replace("Solid_HEX#", ""));
             }
         }
     }
 
     void SetBackground(Sprite sprite)
     {
-        backgroundImage.sprite = sprite;
-        backgroundImage.color = new Color(1, 1, 1, 1);
+        bgImage.sprite = sprite;
+        bgSolid.color = Color.black;
+        bgImage.color = new Color(1, 1, 1, 1);
     }
 
-    void SetBackgroundWithFade(Sprite sprite, float fadeSpeed)
-    {
-        backgroundImage.color = new Color(1, 1, 1, 0);
-
-        backgroundImage.sprite = sprite;
-
-        backgroundLetterbox.SetActive(true);
-        StartCoroutine(BackgroundFadeIn(fadeSpeed));
-    }
-
-    void RemoveBackgroundWithFade()
-    {
-        StartCoroutine(BackgroundFadeOut());
-    }
-
-    void RemoveBackground()
-    {
-        backgroundLetterbox.SetActive(false);
-    }
-
-    IEnumerator BackgroundFadeIn(float fadeSpeed)
+    IEnumerator FadeIn(Image target)
     {
         float alpha = 0;
 
         while (alpha < 1)
         {
+            target.color = new Color(target.color.r, target.color.g, target.color.b, alpha);
             alpha += 0.03f;
-            backgroundImage.color = new Color(1, 1, 1, alpha);
             yield return new WaitForSeconds(fadeSpeed);
         }
     }
 
-    IEnumerator BackgroundFadeOut()
+    IEnumerator FadeOut(Image target)
     {
-        float alpha = backgroundImage.color.a;
+        float alpha = target.color.a;
 
         while (alpha > 0)
         {
-            alpha += 0.05f;
-            backgroundImage.color = new Color(1, 1, 1, alpha);
-            yield return new WaitForSeconds(0.05f);
+            target.color = new Color(target.color.r, target.color.g, target.color.b, alpha);
+            alpha += 0.03f;
+            yield return new WaitForSeconds(fadeSpeed);
         }
-
-        RemoveBackground();
     }
 }
