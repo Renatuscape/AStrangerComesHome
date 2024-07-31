@@ -121,7 +121,7 @@ public class AutoMap : MonoBehaviour
         TransientDataScript.ForceClearWorldSpawns();
         TransientDataScript.transientData.currentLocation = null;
 
-        Debug.Log($"Change map method received {region.objectID}.");
+        // Debug.Log($"Change map method received {region.objectID}.");
         transientData.currentRegion = region;
         dataManager.currentRegion = region.objectID;
 

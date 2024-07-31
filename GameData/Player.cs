@@ -314,7 +314,7 @@ public static class Player
 
     public static void CheckTimers()
     {
-        Debug.Log("Checking timers.");
+        // Debug.Log("Checking timers.");
         List<IdIntPair> timersToRemove = new();
         foreach (var entry in questProgression)
         {

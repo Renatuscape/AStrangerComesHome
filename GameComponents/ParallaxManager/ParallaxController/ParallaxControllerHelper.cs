@@ -12,7 +12,7 @@ public static class ParallaxControllerHelper
 
     public static void AddObjectToParallax(GameObject parallaxObject, string layerName, float minX = -20, float maxX = 20, float passiveSpeed = 0)
     {
-        Debug.Log("Attempting to add parallax object to controller");
+        // Debug.Log("Attempting to add parallax object to controller");
         if (instance != null && parallaxObject != null)
         {
             instance.AddObjectToParallax(parallaxObject, layerName, minX, maxX, passiveSpeed);
@@ -21,7 +21,7 @@ public static class ParallaxControllerHelper
 
     public static void AddStationToParallax(StationParallaxData package)
     {
-        Debug.Log("Attempting to add parallax station to controller");
+        // Debug.Log("Attempting to add parallax station to controller");
 
         if (instance != null && package != null)
         {
@@ -35,7 +35,7 @@ public static class ParallaxControllerHelper
 
         if (layerData != null)
         {
-            Debug.Log($"{layerName} returned a modifier of {layerData.parallaxMultiplier}");
+            // Debug.Log($"{layerName} returned a modifier of {layerData.parallaxMultiplier}");
             return layerData.parallaxMultiplier;
         }
         else

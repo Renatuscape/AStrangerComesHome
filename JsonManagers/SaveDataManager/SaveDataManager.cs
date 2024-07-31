@@ -219,7 +219,7 @@ public class SaveDataManager : MonoBehaviour
             {
                 if (saveInfo.saveSlot == slot.saveSlot)
                 {
-                    Debug.Log("Found matching slot!");
+                    // Debug.Log("Found matching slot!");
                     savesFound.Remove(saveInfo);
                     slot.InitialiseWithData(slot.saveSlot, saveInfo, this);
                     foundMatchingData = true;
@@ -252,7 +252,7 @@ public class SaveDataManager : MonoBehaviour
 
         foreach (var file in loadedFiles)
         {
-            Debug.Log("Found file named " + file.Name);
+            // Debug.Log("Found file named " + file.Name);
             if (file.Extension == fileExtension)
             {
                 numberOfFilesToLoad++;

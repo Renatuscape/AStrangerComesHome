@@ -63,7 +63,7 @@ public class ParallaxSetupHelper
     {
         if (rend != null)
         {
-            Debug.Log("Creating layer controller for " + rend.name);
+            // Debug.Log("Creating layer controller for " + rend.name);
             //if (rend.sprite != null)
             //{
             //    Debug.Log("Created layer using sprite " + rend.sprite.name);

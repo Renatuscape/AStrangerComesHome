@@ -38,7 +38,7 @@ public class ParallaxManager : MonoBehaviour
 
     IEnumerator LoadBackgroundPackage(ParallaxBackgroundPackage package)
     {
-        Debug.Log("Attempting to load sprite package for " + package.regionID);
+        // Debug.Log("Attempting to load sprite package for " + package.regionID);
 
         fadeCurtain.gameObject.SetActive(true);
         fadeCurtain.color = Color.black;
@@ -93,7 +93,7 @@ public class ParallaxManager : MonoBehaviour
 
     IEnumerator FadeCurtainAndDisable()
     {
-        Debug.Log("Attempting to fade curtain.");
+        // Debug.Log("Attempting to fade curtain.");
         float alpha = fadeCurtain.color.a;
         
         yield return new WaitForSeconds(0.3f);

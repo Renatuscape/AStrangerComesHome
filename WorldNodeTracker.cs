@@ -37,18 +37,18 @@ public static class WorldNodeTracker
 
     static void CheckLootNodes()
     {
-        UnityEngine.Debug.Log("Checking loot nodes.");
+        // UnityEngine.Debug.Log("Checking loot nodes.");
 
         var respawningLoot = Player.claimedLoot.Where(e => e.objectID.Contains("WorldNodeLoot") && !e.objectID.Contains("disableRespawn")).ToList();
 
         foreach (var entry in respawningLoot)
         {
-            UnityEngine.Debug.Log("Checking node with ID " + entry.objectID);
+            // UnityEngine.Debug.Log("Checking node with ID " + entry.objectID);
             entry.amount++;
 
             if (entry.objectID.Contains("_CD#")) // By default, roll respawn chance
             {
-                UnityEngine.Debug.Log("Found _CD#");
+                // UnityEngine.Debug.Log("Found _CD#");
                 var data = entry.objectID.Split("_CD#");
 
                 if (int.TryParse(data[1], out var result))
@@ -88,7 +88,7 @@ public static class WorldNodeTracker
 
         static void RollForRespawn(IdIntPair entry, int minCooldown)
         {
-            UnityEngine.Debug.Log("Rolling for respawn.");
+            // UnityEngine.Debug.Log("Rolling for respawn.");
             int extraTime = entry.amount - minCooldown;
 
             if (UnityEngine.Random.Range(0, 100) < (10 + (extraTime * 10)))
@@ -107,7 +107,7 @@ public static class WorldNodeTracker
     public static bool AddCharacterNode(CharacterNode cNode)
     {
         var foundNode = spawnedCharacterNodes.FirstOrDefault(n => n.generatedNodeID == cNode.generatedNodeID);
-        PrintAllCharacterNodes();
+        // PrintAllCharacterNodes();
 
         if (foundNode == null)
         {
@@ -124,21 +124,21 @@ public static class WorldNodeTracker
     public static bool CheckIfCharacterExistsInDifferentNode(CharacterNode cNode)
     {
         var matchingNode = spawnedCharacterNodes.FirstOrDefault(n => n.character.objectID == cNode.characterID);
-        PrintAllCharacterNodes();
+        // PrintAllCharacterNodes();
 
         if (matchingNode == null)
         {
-            UnityEngine.Debug.Log("No node was found with the same character object ID as " + cNode.characterID);
+            // UnityEngine.Debug.Log("No node was found with the same character object ID as " + cNode.characterID);
             return false;
         }
         else if (matchingNode.generatedNodeID != cNode.generatedNodeID)
         {
-            UnityEngine.Debug.Log("Matching node was found, but nodeID was not the same.");
+            // UnityEngine.Debug.Log("Matching node was found, but nodeID was not the same.");
             return true;
         }
         else
         {
-            UnityEngine.Debug.Log("Matching node was found, nodeID was identical.");
+            // UnityEngine.Debug.Log("Matching node was found, nodeID was identical.");
             return false;
         }
     }
