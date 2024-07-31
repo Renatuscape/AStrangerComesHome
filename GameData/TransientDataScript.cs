@@ -356,7 +356,11 @@ public class TransientDataScript : MonoBehaviour
         }
         else
         {
-            Debug.Log("String not recognised as hex.");
+            if (!string.IsNullOrEmpty(hexColour))
+            {
+                Debug.Log("String not recognised as hex: " + hexColour);
+            }
+
             return Color.white;
         }
     }
