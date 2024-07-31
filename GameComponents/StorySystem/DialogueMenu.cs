@@ -18,7 +18,6 @@ public class DialogueMenu : MonoBehaviour
     private void OnEnable()
     {
         choiceManager.gameObject.SetActive(false);
-        backgroundManager.backgroundImage.sprite = null;
     }
 
     public void StartDialogue(Quest quest, string speakerID, bool doNotReopenTopic)
