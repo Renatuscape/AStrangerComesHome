@@ -185,7 +185,7 @@ public static class RequirementChecker
             Debug.Log("Package failed at requirements.");
             return false;
         }
-        else if (!CheckRestrictions(package.requirements))
+        else if (!CheckRestrictions(package.restrictions))
         {
             Debug.Log("Package failed at restrictions.");
             return false;
