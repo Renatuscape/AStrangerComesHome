@@ -125,9 +125,9 @@ public class PlayerSpriteData
         eyesID = "EyesA0";
 
         hairHexColour = "83695C";
-        hairAccentHexColour = "C3AA75";
+        hairAccentHexColour = "E0C49F";
         eyesHexColour = "88DA69";
-        accessoryHexColour = "85BFB1";
+        accessoryHexColour = "A8AB98";
         lipTintHexColour = "CAAB80";
         cloakHexColour = "808E94";
         vestHexColour = "BDA8A7";
