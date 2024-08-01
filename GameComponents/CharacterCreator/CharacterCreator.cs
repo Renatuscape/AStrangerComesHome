@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -9,6 +8,7 @@ using UnityEngine.UI;
 public class CharacterCreator : MonoBehaviour
 {
     public DataManagerScript dataManager;
+    public CharacterPersonaliaChoices personalia;
     public SpriteFactory spriteFactory;
     public GameObject portraitRenderer;
     public GameObject portraitCanvas;
@@ -21,6 +21,7 @@ public class CharacterCreator : MonoBehaviour
     public TextMeshProUGUI bodyToneNumber;
     public TextMeshProUGUI eyesNumber;
     public TextMeshProUGUI characterName;
+    public TMP_InputField nameInput;
 
     public GameObject colourPicker;
     public GameObject iconContainer;
@@ -38,7 +39,6 @@ public class CharacterCreator : MonoBehaviour
         if (TransientDataScript.GameState == GameState.CharacterCreation)
         {
             playerSprite.SetExpressionToDefault();
-            UpdatePlayerIcon();
 
             colourPicker.SetActive(false);
             portraitRenderer.SetActive(true);
@@ -86,21 +86,74 @@ public class CharacterCreator : MonoBehaviour
 
     public void UpdateSpriteFromData()
     {
-        bodyTypeNumber.text = dataManager.bodyIndex.ToString();
-        bodyToneNumber.text = dataManager.headIndex.ToString();
-
-        playerSprite.UpdateAllFromGameData(out var hair, out var eyes, out var body);
-        CheckHairToggles(hair);
-
-        int hairIndex = spriteFactory.hairCatalogue.hairPackages.IndexOf(hair);
-        int eyeIndex = spriteFactory.eyesCatalogue.eyePackages.IndexOf(eyes);
-        int bodyIndex = spriteFactory.bodyCatalogue.bodyPackages.IndexOf(body);
-
-        hairStyleNumber.text = hairIndex.ToString();
-        eyesNumber.text = eyeIndex.ToString();
-        bodyTypeNumber.text = bodyIndex.ToString();
+        PlayerPreset preset = new();
+        preset.PopulateFromDataManager(dataManager);
+        ApplyPreset(preset, true, false);
 
         UpdatePlayerIcon();
+    }
+
+    public void ApplyPreset(PlayerPreset preset, bool applyPersonalia, bool colourOnly)
+    {
+        // APPLY PERSONALIA
+        if (applyPersonalia && !colourOnly)
+        {
+            nameInput.text = preset.playerName;
+            characterName.color = TransientDataScript.GetColourFromHex(preset.playerNameColour);
+            personalia.SetDropDownsFromPreset(preset);
+        }
+        else
+        {
+            nameInput.text = dataManager.playerName;
+            characterName.color = TransientDataScript.GetColourFromHex(dataManager.playerNameColour);
+        }
+
+        // APPLY APPEARANCE
+        PlayerSpriteData playerData;
+
+        if (colourOnly)
+        {
+            playerData = dataManager.playerSprite;
+            bodyToneNumber.text = dataManager.headIndex.ToString();
+            playerSprite.ChangeHead(dataManager.headIndex);
+        }
+        else
+        {
+            playerData = preset.appearance;
+
+            bodyToneNumber.text = preset.headIndex.ToString();
+            playerSprite.ChangeHead(preset.headIndex);
+
+            accentToggle.isOn = preset.appearance.enableAccent;
+            ToggleAccent();
+
+            accessoryToggle.isOn = preset.appearance.enableAccessory;
+            ToggleAccessory();
+        }
+
+        var hairPackage = spriteFactory.hairCatalogue.GetPackageByID(playerData.hairID);
+        playerSprite.playerHair.ApplyHairPackage(hairPackage, playerData.enableAccessory, playerData.enableAccent);
+        int hairIndex = spriteFactory.hairCatalogue.hairPackages.IndexOf(hairPackage);
+        spriteFactory.hairCatalogue.index = hairIndex;
+        hairStyleNumber.text = hairIndex.ToString();
+
+        var bodyPackage = spriteFactory.bodyCatalogue.GetPackageByID(playerData.bodyID);
+        playerSprite.playerBody.ApplyBodyPackage(bodyPackage);
+        int bodyIndex = spriteFactory.bodyCatalogue.bodyPackages.IndexOf(bodyPackage);
+        spriteFactory.bodyCatalogue.index = bodyIndex;
+        bodyTypeNumber.text = bodyIndex.ToString();
+
+        var eyePackage = spriteFactory.eyesCatalogue.GetPackageByID(playerData.eyesID);
+        playerSprite.playerEyes.ApplyEyesPackage(eyePackage);
+        int eyeIndex = spriteFactory.eyesCatalogue.eyePackages.IndexOf(eyePackage);
+        spriteFactory.eyesCatalogue.index = eyeIndex;
+        eyesNumber.text = eyeIndex.ToString();
+
+        // APPLY COLOURS
+        Color lipColour = TransientDataScript.GetColourFromHex(preset.appearance.lipTintHexColour);
+        playerSprite.lipTint.color = new Color(lipColour.r, lipColour.g, lipColour.b, preset.appearance.lipTintTransparency);
+
+        preset.SaveToDataManager(dataManager, applyPersonalia, colourOnly);
     }
 
     public void ChangeHair(bool isPrevious)
