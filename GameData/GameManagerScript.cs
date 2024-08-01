@@ -171,6 +171,10 @@ public class GameManagerScript : MonoBehaviour
         dataManager.playerName = "Morgan";
         dataManager.playerNameColour = "597266";
         dataManager.playerGender = "Male";
+        dataManager.pronounSub = "He";
+        dataManager.pronounObj = "Him";
+        dataManager.pronounGen = "His";
+        dataManager.headIndex = 0;
         dataManager.playerSprite.ResetValues();
         portraitRenderer.UpdatePlayerSprite();
 
