@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class CharacterPersonaliaChoices : MonoBehaviour
 {
+    public Dictionary<int, List<string>> pronounOptions = new()
+    {
+        { 0, new(){"He", "Him", "His" } },
+        { 1, new(){"She", "Her", "Her" } },
+        { 2, new(){"They", "Them", "Theirs" } },
+        { 3, new(){"It", "It", "Its" } },
+    };
     public DataManagerScript dataManager;
     public TMP_Dropdown pronounDropdown;
     public TMP_Dropdown genderDropdown;
@@ -21,96 +28,94 @@ public class CharacterPersonaliaChoices : MonoBehaviour
         dataManager.pronounGen = pronounGen.text;
     }
 
-    public void ChoosePronouns()
+    public void SetDropDownsFromPreset(PlayerPreset preset)
     {
-        if (pronounDropdown.value != 4)
+        if (!string.IsNullOrEmpty(preset.pronounSub))
         {
-            customFields.SetActive(false);
-        }
+            bool foundPronouns = false;
 
-        if (pronounDropdown.value > 5 || pronounDropdown.value < 0)
-            pronounDropdown.value = 0;
-
-        if (pronounDropdown.value == 0)
-        {
-            pronounSub.text = "he";
-            pronounObj.text = "him";
-            pronounGen.text = "his";
-        }
-
-        else if (pronounDropdown.value == 1)
-        {
-            pronounSub.text = "she";
-            pronounObj.text = "her";
-            pronounGen.text = "her";
-        }
-        else if (pronounDropdown.value == 2)
-        {
-            pronounSub.text = "they";
-            pronounObj.text = "them";
-            pronounGen.text = "their";
-        }
-        else if (pronounDropdown.value == 3)
-        {
-            pronounSub.text = "it";
-            pronounObj.text = "it";
-            pronounGen.text = "its";
-        }
-        else if (pronounDropdown.value == 4)
-        {
-            customFields.SetActive(true);
-        }
-
-        ChooseGender(pronounDropdown.value);
-        UpdatePronouns();
-    }
-
-    public void ChooseGender(int choice = -1)
-    {
-        if (choice == -1)
-        {
-            choice = genderDropdown.value;
-
-            if (choice == 0)
+            foreach (var kvp in pronounOptions)
             {
-                dataManager.playerGender = "Male";
+                if (kvp.Value[0] == preset.pronounSub)
+                {
+                    pronounDropdown.value = kvp.Key;
+                    foundPronouns = true;
+                    break;
+                }
             }
-            else if (choice == 1)
+
+            if (!foundPronouns)
             {
-                dataManager.playerGender = "Female";
-            }
-            else if (choice == 2)
-            {
-                dataManager.playerGender = "Other";
-            }
-            else if (choice == 3)
-            {
-                dataManager.playerGender = "None";
+                pronounDropdown.value = 4;
             }
         }
         else
         {
-            if (choice > 2)
-            {
-                genderDropdown.value = 2;
-            }
-            else
-            {
-                genderDropdown.value = choice;
-            }
+            pronounDropdown.value = 0;
+        }
 
-            if (choice == 0)
-            {
-                dataManager.playerGender = "Male";
-            }
-            else if (choice == 1)
-            {
-                dataManager.playerGender = "Female";
-            }
-            else if (choice == 2)
-            {
-                dataManager.playerGender = "Other";
-            }
+        ChoosePronouns();
+    }
+
+    public void ChoosePronouns()
+    {
+        if (pronounDropdown.value > 5 || pronounDropdown.value < 0)
+        {
+            pronounDropdown.value = 0;
+        }
+
+        if (pronounDropdown.value == 4)
+        {
+            customFields.SetActive(true);
+        }
+        else
+        {
+            customFields.SetActive(false);
+            pronounSub.text = pronounOptions[pronounDropdown.value][0];
+            pronounObj.text = pronounOptions[pronounDropdown.value][1];
+            pronounGen.text = pronounOptions[pronounDropdown.value][2];
+
+            dataManager.pronounSub = pronounOptions[pronounDropdown.value][0];
+            dataManager.pronounObj = pronounOptions[pronounDropdown.value][1];
+            dataManager.pronounGen = pronounOptions[pronounDropdown.value][2];
+
+            Debug.Log("Pronoun dropdown value was " + pronounDropdown.value + " and the first dictionary entry was " + pronounOptions[pronounDropdown.value][0]);
+        }
+
+        SetGender(pronounDropdown.value);
+    }
+
+
+    public void SetGender(int choice)
+    {
+        if (choice > 2)
+        {
+            choice = 2;
+        }
+
+        genderDropdown.value = choice;
+
+        ChooseGender();
+    }
+    public void ChooseGender()
+    {
+        int choice = genderDropdown.value;
+
+        if (choice == 0)
+        {
+            dataManager.playerGender = "Male";
+        }
+        else if (choice == 1)
+        {
+            dataManager.playerGender = "Female";
+        }
+        else if (choice == 2)
+        {
+            dataManager.playerGender = "Other";
+        }
+        else if (choice == 3)
+        {
+            dataManager.playerGender = "None";
         }
     }
 
