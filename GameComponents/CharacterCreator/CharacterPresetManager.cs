@@ -10,6 +10,7 @@ public class CharacterPresetManager : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public CharacterCreator characterCreator;
+    public CharacterPresetMenu presetMenu;
     public List<PlayerPreset> presets = new();
     public GameObject presetContainer;
     public Button btnExport;
@@ -17,6 +18,7 @@ public class CharacterPresetManager : MonoBehaviour
     public bool overWritePreset = false;
     public bool isLoading = false;
     string dir;
+    int pageLimit = 36;
 
     private void Start()
     {
@@ -39,7 +41,7 @@ public class CharacterPresetManager : MonoBehaviour
         }
         else
         {
-            var presetToSave = ExportSavedPreset();
+            var presetToSave = PackagePlayerData();
             presetToSave.presetName = presetToSave.playerName + "_Preset";
             string fileName = presetToSave.presetName + ".json";
 
@@ -50,9 +52,11 @@ public class CharacterPresetManager : MonoBehaviour
                 File.WriteAllText(fullPath, json);
                 Debug.Log("Preset saved at " + fullPath);
                 overWritePreset = false;
+                LoadPresets();
             }
             else
             {
+                TransientDataScript.PushAlert("A preset by this name already exists.");
                 Debug.Log("Preset already exists.");
             }
         }
@@ -73,7 +77,7 @@ public class CharacterPresetManager : MonoBehaviour
         }
     }
 
-    public PlayerPreset ExportSavedPreset()
+    public PlayerPreset PackagePlayerData()
     {
         PlayerPreset preset = new PlayerPreset();
         preset.PopulateFromDataManager(dataManager);
@@ -119,11 +123,10 @@ public class CharacterPresetManager : MonoBehaviour
         GameObject presetObj = new();
         presetObj.AddComponent<RectTransform>();
         presetObj.AddComponent<Image>();
-        presetObj.AddComponent<Button>().onClick.AddListener(() => AttemptToApplyPreset(preset));
-        presetObj.name = preset.presetName;
         var script = presetObj.AddComponent<PlayerPresetPrefab>();
+        presetObj.AddComponent<Button>().onClick.AddListener(() => presetMenu.Open(script));
         script.preset = preset;
-        script.presetManager = this;
+        presetObj.name = preset.presetName;
 
         CreateTiny(preset.appearance.hairHexColour, 25, -12.5f, 12.5f);
         CreateTiny(preset.appearance.eyesHexColour, 25, -12.5f, -12.5f);
@@ -155,13 +158,21 @@ public class CharacterPresetManager : MonoBehaviour
         var info = new DirectoryInfo(dir);
         var loadedFiles = info.GetFiles();
 
+        int loaded = 0;
         foreach (var file in loadedFiles)
         {
             // Debug.Log("Found file named " + file.Name);
             if (file.Extension == ".json")
             {
+                if (loaded >= pageLimit)
+                {
+                    TransientDataScript.PushAlert("Cannot load more than " + pageLimit + " presets.");
+                    break;
+                }
+
                 Task loadingTask = LoadFromJsonAsync(Path.GetFileName(file.FullName)); // Pass only the file name
                 loadingTasks.Add(loadingTask);
+                loaded++;
             }
         }
 
@@ -176,14 +187,35 @@ public class CharacterPresetManager : MonoBehaviour
         if (File.Exists(jsonPath))
         {
             string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
-            PlayerPreset saveInfo = JsonUtility.FromJson<PlayerPreset>(jsonData);
-            presets.Add(saveInfo);
+            PlayerPreset preset = JsonUtility.FromJson<PlayerPreset>(jsonData);
+            preset.presetFilePath = jsonPath;
+            presets.Add(preset);
+        }
+    }
+
+    public void DeleteFileAndRefresh(string filePath)
+    {
+        // check if file exists
+        if (!File.Exists(filePath))
+        {
+            Debug.Log("File does not exists");
+        }
+        else
+        {
+            Debug.Log("Found preset. Deleting...");
+
+            File.Delete(filePath);
+
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.Refresh();
+#endif
+
+            LoadPresets();
         }
     }
 }
 
-public class PlayerPresetPrefab: MonoBehaviour
+public class PlayerPresetPrefab : MonoBehaviour
 {
-    public CharacterPresetManager presetManager;
     public PlayerPreset preset;
 }
