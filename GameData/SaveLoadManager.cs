@@ -28,6 +28,13 @@ public class SaveLoadManager : MonoBehaviour
         SaveJsonToFile(json, fileName);
     }
 
+    private void SaveJsonToFile(string json, string fileName)
+    {
+        string fullPath = GetSaveFilePath(fileName);
+        File.WriteAllText(fullPath, json);
+        Debug.Log("Game saved at " + fullPath);
+    }
+
     public async void LoadGame(string fileName)
     {
         //TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
@@ -42,12 +49,6 @@ public class SaveLoadManager : MonoBehaviour
             JsonUtility.FromJsonOverwrite(json, dataManager);
             gameManager.LoadRoutine();
         }
-    }
-    private void SaveJsonToFile(string json, string fileName)
-    {
-        string fullPath = GetSaveFilePath(fileName);
-        File.WriteAllText(fullPath, json);
-        Debug.Log("Game saved at " + fullPath);
     }
 
     private string GetSaveFilePath(string fileName)
