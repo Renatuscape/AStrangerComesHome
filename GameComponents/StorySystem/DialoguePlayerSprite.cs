@@ -14,10 +14,14 @@ public class DialoguePlayerSprite : MonoBehaviour
 
     private void OnEnable()
     {
+        HardReset();
+    }
+
+    public void HardReset()
+    {
         Clear();
         CopyAllChildren();
     }
-
     public void CycleExpressions()
     {
         if (expressionCatalogue != null)
@@ -106,7 +110,7 @@ public class DialoguePlayerSprite : MonoBehaviour
         }
     }
 
-    public void CopyAllChildren()
+    void CopyAllChildren()
     {
         foreach (Transform child in playerSprite.gameObject.transform)
         {
