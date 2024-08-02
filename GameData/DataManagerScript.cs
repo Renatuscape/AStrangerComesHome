@@ -141,6 +141,7 @@ public class PlayerSpriteData
 [Serializable]
 public class PlayerPreset
 {
+    public string presetName;
     public string playerName;
     public string playerGender;
     public string pronounSub;
