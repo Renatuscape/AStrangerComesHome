@@ -136,12 +136,36 @@ public class PlayerSpriteData
         enableAccessory = false;
         enableAccent = false;
     }
+
+
+    public PlayerSpriteData Clone()
+    {
+        return new PlayerSpriteData
+        {
+            hairID = this.hairID,
+            bodyID = this.bodyID,
+            headID = this.headID,
+            eyesID = this.eyesID,
+            hairHexColour = this.hairHexColour,
+            hairAccentHexColour = this.hairAccentHexColour,
+            accessoryHexColour = this.accessoryHexColour,
+            eyesHexColour = this.eyesHexColour,
+            lipTintHexColour = this.lipTintHexColour,
+            cloakHexColour = this.cloakHexColour,
+            vestHexColour = this.vestHexColour,
+            tightsHexColour = this.tightsHexColour,
+            lipTintTransparency = this.lipTintTransparency,
+            enableAccessory = this.enableAccessory,
+            enableAccent = this.enableAccent
+        };
+    }
 }
 
 [Serializable]
 public class PlayerPreset
 {
     public string presetName;
+    public string presetFilePath;
     public string playerName;
     public string playerGender;
     public string pronounSub;
