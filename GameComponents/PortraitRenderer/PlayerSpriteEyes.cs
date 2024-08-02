@@ -26,6 +26,11 @@ public class PlayerSpriteEyes
         }
     }
 
+    public void ApplyEyesColour(Color color)
+    {
+        iris.color = color;
+    }
+
     public void ApplyEyesPackage(PlayerEyesPackage eyePackage)
     {
         Color currentIrisColour = iris.color;
