@@ -89,12 +89,13 @@ public class CharacterCreator : MonoBehaviour
         PlayerPreset preset = new();
         preset.PopulateFromDataManager(dataManager);
         ApplyPreset(preset, true, false);
-
-        UpdatePlayerIcon();
     }
 
     public void ApplyPreset(PlayerPreset preset, bool applyPersonalia, bool colourOnly)
     {
+        colourPicker.gameObject.SetActive(false);
+        preset.SaveToDataManager(dataManager, applyPersonalia, colourOnly);
+
         // APPLY PERSONALIA
         if (applyPersonalia && !colourOnly)
         {
@@ -108,52 +109,41 @@ public class CharacterCreator : MonoBehaviour
             characterName.color = TransientDataScript.GetColourFromHex(dataManager.playerNameColour);
         }
 
-        // APPLY APPEARANCE
-        PlayerSpriteData playerData;
 
-        if (colourOnly)
-        {
-            playerData = dataManager.playerSprite;
-            bodyToneNumber.text = dataManager.headIndex.ToString();
-            playerSprite.ChangeHead(dataManager.headIndex);
-        }
-        else
-        {
-            playerData = preset.appearance;
+        bodyToneNumber.text = preset.headIndex.ToString();
+        playerSprite.ChangeHead(preset.headIndex);
 
-            bodyToneNumber.text = preset.headIndex.ToString();
-            playerSprite.ChangeHead(preset.headIndex);
 
-            accentToggle.isOn = preset.appearance.enableAccent;
-            ToggleAccent();
-
-            accessoryToggle.isOn = preset.appearance.enableAccessory;
-            ToggleAccessory();
-        }
-
-        var hairPackage = spriteFactory.hairCatalogue.GetPackageByID(playerData.hairID);
-        playerSprite.playerHair.ApplyHairPackage(hairPackage, playerData.enableAccessory, playerData.enableAccent);
+        // APPLY HAIR
+        var hairPackage = spriteFactory.hairCatalogue.GetPackageByID(dataManager.playerSprite.hairID);
+        playerSprite.playerHair.LoadPackageWithColours(hairPackage);
         int hairIndex = spriteFactory.hairCatalogue.hairPackages.IndexOf(hairPackage);
         spriteFactory.hairCatalogue.index = hairIndex;
         hairStyleNumber.text = hairIndex.ToString();
-
-        var bodyPackage = spriteFactory.bodyCatalogue.GetPackageByID(playerData.bodyID);
-        playerSprite.playerBody.ApplyBodyPackage(bodyPackage);
+        
+        // APPLY BODY
+        var bodyPackage = spriteFactory.bodyCatalogue.GetPackageByID(dataManager.playerSprite.bodyID);
+        playerSprite.playerBody.LoadPackageWithColours(bodyPackage);
         int bodyIndex = spriteFactory.bodyCatalogue.bodyPackages.IndexOf(bodyPackage);
         spriteFactory.bodyCatalogue.index = bodyIndex;
         bodyTypeNumber.text = bodyIndex.ToString();
 
-        var eyePackage = spriteFactory.eyesCatalogue.GetPackageByID(playerData.eyesID);
-        playerSprite.playerEyes.ApplyEyesPackage(eyePackage);
+        // APPLY EYES
+        var eyePackage = spriteFactory.eyesCatalogue.GetPackageByID(dataManager.playerSprite.eyesID);
+        playerSprite.playerEyes.LoadPackageWithColours(eyePackage);
         int eyeIndex = spriteFactory.eyesCatalogue.eyePackages.IndexOf(eyePackage);
         spriteFactory.eyesCatalogue.index = eyeIndex;
         eyesNumber.text = eyeIndex.ToString();
 
         // APPLY COLOURS
-        Color lipColour = TransientDataScript.GetColourFromHex(preset.appearance.lipTintHexColour);
-        playerSprite.lipTint.color = new Color(lipColour.r, lipColour.g, lipColour.b, preset.appearance.lipTintTransparency);
+        Color lipColour = TransientDataScript.GetColourFromHex(dataManager.playerSprite.lipTintHexColour);
+        playerSprite.lipTint.color = new Color(lipColour.r, lipColour.g, lipColour.b, dataManager.playerSprite.lipTintTransparency);
 
-        preset.SaveToDataManager(dataManager, applyPersonalia, colourOnly);
+        // OTHER MENU ADJUSTMENTS
+        accentToggle.isOn = dataManager.playerSprite.enableAccent;
+        accessoryToggle.isOn = dataManager.playerSprite.enableAccessory;
+
+        playerIcon.HardReset();
     }
 
     public void ChangeHair(bool isPrevious)
@@ -204,7 +194,7 @@ public class CharacterCreator : MonoBehaviour
         if (package != null)
         {
             dataManager.playerSprite.bodyID = package.bodyID;
-            playerSprite.playerBody.ApplyBodyPackage(package);
+            playerSprite.playerBody.ApplyBodyPackageAndSave(package);
             bodyTypeNumber.text = spriteFactory.bodyCatalogue.index.ToString();
         }
 
