@@ -20,7 +20,7 @@ public class PlayerSpriteBody
         }
         else
         {
-            ApplyBodyPackage(package);
+            ApplyBodyPackageAndSave(package);
 
             var dataManager = TransientDataScript.gameManager.dataManager;
             cloak.color = TransientDataScript.GetColourFromHex(dataManager.playerSprite.cloakHexColour);
@@ -29,9 +29,21 @@ public class PlayerSpriteBody
         }
     }
 
-    public void ApplyBodyPackage(PlayerBodyPackage package)
+    public void ApplyBodyColoursAndSave(string cloakHex, string vestHex, string tightsHex)
     {
-        //Color currentCloakColour = cloak.color;
+        var dataManager = TransientDataScript.gameManager.dataManager;
+        dataManager.playerSprite.cloakHexColour = cloakHex;
+        dataManager.playerSprite.vestHexColour = vestHex;
+        dataManager.playerSprite.tightsHexColour = tightsHex;
+
+        cloak.color = TransientDataScript.GetColourFromHex(cloakHex);
+        vest.color = TransientDataScript.GetColourFromHex(vestHex);
+        tights.color = TransientDataScript.GetColourFromHex(tightsHex);
+    }
+    public void ApplyBodyPackageAndSave(PlayerBodyPackage package)
+    {
+        var dataManager = TransientDataScript.gameManager.dataManager;
+        dataManager.playerSprite.bodyID = package.bodyID;
 
         lines.sprite = package.lines;
         cloak.sprite = package.cloak;
