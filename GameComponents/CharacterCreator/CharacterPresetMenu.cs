@@ -23,7 +23,7 @@ public class CharacterPresetMenu : MonoBehaviour
         }
     }
 
-    void CreateNewInstanceAndApplyPreset(PlayerPreset preset, bool applyPersonalia, bool colourOnly)
+    void CopyPresetAndApply(PlayerPreset preset, bool applyPersonalia, bool colourOnly)
     {
         PlayerPreset newPreset = new();
 
@@ -50,9 +50,9 @@ public class CharacterPresetMenu : MonoBehaviour
         btnApplyColour.onClick.RemoveAllListeners();
         btnDelete.onClick.RemoveAllListeners();
 
-        btnApplyAll.onClick.AddListener(() => CreateNewInstanceAndApplyPreset(presetPrefab.preset, true, false));
-        btnApplyAppearance.onClick.AddListener(() => CreateNewInstanceAndApplyPreset(presetPrefab.preset, false, false));
-        btnApplyColour.onClick.AddListener(() => CreateNewInstanceAndApplyPreset(presetPrefab.preset, false, true));
+        btnApplyAll.onClick.AddListener(() => CopyPresetAndApply(presetPrefab.preset, true, false));
+        btnApplyAppearance.onClick.AddListener(() => CopyPresetAndApply(presetPrefab.preset, false, false));
+        btnApplyColour.onClick.AddListener(() => CopyPresetAndApply(presetPrefab.preset, false, true));
         btnDelete.onClick.AddListener(() => { presetManager.DeleteFileAndRefresh(presetPrefab.preset.presetFilePath); menuCanvas.SetActive(false); });
         
         ready = true;
