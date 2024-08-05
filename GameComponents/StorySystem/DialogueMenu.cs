@@ -20,8 +20,12 @@ public class DialogueMenu : MonoBehaviour
         choiceManager.gameObject.SetActive(false);
     }
 
-    public void StartDialogue(Quest quest, string speakerID, bool doNotReopenTopic)
+    public void StartDialogue(Quest quest, string speakerID, bool doNotReopenTopic, bool clearBackground)
     {
+        if (clearBackground)
+        {
+            backgroundManager.ClearBackground();
+        }
         this.doNotReopenTopic= doNotReopenTopic;
         choiceManager.gameObject.SetActive(false);
         initiatingNPC = speakerID;
