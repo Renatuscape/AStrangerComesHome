@@ -85,7 +85,7 @@ public class AutoMapTravelManager
         else if (autoMap.transientData.engineState != EngineState.Off)
         {
             autoMap.transientData.engineState = EngineState.Off;
-            LogAlert.QueueTextAlert("I need to choose a destination.");
+            LogAlert.QueueTextAlert("I need to choose a destination (M).");
         }
     }
 
