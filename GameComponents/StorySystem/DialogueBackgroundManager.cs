@@ -46,12 +46,16 @@ public class DialogueBackgroundManager : MonoBehaviour
 
     private void OnDisable()
     {
+        ClearBackground();
+    }
+
+    public void ClearBackground()
+    {
         StopAllCoroutines();
         bgSolid.color = new Color(0, 0, 0, 0);
         bgImage.color = new Color(1, 1, 1, 0);
         bgImage.sprite = null;
     }
-
     public void SetUpBackground(string backgroundID)
     {
         Debug.Log("Attempting to set up background with ID " + backgroundID);
