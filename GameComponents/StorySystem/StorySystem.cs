@@ -54,7 +54,7 @@ public class StorySystem : MonoBehaviour
 
         topicMenu.SetActive(false);
         dialogueMenu.SetActive(true);
-        dialogueMenu.GetComponent<DialogueMenu>().StartDialogue(quest, activeSpeaker, doNotReopenTopic);
+        dialogueMenu.GetComponent<DialogueMenu>().StartDialogue(quest, activeSpeaker, doNotReopenTopic, true);
         Debug.Log($"Starting dialogue for quest {quest.objectID} with speaker {activeSpeaker}.");
         // speaker may not correspond to quest giver. This will help track which NPC started the dialogue so that topic menu can be reopened properly.
 
