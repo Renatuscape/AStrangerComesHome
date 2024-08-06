@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System;
 
 public class ShopMenu : MonoBehaviour
 {
@@ -16,6 +14,7 @@ public class ShopMenu : MonoBehaviour
 
     public GameObject clearanceNotice;
     public Image backgroundSprite;
+    public ShopDragIcon dragIcon;
 
     public List<GameObject> buyFromShopPrefabs;
     public List<GameObject> sellFromPlayerPrefabs;
@@ -36,6 +35,8 @@ public class ShopMenu : MonoBehaviour
     public TextMeshProUGUI itemValue;
     public TextMeshProUGUI itemNumberInInventory;
 
+    public ShopItemPrefab selectedItem;
+
     void Awake()
     {
         dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
@@ -54,6 +55,7 @@ public class ShopMenu : MonoBehaviour
     {
         SyncSkills();
         TransientDataScript.SetGameState(GameState.ShopMenu, name, gameObject);
+        ClearSelections();
         transform.parent.gameObject.SetActive(true);
         gameObject.SetActive(true);
 
@@ -97,7 +99,7 @@ public class ShopMenu : MonoBehaviour
             }
 
             // SET UP CONTAINERS WITH PREFABS
-            buyFromShopPrefabs = buyFromShopMenu.Initialise(shop.GetSellFromShopList(), false, true, true);
+            buyFromShopPrefabs = buyFromShopMenu.Initialise(shop.GetSellFromShopList(), false, true, false);
 
             if (!shop.buysItems)
             {
@@ -135,7 +137,7 @@ public class ShopMenu : MonoBehaviour
 
     public void SetUpSellFromPlayerMenu()
     {
-        sellFromPlayerPrefabs = sellFromPlayerMenu.Initialise(activeShop.GetBuyFromPlayerList(true), true, true, true);
+        sellFromPlayerPrefabs = sellFromPlayerMenu.Initialise(activeShop.GetBuyFromPlayerList(true), true, true, false);
 
         foreach (var item in sellFromPlayerPrefabs)
         {
@@ -148,6 +150,9 @@ public class ShopMenu : MonoBehaviour
 
     public void BtnSellFromPlayer()
     {
+        selectedItem = null;
+        dragIcon.DisableIcon();
+
         if (activeShop.buysItems)
         {
             sellFromPlayerMenu.gameObject.SetActive(true);
@@ -168,6 +173,9 @@ public class ShopMenu : MonoBehaviour
 
     public void BtnBuyFromShop()
     {
+        selectedItem = null;
+        dragIcon.DisableIcon();
+
         if (!activeShop.doesNotSell)
         {
             sellFromPlayerMenu.gameObject.SetActive(false);
@@ -216,13 +224,21 @@ public class ShopMenu : MonoBehaviour
         judgement = Player.GetCount("ATT002", "ShopMenu");
     }
 
-    public void HandleTransaction(ShopItemPrefab shopItem)
+    public void SelectItemToDrag(ShopItemPrefab itemPrefab)
     {
-        Debug.Log("TRANSACTION DETECTED " + shopItem.itemSource.name);
-        var item = shopItem.itemSource;
+        selectedItem = itemPrefab;
+        dragIcon.DragThis(itemPrefab.itemSource.sprite);
+    }
+
+    public void HandleTransaction()
+    {
+        dragIcon.DisableIcon();
+
+        Debug.Log("TRANSACTION DETECTED " + selectedItem.itemSource.name);
+        var item = selectedItem.itemSource;
         var inventoryAmount = Player.GetCount(item.objectID, name);
 
-        if (shopItem.sellFromPlayer)
+        if (selectedItem.sellFromPlayer)
         {
             if (inventoryAmount > 0)
             {
@@ -235,7 +251,7 @@ public class ShopMenu : MonoBehaviour
                     LogAlert.QueueTextAlert($"Sold for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
                     //TransientDataScript.PushAlert($"Sold {item.name} for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
 
-                    shopItem.UpdateInventoryCount();
+                    selectedItem.UpdateInventoryCount();
                 }
                 else
                 {
@@ -264,7 +280,7 @@ public class ShopMenu : MonoBehaviour
                     LogAlert.QueueTextAlert($"Paid { itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
                     //TransientDataScript.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
 
-                    shopItem.UpdateInventoryCount();
+                    selectedItem.UpdateInventoryCount();
                 }
                 else
                 {
@@ -280,6 +296,15 @@ public class ShopMenu : MonoBehaviour
                 LogAlert.QueueTextAlert("I don't have enough space for more of this.");
             }
         }
+
+        ClearSelections();
+    }
+
+    public void ClearSelections()
+    {
+        itemInfoCard.SetActive(false);
+        selectedItem = null;
+        dragIcon.DisableIcon();
     }
 
     private void OnDisable()
