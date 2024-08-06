@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ShopItemPrefab : MonoBehaviour, IPointerDownHandler, IInitializePotentialDragHandler, IDragHandler
+public class ShopItemPrefab : MonoBehaviour, IPointerDownHandler
 {
     public ShopMenu shopMenu;
 
@@ -10,20 +10,12 @@ public class ShopItemPrefab : MonoBehaviour, IPointerDownHandler, IInitializePot
     public bool isReady = false;
     public bool sellFromPlayer = false;
 
-    bool doubleClickReady = false;
-
-
     public void Initialise(Item item, ShopMenu script, bool sellFromPlayer)
     {
         this.sellFromPlayer = sellFromPlayer;
         shopMenu = script;
         itemSource = item;
         isReady = true;
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        // Required for dragging to work and translate properly to the spawned prefab
     }
 
     public void UpdateInventoryCount()
@@ -74,58 +66,24 @@ public class ShopItemPrefab : MonoBehaviour, IPointerDownHandler, IInitializePot
         }
     }
 
-    public void OnInitializePotentialDrag(PointerEventData eventData)
-    {
-        if (shopMenu.buyFromShopMenu.selectedItem == itemSource || shopMenu.sellFromPlayerMenu.selectedItem == itemSource)
-        {
-            Debug.Log("Spawning draggable " + itemSource.name);
-            // Here we instantiate the second object, that we want to drag. 
-            var item = itemSource;
-            var prefab = BoxFactory.CreateItemIcon(item, false, 96).gameObject;
-            prefab.transform.SetParent(shopMenu.transform, false);
-            prefab.name = item.name;
-
-            var draggable = prefab.AddComponent<DraggableShopItem>();
-            draggable.shopItem = this;
-
-            if (prefab != null)
-            {
-                Debug.Log("Drag registered for " + itemSource.name);
-                prefab.transform.position = Input.mousePosition;
-
-                eventData.pointerDrag = prefab; // assign instantiated object
-            }
-        }
-    }
-
     public void OnPointerDown(PointerEventData eventData)
     {
-        //Debug.Log("Clicked shop item " + itemSource.name);
-
-        if (isReady)
+        if (shopMenu.selectedItem == null)
         {
-            if (doubleClickReady)
+            if (sellFromPlayer)
             {
-                if (sellFromPlayer)
-                {
-                    shopMenu.HighlightPlayerItem(itemSource);
-                }
-                else
-                {
-                    shopMenu.HighlightShopItem(itemSource);
-                }
+                shopMenu.HighlightPlayerItem(itemSource);
             }
             else
             {
-                shopMenu.itemInfoCard.SetActive(false);
-                doubleClickReady = true;
-                Invoke("DisableDoubleClick", 0.35f);
+                shopMenu.HighlightShopItem(itemSource);
             }
-        }
-    }
 
-    void DisableDoubleClick()
-    {
-        doubleClickReady = false;
+            shopMenu.SelectItemToDrag(this);
+        }
+        else
+        {
+            shopMenu.ClearSelections();
+        }
     }
 }
