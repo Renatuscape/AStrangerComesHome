@@ -173,21 +173,21 @@ public class GameController : MonoBehaviour
 
     private void ChangeResolution(int direction)
     {
-        screenSetting = (screenSetting + direction) % 4;
-        if (screenSetting < 0) screenSetting += 4;
+        screenSetting = (screenSetting + direction) % 3;
+        if (screenSetting < 0) screenSetting += 3;
 
         switch (screenSetting)
         {
+            //case 0:
+            //    Screen.SetResolution(960, 540, false);
+            //    break;
             case 0:
-                Screen.SetResolution(960, 540, false);
-                break;
-            case 1:
                 Screen.SetResolution(1440, 810, false);
                 break;
-            case 2:
+            case 1:
                 Screen.SetResolution(1920, 1080, false);
                 break;
-            case 3:
+            case 2:
                 Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
                 break;
         }
