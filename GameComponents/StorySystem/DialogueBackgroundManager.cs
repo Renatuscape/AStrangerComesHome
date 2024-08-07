@@ -34,13 +34,13 @@ public class DialogueBackgroundManager : MonoBehaviour
 
     void SolidBlack()
     {
-        bgSolid.color = Color.black;
+        bgSolid.color = new Color(0, 0, 0, 1);
         bgImage.color = new Color(0, 0, 0, 0);
     }
 
     void SolidWhite()
     {
-        bgSolid.color = Color.white;
+        bgSolid.color = new Color(1, 1, 1, 1);
         bgImage.color = new Color(0, 0, 0, 0);
     }
 
@@ -67,6 +67,10 @@ public class DialogueBackgroundManager : MonoBehaviour
         else if (backgroundID.Contains('-'))
         {
             BuildBgFromTags(backgroundID.Split('-'));
+        }
+        else if (behaviour.TryGetValue(backgroundID, out var value))
+        {
+            value.Invoke();
         }
         else
         {
