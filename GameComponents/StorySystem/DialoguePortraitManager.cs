@@ -72,7 +72,7 @@ public class DialoguePortraitManager : MonoBehaviour
             spriteObject = spriteRight.gameObject;
         }
 
-        if (spriteObject != null)
+        if (spriteObject != null && !dEvent.hideSpeakerPortrait)
         {
             spriteObject.SetActive(true);
 
@@ -91,5 +91,21 @@ public class DialoguePortraitManager : MonoBehaviour
                 portraitAnimator.SetTargetPosition(dEvent, spriteObject);
             }
         }
+        else if (spriteObject != null && dEvent.hideSpeakerPortrait)
+        {
+            spriteObject.SetActive(false);
+        }
+        
+        if (dEvent.hideBothPortraits)
+        {
+            HideAllPortraits();
+        }
     }
+
+    void HideAllPortraits()
+    {
+        spriteLeft.gameObject.SetActive(false);
+        spriteRight.gameObject.SetActive(false);
+        playerSprite.gameObject.SetActive(false);
+}
 }
