@@ -34,6 +34,7 @@ public class GameManagerScript : MonoBehaviour
     public GameObject menuUIManagerComponent;
     public GameObject infoUIManagerComponent;
     public GameObject timeManagerComponent;
+    public GameObject uiCanvasContainer;
 
     public List<GameObject> listOfGameComponents;
 
@@ -273,6 +274,16 @@ public class GameManagerScript : MonoBehaviour
             component.SetActive(false);
             yield return null;
             component.SetActive(true);
+            yield return null;
+        }
+
+        uiCanvasContainer.SetActive(true);
+
+        foreach (Transform transform in uiCanvasContainer.transform)
+        {
+            transform.gameObject.SetActive(false);
+            yield return null;
+            transform.gameObject.SetActive(true);
             yield return null;
         }
 
