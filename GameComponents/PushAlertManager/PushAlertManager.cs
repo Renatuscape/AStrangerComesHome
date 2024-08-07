@@ -19,8 +19,6 @@ public class PushAlertManager : MonoBehaviour
     float textAlpha;
     void Awake()
     {
-        dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
-
         textAlpha = 1;
         alertText.text = " ";
         isDisplayingAlert = false;
