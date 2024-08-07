@@ -33,9 +33,7 @@ public class AudioManager : MonoBehaviour
 
     private void OnDisable()
     {
-        StopAllCoroutines();
-        musicPlayer.Stop();
-        effectAudioCooldown = true;
+        StopAllAudio();
     }
 
     IEnumerator EffectAudioCooldown()
@@ -204,9 +202,25 @@ public class AudioManager : MonoBehaviour
 
             if (!audio.isPlaying)
             {
+                audio.clip = null;
                 playersInUse.Remove(audio);
                 audioPool.Add(audio);
             }
         }
+    }
+
+    void StopAllAudio()
+    {
+        ForceStopBackgroundMusic();
+        StopAllCoroutines();
+        musicPlayer.Stop();
+        effectAudioCooldown = true;
+
+        foreach (var audio in playersInUse)
+        {
+            audio.Stop();
+        }
+
+        RecycleAudio();
     }
 }
