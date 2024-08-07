@@ -95,12 +95,6 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             Destroy(alchemyIngredient);
         }
 
-        var shopDraggable = gameObject.GetComponent<DraggableShopItem>();
-        if (shopDraggable != null)
-        {
-            Destroy(shopDraggable);
-        }
-
         var shopItem = gameObject.GetComponent<ShopItemPrefab>();
         if (shopItem != null)
         {
