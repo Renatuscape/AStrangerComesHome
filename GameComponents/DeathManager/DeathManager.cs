@@ -22,6 +22,7 @@ public class DeathManager : MonoBehaviour
     }
     public void InitiateDeath(Choice choice, bool isSuccess)
     {
+        Debug.Log("Death Manager's InitiateDeath was called.");
         TransientDataScript.SetGameState(GameState.Death, "DeathManager", gameObject);
         if (Player.GetCount(StaticTags.Destruction, name) < 10)
         {
