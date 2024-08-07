@@ -125,6 +125,16 @@ public static class DialogueSetup
                 dEvent.hideOtherPortrait = true;
             }
 
+            if (eventID.Contains("HB#TRUE"))
+            {
+                dEvent.hideBothPortraits = true;
+            }
+
+            if (eventID.Contains("HS#TRUE"))
+            {
+                dEvent.hideSpeakerPortrait = true;
+            }
+
             foreach (string tag in eventTags)
             {
                 if (tag.Contains("SP#"))
@@ -201,7 +211,9 @@ public class DialogueEvent
     public string moveAnimationSpeed; //MAS# NON / SLO / MED / FAS
     public string backgroundID; //BG# Remove / RemoveWithoutFade / imageName / imageName-WithoutFade / imageName-SlowFade / imageName-ExSlowFade / imageName-OnWhite / imageName-#FF00FF (HEX MUST ALWAYS BE LAST)
     public bool isLeft = false;
-    public bool hideOtherPortrait = false;
+    public bool hideBothPortraits = false; //HB#TRUE
+    public bool hideSpeakerPortrait = false; // HS#TRUE
+    public bool hideOtherPortrait = false; // HO#TRUE
 
     public List<string> otherPortraitOverride; // characterID + any data besides isleft, hide, content
 }
