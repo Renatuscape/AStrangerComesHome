@@ -86,16 +86,16 @@ public static class RequirementChecker
     public static bool CheckWeekDay(int weekDay)
     {
         DayOfWeek currentWeekday = TransientDataScript.GetWeekDay();
-        Debug.Log("Current day: " + (int)currentWeekday + " " + currentWeekday);
+        // Debug.Log("Current day: " + (int)currentWeekday + " " + currentWeekday);
 
         if ((int)currentWeekday == weekDay)
         {
-            Debug.Log("Check against " + weekDay + (DayOfWeek)weekDay + " returned true.");
+            // Debug.Log("Check against " + weekDay + (DayOfWeek)weekDay + " returned true.");
             return true;
         }
         else
         {
-            Debug.Log("Check against " + weekDay + " returned false.");
+            // Debug.Log("Check against " + weekDay + " returned false.");
             return false;
         }
     }
@@ -182,27 +182,27 @@ public static class RequirementChecker
     {
         if (!CheckRequirements(package.requirements))
         {
-            Debug.Log("Package failed at requirements.");
+            // Debug.Log("Package failed at requirements.");
             return false;
         }
         else if (!CheckRestrictions(package.restrictions))
         {
-            Debug.Log("Package failed at restrictions.");
+            // Debug.Log("Package failed at restrictions.");
             return false;
         }
         else if (!CheckTime(package.minTimeOfDay, package.maxTimeOfDay))
         {
-            Debug.Log("Package failed at time of day.");
+            // Debug.Log("Package failed at time of day.");
             return false;
         }
         else if (!CheckAgainstCurrentLocation(package.locationID))
         {
-            Debug.Log("Package failed at location check.");
+            // Debug.Log("Package failed at location check.");
             return false;
         }
         else if (TransientDataScript.gameManager.dataManager.totalGameDays < package.requiredDaysPassed)
         {
-            Debug.Log("Package failed at required days passed.");
+            // Debug.Log("Package failed at required days passed.");
             return false;
         }
         else if (!CheckConditions(package.conditions))
