@@ -32,7 +32,6 @@ public class GameManagerScript : MonoBehaviour
     public GameObject coachComponent;
     public GameObject salvageSpawnerComponent;
     public GameObject menuUIManagerComponent;
-    public GameObject infoUIManagerComponent;
     public GameObject timeManagerComponent;
     public GameObject uiCanvasContainer;
 
