@@ -28,6 +28,7 @@ public class TransientDataScript : MonoBehaviour
     public float currentMana;
     public float manapool;
     public float engineBoost;
+    public float maxEngineBoost;
     public EngineState engineState;
 
     //PLAYER LOCATION DATA
