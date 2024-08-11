@@ -7,10 +7,10 @@ public class Engine : MonoBehaviour
     public TransientDataScript transientData;
     static Engine instance;
 
-    public float engineBoostEfficiency;
-    public float engineFuelEfficiency;
-    public float engineBoostMax;
-    public float engineClickPotency;
+    public float skillEngineBoostEfficiency;
+    public float skillEngineFuelEfficiency;
+    public float skillEngineBoostMax;
+    public float skillEngineClickPotency;
 
     float baseSpeed = 0.6f;
     float baseFuelConsumption = 0.01f;
@@ -23,9 +23,7 @@ public class Engine : MonoBehaviour
     float speedDecreaseRate = 0.03f; //Cushion speed decrease
     float speedIncreaseRate = 0.015f; //Rate at which speed is increased when changing gear
 
-    public float currentBoost;
     public float boostDecrease;
-    public float boostMax;
     public float manaConsumptionDebuff;
     public float targetSpeed;
 
@@ -44,7 +42,7 @@ public class Engine : MonoBehaviour
     {
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
         instance = this;
-        boostMax = 50 + (3 * engineBoostMax);
+        transientData.maxEngineBoost = 50 + (3 * skillEngineBoostMax);
 
         MEC000 = Upgrades.FindByID("MEC000");
         MEC001 = Upgrades.FindByID("MEC001");
@@ -53,7 +51,7 @@ public class Engine : MonoBehaviour
 
         transientData.engineState = EngineState.Off;
         transientData.currentSpeed = 0;
-        currentBoost = 0;
+        transientData.engineBoost = 0;
         speedTick = 0.01f;
         effectTick = 0.025f;
 
@@ -66,23 +64,23 @@ public class Engine : MonoBehaviour
     {
         if (instance != null && instance.isReady)
         {
-            instance.engineBoostEfficiency = Player.GetCount("MEC000", "Engine"); //Capacitor - boost depletes slower
+            instance.skillEngineBoostEfficiency = Player.GetCount("MEC000", "Engine"); //Capacitor - boost depletes slower
 
-            instance.engineBoostMax = Player.GetCount("MEC001", "Engine"); //Brass Chamber - more boost can be stored
+            instance.skillEngineBoostMax = Player.GetCount("MEC001", "Engine"); //Brass Chamber - more boost can be stored
 
             if (instance.MEC001.isBroken)
             {
-                instance.boostMax = 50 + (20 * instance.engineBoostMax);
+                instance.transientData.maxEngineBoost = 50 + (20 * instance.skillEngineBoostMax);
             }
             else
             {
-                instance.boostMax = 100 + (20 * instance.engineBoostMax);
+                instance.transientData.maxEngineBoost = 100 + (20 * instance.skillEngineBoostMax);
             }
 
 
-            instance.engineClickPotency = Player.GetCount("MEC002", "Engine"); //Crankshaft - click is more potent
+            instance.skillEngineClickPotency = Player.GetCount("MEC002", "Engine"); //Crankshaft - click is more potent
 
-            instance.engineFuelEfficiency = Player.GetCount("MEC003", "Engine"); //Spark Tubes - engine uses less mana
+            instance.skillEngineFuelEfficiency = Player.GetCount("MEC003", "Engine"); //Spark Tubes - engine uses less mana
         }
     }
 
@@ -112,15 +110,15 @@ public class Engine : MonoBehaviour
     {
         if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
         {
-            if (TransientDataScript.GameState == GameState.Overworld && currentBoost < boostMax)
+            if (TransientDataScript.GameState == GameState.Overworld && transientData.engineBoost < transientData.maxEngineBoost)
             {
                 if (MEC002.isBroken)
                 {
-                    currentBoost = currentBoost + (2 + (0.5f * engineClickPotency));
+                    transientData.engineBoost = transientData.engineBoost + (2 + (0.5f * skillEngineClickPotency));
                 }
                 else
                 {
-                    currentBoost = currentBoost + (5 + (0.5f * engineClickPotency));
+                    transientData.engineBoost = transientData.engineBoost + (5 + (0.5f * skillEngineClickPotency));
                 }
             }
 
@@ -131,24 +129,24 @@ public class Engine : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
-            if (currentBoost > 0)
+            if (transientData.engineBoost > 0)
             {
                 if (MEC000.isBroken)
                 {
-                    boostDecrease = 0.45f - (0.02f * engineBoostEfficiency);
+                    boostDecrease = 0.45f - (0.02f * skillEngineBoostEfficiency);
                 }
                 else
                 {
-                    boostDecrease = 0.3f - (0.02f * engineBoostEfficiency);
+                    boostDecrease = 0.3f - (0.02f * skillEngineBoostEfficiency);
                 }
 
-                currentBoost = currentBoost - boostDecrease;
+                transientData.engineBoost = transientData.engineBoost - boostDecrease;
             }
-            else if (currentBoost < 0)
-                currentBoost = 0;
+            else if (transientData.engineBoost < 0)
+                transientData.engineBoost = 0;
 
-            if (currentBoost > boostMax)
-                currentBoost = boostMax;
+            if (transientData.engineBoost > transientData.maxEngineBoost)
+                transientData.engineBoost = transientData.maxEngineBoost;
         }
     }
     void SpeedManager()
@@ -167,19 +165,19 @@ public class Engine : MonoBehaviour
             switch (transientData.engineState)
             {
                 case EngineState.FirstGear:
-                    targetSpeed = (baseSpeed * firstGearMultiplier) + (currentBoost / 40);
+                    targetSpeed = (baseSpeed * firstGearMultiplier) + (transientData.engineBoost / 40);
                     break;
 
                 case EngineState.SecondGear:
-                    targetSpeed = (baseSpeed * secondGearMultiplier) + (currentBoost / 50);
+                    targetSpeed = (baseSpeed * secondGearMultiplier) + (transientData.engineBoost / 50);
                     break;
 
                 case EngineState.ThirdGear:
-                    targetSpeed = (baseSpeed * thirdGearMultiplier) + (currentBoost / 50);
+                    targetSpeed = (baseSpeed * thirdGearMultiplier) + (transientData.engineBoost / 50);
                     break;
 
                 case EngineState.Reverse:
-                    targetSpeed = 0 - ((baseSpeed * reverseMultiplier) + (currentBoost / 70)) / 2;
+                    targetSpeed = 0 - ((baseSpeed * reverseMultiplier) + (transientData.engineBoost / 70)) / 2;
                     break;
 
                 default:
@@ -208,11 +206,11 @@ public class Engine : MonoBehaviour
         {
             if (MEC003.isBroken)
             {
-                manaConsumptionDebuff = 2f + (10 - engineFuelEfficiency) / 10;
+                manaConsumptionDebuff = 2f + (10 - skillEngineFuelEfficiency) / 10;
             }
             else
             {
-                manaConsumptionDebuff = 2f + (10 - engineFuelEfficiency) / 25;
+                manaConsumptionDebuff = 2f + (10 - skillEngineFuelEfficiency) / 25;
             }
 
 
