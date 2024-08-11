@@ -6,12 +6,11 @@ using UnityEngine.UI;
 public class StartMenuScript : MonoBehaviour
 {
     public GameObject controllerMenu;
-    public GameObject settingsMenu;
+    public SettingsMenu settingsMenu;
 
     void OnEnable()
     {
         controllerMenu.SetActive(false);
-        settingsMenu.SetActive(false);
     }
 
     public void ToggleControlMenu()
@@ -21,6 +20,6 @@ public class StartMenuScript : MonoBehaviour
 
     public void ToggleSettingsMenu()
     {
-        settingsMenu.SetActive(!settingsMenu.activeInHierarchy);
+        settingsMenu.Open();
     }
 }
