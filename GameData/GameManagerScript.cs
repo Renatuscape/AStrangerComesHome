@@ -35,9 +35,8 @@ public class GameManagerScript : MonoBehaviour
     public GameObject timeManagerComponent;
     public GameObject uiCanvasContainer;
 
-    public List<GameObject> listOfGameComponents;
-
     public GameObject gameComponentParent;
+    List<GameObject> listOfGameComponents = new();
 
     public AutoMap mapComponent;
     public CameraController cameraComponent;
