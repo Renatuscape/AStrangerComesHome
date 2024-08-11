@@ -31,7 +31,7 @@ public class EngineBar : MonoBehaviour
     {
         if (engine.isReady)
         {
-            boostFraction = engine.currentBoost * 100 / engine.boostMax / 100;
+            boostFraction = engine.transientData.engineBoost * 100 / engine.transientData.maxEngineBoost / 100;
 
             barMask.localPosition = Vector3.Lerp(barPositionEmpty, barPositionFull, boostFraction);
         }
