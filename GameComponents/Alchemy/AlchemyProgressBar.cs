@@ -1,7 +1,6 @@
 ﻿
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class AlchemyProgressBar : MonoBehaviour
 {
@@ -71,29 +70,10 @@ public class AlchemyProgressBar : MonoBehaviour
 
     void UpdateFillBarPosition()
     {
-        // float smoothness = 2;
-
         float xScale = Mathf.Lerp(0, 1, percentageFill);
 
-        //if (xScale > -0.1f && xScale < 1.1f)
-        //{
-        //    // Smoothly move the fill bar to the target position
-        //    fillBar.localScale = Vector3.Lerp(fillBar.localScale, new Vector3(xScale, 1, 1), Time.deltaTime * smoothness);
-        //}
         if (xScale >= 0 && xScale <= 1)
         {
-            //if (xScale < 0.05)
-            //{
-            //    fillBar.localScale = new Vector3(0.05f, 1, 1);
-            //}
-            //else if (xScale < 1 && xScale > 0.95)
-            //{
-            //    fillBar.localScale = new Vector3(0.95f, 1, 1);
-            //}
-            //else
-            //{
-            //    fillBar.localScale = new Vector3(xScale, 1, 1);
-            //}
             StopAllCoroutines();
             StartCoroutine(ScaleBar(percentageFill));
         }
