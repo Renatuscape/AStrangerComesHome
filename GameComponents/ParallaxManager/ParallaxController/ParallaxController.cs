@@ -57,7 +57,7 @@ public class ParallaxController : MonoBehaviour
 
     void MoveStation()
     {
-        Debug.Log("Attempting to move station.");
+        // Debug.Log("Attempting to move station.");
         if (stationToParallax.parentStation != null && stationToParallax.facade != null)
         {
             float facadeX = stationToParallax.facade.transform.position.x;
@@ -118,7 +118,7 @@ public class ParallaxController : MonoBehaviour
 
     void MoveStationLayer(StationParallaxDataLayer dataLayer, float facadeX)
     {
-        Debug.Log("Attempting to move station layer " + dataLayer.layer.name);
+        // Debug.Log("Attempting to move station layer " + dataLayer.layer.name);
         var position = dataLayer.layer.transform.position;
         var speedToMove = CalculateSpeed(dataLayer.speedMultiplier) * 0.5f;
         // ^ Though speed calculation and movement comes out as equal, halving it is what makes it LOOK correct. Find out the real issue later. Move called twice somehow?
