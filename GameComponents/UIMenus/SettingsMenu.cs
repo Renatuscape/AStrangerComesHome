@@ -6,16 +6,26 @@ using UnityEngine.UI;
 
 public class SettingsMenu : MonoBehaviour
 {
-    public CanvasScaler canvasScaler;
-    public Dropdown canvasScaleDropDown;
     public Toggle alwaysHideCoachExteriorToggle;
+    public Dropdown resolutionDropdown;
+    public GameObject content;
 
-    private void Start()
+    public void Open()
+    {
+        content.SetActive(true);
+    }
+
+    public void Close()
+    {
+        content.SetActive(false);
+    }
+
+    void Start()
     {
         alwaysHideCoachExteriorToggle.onValueChanged.AddListener(ToggleAlwaysHideCoachExterior);
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         alwaysHideCoachExteriorToggle.isOn = GlobalSettings.AlwaysHideCoachExterior;
     }
@@ -24,18 +34,5 @@ public class SettingsMenu : MonoBehaviour
     {
         GlobalSettings.AlwaysHideCoachExterior = toggle;
         GlobalSettings.SaveSettings();
-    }
-
-    public void DropDownScaleUI(int index)
-    {
-        switch (index)
-        {
-            case 0: canvasScaler.scaleFactor = 1; break;
-            case 1: canvasScaler.scaleFactor = 2; break;
-            case 2: canvasScaler.scaleFactor = 3; break;
-            case 3: canvasScaler.scaleFactor = 4; break;
-            case 4: canvasScaler.scaleFactor = 5; break;
-            default: canvasScaler.scaleFactor = 2; break;
-        }
     }
 }
