@@ -28,7 +28,6 @@ public class GameManagerScript : MonoBehaviour
     public GameObject gameComponentMaster;
     public GameObject mainMenuComponent;
     public GameObject characterCreatorComponent;
-    public GameObject parallaxManagerComponent;
     public GameObject coachComponent;
     public GameObject salvageSpawnerComponent;
     public GameObject menuUIManagerComponent;
@@ -70,10 +69,16 @@ public class GameManagerScript : MonoBehaviour
         await InitiateJsonManagers(); // Ensure all json files are loaded before doing anything else
 
         gameComponentParent.SetActive(true); // Enable game components
-
         foreach (Transform child in gameComponentParent.transform)
         {
             listOfGameComponents.Add(child.gameObject);
+        }
+
+        uiCanvasContainer.SetActive(true);
+        foreach (Transform transform in uiCanvasContainer.transform)
+        {
+            transform.gameObject.SetActive(false);
+            transform.gameObject.SetActive(true);
         }
 
         if (mainMenuComponent != null) //check if the main menu exists
