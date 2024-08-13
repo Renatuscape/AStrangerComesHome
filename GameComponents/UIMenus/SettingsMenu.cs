@@ -79,13 +79,14 @@ public class SettingsMenu : MonoBehaviour
         switch (option)
         {
             case 0:
-                Screen.SetResolution(1440, 810, false);
+                Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
                 break;
             case 1:
                 Screen.SetResolution(1920, 1080, false);
                 break;
             case 2:
-                Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
+
+                Screen.SetResolution(1440, 810, false);
                 break;
         }
 
