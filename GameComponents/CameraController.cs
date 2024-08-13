@@ -1,14 +1,14 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class CameraController : MonoBehaviour
 {
     public TransientDataScript transientData;
-
-    public CinemachineVirtualCamera vCam;
-    public Transform camTransform;
+    private readonly Dictionary<KeyCode, Action> keyBindings = new Dictionary<KeyCode, Action>();
+    public CinemachineVirtualCamera virtualCamera;
+    public Transform virtualCameraTransform;
     public Transform targetTransform;
     public GameObject camTargetX; //Exclude from loop
     public GameObject camTarget1;
@@ -17,12 +17,29 @@ public class CameraController : MonoBehaviour
     public GameObject camTargetGarden; //Garden
     public List<GameObject> camTargetsList;
     public int camIndex;
-    public float cameraMovementSpeed = 0.2f;
+
+    public void CameraClose()
+    {
+        TransientDataScript.SetCameraView(CameraView.Cockpit);
+        camIndex = 1;
+        virtualCamera.m_Lens.OrthographicSize = 2;
+        virtualCameraTransform.position = new Vector3(camTargetsList[camIndex].transform.position.x, camTargetsList[camIndex].transform.position.y, virtualCamera.gameObject.transform.position.z);
+        HandleCameraView();
+    }
+
+    public void CameraNormal()
+    {
+        TransientDataScript.SetCameraView(CameraView.Normal);
+        virtualCamera.m_Lens.OrthographicSize = 8.4f;
+        virtualCameraTransform.position = new Vector3(0, 0, virtualCamera.gameObject.transform.position.z);
+        HandleCameraView();
+    }
 
     void Start()
     {
+        InitializeKeyBindings();
         transientData = GameObject.Find("TransientData").GetComponent<TransientDataScript>();
-        camTransform = vCam.gameObject.transform;
+        virtualCameraTransform = virtualCamera.gameObject.transform;
 
         camTargetsList.Add(camTarget1);
         camTargetsList.Add(camTarget2);
@@ -31,17 +48,85 @@ public class CameraController : MonoBehaviour
         targetTransform = camTarget2.transform;
 
     }
-    private void Update()
+
+    void Update()
     {
-        HandleCameraView();
-        HandleCameraMovement();
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView != CameraView.Normal)
+        {
+            ProcessInput();
+        }
+    }
+
+    void InitializeKeyBindings()
+    {
+        keyBindings[KeyCode.RightArrow] = Right;
+        keyBindings[KeyCode.D] = Right;
+        keyBindings[KeyCode.LeftArrow] = Left;
+        keyBindings[KeyCode.A] = Left;
+        keyBindings[KeyCode.UpArrow] = () => { targetTransform = camTargetGarden.transform; };
+        keyBindings[KeyCode.W] = () => { targetTransform = camTargetGarden.transform; };
+        keyBindings[KeyCode.DownArrow] = () =>
+        {
+            camIndex = 0;
+            targetTransform = camTargetX.transform;
+        };
+        keyBindings[KeyCode.S] = () =>
+        {
+            camIndex = 0;
+            targetTransform = camTargetX.transform;
+        };
+    }
+
+    void ProcessInput()
+    {
+        foreach (var keyBinding in keyBindings)
+        {
+            if (Input.GetKeyDown(keyBinding.Key))
+            {
+                keyBinding.Value.Invoke();
+                break;
+            }
+        }
+    }
+
+    void Right()
+    {
+        if (targetTransform == camTargetX.transform)
+            camIndex = 0;
+
+        else if (targetTransform == camTargetGarden.transform)
+        {
+            camIndex = 0;
+        }
+        else
+        {
+            if (camIndex > 0)
+                camIndex--;
+            else
+                camIndex = camTargetsList.Count - 1;
+        }
+
+        targetTransform = camTargetsList[camIndex].transform;
+    }
+
+    void Left()
+    {
+        if (targetTransform == camTargetGarden.transform)
+        {
+            camIndex = 1;
+        }
+        else
+        {
+            if (camIndex < camTargetsList.Count - 1)
+                camIndex++;
+            else
+                camIndex = 0;
+        }
+        targetTransform = camTargetsList[camIndex].transform;
     }
 
     void HandleCameraView()
     {
-        if (TransientDataScript.CameraView == CameraView.Normal && (vCam.m_Lens.OrthographicSize != 8.4 || camTransform.position.x != 0))
-            CameraNormal();
-
         // Snap camera back to normal if the state is anything but these exceptions
         if (TransientDataScript.GameState != GameState.Overworld &&
             TransientDataScript.GameState != GameState.JournalMenu &&
@@ -65,78 +150,7 @@ public class CameraController : MonoBehaviour
                     TransientDataScript.SetCameraView(CameraView.Cockpit);
                 else if (targetTransform == camTarget3.transform)
                     TransientDataScript.SetCameraView(CameraView.Pet);
-
-
-                if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-                {
-                    if (targetTransform == camTargetX.transform)
-                        camIndex = 0;
-
-                    else if (targetTransform == camTargetGarden.transform)
-                    {
-                        camIndex = 0;
-                    }
-                    else
-                    {
-                        if (camIndex > 0)
-                            camIndex--;
-                        else
-                            camIndex = camTargetsList.Count - 1;
-                    }
-
-                    targetTransform = camTargetsList[camIndex].transform;
-                }
-
-                else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-                {
-                    if (targetTransform == camTargetGarden.transform)
-                    {
-                        camIndex = 1;
-                    }
-                    else
-                    {
-                        if (camIndex < camTargetsList.Count - 1)
-                            camIndex++;
-                        else
-                            camIndex = 0;
-                    }
-                    targetTransform = camTargetsList[camIndex].transform;
-                }
-                else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-                {
-                    targetTransform = camTargetGarden.transform;
-                }
-                else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-                {
-                    camIndex = 0;
-                    targetTransform = camTargetX.transform;
-                }
             }
         }
-    }
-    void HandleCameraMovement()
-    {
-        if (vCam.gameObject.transform.position != camTargetsList[camIndex].transform.position)
-        {
-            var camPosition = camTransform.position;
-            var targetPosition = targetTransform.transform.position;
-            var step = cameraMovementSpeed * Vector3.Distance(camPosition, targetPosition); //cushions movement
-            camTransform.position = Vector3.MoveTowards(camPosition, new Vector3(targetPosition.x, targetPosition.y, camPosition.z), step);
-        }
-    }
-
-    public void CameraClose()
-    {
-        TransientDataScript.SetCameraView(CameraView.Cockpit);
-        camIndex = 1;
-        vCam.m_Lens.OrthographicSize = 2;
-        camTransform.position = new Vector3(camTargetsList[camIndex].transform.position.x, camTargetsList[camIndex].transform.position.y, vCam.gameObject.transform.position.z);
-    }
-
-    public void CameraNormal()
-    {
-        TransientDataScript.SetCameraView(CameraView.Normal);
-        vCam.m_Lens.OrthographicSize = 8.4f;
-        camTransform.position = new Vector3(0, 0, vCam.gameObject.transform.position.z);
     }
 }
