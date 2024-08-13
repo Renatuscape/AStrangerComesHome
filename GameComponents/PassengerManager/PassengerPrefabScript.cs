@@ -65,7 +65,7 @@ public class PassengerPrefabScript : MonoBehaviour
     {
         float distance = CalculateDistance(passengerData.origin, passengerData.destination);
         Debug.Log("Distance between A and B: " + distance);
-        passengerData.fare = (int)(distance * distance) * (int)Mathf.Ceil(Player.GetCount(StaticTags.GuildLicense, name) * 0.2f);
+        passengerData.fare = (int)(distance * distance) * (int)Mathf.Ceil(Player.GetCount(StaticTags.GuildLicense, name) * 0.1f);
         Debug.Log("Fare calculated to " + passengerData.fare);
     }
 
