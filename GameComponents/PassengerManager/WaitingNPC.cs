@@ -64,7 +64,8 @@ public class WaitingNPC : MonoBehaviour
             destination.noPassengers ||
             destination == transientData.currentLocation ||
             destination.type == LocationType.Crossing ||
-            CalculateDistance(origin, destination) < 3)
+            CalculateDistance(origin, destination) < 3 ||
+            !RequirementChecker.CheckRequirements(destination.requirements))
         {
             RollDestination();
         }
