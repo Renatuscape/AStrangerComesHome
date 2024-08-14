@@ -23,7 +23,6 @@ public class Engine : MonoBehaviour
     float speedDecreaseRate = 0.03f; //Cushion speed decrease
     float speedIncreaseRate = 0.015f; //Rate at which speed is increased when changing gear
 
-    public float boostDecrease;
     public float manaConsumptionDebuff;
     public float targetSpeed;
 
@@ -127,26 +126,32 @@ public class Engine : MonoBehaviour
 
     void BoostDecrease()
     {
-        if (TransientDataScript.IsTimeFlowing())
+        if (TransientDataScript.IsTimeFlowing() && transientData.engineBoost > 0)
         {
-            if (transientData.engineBoost > 0)
+            if (transientData.engineBoost > transientData.maxEngineBoost)
             {
+                transientData.engineBoost = transientData.maxEngineBoost;
+            }
+            else if (transientData.engineBoost < 0)
+            {
+                transientData.engineBoost = 0;
+            }
+            else
+            {
+                float boostDecrease = 0.3f - (0.02f * skillEngineBoostEfficiency);
+
                 if (MEC000.isBroken)
                 {
-                    boostDecrease = 0.45f - (0.02f * skillEngineBoostEfficiency);
+                    boostDecrease += 0.15f;
                 }
-                else
+
+                if (transientData.engineState == EngineState.Off)
                 {
-                    boostDecrease = 0.3f - (0.02f * skillEngineBoostEfficiency);
+                    boostDecrease = boostDecrease * 2;
                 }
 
                 transientData.engineBoost = transientData.engineBoost - boostDecrease;
             }
-            else if (transientData.engineBoost < 0)
-                transientData.engineBoost = 0;
-
-            if (transientData.engineBoost > transientData.maxEngineBoost)
-                transientData.engineBoost = transientData.maxEngineBoost;
         }
     }
     void SpeedManager()
