@@ -124,14 +124,5 @@ public class CharacterPersonaliaChoices : MonoBehaviour
         dataManager.pronounSub = pronounSub.text;
         dataManager.pronounObj = pronounObj.text;
         dataManager.pronounGen = pronounGen.text;
-        StartCoroutine(LatePronounUpdate());
-    }
-
-    IEnumerator LatePronounUpdate()
-    {
-        yield return new WaitForSeconds(0.1f);
-        dataManager.pronounSub = pronounSub.text;
-        dataManager.pronounObj = pronounObj.text;
-        dataManager.pronounGen = pronounGen.text;
     }
 }
