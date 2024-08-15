@@ -4,10 +4,10 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
 public class CharacterCreator : MonoBehaviour
 {
     public DataManagerScript dataManager;
+    public CharacterFinaliseMenu finaliseMenu;
     public CharacterPersonaliaChoices personalia;
     public SpriteFactory spriteFactory;
     public GameObject portraitRenderer;
@@ -40,6 +40,7 @@ public class CharacterCreator : MonoBehaviour
         {
             playerSprite.SetExpressionToDefault();
 
+            finaliseMenu.gameObject.SetActive(false);
             colourPicker.SetActive(false);
             portraitRenderer.SetActive(true);
 
@@ -298,14 +299,15 @@ public class CharacterCreator : MonoBehaviour
         if (!string.IsNullOrEmpty(dataManager.playerName) && dataManager.playerName.Length > 1)
         {
             GlobalSettings.SaveSettings();
-            playerSprite.SetExpressionToDefault();
             Character player = Characters.FindByTag("Traveller", gameObject.name);
             player.trueName = dataManager.playerName;
             player.hexColour = dataManager.playerNameColour;
             player.NameSetup();
             DialogueTagParser.UpdateTags(dataManager);
-            portraitRenderer.SetActive(false);
-            TransientDataScript.ReturnToOverWorld("Character Creator", gameObject);
+            // playerSprite.SetExpressionToDefault();
+            // portraitRenderer.SetActive(false);
+
+            finaliseMenu.gameObject.SetActive(true);
         }
         else
         {
