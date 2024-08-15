@@ -44,6 +44,7 @@ public class CharacterExpressionCatalogue : MonoBehaviour
         }
         else
         {
+            Debug.Log("Could not find expression by ID " + expressionID);
             return null;
         }
     }
