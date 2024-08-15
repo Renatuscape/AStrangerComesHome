@@ -208,6 +208,7 @@ public class PortraitRenderer : MonoBehaviour
 
     void ResetValues()
     {
+        playerSpriteData.SetExpressionToDefault();
         playerSprite.SetActive(false);
         MoveSprite(playerSprite, playerDefaultX, false);
         rightPortraitContainer.SetActive(false);
