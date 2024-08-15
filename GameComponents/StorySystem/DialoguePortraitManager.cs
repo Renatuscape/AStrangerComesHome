@@ -17,8 +17,10 @@ public class DialoguePortraitManager : MonoBehaviour
 
         spriteRight.gameObject.SetActive(false);
         spriteRight.gameObject.transform.localPosition = new Vector3(starterPosition, spriteRight.gameObject.transform.localPosition.y, spriteRight.gameObject.transform.localPosition.z);
+
         spriteLeft.gameObject.SetActive(false);
         spriteLeft.gameObject.transform.localPosition = new Vector3(starterPosition * -1, spriteLeft.gameObject.transform.localPosition.y, spriteLeft.gameObject.transform.localPosition.z);
+
         playerSprite.gameObject.SetActive(false);
         playerSprite.gameObject.transform.localPosition = new Vector3(starterPosition * -1, playerSprite.gameObject.transform.localPosition.y, playerSprite.gameObject.transform.localPosition.z);
     }
