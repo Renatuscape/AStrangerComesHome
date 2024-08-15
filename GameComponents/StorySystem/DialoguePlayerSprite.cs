@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +10,9 @@ public class DialoguePlayerSprite : MonoBehaviour
     public CharacterExpressionCatalogue expressionCatalogue;
     public List<Image> images = new();
     public List<Image> referenceImages = new();
+    public Image imgExpression;
+    public Image imgBrowColour;
+    public Image imgLipTint;
 
     private void OnEnable()
     {
@@ -71,38 +73,38 @@ public class DialoguePlayerSprite : MonoBehaviour
     }
     public void SetExpression(PlayerExpressionPackage package)
     {
-        Image expression = images.FirstOrDefault(i => i.name.Contains("Expression"));
-        Image lipTint = images.FirstOrDefault(i => i.name.Contains("LipTint"));
-        Image browColour = images.FirstOrDefault(i => i.name.Contains("BrowColour"));
+        //Image expression = images.FirstOrDefault(i => i.name.Contains("Expression"));
+        //Image lipTint = images.FirstOrDefault(i => i.name.Contains("LipTint"));
+        //Image browColour = images.FirstOrDefault(i => i.name.Contains("BrowColour"));
 
-        if (expression != null)
+        if (imgExpression != null)
         {
-            expression.sprite = package.expression;
-            playerSprite.expression.sprite = expression.sprite;
+            imgExpression.sprite = package.expression;
+            playerSprite.expression.sprite = imgExpression.sprite;
         }
         else
         {
             Debug.Log("Expression Image was not found in list.");
         }
 
-        if (lipTint != null)
+        if (imgLipTint != null)
         {
-            Color color = lipTint.color;
-            lipTint.sprite = package.lipTint;
-            lipTint.color = color;
-            playerSprite.lipTint.sprite = lipTint.sprite;
+            Color color = imgLipTint.color;
+            imgLipTint.sprite = package.lipTint;
+            imgLipTint.color = color;
+            playerSprite.lipTint.sprite = imgLipTint.sprite;
         }
         else
         {
             Debug.Log("LipTint Image was not found in list.");
         }
 
-        if (browColour != null)
+        if (imgBrowColour != null)
         {
-            Color color = browColour.color;
-            browColour.sprite = package.browColour;
-            browColour.color = color;
-            playerSprite.playerHair.browColour.sprite = browColour.sprite;
+            Color color = imgBrowColour.color;
+            imgBrowColour.sprite = package.browColour;
+            imgBrowColour.color = color;
+            playerSprite.playerHair.browColour.sprite = imgBrowColour.sprite;
         }
         else
         {
@@ -123,6 +125,19 @@ public class DialoguePlayerSprite : MonoBehaviour
             copiedChild.transform.localScale = new Vector3(1, 1, 1);
 
             copiedChild.name = child.name;
+
+            if (copiedChild.name.Contains("Expression"))
+            {
+                imgExpression = copiedChild.GetComponent<Image>();
+            }
+            else if (copiedChild.name.Contains("LipTint"))
+            {
+                imgLipTint = copiedChild.GetComponent<Image>();
+            }
+            else if (copiedChild.name.Contains("BrowColour"))
+            {
+                imgBrowColour = copiedChild.GetComponent<Image>();
+            }
 
             images.Add(copiedChild.GetComponent<Image>());
         }
