@@ -118,6 +118,7 @@ public class AutoMap : MonoBehaviour
 
     public void ChangeMap(Region region, float x = 9999, float y = 9999)
     {
+        AudioManager.FadeToStop();
         TransientDataScript.ForceClearWorldSpawns();
         TransientDataScript.transientData.currentLocation = null;
 
