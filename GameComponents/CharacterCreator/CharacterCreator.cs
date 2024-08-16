@@ -69,11 +69,6 @@ public class CharacterCreator : MonoBehaviour
         if (TransientDataScript.GameState != GameState.CharacterCreation)
             gameObject.SetActive(false);
 
-        if (dataManager.playerName != characterName.text)
-        {
-            dataManager.playerName = characterName.text;
-        }
-
         if (!portraitRenderer.activeInHierarchy)
         {
             portraitRenderer.SetActive(true);
@@ -296,18 +291,18 @@ public class CharacterCreator : MonoBehaviour
 
     public void FinaliseButton()
     {
-        if (!string.IsNullOrEmpty(dataManager.playerName) && dataManager.playerName.Length > 1)
+        if (!string.IsNullOrEmpty(characterName.text) && characterName.text.Length > 1)
         {
-            GlobalSettings.SaveSettings();
-            Character player = Characters.FindByTag("Traveller", gameObject.name);
-            player.trueName = dataManager.playerName;
-            player.hexColour = dataManager.playerNameColour;
-            player.NameSetup();
-            DialogueTagParser.UpdateTags(dataManager);
+            //GlobalSettings.SaveSettings();
+            //Character player = Characters.FindByTag("Traveller", gameObject.name);
+            //player.trueName = dataManager.playerName;
+            //player.hexColour = dataManager.playerNameColour;
+            //player.NameSetup();
+            //DialogueTagParser.UpdateTags(dataManager);
             // playerSprite.SetExpressionToDefault();
             // portraitRenderer.SetActive(false);
 
-            finaliseMenu.gameObject.SetActive(true);
+            finaliseMenu.Finalise(this);
         }
         else
         {
