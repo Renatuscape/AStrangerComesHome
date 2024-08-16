@@ -14,6 +14,7 @@ public class AudioManager : MonoBehaviour
     public List<AudioSource> audioPool;
     public List<AudioSource> playersInUse;
 
+    bool musicPlayerIsBusy = false;
     float cooldownTimer;
     bool effectAudioCooldown = true;
 
@@ -64,12 +65,12 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
-        if (TransientDataScript.GameState != GameState.MainMenu && TransientDataScript.GameState != GameState.Loading && TransientDataScript.GameState != GameState.Death)
+        if (!musicPlayerIsBusy && TransientDataScript.GameState != GameState.Loading && TransientDataScript.GameState != GameState.Death)
         {
-            musicPlayer.volume = GlobalSettings.MusicVolume;
-
             if (!musicPlayer.isPlaying)
             {
+                musicPlayer.volume = GlobalSettings.MusicVolume;
+
                 var time = dataManager.timeOfDay;
 
                 if (dataManager.currentRegion == "REGION2")
@@ -131,16 +132,26 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    IEnumerator FadeVolume()
+    void FadeVolume()
     {
-        while (musicPlayer.isPlaying)
+        StartCoroutine(FadeVolumeCoroutine());
+    }
+
+    IEnumerator FadeVolumeCoroutine()
+    {
+        musicPlayerIsBusy = true;
+        Debug.Log("Fade volume coroutine started.");
+        while (true)
         {
             yield return new WaitForSeconds(0.2f);
             musicPlayer.volume -= 0.1f;
 
             if (musicPlayer.volume <= 0)
             {
-                instance.musicPlayer.Stop();
+                instance.StopAllAudio();
+                Debug.Log("Fade volume coroutine completed.");
+                musicPlayerIsBusy = false;
+                break;
             }
         }
     }
@@ -214,7 +225,7 @@ public class AudioManager : MonoBehaviour
         ForceStopBackgroundMusic();
         StopAllCoroutines();
         musicPlayer.Stop();
-        effectAudioCooldown = true;
+        //effectAudioCooldown = true;
 
         foreach (var audio in playersInUse)
         {
