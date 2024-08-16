@@ -11,7 +11,7 @@ public class BankExchangeController : MonoBehaviour
     public float commission;
     public bool PerformExchange(out string errorMessage)
     {
-        Debug.Log($"Attempting to exchange {adjustedExchangePrice} {currencyToSell} for {amountToBuy} {currencyToBuy}.");
+        // Debug.Log($"Attempting to exchange {adjustedExchangePrice} {currencyToSell} for {amountToBuy} {currencyToBuy}.");
         string sellID = MoneyExchange.GetCurrency(currencyToSell).objectID;
 
         if (Player.GetCount(sellID, gameObject.name) >= adjustedExchangePrice)
@@ -24,26 +24,26 @@ public class BankExchangeController : MonoBehaviour
 
                 Player.Add(buyData.objectID, amountToBuy);
 
-                Debug.Log("Puchase succeeded.");
+                // Debug.Log("Puchase succeeded.");
                 errorMessage = "";
                 return true;
             }
             else
             {
-                Debug.Log("Puchase failed due to max inventory.");
+                // Debug.Log("Puchase failed due to max inventory.");
                 errorMessage = "You do not have enough inventory space for that many " + currencyToBuy.ToString().ToLower() + "s. Your wallet will only hold " + buyData.max + ".";
                 return false;
             }
         }
 
-        Debug.Log("Puchase failed due to low amount.");
+        // Debug.Log("Puchase failed due to low amount.");
         errorMessage = "You do not have enough " + currencyToSell.ToString().ToLower() + "s to complete this exchange.";
         return false;
     }
 
     public void CalculateExchangePrice()
     {
-        Debug.Log("Calculate Exchange Price was called.");
+        // Debug.Log("Calculate Exchange Price was called.");
         var currencyToSellData = MoneyExchange.GetCurrency(currencyToSell);
         var currencyToBuyData = MoneyExchange.GetCurrency(currencyToBuy);
 
