@@ -47,8 +47,8 @@ public class Character : BaseObject
 
     public void NameSetup()
     {
-        namePlate = "<color=#" + hexColour + ">" + name + "</color>";
-        trueNamePlate = "<color=#" + hexColour + ">" + trueName + "</color>";
+        namePlate = $"<color=#{hexColour}>{name}</color>";
+        trueNamePlate = $"<color=#{hexColour}>{ trueName}</color>";
     }
     public string NamePlate()
     {
