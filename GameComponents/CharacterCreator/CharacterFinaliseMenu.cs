@@ -14,9 +14,17 @@ public class CharacterFinaliseMenu: MonoBehaviour
         btnCancel.onClick.AddListener(() => gameObject.SetActive(false));
         btnConfirm.onClick.AddListener(() => CompleteCharacterCreation());
     }
-    private void OnEnable()
+
+    public void Finalise(CharacterCreator creator)
     {
-        Character player = Characters.FindByID("ARC000");
+        GlobalSettings.SaveSettings();
+        Character player = Characters.FindByTag("Traveller", gameObject.name);
+
+        dataManager.playerName = creator.characterName.text;
+        player.trueName = dataManager.playerName;
+        player.hexColour = dataManager.playerNameColour;
+        player.NameSetup();
+        DialogueTagParser.UpdateTags(dataManager);
 
         if (player != null)
         {
@@ -48,6 +56,8 @@ public class CharacterFinaliseMenu: MonoBehaviour
         {
             detailsText.text = "Player data has not yet loaded properly. Please try again.";
         }
+
+        gameObject.SetActive(true);
     }
 
     void CompleteCharacterCreation()
