@@ -11,6 +11,7 @@ public class JournalStatisticsPage : MonoBehaviour
     public PlayerSprite playerSprite;
     public GameObject personaliaContainer;
     public TextMeshProUGUI namePlate;
+    public TextMeshProUGUI namePlateShadow;
     public TextMeshProUGUI licenseInfo;
     public GameObject upgradeContainer;
     public GameObject otherContainer;
@@ -35,10 +36,12 @@ public class JournalStatisticsPage : MonoBehaviour
             if (player != null)
             {
                 namePlate.text = player.ForceTrueNamePlate();
+                namePlateShadow.text = player.trueName;
             }
             else
             {
                 namePlate.text = dataManager.playerName;
+                namePlateShadow.text = dataManager.playerName;
             }
         }
         else
@@ -48,7 +51,20 @@ public class JournalStatisticsPage : MonoBehaviour
 
         if (licenseGrade > 0)
         {
-            licenseInfo.text = $"Grade {licenseGrade} License\nExperience: {Mathf.FloorToInt((float)dataManager.totalGameDays / 28)} months";
+            string serviceTime;
+
+            if (dataManager.totalGameDays > 336)
+            {
+                var years = Mathf.FloorToInt((float)dataManager.totalGameDays / 336);
+                serviceTime = $"{years} year{(years != 1 ? "s" : "")} in service";
+            }
+            else
+            {
+                var months = Mathf.FloorToInt((float)dataManager.totalGameDays / 28);
+                serviceTime = $"{months} month{(months != 1 ? "s" : "")} in service";
+            }
+
+            licenseInfo.text = $"Grade {licenseGrade} License\n{serviceTime}";
 
             // namePlate.font = fontManager.header.font;
             // licenseInfo.font = fontManager.script.font;
