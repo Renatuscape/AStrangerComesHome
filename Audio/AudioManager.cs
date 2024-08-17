@@ -77,8 +77,7 @@ public class AudioManager : MonoBehaviour
                 {
                     musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Contemplating Mountains");
                 }
-                
-                if (dataManager.currentRegion == "REGION0" || dataManager.currentRegion == "REGION1")
+                else
                 {
                     if (time >= 0.3f && time < 0.6f)
                     {
