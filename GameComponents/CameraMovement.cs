@@ -12,7 +12,7 @@ public class CameraMovement : MonoBehaviour
 
     private void Start()
     {
-        camTransform = camController.virtualCameraTransform;
+        camTransform = camController.virtualCamera.transform;
     }
     private void Update()
     {
