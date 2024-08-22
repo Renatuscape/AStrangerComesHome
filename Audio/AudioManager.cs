@@ -67,31 +67,39 @@ public class AudioManager : MonoBehaviour
     {
         if (!musicPlayerIsBusy && TransientDataScript.GameState != GameState.Loading && TransientDataScript.GameState != GameState.Death)
         {
+            musicPlayer.volume = GlobalSettings.MusicVolume;
+
             if (!musicPlayer.isPlaying)
             {
-                musicPlayer.volume = GlobalSettings.MusicVolume;
-
-                var time = dataManager.timeOfDay;
-
-                if (dataManager.currentRegion == "REGION2")
+                if (TransientDataScript.GameState == GameState.MainMenu)
                 {
-                    musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Contemplating Mountains");
+                    musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Bright Morning");
                 }
                 else
                 {
-                    if (time >= 0.3f && time < 0.6f)
+                    var time = dataManager.timeOfDay;
+
+                    if (dataManager.currentRegion == "REGION2")
                     {
-                        musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Bright Morning");
-                    }
-                    else if (time >= 0.6f && time < 0.9f)
-                    {
-                        musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Sweet Evening");
+                        musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Contemplating Mountains");
                     }
                     else
                     {
-                        musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Pensive Night");
+                        if (time >= 0.3f && time < 0.6f)
+                        {
+                            musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Bright Morning");
+                        }
+                        else if (time >= 0.6f && time < 0.9f)
+                        {
+                            musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Sweet Evening");
+                        }
+                        else
+                        {
+                            musicPlayer.clip = bgMusic.FirstOrDefault(x => x.name == "Pensive Night");
+                        }
                     }
                 }
+                
 
                 if (musicPlayer.clip != null)
                 {
@@ -139,7 +147,7 @@ public class AudioManager : MonoBehaviour
     IEnumerator FadeVolumeCoroutine()
     {
         musicPlayerIsBusy = true;
-        Debug.Log("Fade volume coroutine started.");
+        // Debug.Log("Fade volume coroutine started.");
         while (true)
         {
             yield return new WaitForSeconds(0.2f);
