@@ -14,6 +14,7 @@ public class LogAlert : MonoBehaviour
     public float durationTimer = 0;
     float queueDelay = 1.0f;
     float alertDuration = 5f;
+    int maxActiveAlerts = 8;
 
     void Start()
     {
@@ -31,7 +32,7 @@ public class LogAlert : MonoBehaviour
 
             if (queuedTextAlerts.Count > 0 && queueTimer >= queueDelay)
             {
-                if (activeAlerts.Count < 10)
+                if (activeAlerts.Count < maxActiveAlerts)
                 {
                     PrintTextAlert(queuedTextAlerts[0]);
                 }
@@ -39,7 +40,7 @@ public class LogAlert : MonoBehaviour
             }
             else if (queuedItemAlerts.Count > 0 && queueTimer >= queueDelay)
             {
-                if (activeAlerts.Count < 10)
+                if (activeAlerts.Count < maxActiveAlerts)
                 {
                     PrintItemAlert(queuedItemAlerts[0]);
                 }
