@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ public class CharacterNode : MonoBehaviour
     public bool isDormant = false; // allows other classes know not to enable the node
     public string textToDisplay;
     public string generatedNodeID;
+    public CharacterNodeBobber bobber;
 
     SpriteRenderer rend;
     CapsuleCollider2D col;
@@ -124,6 +126,7 @@ public class CharacterNode : MonoBehaviour
 
     void HideNode()
     {
+        bobber.HideBobber();
         isDormant = true;
         //Debug.Log("Hiding character " + characterID);
         rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, 0);
@@ -168,6 +171,7 @@ public class CharacterNode : MonoBehaviour
             isDormant = false;
             ConfigureDisplayText();
             FindSprite();
+            bobber.EnableBobber(character);
             StartCoroutine(FadeInAndEnable());
         }
         else
