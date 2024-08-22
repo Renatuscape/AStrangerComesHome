@@ -10,17 +10,9 @@ public class BankBuilding : MonoBehaviour
 
     void Awake()
     {
-        var componentContainer = GameObject.Find("GameComponents");
-        if (componentContainer != null)
-        {
-            var bankObject = componentContainer.transform.Find("BankComponent").gameObject;
+        bankManager = TransientDataScript.gameManager.bankManager;
 
-            if (bankObject != null)
-                bankManager = bankObject.GetComponent<BankManager>();
-            else
-                Debug.LogError("BankManager not found");
-        }
-        else
+        if (bankManager == null)
         {
             Debug.LogError("GameComponents not found");
         }
@@ -38,7 +30,7 @@ public class BankBuilding : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
+        if (bankManager != null && TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             bankManager.OpenBankMenu();
         }
