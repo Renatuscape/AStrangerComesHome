@@ -2,20 +2,27 @@
 using System.IO;
 using UnityEngine;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 
 public static class GuildRewardLoader
 {
     public static GuildRewardsMenu guildRewards;
+    public static bool isLoaded = false;
     public static Task StartLoading(GuildRewardsMenu guildRewardsMenu)
     {
-        guildRewards = guildRewardsMenu;
-        List<Task> loadingTasks = new List<Task>();
+        if (!isLoaded)
+        {
+            guildRewards = guildRewardsMenu;
+            List<Task> loadingTasks = new List<Task>();
 
-        Task loadingTask = LoadFromJsonAsync("GuildRewards.json");
-        loadingTasks.Add(loadingTask);
+            Task loadingTask = LoadFromJsonAsync("GuildRewards.json");
+            loadingTasks.Add(loadingTask);
 
-        return Task.WhenAll(loadingTasks);
+            return Task.WhenAll(loadingTasks);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     [System.Serializable]
@@ -51,6 +58,8 @@ public static class GuildRewardLoader
                     guildRewards.rewardTiersTotalPassengers = dataWrapper.totalPassengers;
                     guildRewards.rewardTiersTotalFare = dataWrapper.totalFare;
                     guildRewards.rewardTiersMisc = dataWrapper.misc;
+
+                    isLoaded = true;
                 }
                 else
                 {
