@@ -18,6 +18,11 @@ public static class DialogueSetup
                 ParseDialogueSteps(dialogue); //set up dialogue steps with proper speaker objects
             }
 
+            if (string.IsNullOrEmpty(dialogue.speakerID))
+            {
+                dialogue.speakerID = dialogue.objectID.Split('-')[0];
+            }
+
             Dialogues.all.Add(dialogue);
         }
     }
