@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 [System.Serializable]
 public class Quest : BaseObject
@@ -84,5 +85,10 @@ public static class Quests
         }
         //Debug.LogWarning("No item found with ID containing this search term: " + searchWord);
         return null;
+    }
+
+    public static List<Quest> GetQuestsByGiver(string characterID)
+    {
+        return all.Where(q => q.questGiver.objectID == characterID).ToList();
     }
 }
