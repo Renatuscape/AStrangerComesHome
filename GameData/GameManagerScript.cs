@@ -51,6 +51,7 @@ public class GameManagerScript : MonoBehaviour
     public PassengerManager passengerManager;
     public StationManager stationManager;
     public SaveDataManager saveDataManager;
+    public BankManager bankManager;
 
     void Awake()
     {
@@ -63,6 +64,7 @@ public class GameManagerScript : MonoBehaviour
     async void StartUpRoutine()
     {
         loadingCanvas.gameObject.SetActive(true);
+        Debug.Log("RUNNING STARTUP ROUTINE");
 
         GlobalSettings.LoadSettings();
 
@@ -94,11 +96,12 @@ public class GameManagerScript : MonoBehaviour
 
         loadingCanvas.gameObject.SetActive(false);
         setUpReady = true;
+        Debug.Log("COMPLETED STARTUP ROUTINE");
     }
 
     async Task InitiateJsonManagers()
     {
-
+        Debug.Log("INITIATING JSON MANAGERS");
         await spriteFactory.WaitForBuildCompletionAsync();
         Debug.Log("Sprite Factory finished building.");
 
