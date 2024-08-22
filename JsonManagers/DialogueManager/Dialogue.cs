@@ -76,6 +76,18 @@ public static class Dialogues
             .ToList();
     }
 
+    public static List<Dialogue> GetDialoguesBySpeaker(string characterID, bool currentlyActiveOnly)
+    {
+        if (currentlyActiveOnly)
+        {
+            return all.Where(d => d.speakerID == characterID && d.questStage == Player.GetQuestStage(d.objectID)).ToList();
+        }
+        else
+        {
+            return all.Where(d => d.speakerID == characterID).ToList();
+        }
+    }
+
     public static Dialogue FindByID(string dialogueID)
     {
         return all.FirstOrDefault(d => d.objectID == dialogueID);
