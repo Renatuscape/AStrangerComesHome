@@ -100,7 +100,7 @@ public class WaitingNPC : MonoBehaviour
             }
             else
             {
-                TransientDataScript.PushAlert("Potential passengers are asking to see a license. What's that about?");
+                LogAlert.QueueTextAlert("Potential passengers are asking to see a license. What's that about?");
             }
         }
     }
