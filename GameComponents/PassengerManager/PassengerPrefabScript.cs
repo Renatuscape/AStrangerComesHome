@@ -35,9 +35,9 @@ public class PassengerPrefabScript : MonoBehaviour
             spiritEssence = Items.FindByID("CAT000");
         }
 
-        UpdatePassengerData();
-
         isReady = true;
+
+        UpdatePassengerData();
     }
 
     public void UpdatePassengerData()
