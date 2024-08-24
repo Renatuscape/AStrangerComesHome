@@ -63,7 +63,7 @@ public class ParallaxBackgroundRenderer
 
     public void ResetAllLayerPositions()
     {
-        Debug.Log("Reset all layer positions was called.");
+        // Debug.Log("Reset all layer positions was called.");
         Type type = GetType();
         FieldInfo[] fields = type.GetFields();
 
