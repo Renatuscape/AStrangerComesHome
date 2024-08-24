@@ -6,14 +6,17 @@ public class InteractableBobber : MonoBehaviour
 {
     public GameObject bobberObject;
     public bool ready = false;
-    private void Start()
+    private void OnEnable()
     {
-        bobberObject.SetActive(false);
-        StartCoroutine(EnableBobber(Random.Range(1f, 2f)));
+        if (!ready)
+        {
+            bobberObject.SetActive(false);
+            StartCoroutine(EnableBobber(Random.Range(1f, 2f)));
+        }
     }
     private void Update()
     {
-        if (ready && TransientDataScript.CameraView == CameraView.Normal)
+        if (ready && TransientDataScript.CameraView == CameraView.Normal && TransientDataScript.GameState == GameState.Overworld)
         {
             if (!bobberObject.activeInHierarchy)
             {
