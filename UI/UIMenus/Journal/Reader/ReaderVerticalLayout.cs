@@ -13,27 +13,25 @@ public class ReaderVerticalLayout : MonoBehaviour
     public TextMeshProUGUI pageNumberL;
     public TextMeshProUGUI pageNumberR;
 
-    List<Page> pages;
+    public Book book;
+    public List<Page> pages;
     int pageIndex;
 
-    Book prevBook;
-
-    internal void Initialise(Book book)
+    internal void Initialise(Book bookIn)
     {
         Debug.Log("Vertical reader has been initialised. Attempting to set active.");
-
+        book = bookIn;
+        pages = book.pages;
+        pageIndex = 0;
         gameObject.SetActive(true);
-
-        if (prevBook != book)
-        {
-            pageIndex = 0;
-            prevBook = book;
-        }
 
         if (pages != null && pages.Count > 0)
         {
-            pages = book.pages;
             PrintPage();
+        }
+        else
+        {
+            Debug.Log("Vertical layout found no pages.");
         }
     }
 
@@ -45,30 +43,30 @@ public class ReaderVerticalLayout : MonoBehaviour
         {
             pageNumberL.text = $"{pageIndex + 1}";
             pageNumberR.text = $"{pageIndex + 2}";
-            pageNumberL.gameObject.SetActive(true);
-            pageNumberR.gameObject.SetActive(true);
+            pageNumberL.transform.parent.gameObject.SetActive(true);
+            pageNumberR.transform.parent.gameObject.SetActive(true);
         }
         else
         {
-            pageNumberL.gameObject.SetActive(false);
-            pageNumberR.gameObject.SetActive(false);
+            pageNumberL.transform.parent.gameObject.SetActive(false);
+            pageNumberR.transform.parent.gameObject.SetActive(false);
         }
 
         foreach (var text in pages[pageIndex].text)
-            {
-                var prefab = reader.PrintLine(text, pageA);
-            }
+        {
+            var prefab = reader.PrintLine(text, pageA);
+        }
 
-            if (pages.Count > pageIndex + 1)
+        if (pages.Count > pageIndex + 1)
+        {
+            if (pages[pageIndex + 1].text != null && pages[pageIndex + 1].text.Count > 0)
             {
-                if (pages[pageIndex + 1].text != null && pages[pageIndex + 1].text.Count > 0)
+                foreach (var text in pages[pageIndex + 1].text)
                 {
-                    foreach (var text in pages[pageIndex + 1].text)
-                    {
-                        var prefab = reader.PrintLine(text, pageB);
-                    }
+                    var prefab = reader.PrintLine(text, pageB);
                 }
             }
+        }
     }
 
     public void BtnForward()
