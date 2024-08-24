@@ -17,9 +17,8 @@ public class JournalInventoryPage : MonoBehaviour
 
     private void OnEnable()
     {
-        itemInfo.gameObject.SetActive(false);
         itemName.text = "";
-        itemRarity.text = "";
+        itemRarity.text = "Choose an item";
         itemDescription.text = "";
 
         itemPrefabs = inventoryContainer.Initialise(Player.GetInventory().Where(i => i.type != ItemType.Book).ToList(), true, true, true);
@@ -55,16 +54,14 @@ public class JournalInventoryPage : MonoBehaviour
 
         if (selectedItem != null)
         {
-            itemInfo.gameObject.SetActive(true);
             itemName.text = Items.GetEmbellishedItemText(selectedItem, false, false, false);
             itemRarity.text = selectedItem.rarity.ToString();
             itemDescription.text =  DialogueTagParser.ParseText(selectedItem.description);
         }
         else
         {
-            itemInfo.gameObject.SetActive(false);
             itemName.text = "";
-            itemRarity.text = "";
+            itemRarity.text = "Choose an item";
             itemDescription.text = "";
         }
 
