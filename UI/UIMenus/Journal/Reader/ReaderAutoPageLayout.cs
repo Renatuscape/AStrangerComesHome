@@ -38,9 +38,14 @@ public class ReaderAutoPageLayout : MonoBehaviour
             gameObject.SetActive(true);
 
             activePage = book.pages[0];
-            BuildAutoBook();
-            PrintAutoPage();
+            StartCoroutine(OpenAutoBookCoroutine());
         }
+    }
+
+    IEnumerator OpenAutoBookCoroutine()
+    {
+        yield return StartCoroutine(BuildAutoBook());
+        PrintAutoPage();
     }
 
     internal void PrintAutoPage()
@@ -79,7 +84,7 @@ public class ReaderAutoPageLayout : MonoBehaviour
         }
     }
 
-    void BuildAutoBook()
+    IEnumerator BuildAutoBook()
     {
         autoPageinator = new();
         autoPageinator.pages = new() { new() };
@@ -91,6 +96,9 @@ public class ReaderAutoPageLayout : MonoBehaviour
             Canvas.ForceUpdateCanvases();
 
             reader.PrintLine(activePage.text[i], pageA);
+            
+            yield return null;
+            Canvas.ForceUpdateCanvases();
 
             if (!CheckOverflow(pageA.GetComponent<RectTransform>()) ||
                 (i != 0 && activePage.text[i].Contains("#B ")))
@@ -102,8 +110,6 @@ public class ReaderAutoPageLayout : MonoBehaviour
             }
 
             autoPageinator.pages[autoPageIndex].text.Add(activePage.text[i]);
-
-            Canvas.ForceUpdateCanvases();
         }
     }
 
@@ -132,7 +138,7 @@ public class ReaderAutoPageLayout : MonoBehaviour
 
     bool CheckOverflow(RectTransform parentRect)
     {
-        float parentHeight = parentRect.rect.height - 30;
+        float parentHeight = parentRect.rect.height;
         float childrenHeight = 0f;
 
         // Ensure layout update before calculating preferred height
@@ -151,12 +157,12 @@ public class ReaderAutoPageLayout : MonoBehaviour
                     // Ensure layout update before calculating preferred height
                     LayoutRebuilder.ForceRebuildLayoutImmediate(textComponent.rectTransform);
                     float textHeight = LayoutUtility.GetPreferredHeight(textComponent.rectTransform);
-                    childrenHeight += textHeight;
+                    childrenHeight += textHeight + 15;
                 }
                 else
                 {
                     // For regular RectTransforms, just add their height
-                    childrenHeight += childRect.rect.height;
+                    childrenHeight += childRect.rect.height + 15;
                 }
             }
         }
