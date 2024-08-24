@@ -80,7 +80,7 @@ public static class Dialogues
     {
         if (currentlyActiveOnly)
         {
-            return all.Where(d => d.speakerID == characterID && d.questStage == Player.GetQuestStage(d.objectID)).ToList();
+            return all.Where(d => d.speakerID == characterID && d.questStage == Player.GetQuestStage(d.questID)).ToList();
         }
         else
         {
