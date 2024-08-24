@@ -171,7 +171,7 @@ public class CharacterNode : MonoBehaviour
             isDormant = false;
             ConfigureDisplayText();
             FindSprite();
-            bobber.EnableBobber(character);
+            bobber.EnableBobber(character, rend);
             StartCoroutine(FadeInAndEnable());
         }
         else
