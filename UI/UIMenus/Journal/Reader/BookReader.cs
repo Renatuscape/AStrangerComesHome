@@ -10,9 +10,15 @@ public class BookReader : MonoBehaviour
     public FontManager fontManager;
     public ReaderAutoPageLayout autoPageLayout;
     public ReaderVerticalLayout verticalLayout;
-    public ReaderHorizontalLayout horizontalLayout; 
+    public ReaderHorizontalLayout horizontalLayout;
     public Book book;
     public TextMeshProUGUI bookTitle;
+
+    public RectMask2D rectMask;
+
+    public Image backgroundRend;
+    public Sprite backgroundLetter;
+    public Sprite backgroundBook;
 
     public GameObject textPrefab;
     public GameObject vDivPrefab;
@@ -23,9 +29,11 @@ public class BookReader : MonoBehaviour
     public void Initialise(Book bookToRead)
     {
         CleanReader();
+        rectMask.padding = new Vector4(0, 700, 0, 0);
 
         book = bookToRead;
         bookTitle.text = book.inventoryItem.name;
+        SetBackground();
 
         autoPageLayout.gameObject.SetActive(false);
         verticalLayout.gameObject.SetActive(false);
@@ -44,6 +52,35 @@ public class BookReader : MonoBehaviour
                 verticalLayout.Initialise(book);
             }
         }
+
+        StartCoroutine(UnveilText());
+    }
+
+    void SetBackground()
+    {
+        if (book.isLetter)
+        {
+            backgroundRend.sprite = backgroundLetter;
+        }
+        else
+        {
+            backgroundRend.sprite = backgroundBook;
+        }
+    }
+
+    IEnumerator UnveilText()
+    {
+        float padding = rectMask.padding.y;
+        yield return new WaitForSeconds(1f);
+
+        while (padding > -1)
+        {
+            padding = padding - 15;
+            rectMask.padding = new Vector4(0, padding, 0, 0);
+
+            yield return new WaitForSeconds(0.0005f);
+        }
+        rectMask.padding = new Vector4(0, 0, 0, 0);
     }
 
     internal GameObject PrintLine(string text, GameObject container)
