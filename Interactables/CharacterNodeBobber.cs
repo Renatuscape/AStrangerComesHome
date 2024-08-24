@@ -1,44 +1,100 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class CharacterNodeBobber : MonoBehaviour
 {
-    public InteractableBobber interactableBobber;
+    public InteractableBobber bobber;
+    public bool alwaysShopIcon;
     public bool alwaysHideBobber = false;
     public bool alwaysShowBobber = false;
-    GameObject bobber;
+    public bool doNotOverrideLayer = false;
+    public Sprite iconShop;
+    public SpriteRenderer rend;
     Character character;
+    bool ready = false;
+    bool isCheckedSinceStateChange = false;
+    private void Update()
+    {
+        if (ready && character != null)
+        {
+            if (!isCheckedSinceStateChange && TransientDataScript.GameState == GameState.Overworld)
+            {
+                EnableBobber(character);
+            }
+            else if (isCheckedSinceStateChange && TransientDataScript.GameState != GameState.Overworld)
+            {
+                isCheckedSinceStateChange = false;
+            }
+        }
+    }
 
     public void HideBobber()
     {
-        bobber.SetActive(false);
+        bobber.gameObject.SetActive(false);
     }
 
     public void ShowBobber()
     {
-        bobber.SetActive(true);
-    }
-    void Start()
-    {
-        bobber = interactableBobber.gameObject;
-        bobber.SetActive(false);
+        bobber.gameObject.SetActive(true);
     }
 
-    public void EnableBobber(Character incomingCharacter)
+    public void EnableBobber(Character incomingCharacter, SpriteRenderer rendIn = null)
     {
+        isCheckedSinceStateChange = true;
+        Debug.Log("Attempting to set up bobber.");
         character = incomingCharacter;
-        if (!alwaysHideBobber && character != null)
+
+        if (!ready)
         {
-            if (alwaysShowBobber)
+
+            Setup();
+        }
+
+        if (!doNotOverrideLayer && rendIn != null)
+        {
+            rend.sortingLayerName = rendIn.sortingLayerName;
+            rend.sortingOrder = rendIn.sortingOrder;
+        }
+
+        if (ready)
+        {
+            Debug.Log("Bobber was ready. Running checks.");
+            if (!alwaysHideBobber && character != null)
             {
-                bobber.SetActive(true);
+                if (alwaysShowBobber)
+                {
+                    ShowBobber();
+                }
+                else if (CharacterHasActiveShops() || CharacterHasActiveDialogue())
+                {
+                    Debug.Log(character.objectID + " bobber passed shop or dialogue test.");
+                    ShowBobber();
+                }
+                else
+                {
+                    HideBobber();
+                }
             }
-            else if (CharacterHasActiveShops() || CharacterHasActiveDialogue())
+            else
             {
-                bobber.SetActive(true);
+                HideBobber();
             }
+        }
+    }
+    void Setup()
+    {
+        if (bobber != null)
+        {
+            bobber.gameObject.SetActive(false);
+            bobber.ready = false;
+
+            if (alwaysShopIcon)
+            {
+                rend.sprite = iconShop;
+            }
+
+            ready = true;
         }
     }
 
@@ -48,12 +104,14 @@ public class CharacterNodeBobber : MonoBehaviour
 
         foreach (var dialogue in dialogues)
         {
-            if (dialogue.CheckRequirements())
+            if (dialogue.questStage < 100 && dialogue.stageType == StageType.Dialogue && dialogue.CheckRequirements())
             {
                 Debug.Log(dialogue.objectID + " returned true when setting up bobber for " + character.objectID);
                 return true;
             }
         }
+
+        Debug.Log("Dialogue returned false when setting up bobber for " + character.objectID);
         return false;
     }
 
@@ -61,12 +119,15 @@ public class CharacterNodeBobber : MonoBehaviour
     {
         foreach (var shop in character.shops)
         {
-            if (shop.CheckRequirements())
+            if ((character.type == CharacterType.Generic || Player.GetCount(character.objectID, name) > 0) && shop.CheckRequirements())
             {
                 Debug.Log(shop.objectID + " returned true when setting up bobber for " + character.objectID);
+                rend.sprite = iconShop;
                 return true;
             }
         }
+
+        Debug.Log("Shop returned false when setting up bobber for" + character.objectID);
         return false;
     }
 }
