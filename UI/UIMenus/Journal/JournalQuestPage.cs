@@ -24,8 +24,8 @@ public class JournalQuestPage : MonoBehaviour
     private void Awake()
     {
         displayTitle.text = "";
-        displayTopicName.text = "";
-        displayDescription.text = "";
+        displayTopicName.text = "Details";
+        displayDescription.text = "Choose a quest to see the details.\nA '?' button will appear for quests with a to-do list.";
         btnTaskToggle.onClick.AddListener(() =>
         {
             taskTrackerPanel.SetActive(!taskTrackerPanel.activeInHierarchy);
