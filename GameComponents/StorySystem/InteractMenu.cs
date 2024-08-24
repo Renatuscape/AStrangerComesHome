@@ -28,9 +28,6 @@ public class InteractMenu : MonoBehaviour
 
             PrintChatButton(character);
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate(prefabContainer.GetComponent<RectTransform>());
-            Canvas.ForceUpdateCanvases();
-
             if (shop == null || string.IsNullOrEmpty(shop.objectID))
             {
                 FindViableShops(character);
@@ -59,30 +56,36 @@ public class InteractMenu : MonoBehaviour
             {
                 PrintGiftButton(character);
             }
-
-            prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-            prefabContainer.GetComponent<ContentSizeFitter>().enabled = false;    
-            Canvas.ForceUpdateCanvases();
-            prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-            prefabContainer.GetComponent<ContentSizeFitter>().enabled = true;
-            Canvas.ForceUpdateCanvases();
         }
 
         gameObject.SetActive(true);
+        StartCoroutine(UpdateLayout());
         PrintLeaveButton();
+    }
+
+    IEnumerator UpdateLayout()
+    {
+        Canvas.ForceUpdateCanvases();
+        prefabContainer.GetComponent<VerticalLayoutGroup>().spacing = 4.8f;
+        yield return null;
+        prefabContainer.GetComponent<VerticalLayoutGroup>().spacing = 4.9f;
+        Canvas.ForceUpdateCanvases();
+        yield return null;
+        prefabContainer.GetComponent<VerticalLayoutGroup>().spacing = 5;
+        Canvas.ForceUpdateCanvases();
+        yield return null;
+        Canvas.ForceUpdateCanvases();
     }
 
     void PrintChatButton(Character character)
     {
         prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-        prefabContainer.GetComponent<ContentSizeFitter>().enabled = false;
         Canvas.ForceUpdateCanvases();
 
         var chatButton = GetButton($"Chat with {character.NamePlate()}");
         chatButton.GetComponent<Button>().onClick.AddListener(() => storySystem.OpenTopicMenu(character.objectID));
 
         prefabContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-        prefabContainer.GetComponent<ContentSizeFitter>().enabled = true;
         Canvas.ForceUpdateCanvases();
     }
 
