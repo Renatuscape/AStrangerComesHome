@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -27,9 +28,12 @@ public class CollectionsPeople : MonoBehaviour
     void PopulatePeople()
     {
         people = new List<Character>();
-        foreach (var character in Characters.all)
+
+        foreach (var entry in Player.inventoryList)
         {
-            if (!character.excludeFromPrint && Player.GetCount(character.objectID, ToString()) > 0)
+            Character character = Characters.all.FirstOrDefault(c => c.objectID == entry.objectID);
+
+            if (character != null && !character.excludeFromPrint)
             {
                 people.Add(character);
             }
