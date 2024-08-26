@@ -88,8 +88,8 @@ public class AlchemyTracker : MonoBehaviour
     void UpdateValues()
     {
         timer = 0;
-        tick = 10 - (Player.GetCount(StaticTags.Hermeneutics, name) * 0.9f);
-        progressAmount = 1 + (Player.GetCount(StaticTags.Chemistry, name) * 0.6f);
+        tick = 10 - (Player.GetCount(StaticTags.Alchemy, name) * 0.5f);
+        progressAmount = 1 + (Player.GetCount(StaticTags.Alchemy, name) * 0.3f) + (Player.GetCount(StaticTags.Hermeneutics, name) * 0.7f);
         baseManaConsumption = (int)Mathf.Floor(6 - (Player.GetCount(StaticTags.Metaphysics, name) * 0.5f));
     }
 }
