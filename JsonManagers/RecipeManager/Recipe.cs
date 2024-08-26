@@ -95,9 +95,18 @@ public class Recipe : BaseObject
 
     public void AddYieldToPlayer()
     {
+        int chemistry = Player.GetCount(StaticTags.Chemistry, "Recipe add yield");
+
         foreach (var entry in yield)
         {
-            Player.Add(entry.objectID, entry.amount);
+            int amountToAdd = entry.amount;
+
+            if (chemistry * 9f > Random.Range(1, 100f))
+            {
+                amountToAdd++;
+            }
+
+            Player.Add(entry.objectID, amountToAdd);
         }
     }
 }
