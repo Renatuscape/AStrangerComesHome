@@ -12,6 +12,13 @@ public class DebugMenu : MonoBehaviour
         characterCreator.SetActive(true);
     }
 
+    public void TripQuestTimers()
+    {
+        TransientDataScript.gameManager.dataManager.totalGameDays++;
+        TransientDataScript.DailyTick();
+        LogAlert.QueueTextAlert("Days passed +1");
+    }
+
     public void DebugItems()
     {
         foreach (Item item in Items.all)

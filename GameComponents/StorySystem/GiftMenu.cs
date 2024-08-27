@@ -13,7 +13,7 @@ public class GiftMenu : MonoBehaviour
     public PageinatedContainer pageinatedContainer;
     public TextMeshProUGUI giftingText;
     public GameObject selectedGiftContainer;
-    public GameObject selectedGiftInfo;
+    public GameObject giftSelectionPanel;
     public Item selectedGift;
     public List<Item> availableInventory = new();
     public List<GiftItem> spawnedItems = new();
@@ -35,7 +35,7 @@ public class GiftMenu : MonoBehaviour
 
         this.character = character;
         portraitRenderer.EnableForGifting(character);
-        selectedGiftInfo.SetActive(false);
+        giftSelectionPanel.SetActive(false);
         selectedGift = null;
         gameObject.SetActive(true);
         TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
@@ -80,7 +80,7 @@ public class GiftMenu : MonoBehaviour
     public void SelectGift(Item item)
     {
         selectedGift = item;
-        selectedGiftInfo.SetActive(true);
+        giftSelectionPanel.SetActive(true);
 
         foreach (Transform child in selectedGiftContainer.transform)
         {
@@ -96,7 +96,7 @@ public class GiftMenu : MonoBehaviour
 
     public void Gift()
     {
-        selectedGiftInfo.SetActive(false);
+        giftSelectionPanel.SetActive(false);
         TransientDataScript.SetAsGifted(character);
 
         foreach (var giftItem in spawnedItems)
@@ -132,16 +132,18 @@ public class GiftMenu : MonoBehaviour
         }
 
         Player.Remove(selectedGift.objectID);
+        pageinatedContainer.ClearSeletion();
+        pageinatedContainer.ClearPrefabs();
+        spawnedItems.Clear();
         giftingText.text = "";
     }
 
 
     public void Close()
     {
-        foreach (var giftItem in spawnedItems)
-        {
-            giftItem.gameObject.GetComponent<ItemIconData>().Return("GiftMenu setup");
-        }
+        pageinatedContainer.ClearSeletion();
+        pageinatedContainer.ClearPrefabs();
+        spawnedItems.Clear();
 
         spawnedItems.Clear();
         availableInventory.Clear();
