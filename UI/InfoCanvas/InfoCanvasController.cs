@@ -12,7 +12,7 @@ public class InfoCanvasController : MonoBehaviour
 
     private void Update()
     {
-        if (TransientDataScript.GameState == GameState.Overworld)
+        if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             largeWallet.SetActive(GlobalSettings.UiWalletLarge);
             smallWallet.SetActive(!GlobalSettings.UiWalletLarge);
