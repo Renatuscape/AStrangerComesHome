@@ -42,7 +42,7 @@ public class PageinatedList : MonoBehaviour
             categoryContainer.gameObject.SetActive(false);
             content = listItems;
             pageLimit = CalculatePageLimit();
-            BuildPagesWithoutCategories();
+            BuildPages("Default");
             gameObject.SetActive(true);
 
             if (pages.Count < 2)
@@ -84,13 +84,14 @@ public class PageinatedList : MonoBehaviour
         }
     }
 
-    void BuildPagesWithoutCategories()
+    void BuildPages(string categoryName)
     {
         ClearPrefabs();
 
         int i = 0;
         int pageNumber = 1;
         ListPage currentPage = new();
+        currentPage.category = categoryName;
         pages.Add(currentPage);
 
         currentPage.pageNumber = pageNumber;
@@ -109,6 +110,7 @@ public class PageinatedList : MonoBehaviour
                 pages.Add(newPage);
                 currentPage = newPage;
                 currentPage.listItems = new();
+                currentPage.category = categoryName;
             }
 
             if (i < pageLimit)
