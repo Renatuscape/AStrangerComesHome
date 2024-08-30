@@ -59,7 +59,7 @@ public class GarageConfirmMenu : MonoBehaviour
     {
         if (UpgradeWearTracker.RepairUpgrade(upgradeIcon.upgrade.objectID, calculatedRepairPrice))
         {
-            LogAlert.QueueTextAlert(upgradeIcon.name + " has been repaired.");
+            LogAlert.QueueTextAlert(upgradeIcon.upgrade.name + " has been repaired.");
             repairInfo.gameObject.SetActive(false);
             btnRepair.gameObject.SetActive(false);
             upgradeIcon.UpdateSlider();  //upgradeIcon.wearSlider.value = 0;
