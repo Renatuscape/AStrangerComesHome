@@ -25,9 +25,26 @@ public class BookReader : MonoBehaviour
     public GameObject hDivPrefab;
 
     public List<GameObject> printedPrefabs = new();
-
+    bool isBuilding;
+    bool isBuildSuccessful;
+    private void Update()
+    {
+        if (!isBuilding && !isBuildSuccessful)
+        {
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(UnveilText());
+            }
+            else
+            {
+                Debug.LogWarning("BookReader was not active in hierarchy.");
+                isBuildSuccessful = false;
+            }
+        }
+    }
     public void Initialise(Book bookToRead)
     {
+        isBuilding = true;
         CleanReader();
         rectMask.padding = new Vector4(0, 700, 0, 0);
 
@@ -53,7 +70,16 @@ public class BookReader : MonoBehaviour
             }
         }
 
-        StartCoroutine(UnveilText());
+        if (gameObject.activeInHierarchy)
+        {
+            StartCoroutine(UnveilText());
+        }
+        else
+        {
+            Debug.LogWarning("Reader was not active in hierarchy.");
+            isBuildSuccessful = false;
+        }
+        isBuilding = false;
     }
 
     void SetBackground()
@@ -70,20 +96,21 @@ public class BookReader : MonoBehaviour
 
     IEnumerator UnveilText()
     {
+        isBuildSuccessful = true;
+        yield return new WaitForSeconds(0.5f);
         float padding = rectMask.padding.y;
-        yield return new WaitForSeconds(1f);
 
         while (padding > -1)
         {
             padding = padding - 15;
             rectMask.padding = new Vector4(0, padding, 0, 0);
 
-            yield return new WaitForSeconds(0.0005f);
+            yield return new WaitForSeconds(0.0001f);
         }
         rectMask.padding = new Vector4(0, 0, 0, 0);
     }
 
-    internal GameObject PrintLine(string text, GameObject container)
+    public GameObject PrintLine(string text, GameObject container)
     {
         if (text.Contains("#hDiv"))
         {
@@ -179,7 +206,7 @@ public class BookReader : MonoBehaviour
         Canvas.ForceUpdateCanvases();
     }
 
-    internal void CleanReader()
+    public void CleanReader()
     {
         foreach (var prefab in printedPrefabs)
         {
