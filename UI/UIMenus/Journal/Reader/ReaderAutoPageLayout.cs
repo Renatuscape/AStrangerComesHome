@@ -19,10 +19,29 @@ public class ReaderAutoPageLayout : MonoBehaviour
     public GameObject buttonBack;
 
     int pageIndex;
+    bool isBuilding = false;
+    bool isBuildSuccessful = false;
     Book prevBook;
+
+    private void Update()
+    {
+        if (!isBuilding && !isBuildSuccessful)
+        {
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(OpenAutoBookCoroutine());
+            }
+            else
+            {
+                Debug.LogWarning("AutoPageLayout was not active in hierarchy.");
+                isBuildSuccessful = false;
+            }
+        }
+    }
 
     internal void InitialiseAutoBook(Book book)
     {
+        isBuilding = true;
         if (book.pages != null && book.pages.Count != 1)
         {
             Debug.Log("An autopage book should have no more or less than 1 page.");
@@ -38,12 +57,24 @@ public class ReaderAutoPageLayout : MonoBehaviour
             gameObject.SetActive(true);
 
             activePage = book.pages[0];
-            StartCoroutine(OpenAutoBookCoroutine());
+
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(OpenAutoBookCoroutine());
+            }
+            else
+            {
+                Debug.LogWarning("AutoPageLayout was not active in hierarchy.");
+                isBuildSuccessful = false;
+            }
         }
+
+        isBuilding = false;
     }
 
     IEnumerator OpenAutoBookCoroutine()
     {
+        isBuildSuccessful = true;
         yield return StartCoroutine(BuildAutoBook());
         PrintAutoPage();
     }
@@ -167,12 +198,12 @@ public class ReaderAutoPageLayout : MonoBehaviour
             }
         }
 
-        Debug.Log($"Parent height was {parentHeight}. Children height was {childrenHeight}. Should return {childrenHeight > parentHeight}");
+        // Debug.Log($"Parent height was {parentHeight}. Children height was {childrenHeight}. Should return {childrenHeight > parentHeight}");
 
         if (childrenHeight > parentHeight)
         {
             // Overflow detected
-            Debug.Log("Overflow detected!");
+            // Debug.Log("Overflow detected!");
             return false;
         }
 
