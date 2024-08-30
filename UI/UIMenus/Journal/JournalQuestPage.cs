@@ -8,8 +8,7 @@ using UnityEngine.UI;
 public class JournalQuestPage : MonoBehaviour
 {
     public FontManager fontManager;
-    public GameObject questPrefab;
-    public GameObject questContainer;
+    public PageinatedList pageinatedList;
     public GameObject detailContainer;
     public float delayBetweenQuests = 0.1f;
     public List<GameObject> questPrefabs;
@@ -40,34 +39,63 @@ public class JournalQuestPage : MonoBehaviour
 
         btnTaskToggle.gameObject.SetActive(false);
         taskTrackerPanel.gameObject.SetActive(false);
-        StartCoroutine(InstantiateQuests());
+
+        var questList = pageinatedList.InitialiseWithoutCategories(GetActiveQuestsForPageination());
+
+        if (questList != null && questList.Count > 0)
+        {
+            AddButtonFunctionality(questList);
+        }
     }
 
-    IEnumerator InstantiateQuests()
+    void AddButtonFunctionality(List<GameObject> prefabs)
     {
+        foreach (var prefab in prefabs)
+        {
+            var btn = prefab.GetComponent<Button>();
+
+            if (btn != null)
+            {
+                btn.onClick.AddListener(() =>
+                {
+                    DisplayQuestDetails(Quests.FindByID(prefab.GetComponent<ListItemPrefab>().entry.objectID));
+                });
+            }
+        }
+    }
+
+    List<Quest> GetActiveQuests()
+    {
+        List<Quest> activeQuests = new();
+
         foreach (var quest in Quests.all)
         {
             if (!quest.excludeFromJournal && Player.GetEntry(quest.objectID, name, out var entry))
             {
                 if (entry.amount < 100) // Exclude completed quests here for now. Make separate complete and active category later
                 {
-                    questContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
-
-                    yield return new WaitForSeconds(delayBetweenQuests); // Add a delay
-
-                    GameObject newQuest = Instantiate(questPrefab, questContainer.transform);
-                    newQuest.GetComponent<QuestPrefab>().quest = quest;
-                    newQuest.GetComponent<QuestPrefab>().journalQuestPage = this;
-                    var textMesh = newQuest.transform.Find("QuestTitle").GetComponent<TextMeshProUGUI>();
-                    textMesh.text = DialogueTagParser.ParseText(quest.name);
-                    textMesh.font = fontManager.subtitle.font;
-                    questPrefabs.Add(newQuest);
-
-                    questContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
-                    Canvas.ForceUpdateCanvases();
+                    activeQuests.Add(quest);
                 }
             }
         }
+
+        return activeQuests;
+    }
+
+    List<IdIntPair> GetActiveQuestsForPageination()
+    {
+        List<IdIntPair> activeQuests = new();
+
+        foreach (var quest in GetActiveQuests())
+        {
+            var entry = new IdIntPair();
+
+            entry.objectID = quest.objectID;
+            entry.description = quest.name;
+            activeQuests.Add(entry);
+        }
+
+        return activeQuests;
     }
 
     private void OnDisable()
@@ -130,7 +158,7 @@ public class JournalQuestPage : MonoBehaviour
             displayTopicName.text = DialogueTagParser.ParseText(topicName);
         }
 
-        if (dialogue.taskTracking.Count > 0)
+        if (dialogue.taskTracking != null && dialogue.taskTracking.Count > 0)
         {
             taskTrackerText.text = "";
             btnTaskToggle.gameObject.SetActive(true);
@@ -173,7 +201,7 @@ public class JournalQuestPage : MonoBehaviour
 
                 else
                 {
-                    taskTrackerText.text += DialogueTagParser.ParseText(task.description);
+                    taskTrackerText.text += DialogueTagParser.ParseText(taskDescription);
                 }
 
                 taskTrackerText.text += "\n\n";
