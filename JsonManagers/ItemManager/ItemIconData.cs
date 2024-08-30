@@ -107,6 +107,18 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             Destroy(giftItem);
         }
 
+        var seedFloat = gameObject.GetComponent<GardenSeedFloat>();
+        if (seedFloat != null)
+        {
+            Destroy(seedFloat);
+        }
+
+        var shelvedBook = gameObject.GetComponent<ShelvedBook>();
+        if (shelvedBook != null)
+        {
+            Destroy(shelvedBook);
+        }
+
         priceText.transform.parent.gameObject.SetActive(false);
         BoxFactory.ReturnItemIconToPool(this, caller);
     }
