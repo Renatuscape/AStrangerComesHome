@@ -8,6 +8,11 @@ public class JournalStatisticsPage : MonoBehaviour
 {
     public FontManager fontManager;
     public DataManagerScript dataManager;
+    public PageinatedList pageinatedList;
+    public Button btnSkills;
+    public Button btnSpheres;
+    public Button btnUpgrades;
+
     public PlayerSprite playerSprite;
     public GameObject personaliaContainer;
     public TextMeshProUGUI namePlate;
@@ -20,6 +25,10 @@ public class JournalStatisticsPage : MonoBehaviour
 
     private void Start()
     {
+        btnSkills.onClick.AddListener(() => EnableSkillList());
+        btnSpheres.onClick.AddListener(() => EnableSphereList());
+        btnUpgrades.onClick.AddListener(() => EnableUpgradeList());
+
         if (!upgradesSetUp)
         {
             BuildUpgradePage();
@@ -84,8 +93,56 @@ public class JournalStatisticsPage : MonoBehaviour
         {
             BuildUpgradePage();
         }
+
+        upgradeContainer.SetActive(true);
     }
 
+    public void EnableUpgradeList()
+    {
+        upgradeContainer.gameObject.SetActive(true);
+        otherContainer.gameObject.SetActive(false);
+    }
+    public void EnableSkillList()
+    {
+        upgradeContainer.gameObject.SetActive(false);
+        otherContainer.gameObject.SetActive(true);
+
+        List<IdIntPair> list = new List<IdIntPair>();
+
+        foreach (var skill in Skills.all)
+        {
+            if (!skill.objectID.Contains("ATT") && Player.GetEntry(skill.objectID, "Journal Statistics", out var entry))
+            {
+                IdIntPair newEntry = new();
+                newEntry.objectID = entry.objectID;
+                newEntry.description = skill.name + $" {entry.amount}";
+                list.Add(newEntry);
+            }
+        }
+
+        pageinatedList.InitialiseWithoutCategories(list);
+    }
+
+    public void EnableSphereList()
+    {
+        upgradeContainer.gameObject.SetActive(false);
+        otherContainer.gameObject.SetActive(true);
+
+        List<IdIntPair> list = new List<IdIntPair>();
+
+        foreach (var skill in Skills.all)
+        {
+            if (skill.objectID.Contains("ATT") && Player.GetEntry(skill.objectID, "Journal Statistics", out var entry))
+            {
+                IdIntPair newEntry = new();
+                newEntry.objectID = entry.objectID;
+                newEntry.description = skill.name + $" {entry.amount}";
+                list.Add(newEntry);
+            }
+        }
+
+        pageinatedList.InitialiseWithoutCategories(list);
+    }
     void UpdateUpgradeNumbers()
     {
         foreach (var upgrade in upgrades)
