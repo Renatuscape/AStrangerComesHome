@@ -22,6 +22,7 @@ public class JournalController : MonoBehaviour
     public void ForceReader(Book book)
     {
         EnableJournal();
+
         if (book.isLetter)
         {
             collectionsPage.EnableLetters();
