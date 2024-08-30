@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,9 +47,10 @@ public class GuildRewardsMenu : MonoBehaviour
             isGuildmaster = initiatedByGuildmaster;
             this.totalFare = totalFare;
             this.totalPassengers = totalPassengers;
-
-            SetUpRewards();
+            
             gameObject.SetActive(true);
+            SetUpRewards();
+
         }
     }
 
@@ -109,7 +111,44 @@ public class GuildRewardsMenu : MonoBehaviour
 
         newButton.gameObject.transform.SetParent(parentContainer.transform);
         buttonList.Add(newButton);
+        StartCoroutine(RefreshCanvas());
         return newButton;
+    }
+
+    IEnumerator RefreshCanvas()
+    {
+    var rewardContainerLayout = rewardContainerPassengers.GetComponent<VerticalLayoutGroup>();
+    var fareContainerLayout = rewardContainerFare.GetComponent<VerticalLayoutGroup>();
+        var rewardConttainerLayout = rewardContainerMisc.GetComponent<VerticalLayoutGroup>();
+
+
+        if (rewardContainerLayout != null)
+        {
+            rewardContainerLayout.enabled = false;
+            Canvas.ForceUpdateCanvases();
+            yield return null;
+
+            rewardContainerLayout.enabled = true;
+            yield return null;
+            Canvas.ForceUpdateCanvases();
+
+            fareContainerLayout.enabled = false;
+            Canvas.ForceUpdateCanvases();
+            yield return null;
+
+            fareContainerLayout.enabled = true;
+            yield return null;
+
+            rewardConttainerLayout.enabled = false;
+            Canvas.ForceUpdateCanvases();
+            yield return null;
+
+            rewardConttainerLayout.enabled = true;
+            yield return null;
+            Canvas.ForceUpdateCanvases();
+        }
+        yield return null;
+        Canvas.ForceUpdateCanvases();
     }
 
     Button PrintMiscTier(GuildRewardTier tier)
@@ -144,6 +183,7 @@ public class GuildRewardsMenu : MonoBehaviour
 
         newButton.gameObject.transform.SetParent(rewardContainerMisc.transform);
         btnsCollectMisc.Add(newButton);
+        StartCoroutine(RefreshCanvas());
 
         return newButton;
     }
