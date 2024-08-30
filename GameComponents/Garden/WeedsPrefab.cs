@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeedsPrefab : MonoBehaviour
 {
-    public PlanterScript planterParent;
+    public GardenPlanter planterParent;
 
     private void OnMouseDown()
     {
