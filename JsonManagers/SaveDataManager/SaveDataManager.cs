@@ -244,8 +244,19 @@ public class SaveDataManager : MonoBehaviour
         numberOfFilesToLoad = 0;
 
         string saveDirectory = "/SaveData/";
-        //string fileName = "SaveData.ran";
         dir = Application.persistentDataPath + saveDirectory;
+
+        // Check if the directory exists, if not, create it
+        if (!Directory.Exists(dir))
+        {
+            Debug.Log("Save directory does not exist. Creating directory at " + dir);
+            Directory.CreateDirectory(dir);
+        }
+        else
+        {
+            Debug.Log("Save directory exists at " + dir);
+        }
+
         Debug.Log("Looking for save files in " + dir);
         var info = new DirectoryInfo(dir);
         loadedFiles = info.GetFiles();
