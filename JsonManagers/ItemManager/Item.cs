@@ -144,8 +144,6 @@ public static class Items
 
     public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity, bool printType)
     {
-
-
         TransientDataScript.PrintFloatText(GetEmbellishedItemText(item, printPrice, printRarity, printType));
     }
 
