@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class DataManagerScript : MonoBehaviour
 {
@@ -53,6 +54,68 @@ public class DataManagerScript : MonoBehaviour
     //CRAFTING DATA
     public List<SynthesiserData> alchemySynthesisers;
     public List<PlanterData> planters;
+
+    public void Reset()
+    {
+        version = Application.version;
+        lastVersionSaved = "none";
+        saveID = Random.Range(100000, 999999).ToString();
+        saveSlot = -1;
+        playerName = "Morgan";
+        playerNameColour = "597266";
+        playerGender = "Male";
+        pronounSub = "He";
+        pronounObj = "Him";
+        pronounGen = "His";
+        headIndex = 0;
+        playerSprite.ResetValues();
+
+        totalGameDays = 0;
+        timeOfDay = 0.3f;
+        currentRegion = "REGION1";
+        mapPositionX = 0f;
+        mapPositionY = 0f;
+        seatA = new() { seatID = "A"};
+        seatB = new() { seatID = "B" }; ;
+        postLocationID = "R0-LOCC0-CITY";
+
+        Player.inventoryList = new();
+        inventoryList = Player.inventoryList;
+
+        Player.questProgression = new();
+        questProgression = Player.questProgression;
+
+        planters.Clear();
+        alchemySynthesisers = new();
+        giftedThisWeek = new();
+        unlockedNames = new();
+        claimedLoot = new();
+
+        upgradeWear = new();
+
+        foreach (var up in Upgrades.all)
+        {
+            TransientDataScript.gameManager.dataManager.upgradeWear.Add(new IdIntPair() { objectID = up.objectID, amount = 0 });
+            Player.upgradeWear = TransientDataScript.gameManager.dataManager.upgradeWear;
+        }
+
+        alchemySynthesisers = new();
+        planters = new()
+        {
+            new()
+            {
+                planterID = "PlanterA"
+            },
+            new()
+            {
+                planterID = "PlanterB"
+            },
+            new()
+            {
+                planterID = "PlanterC"
+            }
+        };
+    }
 }
 
 [Serializable]
@@ -73,10 +136,21 @@ public class PlanterData
     public string planterSpriteID;
     public bool isActive;
     public Item seed;
-    public float maxGrowth;
     public float progress;
     public int seedHealth;
     public int weeds;
+
+    public int GetMaxGrowth()
+    {
+        if (seed != null)
+        {
+            return 100 * (seed.health + seed.yield);
+        }
+        else
+        {
+            return -1;
+        }
+    }
 }
 
 [Serializable]
@@ -91,134 +165,4 @@ public class PassengerData
     public Location destination;
     public int fare;
     public List<string> dialogueIDs;
-}
-
-[Serializable]
-public class PlayerSpriteData
-{
-    public string hairID;
-    public string bodyID;
-    public string headID;
-    public string eyesID;
-
-    public string hairHexColour;
-    public string hairAccentHexColour;
-    public string accessoryHexColour;
-
-    public string eyesHexColour;
-    public string lipTintHexColour;
-
-    public string cloakHexColour;
-    public string vestHexColour;
-    public string tightsHexColour;
-
-    public float lipTintTransparency;
-    public bool enableAccessory;
-    public bool enableAccent;
-
-    public void ResetValues()
-    {
-        hairID = "HairA0";
-        bodyID = "BodyA0";
-        headID = "Default";
-        eyesID = "EyesA0";
-
-        hairHexColour = "83695C";
-        hairAccentHexColour = "E0C49F";
-        eyesHexColour = "88DA69";
-        accessoryHexColour = "A8AB98";
-        lipTintHexColour = "CAAB80";
-        cloakHexColour = "808E94";
-        vestHexColour = "BDA8A7";
-        tightsHexColour = "919F98";
-
-        lipTintTransparency = 0;
-        enableAccessory = false;
-        enableAccent = false;
-    }
-
-
-    public PlayerSpriteData Clone()
-    {
-        return new PlayerSpriteData
-        {
-            hairID = this.hairID,
-            bodyID = this.bodyID,
-            headID = this.headID,
-            eyesID = this.eyesID,
-            hairHexColour = this.hairHexColour,
-            hairAccentHexColour = this.hairAccentHexColour,
-            accessoryHexColour = this.accessoryHexColour,
-            eyesHexColour = this.eyesHexColour,
-            lipTintHexColour = this.lipTintHexColour,
-            cloakHexColour = this.cloakHexColour,
-            vestHexColour = this.vestHexColour,
-            tightsHexColour = this.tightsHexColour,
-            lipTintTransparency = this.lipTintTransparency,
-            enableAccessory = this.enableAccessory,
-            enableAccent = this.enableAccent
-        };
-    }
-}
-
-[Serializable]
-public class PlayerPreset
-{
-    public string presetName;
-    public string presetFilePath;
-    public string playerName;
-    public string playerGender;
-    public string pronounSub;
-    public string pronounObj;
-    public string pronounGen;
-
-    public string playerNameColour;
-    public int headIndex;
-
-    public PlayerSpriteData appearance;
-
-    public void PopulateFromDataManager(DataManagerScript dataManager)
-    {
-        playerName = dataManager.playerName;
-        playerGender = dataManager.playerGender;
-        pronounGen = dataManager.pronounGen;
-        pronounObj = dataManager.pronounObj;
-        pronounSub = dataManager.pronounSub;
-        playerNameColour = dataManager.playerNameColour;
-        headIndex = dataManager.headIndex;
-        appearance = dataManager.playerSprite;
-    }
-
-    public void SaveToDataManager(DataManagerScript dataManager, bool savePersonalia, bool colourOnly)
-    {
-        if (savePersonalia)
-        {
-            dataManager.playerName = playerName;
-            dataManager.playerGender = playerGender;
-            dataManager.pronounGen = pronounGen;
-            dataManager.pronounObj = pronounObj;
-            dataManager.pronounSub = pronounSub;
-
-            dataManager.playerNameColour = playerNameColour;
-        }
-
-        if (!colourOnly)
-        {
-            dataManager.headIndex = headIndex;
-
-            dataManager.playerSprite = appearance;
-        }
-        else
-        {
-            dataManager.playerSprite.eyesHexColour = appearance.eyesHexColour;
-            dataManager.playerSprite.hairHexColour = appearance.hairHexColour;
-            dataManager.playerSprite.hairAccentHexColour = appearance.hairAccentHexColour;
-            dataManager.playerSprite.accessoryHexColour = appearance.accessoryHexColour;
-            dataManager.playerSprite.tightsHexColour = appearance.tightsHexColour;
-            dataManager.playerSprite.cloakHexColour = appearance.cloakHexColour;
-            dataManager.playerSprite.vestHexColour = appearance.vestHexColour;
-            dataManager.playerSprite.lipTintHexColour = appearance.lipTintHexColour;
-            dataManager.playerSprite.lipTintTransparency = appearance.lipTintTransparency;
-        }
-    }
 }
