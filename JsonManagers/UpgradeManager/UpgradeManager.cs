@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class UpgradeManager : MonoBehaviour
 {
+    public List<Upgrade> debugItemList = Upgrades.all;
     public bool allObjecctsLoaded = false;
     public int filesLoaded = 0;
     public int numberOfFilesToLoad = 1;
