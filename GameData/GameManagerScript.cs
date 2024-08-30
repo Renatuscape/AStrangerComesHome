@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using Random = UnityEngine.Random;
-
 public class GameManagerScript : MonoBehaviour
 {
     public static bool setUpReady = false;
@@ -52,6 +50,7 @@ public class GameManagerScript : MonoBehaviour
     public StationManager stationManager;
     public SaveDataManager saveDataManager;
     public BankManager bankManager;
+    public GardenCoachPlanters coachPlanters;
 
     void Awake()
     {
@@ -171,43 +170,11 @@ public class GameManagerScript : MonoBehaviour
 
     private IEnumerator NewGameSetup()
     {
-        dataManager.version = Application.version;
-        dataManager.lastVersionSaved = "none";
-        dataManager.saveID = Random.Range(100000, 999999).ToString();
-        dataManager.saveSlot = -1;
-        dataManager.playerName = "Morgan";
-        dataManager.playerNameColour = "597266";
-        dataManager.playerGender = "Male";
-        dataManager.pronounSub = "He";
-        dataManager.pronounObj = "Him";
-        dataManager.pronounGen = "His";
-        dataManager.headIndex = 0;
-        dataManager.playerSprite.ResetValues();
+        dataManager.Reset();
         portraitRenderer.UpdatePlayerSprite();
+        coachPlanters.Setup();
 
         yield return StartCoroutine(ResetGameComponentsCoroutine());
-
-        dataManager.totalGameDays = 0;
-        dataManager.timeOfDay = 0.3f;
-        dataManager.currentRegion = "REGION1";
-        dataManager.mapPositionX = 0f;
-        dataManager.mapPositionY = 0f;
-        dataManager.seatA = new();
-        dataManager.seatB = new();
-        dataManager.postLocationID = "R0-LOCC0-CITY";
-
-        Player.inventoryList.Clear();
-        dataManager.questProgression.Clear();
-        dataManager.inventoryList.Clear();
-        dataManager.planters.Clear();
-        dataManager.alchemySynthesisers.Clear();
-        dataManager.unlockedNames.Clear();
-        dataManager.giftedThisWeek.Clear();
-        dataManager.claimedLoot.Clear();
-
-        SetUpUpgradeWear();
-        dataManager.inventoryList = Player.inventoryList;
-        dataManager.questProgression = Player.questProgression;
 
         // Add skills to the player inventory from the start
         Player.Add(StaticTags.Wandering, 10, true); // Wandering
@@ -225,17 +192,6 @@ public class GameManagerScript : MonoBehaviour
         passengerManager.Initialise();
     }
 
-    void SetUpUpgradeWear()
-    {
-        TransientDataScript.gameManager.dataManager.upgradeWear = new();
-
-        foreach (var up in Upgrades.all)
-        {
-            TransientDataScript.gameManager.dataManager.upgradeWear.Add(new IdIntPair() { objectID = up.objectID, amount = 0 });
-            Player.upgradeWear = TransientDataScript.gameManager.dataManager.upgradeWear;
-        }
-    }
-
     public void LoadRoutine()
     {
         StartCoroutine(LoadCoroutine());
@@ -248,13 +204,9 @@ public class GameManagerScript : MonoBehaviour
         yield return StartCoroutine(ResetGameComponentsCoroutine());
         DialogueTagParser.UpdateTags(dataManager);
 
-        if (Player.upgradeWear == null || Player.upgradeWear.Count < 1)
-        {
-            SetUpUpgradeWear();
-        }
-
         InitialiseMap();
 
+        coachPlanters.Setup();
         questTracker.StartTracking();
         alchemyTracker.StartTracking();
         passengerManager.Initialise();
