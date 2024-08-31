@@ -12,6 +12,7 @@ public class TransientDataScript : MonoBehaviour
 
     public Language language;
     public List<GameObject> activePrefabs;
+    public List<CharacterNode> spawnedCharacterNodes;
 
     [TextArea(20, 50)]
     public string gameStateLog = "Game State Changes";
