@@ -104,7 +104,7 @@ public static class DialogueSetup
         }
     }
 
-    static DialogueEvent ParseDialogueEventID(string eventID)
+    public static DialogueEvent ParseDialogueEventID(string eventID)
     {
         // Example ID: Arcanist-S#SAD-SP#MID-TP#FAR-E#SHAKE-MAS#SLO-L#TRUE-HO#TRUE
         // = show sad arcanist sprite, start mid and move slowly to far position, shaking effect, left position portrait and hide other
