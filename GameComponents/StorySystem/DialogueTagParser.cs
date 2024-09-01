@@ -8,15 +8,16 @@ public static class DialogueTagParser
 
     public static string ParseText(string text)
     {
+        // Debug.Log("DTagParser: received " + text);
         if (string.IsNullOrEmpty(text))
         {
-            // Debug.Log("No text to parse");
+            // Debug.Log("DTagParser: No text to parse");
             return text;
         }
 
         if (tags is null || tags.Count == 0)
         {
-            Debug.Log("Attempted to parse text before dialogue tags were created.");
+            Debug.Log("DTagParser: Attempted to parse text before dialogue tags were created.");
             return text;
         }
 
@@ -28,6 +29,7 @@ public static class DialogueTagParser
             text = text.Replace(tag, value);
         }
 
+        // Debug.Log("DTagParser: returned " + text);
         return text;
     }
 
