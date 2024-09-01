@@ -6,7 +6,7 @@ public class GardenSeedFloat : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public ItemIconData itemData;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        TransientDataScript.PrintFloatText(Items.GetEmbellishedItemText(itemData.item, false, true, false) + $"\nGrow time: {100 * (itemData.item.health + itemData.item.yield)}");
+        TransientDataScript.PrintFloatText(Items.GetEmbellishedItemText(itemData.item, false, true, false) + $"\nMax Health {itemData.item.health} | Max yield {itemData.item.yield}\nEstimated grow time: {100 * (itemData.item.health + itemData.item.yield)}");
     }
 
     public void OnPointerExit(PointerEventData eventData)
