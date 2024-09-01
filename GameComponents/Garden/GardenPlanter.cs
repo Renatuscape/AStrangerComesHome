@@ -8,13 +8,13 @@ public class GardenPlanter : MonoBehaviour
     public SpriteRenderer plantRend;
     public List<GameObject> weeds;
     public GameObject weedsPrefab;
-    int maxWeeds = 3;
+    int maxWeeds = 5;
     public float weedTimer;
     public int weedTick;
 
     void Awake()
     {
-        weedTick = Random.Range(45, 120);
+        weedTick = Random.Range(45, 180);
     }
 
     public void UpdateFromPlanterData()
@@ -144,8 +144,16 @@ public class GardenPlanter : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing() && TransientDataScript.CameraView == CameraView.Garden && planterData != null)
         {
-            if (planterData.isActive && planterData.seed != null) {
-                TransientDataScript.PrintFloatText($"{Items.GetEmbellishedItemText(planterData.seed, false, false, false)}\n{planterData.progress}/{planterData.GetMaxGrowth()}");
+            if (planterData.isActive && planterData.seed != null)
+            {
+                int progress = Mathf.FloorToInt(planterData.progress);
+
+                if (progress > planterData.GetMaxGrowth())
+                {
+                    progress = planterData.GetMaxGrowth();
+                }
+
+                TransientDataScript.PrintFloatText($"{Items.GetEmbellishedItemText(planterData.seed, false, false, false)}\n{progress}/{planterData.GetMaxGrowth()}");
             }
             else
             {
