@@ -111,6 +111,8 @@ public class DialogueMenu : MonoBehaviour
 
     public void EndDialogue(Choice choice)
     {
+        Debug.Log("DIALOGUE: ENDING DIALOGUE.");
+
         if (choice != null && choice.nodeData.removeSpeakerNode)
         {
             var speaker = choice.nodeData.nodeID;
@@ -119,8 +121,10 @@ public class DialogueMenu : MonoBehaviour
                 Debug.LogWarning("Set speaker ID for " + choice.optionText + " to use removeSpeakerNode feature.");
             }
 
+            Debug.Log("DIALOGUE: Attempting to disable node.");
             WorldNodeTracker.DisableNodeWithFade(speaker);
         }
+
         dialogueDisplay.gameObject.SetActive(false);
 
         if (!doNotReopenTopic)
