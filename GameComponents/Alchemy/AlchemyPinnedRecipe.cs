@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class AlchemyPinnedRecipe : MonoBehaviour, IDragHandler
 {
@@ -36,6 +37,22 @@ public class AlchemyPinnedRecipe : MonoBehaviour, IDragHandler
             }
 
         }
+
+        StartCoroutine(ForceRefresh());
+    }
+
+    IEnumerator ForceRefresh()
+    {
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+        GetComponent<VerticalLayoutGroup>().enabled = false;
+        GetComponent<ContentSizeFitter>().enabled = false;
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+        GetComponent<VerticalLayoutGroup>().enabled = true;
+        GetComponent<ContentSizeFitter>().enabled = true;
+        yield return null;
+        Canvas.ForceUpdateCanvases();
     }
 
     public void OnDrag(PointerEventData eventData)
