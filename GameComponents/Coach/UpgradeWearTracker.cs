@@ -30,6 +30,10 @@ public static class UpgradeWearTracker
             if (MoneyExchange.Purchase(repairPrice))
             {
                 upgradeEntry.amount = 0;
+
+                Upgrade upgrade = Upgrades.FindByID(upgradeEntry.objectID);
+                upgrade.isBroken = false;
+
                 return true;
             }
             else
@@ -69,7 +73,7 @@ public static class UpgradeWearTracker
                 randomUpgrade.amount += wearLevel;
             }
 
-            if (randomUpgrade.amount >= maxWear * 0.75f)
+            if (randomUpgrade.amount >= maxWear * 0.85f)
             {
                 var upgrade = Upgrades.FindByID(randomUpgrade.objectID);
 
