@@ -67,61 +67,60 @@ public class PlantingManager : MonoBehaviour
 
         PrintSeeds();
 
-        if (unlockedPlanters >= 3)
-        {
-            DynamicPlanterSelection();
-        }
-        else
-        {
-            MouseDownSelectPlanterA();
-        }
+        DynamicPlanterSelection();
 
-        UpdatePlanterIcons();
+        if (TransientDataScript.IsTimeFlowing())
+        {
+            UpdatePlanterIcons();
+        }
     }
 
 
     private void UpdatePlanterIcons()
     {
-        if (gardenManager.planterPackages != null)
+        unlockedPlanters = Player.GetCount(StaticTags.UnlockedPlanters, name);
+
+        if (unlockedPlanters > 0)
         {
-            foreach (var planter in gardenManager.planterPackages)
+            var planterData = dataManager.planters.FirstOrDefault(p => p.planterID == "planterA");
+
+            if (planterData.isActive)
             {
-                if (planter.planterData.isActive)
-                {
-                    if (planter.planterData.planterID == "planterA")
-                    {
-                        planterIconA.sprite = Items.all.FirstOrDefault(x => x.objectID == planter.planterData.seed.objectID).sprite;
-                    }
-                    else if (planter.planterData.planterID == "planterB")
-                    {
-                        planterIconB.sprite = Items.all.FirstOrDefault(x => x.objectID == planter.planterData.seed.objectID).sprite;
-                    }
-                    else if (planter.planterData.planterID == "planterC")
-                    {
-                        planterIconC.sprite = Items.all.FirstOrDefault(x => x.objectID == planter.planterData.seed.objectID).sprite;
-                    }
-                }
-                else
-                {
-                    if (planter.planterData.planterID == "planterA")
-                    {
-                        planterIconA.sprite = gardenManager.planterSprites.FirstOrDefault(s => s.name.Contains(planter.planterData.planterSpriteID));
-                    }
-                    else if (planter.planterData.planterID == "planterB")
-                    {
-                        planterIconB.sprite = gardenManager.planterSprites.FirstOrDefault(s => s.name.Contains(planter.planterData.planterSpriteID));
-                    }
-                    else if (planter.planterData.planterID == "planterC")
-                    {
-                        planterIconC.sprite = gardenManager.planterSprites.FirstOrDefault(s => s.name.Contains(planter.planterData.planterSpriteID));
-                    }
-                }
+                planterIconA.sprite = SpriteFactory.GetItemSprite(planterData.seed.objectID);
+            }
+            else
+            {
+                planterIconA.sprite = planterIconFree;
             }
         }
-        else
+        if (unlockedPlanters > 1)
         {
-            Debug.Log("Garden manager was not ready.");
+            var planterData = dataManager.planters.FirstOrDefault(p => p.planterID == "planterB");
+
+            if (planterData.isActive)
+            {
+                planterIconB.sprite = SpriteFactory.GetItemSprite(planterData.seed.objectID);
+            }
+            else
+            {
+                planterIconB.sprite = planterIconFree;
+            }
         }
+        if (unlockedPlanters > 2)
+        {
+            var planterData = dataManager.planters.FirstOrDefault(p => p.planterID == "planterC");
+
+            if (planterData.isActive)
+            {
+                planterIconC.sprite = SpriteFactory.GetItemSprite(planterData.seed.objectID);
+            }
+            else
+            {
+                planterIconC.sprite = planterIconFree;
+            }
+        }
+
+        TransientDataScript.gameManager.coachPlanters.CheckUnlockedPlanters();
     }
 
     private void PrintSeeds()
@@ -140,7 +139,12 @@ public class PlantingManager : MonoBehaviour
             }
         }
 
-        seedContainer.Initialise(seedStock, true, true, true);
+        var seeds = seedContainer.Initialise(seedStock, true, false, true);
+        foreach (var seed in seeds)
+        {
+            var script = seed.AddComponent<GardenSeedFloat>();
+            script.itemData = seed.GetComponent<ItemIconData>();
+        }
     }
 
     private void RemoveSeeds()
@@ -154,23 +158,55 @@ public class PlantingManager : MonoBehaviour
 
     private void DynamicPlanterSelection()
     {
-
-        foreach (var planter in gardenManager.planterPackages)
+        Debug.Log("Attempting to dynamically select next planter");
+        int plantersUnlocked = Player.GetCount(StaticTags.UnlockedPlanters, name);
+        int occupiedPlanters = 0;
+        foreach (var planter in dataManager.planters)
         {
-            if (!planter.planterData.isActive)
+            if (planter.planterID == "planterA" && plantersUnlocked > 0)
             {
-                if (planter.planterData.planterID == "planterA")
+                if (!planter.isActive)
                 {
                     MouseDownSelectPlanterA();
+                    break;
                 }
-                else if (planter.planterData.planterID == "planterB")
+                else
+                {
+                    occupiedPlanters++;
+                }
+            }
+            else if (planter.planterID == "planterB" && plantersUnlocked > 0)
+            {
+                if (!planter.isActive)
                 {
                     MouseDownSelectPlanterB();
+                    break;
                 }
-                else if (planter.planterData.planterID == "planterC")
+                else
+                {
+                    occupiedPlanters++;
+                }
+            }
+            else if (planter.planterID == "planterC" && plantersUnlocked > 0)
+            {
+                if (!planter.isActive)
                 {
                     MouseDownSelectPlanterC();
+                    break;
                 }
+                else
+                {
+                    occupiedPlanters++;
+                }
+            }
+            else
+            {
+                Debug.Log("Planter did not match any accepted IDs: " + planter.planterID);
+            }
+
+            if (occupiedPlanters == unlockedPlanters)
+            {
+                gameObject.SetActive(false);
             }
         }
     }
@@ -196,7 +232,7 @@ public class PlantingManager : MonoBehaviour
             readyToPlant = true;
 
         //planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
-        
+
     }
 
     public void SelectSeed(GameObject seedObject) //must pass the spawned prefab. Might have to be done in a script triggered by event
@@ -221,22 +257,25 @@ public class PlantingManager : MonoBehaviour
     //FOR SELECTING PLANTER IN THE MENU. CONSOLIDATE INTO ONE METHOD LATER, BUT IT WORKS FOR NOW
     public void MouseDownSelectPlanterA()
     {
+        Debug.Log("MouseDown on planterA");
         activePlanter = dataManager.planters.FirstOrDefault(p => p.planterID == "planterA");
-        planterFrame.transform.SetParent(planterA.transform);
+        planterFrame.transform.SetParent(planterA.transform, false);
         planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
         planterFrame.SetActive(true);
     }
     public void MouseDownSelectPlanterB()
     {
+        Debug.Log("MouseDown on planterB");
         activePlanter = dataManager.planters.FirstOrDefault(p => p.planterID == "planterB");
-        planterFrame.transform.SetParent(planterB.transform);
+        planterFrame.transform.SetParent(planterB.transform, false);
         planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
         planterFrame.SetActive(true);
     }
     public void MouseDownSelectPlanterC()
     {
+        Debug.Log("MouseDown on planterC");
         activePlanter = dataManager.planters.FirstOrDefault(p => p.planterID == "planterC");
-        planterFrame.transform.SetParent(planterC.transform);
+        planterFrame.transform.SetParent(planterC.transform, false);
         planterFrame.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
         planterFrame.SetActive(true);
     }
@@ -264,6 +303,10 @@ public class PlantingManager : MonoBehaviour
                 Debug.Log("I am all out of this type of seeds.");
             }
         }
+        else
+        {
+            LogAlert.QueueTextAlert("I must select a seed and an empty planter.");
+        }
     }
 
     public void StorePlanterData(PlanterData planterData)
@@ -274,8 +317,7 @@ public class PlantingManager : MonoBehaviour
 
             planterData.seed = Items.FindByID(seedContainer.selectedItem.objectID);
             planterData.seedHealth = seedContainer.selectedItem.health;
-            planterData.isActive= true;
-            planterData.maxGrowth = 100 * planterData.seed.health * planterData.seed.yield;
+            planterData.isActive = true;
 
             bool isAnyPlanterFree = false;
 
@@ -293,12 +335,10 @@ public class PlantingManager : MonoBehaviour
                 gameObject.SetActive(false);
             }
 
-            if (unlockedPlanters >= 3)
-            {
-                Invoke("DynamicPlanterSelection", 0.01f);
-            }
-
+            DynamicPlanterSelection();
             UpdatePlanterIcons();
         }
+
+        TransientDataScript.gameManager.coachPlanters.Setup();
     }
 }
