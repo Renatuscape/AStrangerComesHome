@@ -41,6 +41,7 @@ public class DialogueDisplay : MonoBehaviour
     public float autoTimer;
 
     bool waitingForAutoPlayCoroutine = false;
+    Choice lastChoicePrinted;
     private void Start()
     {
         btnAutoPlay.onClick.AddListener(() => ToggleAuto());
@@ -120,6 +121,7 @@ public class DialogueDisplay : MonoBehaviour
                 dialogueMenu.SetUpBackground(dialogue.backgroundID);
 
                 var titleText = dialogue.topicName;
+
                 if (string.IsNullOrEmpty(titleText))
                 {
                     titleText = Quests.FindByID(dialogue.questID).name;
@@ -186,6 +188,7 @@ public class DialogueDisplay : MonoBehaviour
 
     public void PrintChoiceResult(Choice choice, bool isSuccess, List<IdIntPair> missingItems)
     {
+        lastChoicePrinted = choice;
         autoTimer = 0;
         string speakerTag = isSuccess ? choice.successSpeaker : choice.failureSpeaker;
         bool hasResultText = !string.IsNullOrEmpty(speakerTag);
@@ -197,10 +200,21 @@ public class DialogueDisplay : MonoBehaviour
         if (hasResultText) // if there is no speaker, skip the print
         {
             DialogueEvent resultEvent = new();
+            bool isEvent = false;
 
             // Parse speaker event data here if it exists
 
-            resultEvent.speaker = Characters.FindByTag(speakerTag, name);
+            var speakerSearch = speakerTag;
+
+            if (speakerSearch.Contains('-'))
+            {
+                resultEvent = DialogueSetup.ParseDialogueEventID(speakerSearch);
+                isEvent = true;
+            }
+            else
+            {
+                resultEvent.speaker = Characters.FindByTag(speakerSearch, name);
+            }
 
             if (resultEvent.speaker == null)
             {
@@ -212,9 +226,14 @@ public class DialogueDisplay : MonoBehaviour
 
                 SetDisplayNames(resultEvent);
 
-                if (resultEvent.speaker.objectID != "ARC000" && resultEvent.speaker.objectID != "ARC999")
+                if (!isEvent && resultEvent.speaker.objectID != "ARC000" && resultEvent.speaker.objectID != "ARC999")
                 {
                     portraitManager.SetRightPortrait(resultEvent.speaker.objectID);
+
+                }
+                else if (isEvent)
+                {
+                    portraitManager.StartDialogueEvent(resultEvent);
                 }
 
                 var parsedContent = DialogueTagParser.ParseText(content);
@@ -361,7 +380,8 @@ public class DialogueDisplay : MonoBehaviour
         }
         else if (endConversation)
         {
-            dialogueMenu.EndDialogue(null);
+            dialogueMenu.EndDialogue(lastChoicePrinted);
+            lastChoicePrinted = null;
         }
         else if (continueAfterChoice && !isPrinting)
         {
