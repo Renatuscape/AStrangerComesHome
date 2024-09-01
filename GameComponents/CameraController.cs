@@ -63,8 +63,8 @@ public class CameraController : MonoBehaviour
         keyBindings[KeyCode.D] = Right;
         keyBindings[KeyCode.LeftArrow] = Left;
         keyBindings[KeyCode.A] = Left;
-        keyBindings[KeyCode.UpArrow] = () => { targetTransform = camTargetGarden.transform; };
-        keyBindings[KeyCode.W] = () => { targetTransform = camTargetGarden.transform; };
+        keyBindings[KeyCode.UpArrow] = () => { targetTransform = camTargetGarden.transform; TransientDataScript.SetCameraView(CameraView.Garden); };
+        keyBindings[KeyCode.W] = () => { targetTransform = camTargetGarden.transform; TransientDataScript.SetCameraView(CameraView.Garden); };
         keyBindings[KeyCode.DownArrow] = () =>
         {
             camIndex = 0;
@@ -133,6 +133,7 @@ public class CameraController : MonoBehaviour
             TransientDataScript.GameState != GameState.AlchemyMenu)
         {
             TransientDataScript.SetCameraView(CameraView.Normal);
+            virtualCameraTransform.position = new Vector3(0, 0, virtualCamera.gameObject.transform.position.z);
         }
 
         else if (TransientDataScript.GameState == GameState.Overworld)
