@@ -53,6 +53,11 @@ public class CharacterNode : MonoBehaviour
         if ((character == null || string.IsNullOrEmpty(character.objectID)) && !string.IsNullOrEmpty(characterID))
         {
             character = Characters.FindByID(characterID);
+
+            if (allowOverride)
+            {
+                generatedNodeID = character.objectID + "_" + generatedNodeID;
+            }
         }
 
         if (character != null && !string.IsNullOrEmpty(character.objectID))
@@ -63,7 +68,7 @@ public class CharacterNode : MonoBehaviour
             }
             else
             {
-                Debug.Log("Checks failed. Attempting to hide node.");
+                Debug.Log("CNode: Checks failed. Attempting to hide node " + character.objectID);
                 HideNode();
             }
 
@@ -80,9 +85,14 @@ public class CharacterNode : MonoBehaviour
 
     public void RefreshNode()
     {
+        if (character == null)
+        {
+            AttemptSpawn();
+        }
+
         if (!failedRNG && AttemptChecks())
         {
-            //Debug.Log("Checks succeeded. Attempting setup if alpha is 0.");
+            Debug.Log("CNode: Checks succeeded. Attempting setup if alpha is 0 for " + generatedNodeID);
             if (isDormant)
             {
                 isDormant = false;
@@ -93,7 +103,7 @@ public class CharacterNode : MonoBehaviour
         }
         else
         {
-            Debug.Log("Checks failed. Attempting fade and hide if not already dormant.");
+            Debug.Log("CNode: Checks failed. Attempting fade and hide if not already dormant " + generatedNodeID);
 
             if (!isDormant)
             {
@@ -128,7 +138,7 @@ public class CharacterNode : MonoBehaviour
     {
         bobber.HideBobber();
         isDormant = true;
-        //Debug.Log("Hiding character " + characterID);
+        Debug.Log("CNode: Hiding character " + characterID);
         rend.color = new Color(rend.color.r, rend.color.g, rend.color.b, 0);
         col.enabled = false;
     }
@@ -137,7 +147,7 @@ public class CharacterNode : MonoBehaviour
     {
         bool passedCustomRequirements;
         bool passedDialogueRequirements;
-        bool isAlreadySpawned = WorldNodeTracker.CheckIfCharacterExistsInDifferentNode(this);
+        bool isAlreadySpawned = character != null && WorldNodeTracker.CheckIfCharacterExistsInDifferentNode(this);
 
         if (customRequirements == null)
         {
@@ -150,12 +160,20 @@ public class CharacterNode : MonoBehaviour
 
         if (string.IsNullOrEmpty(activeDialogueID))
         {
-            passedDialogueRequirements = true;
+            if (allowOverride)
+            {
+                passedDialogueRequirements = HasAnyRelevantDialogue();
+            }
+            else
+            {
+                passedDialogueRequirements = true;
+            }
         }
         else
         {
             Dialogue dialogue = Dialogues.FindByID(activeDialogueID);
             passedDialogueRequirements = RequirementChecker.CheckDialogueRequirements(dialogue);
+            Debug.Log("CNode: PassedDialogueRequirements = " + passedDialogueRequirements);
         }
 
         //Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}. Is already spawned: {isAlreadySpawned}");
@@ -164,19 +182,18 @@ public class CharacterNode : MonoBehaviour
 
     void EnableCharacter()
     {
-        // Debug.Log("Attempting to enable character " + characterID);
+        Debug.Log("CNode: Attempting to enable character " + characterID);
 
         if (character != null)
         {
             isDormant = false;
             ConfigureDisplayText();
             FindSprite();
-            bobber.EnableBobber(character, rend);
             StartCoroutine(FadeInAndEnable());
         }
         else
         {
-            Debug.LogWarning("No character found with ID " + characterID + ". Use different class for decorative NPCs.");
+            Debug.LogWarning("CNode: No character found with ID " + characterID + ". Use different class for decorative NPCs.");
             HideNode();
         }
     }
@@ -253,7 +270,7 @@ public class CharacterNode : MonoBehaviour
 
     void OnMouseOver()
     {
-        if (!string.IsNullOrEmpty(textToDisplay) && TransientDataScript.GameState == GameState.Overworld)
+        if (!string.IsNullOrEmpty(textToDisplay) && TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
         {
             TransientDataScript.PrintFloatText(textToDisplay);
         }
@@ -271,7 +288,7 @@ public class CharacterNode : MonoBehaviour
     {
         if (character != null && TransientDataScript.transientData.currentSpeed == 0)
         {
-            if (TransientDataScript.GameState == GameState.Overworld)
+            if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Normal)
             {
                 // Debug.Log($"Opening interact menu with {character.name}");
                 InteractMenu.Open(character);
@@ -287,7 +304,7 @@ public class CharacterNode : MonoBehaviour
 
     IEnumerator ContinuouslyCheckRequirements()
     {
-        Debug.Log("Started requirement checker for continuous spawn checks.");
+        Debug.Log("CNode: Started requirement checker for continuous spawn checks.");
         while (true)
         {
             yield return new WaitForSeconds(5);
@@ -326,6 +343,8 @@ public class CharacterNode : MonoBehaviour
         float alpha = 0;
         float fadeValue = 0.01f;
 
+        bobber.EnableBobber(character, rend);
+
         while (alpha < 1)
         {
             alpha += fadeValue;
@@ -336,5 +355,25 @@ public class CharacterNode : MonoBehaviour
 
             yield return new WaitForSeconds(0.05f);
         }
+    }
+
+    bool HasAnyRelevantDialogue()
+    {
+        if (character.objectID != null)
+        {
+            var dialogues = Dialogues.GetDialoguesBySpeaker(character.objectID, true);
+
+            foreach ( var dialogue in dialogues)
+            {
+                var passed = dialogue.CheckRequirements();
+
+                if (passed)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
