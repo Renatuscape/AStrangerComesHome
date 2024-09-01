@@ -44,61 +44,32 @@ public class TopicMenu : MonoBehaviour
 
         foreach (Quest quest in Quests.all)
         {
-            string speaker = "";
             int stage = Player.GetCount(quest.objectID, "topicMenu");
+            Dialogue activeDialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
 
-            if (stage < quest.dialogues.Count)
+            if (activeDialogue != null && activeDialogue.stageType == StageType.Dialogue)
             {
-                Dialogue activeDialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
 
-                if (activeDialogue != null)
+                if (activeDialogue.speakerID == speakerID)
                 {
-                    if (activeDialogue.stageType == StageType.Dialogue) // Make sure this stage is of type dialogue
+                    Debug.Log($"TOPIC MENU: Speaker matched. Checking requirements for dialogue {activeDialogue.objectID}");
+
+                    if (activeDialogue.CheckRequirements())
                     {
-                        speaker = activeDialogue.speakerID;
-                        //Debug.Log($"Dialogue type was dialogue, and speakerID in dialogue was \"{speaker}\".");
-                    }
-
-                    if (string.IsNullOrEmpty(speaker)) // If there is no speaker assigned to this dialogue, default to quest giver ID.
-                    {
-                        speaker = quest.questGiver.objectID;
-                        //Debug.Log($"Speaker was null or empty in dialogue. Speaker is set to {quest.questGiver.objectID} ({speaker})");
-                    }
-
-                    if (speaker == speakerID)
-                    {
-                        //Debug.Log($"SPEAKER MATCH FOUND. Checking requirements for dialogue {activeDialogue.objectID}");
-
-                        bool passedChecks = true;
-
-                        if (stage == 0)
-                        {
-                            passedChecks = quest.unlockRequirements.CheckRequirements(out var minDaysPassed);
-                        }
-
-                        if (passedChecks)
-                        {
-                            passedChecks = activeDialogue.CheckRequirements();
-
-                            if (passedChecks)
-                            {
-                                //Debug.Log($"Check for quest and dialogue {activeDialogue.objectID} passed.");
-                                foundQuests.Add(quest);
-                            }
-                        }
+                        Debug.Log($"TOPIC MENU: Check for quest and dialogue {activeDialogue.objectID} passed.");
+                        foundQuests.Add(quest);
                     }
                 }
-
             }
         }
 
-        //Debug.Log($"Found {foundQuests.Count} topics.");
+        Debug.Log($"Found {foundQuests.Count} topics.");
         return foundQuests;
     }
 
     public void CreateTopicButtons()
     {
-        // Debug.Log("Quest list contained " + questList.Count);
+        Debug.Log("TOPIC MENU: Quest list contained " + questList.Count);
 
         if (questList.Count > 1 || (!allowAutoPlay && questList.Count > 0))
         {
@@ -131,6 +102,7 @@ public class TopicMenu : MonoBehaviour
             }
             else
             {
+                Debug.Log("Attempting to start dialogue immediately.");
                 var message = BoxFactory.CreateTextBox("Nothing to talk about right now.", topicContainer.GetComponent<RectTransform>().sizeDelta.x - 20);
                 message.transform.SetParent(topicContainer.transform, false);
                 buttonList.Add(message);
@@ -159,7 +131,12 @@ public class TopicMenu : MonoBehaviour
 
                 button.transform.SetParent(topicContainer.transform, false);
                 var text = button.gameObject.transform.GetChild(0);
-                text.GetComponent<TextMeshProUGUI>().text = DialogueTagParser.ParseText(topicName);
+
+                // Debug.Log("TPMenu: Attempting to print topic with name " + topicName);
+                var parsedText = DialogueTagParser.ParseText(topicName);
+                // Debug.Log("TPMenu: Parsed text result: " + parsedText);
+                text.GetComponent<TextMeshProUGUI>().text = parsedText;
+                // Debug.Log("TPMenu: Button text should read: " + text.GetComponent<TextMeshProUGUI>().text);
                 buttonList.Add(button);
 
                 button.GetComponent<Button>().onClick.AddListener(() => StartDialogue(quest, false));
@@ -171,31 +148,31 @@ public class TopicMenu : MonoBehaviour
     {
         if (quest.dialogues != null && quest.dialogues.Count > 0)
         {
-            if (Player.GetEntry(quest.objectID, "TopicMenu", out IdIntPair entry))
+            int stage = Player.GetCount(quest.objectID, "topicMenu");
+            Dialogue activeDialogue = quest.dialogues.FirstOrDefault(d => d.questStage == stage);
+
+            if (activeDialogue != null && activeDialogue.stageType == StageType.Dialogue)
             {
-                if (entry.amount < quest.dialogues.Count) //CHECK IF NEW DIALOGUES EXIST
+                if (!string.IsNullOrEmpty(activeDialogue.topicName))
                 {
-                    topicName = quest.dialogues[entry.amount].topicName;
-
-                    if (string.IsNullOrEmpty(topicName))
-                    {
-                        topicName = quest.name; //EXCHANGE WITH LOGIC TO FIND PREVIOUS STAGE NAME
-                    }
-
-                    return quest.dialogues[entry.amount];
+                    topicName = activeDialogue.topicName;
                 }
-                topicName = "";
-                return null;
+                else
+                {
+                    topicName = quest.name;
+                }
+
+                return activeDialogue;
             }
-            else //if quest is not already active and found in player journal
+            else
             {
-                topicName = quest.name;
-                return quest.dialogues[0];
+                topicName = "No Topic";
+                return null;
             }
         }
         else
         {
-            topicName = "";
+            topicName = "No Topic";
             return null;
         }
     }
