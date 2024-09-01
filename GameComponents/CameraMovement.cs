@@ -9,7 +9,7 @@ public class CameraMovement : MonoBehaviour
     float timerTick = 0.3f;
     float cameraMovementSpeed = 12;
     Transform camTransform;
-
+    bool runningCoroutine;
     private void Start()
     {
         camTransform = camController.virtualCamera.transform;
@@ -21,6 +21,7 @@ public class CameraMovement : MonoBehaviour
             // HandleCameraMovement();
 
             timer += Time.deltaTime;
+
             if (timer >= timerTick)
             {
                 timer = 0;
@@ -28,10 +29,22 @@ public class CameraMovement : MonoBehaviour
                 StartCoroutine(MoveCameraCoroutine());
             }
         }
+        else if (TransientDataScript.CameraView == CameraView.Normal && runningCoroutine)
+        {
+            StopMovement();
+        }
+    }
+
+    public void StopMovement()
+    {
+        StopAllCoroutines();
+        runningCoroutine = false;
+        camController.CameraNormal();
     }
 
     IEnumerator MoveCameraCoroutine()
     {
+        runningCoroutine = true;
         var targetTransform = camController.targetTransform;
         Vector3 camPosition = camTransform.position;
         Vector3 targetPosition = targetTransform.position;
@@ -57,5 +70,6 @@ public class CameraMovement : MonoBehaviour
 
         // Ensure the final position is exactly the target position
         camTransform.position = targetPosition;
+        runningCoroutine = false;
     }
 }
