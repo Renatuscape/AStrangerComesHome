@@ -88,11 +88,11 @@ public class PassengerPrefabScript : MonoBehaviour
 
                 if (passengerData.fare < totalAdded)
                 {
-                    TransientDataScript.PushAlert("I was unable to accept the total fare. Better go to the bank!");
+                    LogAlert.QueueTextAlert("I was unable to accept the total fare. Better go to the bank!");
                 }
                 else
                 {
-                    TransientDataScript.PushAlert($"{passengerData.passengerName} paid {passengerData.fare} shillings.");
+                    LogAlert.QueueTextAlert($"{passengerData.passengerName} paid {passengerData.fare} shillings.");
                 }
 
                 // Tip is paid out in hellers and scripted items are updated to track
