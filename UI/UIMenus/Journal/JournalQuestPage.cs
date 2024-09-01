@@ -22,13 +22,18 @@ public class JournalQuestPage : MonoBehaviour
 
     private void Awake()
     {
-        displayTitle.text = "";
-        displayTopicName.text = "Details";
-        displayDescription.text = "Choose a quest to see the details.\nA '?' button will appear for quests with a to-do list.";
+        SetDefaultText();
         btnTaskToggle.onClick.AddListener(() =>
         {
             taskTrackerPanel.SetActive(!taskTrackerPanel.activeInHierarchy);
         });
+    }
+
+    void SetDefaultText()
+    {
+        displayTitle.text = "";
+        displayTopicName.text = "Details";
+        displayDescription.text = "Choose a quest to see the details.\nA '?' button will appear for quests with a to-do list.";
     }
     private void OnEnable()
     {
@@ -104,6 +109,8 @@ public class JournalQuestPage : MonoBehaviour
         {
             Destroy(quest);
         }
+
+        SetDefaultText();
     }
 
     public void DisplayQuestDetails(Quest quest)
