@@ -37,6 +37,22 @@ public class AlchemyMenu : MonoBehaviour
 
     bool containersEnabled;
 
+    public void ResetTable()
+    {
+        List<AlchemyIngredient> allDraggables = new();
+
+        foreach (var inventoryItem in inventoryItems)
+        {
+            allDraggables.AddRange(inventoryItem.alchemyIngredients);
+        }
+
+        for (int i = allDraggables.Count - 1; i >= 0; i--)
+        {
+            allDraggables[i].ReturnToInventory(true);
+        }
+        pageinatedContainer.ClearPrefabs();
+        inventoryItems.Clear();
+    }
     public void Initialise(SynthesiserType synthesiserType)
     {
         if (!containersEnabled)
@@ -71,6 +87,43 @@ public class AlchemyMenu : MonoBehaviour
         InitialiseBySynthesiser(foundSynth);
     }
 
+    public void BuildInventory()
+    {
+        inventoryItems.Clear();
+        pageinatedContainer.ClearPrefabs();
+        List<string> availableIngredients = new();
+
+        foreach (var item in Items.all) // exclude seeds, misc, scripts and books, and any unique item
+        {
+            if (item.type == ItemType.Treasure
+            || item.type == ItemType.Plant
+            || item.type == ItemType.Trade
+            || item.type == ItemType.Catalyst
+            || item.type == ItemType.Material)
+            {
+                if (item.rarity != ItemRarity.Unique)
+                {
+                    int amount = Player.GetCount(item.objectID, name);
+
+                    if (amount > 0)
+                    {
+                        availableIngredients.Add(item.objectID);
+                    }
+                }
+            }
+        }
+
+        var spawnedItems = pageinatedContainer.Initialise(availableIngredients, true, true, false);
+
+        foreach (var obj in spawnedItems)
+        {
+            var itemIconScript = obj.GetComponent<ItemIconData>();
+            var inventoryScript = obj.AddComponent<AlchemyInventoryItem>();
+            inventoryScript.Initialise(itemIconScript, this);
+            inventoryItems.Add(inventoryScript);
+        }
+    }
+
     public void InitialiseBySynthesiser(SynthesiserData incomingSynthesiser)
     {
         if (!containersEnabled)
@@ -93,39 +146,7 @@ public class AlchemyMenu : MonoBehaviour
             }
 
             gameObject.SetActive(true);
-            //inventory.RenderInventory(ItemType.Catalyst, false);
-
-            List<string> availableIngredients = new();
-
-            foreach (var item in Items.all) // exclude seeds, misc, scripts and books, and any unique item
-            {
-                if (item.type == ItemType.Treasure
-                || item.type == ItemType.Plant
-                || item.type == ItemType.Trade
-                || item.type == ItemType.Catalyst
-                || item.type == ItemType.Material)
-                {
-                    if (item.rarity != ItemRarity.Unique)
-                    {
-                        int amount = Player.GetCount(item.objectID, name);
-
-                        if (amount > 0)
-                        {
-                            availableIngredients.Add(item.objectID);
-                        }
-                    }
-                }
-            }
-
-            var spawnedItems = pageinatedContainer.Initialise(availableIngredients, true, true, false);
-
-            foreach (var obj in spawnedItems)
-            {
-                var itemIconScript = obj.GetComponent<ItemIconData>();
-                var inventoryScript = obj.AddComponent<AlchemyInventoryItem>();
-                inventoryScript.Initialise(itemIconScript, this);
-                inventoryItems.Add(inventoryScript);
-            }
+            BuildInventory();
 
             TransientDataScript.SetGameState(GameState.AlchemyMenu, name, gameObject);
             progressBar.alchemyMenu = this;
@@ -191,6 +212,7 @@ public class AlchemyMenu : MonoBehaviour
         synthData.isSynthActive = false;
         synthData.progressSynth = 0;
         synthData.synthRecipe = null;
+        BuildInventory();
     }
 
     public void HandleCreate()
@@ -287,7 +309,7 @@ public class AlchemyMenu : MonoBehaviour
 
     private void OnDisable()
     {
-        pageinatedContainer.ClearPrefabs();
+        ResetTable();
 
         //foreach (var entry in alchemyObjects)
         //{
