@@ -117,10 +117,12 @@ public static class RequirementChecker
         {
             if (TransientDataScript.GetCurrentLocation() == requiredLocation)
             {
+                // Debug.Log("RChecker: Location returned true");
                 return true;
             }
             else
             {
+                // Debug.Log("RChecker: Location returned false");
                 return false;
             }
         }
