@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -49,18 +50,26 @@ public static class Player
     {
         Debug.Log("SetQuest called for id " + objectID);
 
-        IdIntPair foundObject = questProgression.FirstOrDefault(q => q.objectID == objectID);
-
-        if (foundObject != null)
+        if (objectID.Contains("-SetTIMER"))
         {
-            questProgression.FirstOrDefault(q => q.objectID == objectID).amount = amount;
+            AddTimer(objectID);
         }
         else
         {
-            questProgression.Add(new() { objectID = objectID, amount = amount });
-            Debug.Log("Quest Progression now contains " + questProgression.Count);
+            IdIntPair foundObject = questProgression.FirstOrDefault(q => q.objectID == objectID);
+
+            if (foundObject != null)
+            {
+                questProgression.FirstOrDefault(q => q.objectID == objectID).amount = amount;
+            }
+            else
+            {
+                questProgression.Add(new() { objectID = objectID, amount = amount });
+                Debug.Log("Quest Progression now contains " + questProgression.Count);
+            }
         }
     }
+
     public static void IncreaseQuest(string objectID, int amount = 0)
     {
         Debug.Log("IncreaseQuest called for id " + objectID);
@@ -156,6 +165,29 @@ public static class Player
             Debug.Log("No existing timer entry. Creating and adding new.");
             foundEntry = new() { objectID = objectID, amount = 0 };
             questProgression.Add(foundEntry);
+        }
+
+        TransientDataScript.transientData.StartCoroutine(CheckIfTimerAddedCorrectly(objectID));
+    }
+
+    static IEnumerator CheckIfTimerAddedCorrectly(string objectID)
+    {
+        yield return null;
+        yield return new WaitForSeconds(1);
+
+        var foundEntry = questProgression.FirstOrDefault(e => e.objectID == objectID);
+
+        if (foundEntry != null)
+        {
+            Debug.Log(objectID + " was successfully added to quest progression.");
+        }
+        else
+        {
+            Debug.Log(objectID + " did not exist during check. Creating and attempting to add again.");
+            foundEntry = new() { objectID = objectID, amount = 0 };
+            questProgression.Add(foundEntry);
+
+            TransientDataScript.transientData.StartCoroutine(CheckIfTimerAddedCorrectly(objectID));
         }
     }
 
@@ -288,7 +320,12 @@ public static class Player
     public static int GetCount(string searchID, string caller)
     {
         //Debug.Log(caller + " called Player.GetCount()");
-        if (GetEntry(searchID, "Player", out var entry))
+
+        if (searchID.Length == 10 && searchID.Contains("-Q"))
+        {
+            return GetQuestStage(searchID);
+        }
+        else if (GetEntry(searchID, "Player", out var entry))
         {
             return entry.amount;
         }
