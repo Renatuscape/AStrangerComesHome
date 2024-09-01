@@ -76,7 +76,7 @@ public class DialogueBackgroundManager : MonoBehaviour
         {
             Sprite background = SpriteFactory.GetBackgroundSprite(backgroundID);
 
-            if (background != null)
+            if (background != null && bgImage.sprite != background)
             {
                 fadeSpeed = normalFade;
                 SetBackground(background);
@@ -84,6 +84,7 @@ public class DialogueBackgroundManager : MonoBehaviour
             }
 
             // Do nothing if the background is null. Leave current background as is
+            // Also do nothing if backgorund is the same with no behaviour commands
         }
     }
 
