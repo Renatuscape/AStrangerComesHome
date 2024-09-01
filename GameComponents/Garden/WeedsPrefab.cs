@@ -13,13 +13,13 @@ public class WeedsPrefab : MonoBehaviour
 
             planterParent.planterData.weeds--;
             Destroy(gameObject);
-            int rollForBonus = Random.Range(0, 100);
+            int roll = Random.Range(0, 100);
 
-            if (rollForBonus > 85)
+            if (roll > 85)
             {
                 Player.Add(StaticTags.WeedItem, 2);
             }
-            else
+            else if (roll > 30)
             {
                 Player.Add(StaticTags.WeedItem);
             }
