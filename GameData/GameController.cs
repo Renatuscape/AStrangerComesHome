@@ -122,7 +122,7 @@ public class GameController : MonoBehaviour
 
     private void ToggleMap(bool enable)
     {
-        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.MapMenu)
+        if ((TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.MapMenu) && TransientDataScript.CameraView == CameraView.Normal)
         {
             TransientDataScript.SetGameState(enable ? GameState.MapMenu : GameState.Overworld, nameof(GameController), gameObject);
             gm.mapComponent.ToggleEnable(enable);
