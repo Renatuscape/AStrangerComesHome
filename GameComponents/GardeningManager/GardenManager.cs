@@ -2,30 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
-
-[Serializable]
-public class GardeningPlanterPackage
-{
-    public PlanterData planterData;
-    public SpriteRenderer plantSprite;
-    public SpriteRenderer worldPlanter;
-}
 
 //HANDLES GARDEN PLANTER SETUP
 public class GardenManager : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public GameObject confirmPlantingMenu;
-
-    public SpriteRenderer planterA;
-    public SpriteRenderer plantSpriteA;
-    public SpriteRenderer planterB;
-    public SpriteRenderer plantSpriteB;
-    public SpriteRenderer planterC;
-    public SpriteRenderer plantSpriteC;
-    public List<GardeningPlanterPackage> planterPackages = new();
 
     public int creation;
     public int gardening; // improves growth for all plants
@@ -44,19 +29,7 @@ public class GardenManager : MonoBehaviour
 
     private void Awake()
     {
-        CheckPlanters();
         confirmPlantingMenu.SetActive(false);
-        SyncSkills();
-    }
-
-    private void OnEnable()
-    {
-        SyncSkills();
-        UpdatePlanterSprite();
-        plantSpriteA.sprite = null;
-        plantSpriteB.sprite = null;
-        plantSpriteC.sprite = null;
-        GrowthTick();
     }
 
     void SyncSkills()
@@ -72,83 +45,23 @@ public class GardenManager : MonoBehaviour
 
     void CheckPlanters()
     {
-        // ENSURE PLANTER DATA EXISTS
-        unlockedPlanters = Player.GetCount(StaticTags.UnlockedPlanters, name);
-
-        if (unlockedPlanters >= 1)
-        {
-            SetUpPlanter("planterA", plantSpriteA, planterA);
-        }
-        if (unlockedPlanters >= 2)
-        {
-            SetUpPlanter("planterB", plantSpriteB, planterB);
-        }
-        if (unlockedPlanters >= 3)
-        {
-            SetUpPlanter("planterC", plantSpriteC, planterC);
-        }
-        if (unlockedPlanters < 1)
-        {
-            planterA.gameObject.SetActive(false);
-            planterB.gameObject.SetActive(false);
-            planterC.gameObject.SetActive(false);
-
-            if (dataManager.planters != null && dataManager.planters.Count > 0)
-            {
-                dataManager.planters.Clear();
-            }
-        }
-
+        UpdatePlanterData();
         plantersChecked = true;
     }
 
-    PlanterData CreatePlanter(string planterID)
-    {
-        PlanterData newPlanter = new PlanterData();
-        newPlanter.planterID = planterID;
-        newPlanter.planterSpriteID = planterSprites[0].name;
-        dataManager.planters.Add(newPlanter);
+    //PlanterData CreatePlanter(string planterID)
+    //{
+    //    PlanterData newPlanter = new PlanterData();
+    //    newPlanter.planterID = planterID;
+    //    newPlanter.planterSpriteID = planterSprites[0].name;
+    //    dataManager.planters.Add(newPlanter);
 
-        return newPlanter;
-    }
-
-    void SetUpPlanter(string planterDataID, SpriteRenderer plantSprite, SpriteRenderer worldPlanter)
-    {
-        if (dataManager.planters == null)
-        {
-            dataManager.planters = new();
-        }
-
-        var planterData = dataManager.planters.FirstOrDefault(p => p.planterID == planterDataID);
-
-        if (planterData == null)
-        {
-            planterData = CreatePlanter(planterDataID);
-        }
-
-        var package = planterPackages.FirstOrDefault(p => p.planterData.planterID == planterData.planterID);
-
-        if (package == null)
-        {
-            package = new();
-            package.planterData = planterData;
-            planterPackages.Add(package);
-        }
-
-        package.worldPlanter = worldPlanter;
-        package.plantSprite = plantSprite;
-        package.worldPlanter.gameObject.SetActive(true);
-    }
+    //    return newPlanter;
+    //}
 
     public void UpdatePlanterSprite()
     {
-        if (planterSprites.Count >= 1)
-        {
-            foreach (var planter in planterPackages)
-            {
-                planter.worldPlanter.sprite = planterSprites.FirstOrDefault(s => s.name.Contains(planter.planterData.planterSpriteID));
-            }
-        }
+        TransientDataScript.gameManager.coachPlanters.CheckUnlockedPlanters();
     }
 
     public void GlobalPushGrow()
@@ -156,14 +69,6 @@ public class GardenManager : MonoBehaviour
         if (TransientDataScript.IsTimeFlowing())
         {
             GrowthTick();
-
-            foreach (var planter in planterPackages)
-            {
-                if (!planter.planterData.isActive || planter.planterData.seed == null)
-                {
-                    planter.plantSprite = null;
-                }
-            }
         }
     }
 
@@ -178,47 +83,24 @@ public class GardenManager : MonoBehaviour
             plantersChecked = false;
         }
 
-        if (plantersChecked && unlockedPlanters > 0)
+        foreach (var planter in dataManager.planters)
         {
-            foreach(var planter in planterPackages)
+            if (planter.isActive && planter.progress < planter.GetMaxGrowth())
             {
-                if (planter.planterData.isActive && planter.planterData.seed != null)
-                {
-                    UpdatePlanterData(planter);
-                }
+                growth = CalculateGrowth(planter);
+
+                planter.progress += growth;
             }
         }
+
+        UpdatePlanterData();
     }
 
-    void UpdatePlanterData(GardeningPlanterPackage planter)
+    void UpdatePlanterData()
     {
-        var seed = planter.planterData.seed;
-        ref var progress = ref planter.planterData.progress;
-
-        var maxGrowth = 100 * (seed.health + seed.yield);
-
-        if (progress < maxGrowth)
+        if (TransientDataScript.IsTimeFlowing())
         {
-            growth = CalculateGrowth(planter.planterData);
-
-            progress += growth;
-
-            if (progress < maxGrowth * 0.3f)
-            {
-                planter.plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 1);
-            }
-            else if (progress > maxGrowth * 0.3f && progress < maxGrowth * 0.6f)
-            {
-                planter.plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 2);
-            }
-            else if (progress > maxGrowth * 0.6f)
-            {
-                planter.plantSprite.sprite = SpriteFactory.GetSprout(seed.objectID, 3);
-            }
-        }
-        else
-        {
-            planter.plantSprite.sprite = seed.GetOutput().sprite;
+            TransientDataScript.gameManager.coachPlanters.CheckUnlockedPlanters();
         }
     }
 
@@ -228,20 +110,14 @@ public class GardenManager : MonoBehaviour
         if (TransientDataScript.IsTimeFlowing() && TransientDataScript.CameraView == CameraView.Garden)
         {
             SyncSkills();
-
-            GardeningPlanterPackage package = planterPackages.FirstOrDefault(p => p.planterData.planterID == planterData.planterID);
-
-            if (package != null)
-            {
-                ProcessPlanterClick(package);
-            }
+            ProcessPlanterClick(planterData);
+            UpdatePlanterData();
         }
     }
 
-    void ProcessPlanterClick(GardeningPlanterPackage package)
+    void ProcessPlanterClick(PlanterData planterData)
     {
-        Item seed = package.planterData.seed;
-        PlanterData planterData = package.planterData;
+        Item seed = planterData.seed;
 
         //IF THE PLANTER IS EMPTY
         if (!planterData.isActive)
@@ -260,7 +136,7 @@ public class GardenManager : MonoBehaviour
                 deathLevel -= Mathf.Floor(goetia * 0.2f);
             }
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
-            if (planterData.progress < planterData.maxGrowth)
+            if (planterData.progress < planterData.GetMaxGrowth())
             {
                 PrintPlantInfo(planterData);
             }
@@ -270,7 +146,7 @@ public class GardenManager : MonoBehaviour
 
                 if (plantInInventory + seed.yield <= outputPlant.maxValue)
                 {
-                    Debug.Log($"{seed.name} is ready! {planterData.progress}/{planterData.maxGrowth}");
+                    Debug.Log($"{seed.name} is ready! {planterData.progress}/{planterData.GetMaxGrowth()}");
 
                     //PLANT YIELD
                     var yield = seed.yield;
@@ -279,18 +155,23 @@ public class GardenManager : MonoBehaviour
                     {
                         yield = 1;
 
-                        var failChance = 90 - (epistemology * 5) - (gardening * 3);
+                        var failChance = 85 - (epistemology * 4) - (gardening * 3);
 
-                        for (int i  = 0; i < yield; i++)
+                        for (int i = 0; i < yield; i++)
                         {
                             if (Random.Range(0, 100) > failChance)
                             {
                                 yield++;
                             }
+
+                            if (yield >= seed.yield)
+                            {
+                                break;
+                            }
                         }
                     }
 
-                    var toAdd = yield + (int)Mathf.Ceil(goetia * 0.2f);
+                    var toAdd = yield + Mathf.RoundToInt(goetia * 0.2f);
 
                     if (toAdd < 1)
                     {
@@ -319,15 +200,13 @@ public class GardenManager : MonoBehaviour
                     //CHECK IF PLANT IS DEAD
                     if (planterData.seedHealth > deathLevel)
                     {
-                        planterData.progress = planterData.maxGrowth / 3;
-                        UpdatePlanterData(package);
+                        planterData.progress = planterData.GetMaxGrowth() / 3;
                     }
 
                     else if (planterData.seedHealth <= deathLevel)
                     {
                         planterData.progress = 0;
                         planterData.isActive = false;
-                        package.plantSprite.sprite = null;
                     }
                 }
                 else
@@ -357,7 +236,7 @@ public class GardenManager : MonoBehaviour
 
     void PrintPlantInfo(PlanterData planterData)
     {
-        Debug.Log($"{planterData.seed.name} is growing. {planterData.progress}/{planterData.maxGrowth}");
+        Debug.Log($"{planterData.seed.name} is growing. {planterData.progress}/{planterData.GetMaxGrowth()}");
 
         growth = CalculateGrowth(planterData);
 
@@ -388,7 +267,7 @@ public class GardenManager : MonoBehaviour
 
         if (planterData.progress > 0)
         {
-            float growthPercentage = planterData.progress / planterData.maxGrowth * 100;
+            float growthPercentage = planterData.progress / planterData.GetMaxGrowth() * 100;
 
             if (growthPercentage >= 90)
             {
