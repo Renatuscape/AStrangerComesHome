@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 public static class WorldNodeTracker
 {
     public static List<CharacterNode> allExistingNodes = new();
-    static List<CharacterNode> spawnedCharacterNodes = new();
+    public static List<CharacterNode> spawnedCharacterNodes = new();
     public static void DisableNodeWithFade(string speakerID)
     {
+        UnityEngine.Debug.Log("WNT: Attempting to disable node with ID " + speakerID);
         foreach (var cNode in spawnedCharacterNodes)
         {
-            if (cNode.characterID == speakerID)
+            if (cNode.characterID.Contains(speakerID))
             {
                 cNode.DisableWithFade();
 
@@ -21,6 +23,7 @@ public static class WorldNodeTracker
 
     public static void UpdateNodesOnDayTick()
     {
+        UnityEngine.Debug.Log("WNT: Updating nodes on daily tick.");
         foreach (var cNode in allExistingNodes)
         {
             if (cNode.updateAtMidnight)
@@ -60,7 +63,7 @@ public static class WorldNodeTracker
                 }
                 else
                 {
-                    UnityEngine.Debug.Log("Parsing cooldown failed: " + data[1]);
+                    UnityEngine.Debug.Log("WNT: Parsing cooldown failed: " + data[1]);
                 }
             }
             else if (entry.objectID.Contains("_ECD#")) // Exact cooldown means no random roll
@@ -71,18 +74,18 @@ public static class WorldNodeTracker
                 {
                     if (result <= entry.amount)
                     {
-                        UnityEngine.Debug.Log("Removing loot with exact cooldown.");
+                        UnityEngine.Debug.Log("WNT: Removing loot with exact cooldown.");
                         Player.claimedLoot.Remove(entry);
                     }
                 }
                 else
                 {
-                    UnityEngine.Debug.Log("Parsing exact cooldown failed: " + data[1]);
+                    UnityEngine.Debug.Log("WNT: Parsing exact cooldown failed: " + data[1]);
                 }
             }
             else
             {
-                UnityEngine.Debug.Log("Could not find cooldown data for " + entry.objectID);
+                UnityEngine.Debug.Log("WNT: Could not find cooldown data for " + entry.objectID);
             }
         }
 
@@ -100,12 +103,14 @@ public static class WorldNodeTracker
 
     public static void ClearCharacterNodes()
     {
+        UnityEngine.Debug.Log("WNT: Clearing character nodes.");
         spawnedCharacterNodes.Clear();
         allExistingNodes.Clear();
     }
 
     public static bool AddCharacterNode(CharacterNode cNode)
     {
+        UnityEngine.Debug.Log("WNT: Adding character node " + cNode.generatedNodeID);
         var foundNode = spawnedCharacterNodes.FirstOrDefault(n => n.generatedNodeID == cNode.generatedNodeID);
         // PrintAllCharacterNodes();
 
@@ -154,7 +159,7 @@ public static class WorldNodeTracker
 
     public static void PrintAllCharacterNodes()
     {
-        UnityEngine.Debug.Log($"List of nodes had {spawnedCharacterNodes.Count} nodes.");
+        UnityEngine.Debug.Log($"WNT: List of nodes had {spawnedCharacterNodes.Count} nodes.");
         foreach (var node in spawnedCharacterNodes)
         {
             UnityEngine.Debug.Log($"Node {node.generatedNodeID}");
