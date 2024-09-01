@@ -51,6 +51,7 @@ public class TransientDataScript : MonoBehaviour
     private void Awake()
     {
         transientData = this;
+        spawnedCharacterNodes = WorldNodeTracker.spawnedCharacterNodes;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManagerScript>();
     }
 
