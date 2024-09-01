@@ -94,12 +94,7 @@ public class CollectionsPeople : MonoBehaviour
                 description = people[index].description;
             }
 
-            peoplePageDescription.text = description;
-
-            //peoplePageDescription.text += $"\nDebug:" +
-            //    $"\nAffecton {Player.GetCount(people[index].objectID, ToString())}" +
-            //    $"\nName returned {people[index].NamePlate()}" +
-            //    $"\nType {people[index].type}";
+            peoplePageDescription.text = DialogueTagParser.ParseText(description);
         }
 
     }
