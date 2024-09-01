@@ -132,7 +132,7 @@ public class BankAccountMenu : MonoBehaviour
         else
         {
             deposit = guilders;
-            PrintMessage("DISGUSTED", $"It would be wonderful if you had that many guilders to deposit, but you do not. Let us deposit all {guilders} guilders in your wallet.");
+            PrintMessage("DISGUSTED", $"It would be wonderful if you had that many guilders to deposit, but you do not. Let us deposit all {guilders} guilders from your wallet.");
         }
 
         Player.Remove(StaticTags.Guilder, deposit);
