@@ -289,6 +289,11 @@ public class CharacterCreator : MonoBehaviour
         }
     }
 
+    public void SetPlayerName()
+    {
+        dataManager.playerName = characterName.text;
+    }
+
     public void FinaliseButton()
     {
         if (!string.IsNullOrEmpty(characterName.text) && characterName.text.Length > 1)
