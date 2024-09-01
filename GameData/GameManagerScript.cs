@@ -190,6 +190,7 @@ public class GameManagerScript : MonoBehaviour
         questTracker.StartTracking();
         alchemyTracker.StartTracking();
         passengerManager.Initialise();
+        mapComponent.PlaceMarker(new Vector3(-100, -100));
     }
 
     public void LoadRoutine()
@@ -218,6 +219,12 @@ public class GameManagerScript : MonoBehaviour
         player.NameSetup();
         DialogueTagParser.UpdateTags(dataManager);
 
+        foreach (var planter in dataManager.planters)
+        {
+            planter.weeds = 0;
+        }
+
+        mapComponent.PlaceMarker(new Vector3(dataManager.mapPositionX, dataManager.mapPositionY));
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 
