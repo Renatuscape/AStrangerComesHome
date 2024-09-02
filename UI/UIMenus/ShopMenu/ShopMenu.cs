@@ -122,6 +122,7 @@ public class ShopMenu : MonoBehaviour
                 {
                     var uiData = itemPrefab.GetComponent<ItemIconData>();
                     uiData.printRarity = true;
+                    uiData.printSeedData = true;
 
                     var shopItemScript = itemPrefab.AddComponent<ShopItemPrefab>();
                     shopItemScript.Initialise(uiData.item, this, false);
@@ -143,6 +144,7 @@ public class ShopMenu : MonoBehaviour
         {
             var uiData = item.GetComponent<ItemIconData>();
             uiData.printRarity = true;
+            uiData.printSeedData = true;
             var shopItemScript = item.AddComponent<ShopItemPrefab>();
             shopItemScript.Initialise(uiData.item, this, true);
         }
@@ -201,7 +203,7 @@ public class ShopMenu : MonoBehaviour
 
     public void HighlightShopItem(Item item)
     {
-        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false) + "</size></b>\n" + item.rarity;
+        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false, true) + "</size></b>\n" + item.rarity;
         itemPrice.text = $"Buy price: " + activeShop.CalculateBuyFromShopPrice(item).ToString();
         itemValue.text = $"Value: {item.basePrice}";
         itemNumberInInventory.text = $"({Player.GetCount(item.objectID, name)} in inventory)";
@@ -211,7 +213,7 @@ public class ShopMenu : MonoBehaviour
     }
     public void HighlightPlayerItem(Item item)
     {
-        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false) + "</size></b>\n" + item.rarity;
+        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false, true) + "</size></b>\n" + item.rarity;
         itemPrice.text = "Sell price: " + activeShop.CalculateSellFromInventoryPrice(item).ToString();
         itemValue.text = $"Value: {item.basePrice}";
         itemNumberInInventory.text = "";
@@ -248,7 +250,7 @@ public class ShopMenu : MonoBehaviour
                 {
                     Player.Remove(item.objectID);
                     AudioManager.PlaySoundEffect("cloth3", +0.3f);
-                    LogAlert.QueueTextAlert($"Sold for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
+                    // LogAlert.QueueTextAlert($"Sold for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
                     //TransientDataScript.PushAlert($"Sold {item.name} for {itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
 
                     selectedItem.UpdateInventoryCount();
@@ -277,7 +279,7 @@ public class ShopMenu : MonoBehaviour
                     Player.Add(item.objectID);
                     AudioManager.PlaySoundEffect("cloth3", +0.3f);
                     //Debug.Log($"{activeShop} You purchased {item.name} for {itemCost}.");
-                    LogAlert.QueueTextAlert($"Paid { itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
+                    //LogAlert.QueueTextAlert($"Paid { itemCost} shillings.\nI now have {Player.GetCount(item.objectID, name)} total.");
                     //TransientDataScript.PushAlert($"Purchased {item.name}. I now have {Player.GetCount(item.objectID, name)} total.");
 
                     selectedItem.UpdateInventoryCount();
