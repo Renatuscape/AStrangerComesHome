@@ -42,6 +42,8 @@ public class GameController : MonoBehaviour
         keyBindings[KeyCode.Backspace] = () => ToggleEngineState(EngineState.Reverse);
         keyBindings[KeyCode.E] = () => ToggleEngineState(EngineState.FirstGear);
         keyBindings[KeyCode.R] = () => ToggleEngineState(EngineState.Reverse);
+        keyBindings[KeyCode.C] = () => ManaClick();
+        keyBindings[KeyCode.Z] = () => EngineClick();
         keyBindings[KeyCode.M] = () => ToggleMap(TransientDataScript.GameState != GameState.MapMenu);
         keyBindings[KeyCode.Tab] = ToggleJournalMenu;
         keyBindings[KeyCode.J] = ToggleJournalMenu;
@@ -107,6 +109,14 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private void EngineClick()
+    {
+        TransientDataScript.gameManager.coachEngine.BoostClick();
+    }
+    private void ManaClick()
+    {
+        TransientDataScript.gameManager.manaConverter.ManaClick();
+    }
     private void ToggleEngineState()
     {
         ToggleEngineState(TransientDataScript.transientData.engineState != EngineState.Off ? EngineState.Off : EngineState.FirstGear);
