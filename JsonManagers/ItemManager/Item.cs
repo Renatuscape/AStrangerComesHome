@@ -142,12 +142,17 @@ public static class Items
         return ItemType.Script;
     }
 
-    public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity, bool printType)
+    public static void PrintFloatEmbellishedItem(Item item, bool printPrice, bool printRarity, bool printType, bool printSeedData)
     {
-        TransientDataScript.PrintFloatText(GetEmbellishedItemText(item, printPrice, printRarity, printType));
+        TransientDataScript.PrintFloatText(GetEmbellishedItemText(item, printPrice, printRarity, printType, printSeedData));
     }
 
-    public static string GetEmbellishedItemText(Item item, bool printPrice, bool printRarity, bool printType)
+    public static string GetItemSeedData(Item item)
+    {
+        return !string.IsNullOrEmpty(item.outputID) ? $"\nHealth {item.health} | Max yield {item.yield}\nEstimated grow time: {100 * (item.health + item.yield)}" : "Yields nothing";
+    }
+
+    public static string GetEmbellishedItemText(Item item, bool printPrice, bool printRarity, bool printType, bool printSeedData)
     {
         string hexColour = "635550";
         if (item.rarity == ItemRarity.Common)
@@ -178,7 +183,8 @@ public static class Items
         string value = printPrice ? $"\nValue: {MoneyExchange.CalculateSellPrice(item)}" : "";
         string rarity = printRarity ? $"\nRarity: {item.rarity}" : "";
         string type = printType ? $"\nType: {item.type}" : "";
-        string content = $"<color=#{hexColour}>{item.name}{value}{rarity}{type}</color>";
+        string seedData = printSeedData ? $"{(item.type == ItemType.Seed ? GetItemSeedData(item) : "")}" : "";
+        string content = $"<color=#{hexColour}>{item.name}{value}{rarity}{type}</color>{seedData}";
 
         return content;
     }
