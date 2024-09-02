@@ -267,12 +267,12 @@ public static class MoneyExchange
             }
         }
 
-        var guildersAdded = Player.Add(StaticTags.Guilder, guilders, true);
-        var crownsAdded = Player.Add(StaticTags.Crown, crowns, true);
-        var shillingsAdded = Player.Add(StaticTags.Shilling, shillings, true);
-        totalAdded = (guildersAdded * 100) + (crownsAdded * 10) + shillingsAdded;
+        var guildersAdded = guilders > 0 ? Player.Add(StaticTags.Guilder, guilders, true) : 0; //, true);
+        var crownsAdded = crowns > 0 ? Player.Add(StaticTags.Crown, crowns, true) : 0; //, true);
+        var shillingsAdded = shillings > 0 ? Player.Add(StaticTags.Shilling, shillings, true) : 0; //, true);
 
-        Debug.Log($"The equivalent of {totalAdded} shillings was added total. Guilders: {guildersAdded}, crowns: {crownsAdded}, shillings: {shillingsAdded}");
+        totalAdded = (guildersAdded * 100) + (crownsAdded * 10) + shillingsAdded;
+        // Debug.Log($"The equivalent of {totalAdded} shillings was added total. Guilders: {guildersAdded}, crowns: {crownsAdded}, shillings: {shillingsAdded}");
         return true;
     }
     #endregion
