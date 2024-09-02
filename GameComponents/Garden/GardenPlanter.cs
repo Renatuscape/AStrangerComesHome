@@ -103,15 +103,6 @@ public class GardenPlanter : MonoBehaviour
                 if (planterData.weeds < maxWeeds)
                     WeedTick();
             }
-
-            //if (TransientDataScript.GameState == GameState.Overworld && TransientDataScript.CameraView == CameraView.Garden)
-            //{
-            //    boxCollider.enabled = true;
-            //}
-            //else
-            //{
-            //    boxCollider.enabled = false;
-            //}
         }
     }
 
@@ -153,7 +144,7 @@ public class GardenPlanter : MonoBehaviour
                     progress = planterData.GetMaxGrowth();
                 }
 
-                TransientDataScript.PrintFloatText($"{Items.GetEmbellishedItemText(planterData.seed, false, false, false)}\n{progress}/{planterData.GetMaxGrowth()}");
+                TransientDataScript.PrintFloatText($"{Items.GetEmbellishedItemText(planterData.seed, false, false, false, false)}\n{progress}/{planterData.GetMaxGrowth()}");
             }
             else
             {
