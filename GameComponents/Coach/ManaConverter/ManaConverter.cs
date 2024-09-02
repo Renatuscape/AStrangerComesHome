@@ -16,6 +16,7 @@ public class ManaConverter : MonoBehaviour
     public Upgrade MAU001;
     public Upgrade MAU002;
     public bool isReady = false;
+    bool clickDelay = false;
     public void Enable()
     {
         TransientDataScript.transientData.currentMana = 0;
@@ -86,8 +87,14 @@ public class ManaConverter : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
+        ManaClick();
+    }
+
+    public void ManaClick()
+    {
+        if (TransientDataScript.GameState == GameState.Overworld && !clickDelay)
         {
+            clickDelay =  true;
             float clickRecovery;
 
             if (MAU000.isBroken)
@@ -96,7 +103,7 @@ public class ManaConverter : MonoBehaviour
             }
             else
             {
-                clickRecovery = 1 + (manaClickPotency * 0.2f + (attMysticism * 0.15f));
+                clickRecovery = 1.5f + (manaClickPotency * 0.7f + (attMysticism * 0.5f));
             }
 
             if (TransientDataScript.transientData.currentMana + clickRecovery <= TransientDataScript.transientData.manapool)
@@ -107,6 +114,14 @@ public class ManaConverter : MonoBehaviour
             {
                 TransientDataScript.transientData.currentMana = TransientDataScript.transientData.manapool;
             }
+
+            StartCoroutine(ClickDelay());
         }
+    }
+
+    IEnumerator ClickDelay()
+    {
+        yield return new WaitForSeconds(0.2f);
+        clickDelay = false;
     }
 }
