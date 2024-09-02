@@ -54,9 +54,9 @@ public class JournalInventoryPage : MonoBehaviour
 
         if (selectedItem != null)
         {
-            itemName.text = Items.GetEmbellishedItemText(selectedItem, false, false, false);
+            itemName.text = Items.GetEmbellishedItemText(selectedItem, false, false, false, false);
             itemRarity.text = selectedItem.rarity.ToString();
-            itemDescription.text =  DialogueTagParser.ParseText(selectedItem.description);
+            itemDescription.text =  DialogueTagParser.ParseText(selectedItem.description) + (selectedItem.type == ItemType.Seed ? $"\n{Items.GetItemSeedData(selectedItem)}" : "");
         }
         else
         {
