@@ -11,9 +11,7 @@ public class LogAlert : MonoBehaviour
     public List<ItemIntPair> queuedItemAlerts;
     public List<string> queuedTextAlerts;
     public float queueTimer = 0;
-    public float durationTimer = 0;
-    float queueDelay = 1.0f;
-    float alertDuration = 5f;
+    float queueDelay = 1f;
     int maxActiveAlerts = 8;
 
     void Start()
@@ -28,46 +26,101 @@ public class LogAlert : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing() || TransientDataScript.GameState == GameState.CharacterCreation)
         {
-            queueTimer += Time.deltaTime;
+            if (queuedItemAlerts.Count > 0 || queuedTextAlerts.Count > 0)
+            {
+                queueTimer += Time.deltaTime;
+            }
+            else if (activeAlerts.Count == 0)
+            {
+                queueTimer = 0.5f;
+            }
 
-            if (queuedTextAlerts.Count > 0 && queueTimer >= queueDelay)
+            if (queueTimer >= queueDelay && queuedTextAlerts.Count > 0 )
             {
                 if (activeAlerts.Count < maxActiveAlerts)
                 {
-                    PrintTextAlert(queuedTextAlerts[0]);
+                    PrintTextAlert(ConsolidateAndRemoveTextAlerts(queuedTextAlerts[0]));
+
+                    if (activeAlerts.Count >= maxActiveAlerts)
+                    {
+                        DestroyAlertPrefab(activeAlerts[0]);
+                    }
                 }
+
                 queueTimer = 0;
             }
-            else if (queuedItemAlerts.Count > 0 && queueTimer >= queueDelay)
+            else if (queueTimer >= queueDelay && queuedItemAlerts.Count > 0)
             {
                 if (activeAlerts.Count < maxActiveAlerts)
                 {
-                    PrintItemAlert(queuedItemAlerts[0]);
+                    PrintItemAlert(ConsolidateAndRemoveItemAlerts(queuedItemAlerts[0]));
+
+                    if (activeAlerts.Count >= maxActiveAlerts)
+                    {
+                        DestroyAlertPrefab(activeAlerts[0]);
+                    }
                 }
+
                 queueTimer = 0;
-            }
-            else if (queuedItemAlerts.Count == 0)
-            {
-                queueTimer = queueDelay;
-            }
-
-            if (activeAlerts.Count > 0)
-            {
-                durationTimer += Time.deltaTime;
-
-                if (durationTimer >= alertDuration)
-                {
-                    DestroyAlertPrefab(activeAlerts[0]);
-                    durationTimer = 0;
-                }
             }
         }
     }
 
+    string ConsolidateAndRemoveTextAlerts (string reference)
+    {
+        string consolidatedAlert = reference;
+        List<string> alertsToRemove = new();
+        int repeats = 0;
+
+        foreach (var queuedItem in queuedTextAlerts)
+        {
+            if (queuedItem == reference)
+            {
+                repeats++;
+                alertsToRemove.Add(queuedItem);
+            }
+        }
+
+        Debug.Log("Consolidating alerts: " + repeats);
+
+        foreach (var alert in alertsToRemove)
+        {
+            queuedTextAlerts.Remove(alert);
+        }
+
+        if (repeats > 1)
+        {
+            consolidatedAlert += $" (x{repeats})";
+        }
+
+        return consolidatedAlert;
+    }
+
+    ItemIntPair ConsolidateAndRemoveItemAlerts(ItemIntPair reference)
+    {
+        ItemIntPair consolidatedAlert = new() { item = reference.item};
+        List<ItemIntPair> alertsToRemove = new();
+
+        foreach (var queuedItem in queuedItemAlerts)
+        {
+            if (queuedItem.item.objectID == reference.item.objectID)
+            {
+                alertsToRemove.Add(queuedItem);
+                consolidatedAlert.amount += queuedItem.amount;
+            }
+        }
+
+        Debug.Log("Consolidating alerts: " + queuedItemAlerts.Count);
+
+        foreach (var alert in alertsToRemove)
+        {
+            queuedItemAlerts.Remove(alert);
+        }
+
+        return consolidatedAlert;
+    }
     void PrintItemAlert(ItemIntPair entry)
     {
-        //Debug.Log("Attempting to print item to log");
-        queuedItemAlerts.RemoveAt(0);
         var alert = BoxFactory.CreateItemRow(entry.item, entry.amount);
         AddBehaviour(alert);
         alert.transform.SetParent(alertContainer.transform, false);
@@ -78,7 +131,7 @@ public class LogAlert : MonoBehaviour
     {
         logAlert.gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
         //Debug.Log("Attempting to print text to log");
-        queuedTextAlerts.RemoveAt(0);
+        //queuedTextAlerts.RemoveAt(0);
         var alert = BoxFactory.CreateButton(alertText, 330);
         AddBehaviour(alert);
         alert.transform.SetParent(alertContainer.transform, false);
@@ -94,6 +147,7 @@ public class LogAlert : MonoBehaviour
     void AddBehaviour(GameObject prefab)
     {
         prefab.GetComponent<Button>().onClick.AddListener(() => DestroyAlertPrefab(prefab));
+        prefab.AddComponent<LogAlertPrefab>();
 
         if (prefab.GetComponent<Anim_ScaleOnEnable>() == null)
         {
@@ -109,7 +163,10 @@ public class LogAlert : MonoBehaviour
 
     public void DestroyAlertPrefab(GameObject prefab)
     {
-        activeAlerts.Remove(prefab);
+        if (activeAlerts.Contains(prefab))
+        {
+            activeAlerts.Remove(prefab);
+        }
         Destroy(prefab);
     }
 
@@ -200,5 +257,21 @@ public class LogAlert : MonoBehaviour
         }
 
         activeAlerts = new();
+    }
+}
+
+public class LogAlertPrefab: MonoBehaviour
+{
+    float timer;
+    float alertDuration = 5;
+
+    void Update()
+    {
+        timer += Time.deltaTime;
+
+        if (timer >= alertDuration)
+        {
+            LogAlert.logAlert.DestroyAlertPrefab(gameObject);
+        }
     }
 }
