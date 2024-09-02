@@ -35,7 +35,9 @@ public class Engine : MonoBehaviour
     public Upgrade MEC001;
     public Upgrade MEC002;
     public Upgrade MEC003;
+    public int skillThaumaturgy;
     public bool isReady = false;
+    bool clickDelay = false;
 
     public void Enable()
     {
@@ -80,6 +82,7 @@ public class Engine : MonoBehaviour
             instance.skillEngineClickPotency = Player.GetCount("MEC002", "Engine"); //Crankshaft - click is more potent
 
             instance.skillEngineFuelEfficiency = Player.GetCount("MEC003", "Engine"); //Spark Tubes - engine uses less mana
+            instance.skillThaumaturgy = Player.GetCount(StaticTags.Thaumaturgy, instance.name);
         }
     }
 
@@ -107,21 +110,34 @@ public class Engine : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (TransientDataScript.GameState == GameState.Overworld || TransientDataScript.GameState == GameState.ShopMenu)
+        BoostClick();
+    }
+
+    public void BoostClick()
+    {
+        if (TransientDataScript.GameState == GameState.Overworld && !clickDelay)
         {
+            clickDelay = true;
             if (TransientDataScript.GameState == GameState.Overworld && transientData.engineBoost < transientData.maxEngineBoost)
             {
                 if (MEC002.isBroken)
                 {
-                    transientData.engineBoost = transientData.engineBoost + (2 + (0.5f * skillEngineClickPotency));
+                    transientData.engineBoost = transientData.engineBoost + (4 + (0.5f * skillEngineClickPotency) + (skillThaumaturgy * 0.5f));
                 }
                 else
                 {
-                    transientData.engineBoost = transientData.engineBoost + (5 + (0.5f * skillEngineClickPotency));
+                    transientData.engineBoost = transientData.engineBoost + (7 + (0.5f * skillEngineClickPotency) + (skillThaumaturgy * 0.5f));
                 }
             }
 
+            StartCoroutine(ClickDelay());
         }
+    }
+
+    IEnumerator ClickDelay()
+    {
+        yield return new WaitForSeconds(0.2f);
+        clickDelay = false;
     }
 
     void BoostDecrease()
@@ -136,24 +152,28 @@ public class Engine : MonoBehaviour
             {
                 transientData.engineBoost = 0;
             }
+
+            float boostDecrease;
+
+            if (transientData.engineState == EngineState.Off)
+            {
+                boostDecrease = (transientData.engineBoost * 0.01f) + 0.15f;
+            }
             else
             {
-                float boostDecrease = 0.3f - (0.02f * skillEngineBoostEfficiency);
+                boostDecrease = 0.3f - (0.02f * skillEngineBoostEfficiency);
 
                 if (MEC000.isBroken)
                 {
                     boostDecrease += 0.15f;
                 }
-
-                if (transientData.engineState == EngineState.Off)
-                {
-                    boostDecrease = boostDecrease * 2;
-                }
-
-                transientData.engineBoost = transientData.engineBoost - boostDecrease;
             }
+
+
+            transientData.engineBoost = transientData.engineBoost - boostDecrease;
         }
     }
+
     void SpeedManager()
     {
         if (TransientDataScript.IsTimeFlowing())
@@ -209,6 +229,7 @@ public class Engine : MonoBehaviour
     {
         if (TransientDataScript.IsTimeFlowing())
         {
+
             if (MEC003.isBroken)
             {
                 manaConsumptionDebuff = 2f + (10 - skillEngineFuelEfficiency) / 10;
