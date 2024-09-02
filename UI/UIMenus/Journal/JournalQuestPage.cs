@@ -181,7 +181,7 @@ public class JournalQuestPage : MonoBehaviour
 
                     if (obj.objectType == ObjectType.Item)
                     {
-                        taskDescription = $"{Items.GetEmbellishedItemText((Item)obj, false, false, false)} {inventoryCount}/{task.amount}";
+                        taskDescription = $"{Items.GetEmbellishedItemText((Item)obj, false, false, false, false)} {inventoryCount}/{task.amount}";
                     }
                     else if (obj.objectType != ObjectType.Quest || obj.objectType != ObjectType.Character)
                     {
