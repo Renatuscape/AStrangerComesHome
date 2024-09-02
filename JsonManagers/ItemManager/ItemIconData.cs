@@ -17,12 +17,13 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public bool printPrice;
     public bool printRarity;
     public bool printType;
+    public bool printSeedData;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!disableFloatText)
         {
-            Items.PrintFloatEmbellishedItem(item, printPrice, printRarity, printType);
+            Items.PrintFloatEmbellishedItem(item, printPrice, printRarity, printType, printSeedData);
         }
     }
 
@@ -105,12 +106,6 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (giftItem != null)
         {
             Destroy(giftItem);
-        }
-
-        var seedFloat = gameObject.GetComponent<GardenSeedFloat>();
-        if (seedFloat != null)
-        {
-            Destroy(seedFloat);
         }
 
         var shelvedBook = gameObject.GetComponent<ShelvedBook>();
