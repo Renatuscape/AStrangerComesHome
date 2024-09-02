@@ -129,12 +129,7 @@ public class GardenManager : MonoBehaviour
         else if (seed != null && planterData.isActive)
         {
             Item outputPlant = seed.GetOutput();
-            float deathLevel = 0;
 
-            if (seed.health > 1)
-            {
-                deathLevel -= Mathf.Floor(goetia * 0.2f);
-            }
             //IF THE PLANTER IS GROWING BUT NOT FINISHED
             if (planterData.progress < planterData.GetMaxGrowth())
             {
@@ -148,14 +143,15 @@ public class GardenManager : MonoBehaviour
                 {
                     Debug.Log($"{seed.name} is ready! {planterData.progress}/{planterData.GetMaxGrowth()}");
 
-                    //PLANT YIELD
+                    //PLANT YIELD - EPISTEMOLOGY
+                    //Plants with only one yield by default can only get a higher yield through the Goetia skill
                     var yield = seed.yield;
 
-                    if (seed.yield > 1) //Plants with only one yield by default can only get a higher yield through the Earthsoul skill
+                    if (seed.yield > 1)
                     {
                         yield = 1;
 
-                        var failChance = 85 - (epistemology * 4) - (gardening * 3);
+                        var failChance = 85 - (epistemology * 5) - (gardening * 2);
 
                         for (int i = 0; i < yield; i++)
                         {
@@ -171,26 +167,23 @@ public class GardenManager : MonoBehaviour
                         }
                     }
 
-                    var toAdd = yield + Mathf.RoundToInt(goetia * 0.2f);
+                    // BONUS YIELD FROM GOETIA
+                    var toAdd = yield + Mathf.CeilToInt(goetia * 0.2f);
 
                     if (toAdd < 1)
                     {
                         Debug.LogWarning("Yield was less than one for " + seed.name);
                         toAdd = 1;
                     }
+
                     Player.Add(outputPlant.objectID, toAdd); //Bonus 1 or 2 yield from Earthsoul mythical skill
 
-                    //PLANT HEALTH
+                    // BONUS HEALTH FROM GOETIA
                     var rollForHealth = Random.Range(0, 100);
-                    var survivalChance = 90 - (cultivation * 5) - (gardening * 2);
 
-                    if (rollForHealth < goetia * 2)
+                    if (rollForHealth < goetia * 1.5f)
                     {
-                        LogAlert.QueueTextAlert($"A mystical force has vitalised this {outputPlant.name}!");
-                    }
-                    else if (seed.health > 1 && rollForHealth < survivalChance)
-                    {
-                        planterData.seedHealth = 0;
+                        LogAlert.QueueTextAlert($"A mystical force has revitalised this {outputPlant.name}!");
                     }
                     else
                     {
@@ -198,12 +191,12 @@ public class GardenManager : MonoBehaviour
                     }
 
                     //CHECK IF PLANT IS DEAD
-                    if (planterData.seedHealth > deathLevel)
+                    if (planterData.seedHealth > 0)
                     {
                         planterData.progress = planterData.GetMaxGrowth() / 3;
                     }
 
-                    else if (planterData.seedHealth <= deathLevel)
+                    else if (planterData.seedHealth <= 0)
                     {
                         planterData.progress = 0;
                         planterData.isActive = false;
@@ -224,7 +217,7 @@ public class GardenManager : MonoBehaviour
 
     float CalculateGrowth(PlanterData planter)
     {
-        float amount = 1.5f + (gardening * 0.2f) + (creation * 0.2f) + (goetia * 0.2f);
+        float amount = 1f + (gardening * 0.3f) + (creation * 0.2f) + (cultivation * 0.5f);
 
         if (planter.weeds > 0)
         {
@@ -306,6 +299,6 @@ public class GardenManager : MonoBehaviour
             nameToPrint = nameToPrint.Replace(" Sapling", "");
         }
 
-        LogAlert.QueueTextAlert($"This {nameToPrint} {growthState} It is growing at {growthRate} pace.");
+        LogAlert.QueueTextAlert($"This {nameToPrint} {growthState} It is growing at {growthRate} pace and has {planterData.seedHealth} health.");
     }
 }
