@@ -139,11 +139,13 @@ public class PlantingManager : MonoBehaviour
             }
         }
 
-        var seeds = seedContainer.Initialise(seedStock, true, false, true);
-        foreach (var seed in seeds)
+        var seeds = seedContainer.Initialise(seedStock, true, true, true);
+
+        foreach (var item in seeds)
         {
-            var script = seed.AddComponent<GardenSeedFloat>();
-            script.itemData = seed.GetComponent<ItemIconData>();
+            var uiData = item.GetComponent<ItemIconData>();
+            uiData.printRarity = true;
+            uiData.printSeedData = true;
         }
     }
 
@@ -316,7 +318,10 @@ public class PlantingManager : MonoBehaviour
             Player.Remove(seedContainer.selectedItem.objectID);
 
             planterData.seed = Items.FindByID(seedContainer.selectedItem.objectID);
-            planterData.seedHealth = seedContainer.selectedItem.health;
+
+            Debug.Log($"Saving seed {planterData.seed.objectID}. Health registered as " + planterData.seed.health);
+
+            planterData.seedHealth = planterData.seed.health;
             planterData.isActive = true;
 
             bool isAnyPlanterFree = false;
