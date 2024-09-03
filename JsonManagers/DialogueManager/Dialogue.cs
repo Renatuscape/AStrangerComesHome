@@ -35,6 +35,7 @@ public class Dialogue
     //public int minimumDaysPassed;
 
     public bool disableAutoNode = false;
+    public bool forceAutoNode = false; // Will forcibly display node on failed checks. Location MUST STILL BE ACCURATE
     public List<Choice> choices = new(); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
     public List<IdIntPair> taskTracking = new(); // For quests with multiple, non-chronological requirements that should be tracked in the journal. More responsive and situational than hints.
     public bool autoProgressStage = false; //automatically go to next stage when step is completed
