@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ManaConverter : MonoBehaviour
 {
+    public SpawnParticlesTrigger spawnParticlesTrigger;
     public static ManaConverter instance;
 
     public int manapool;
@@ -95,6 +96,8 @@ public class ManaConverter : MonoBehaviour
         if (TransientDataScript.GameState == GameState.Overworld && !clickDelay)
         {
             clickDelay =  true;
+            spawnParticlesTrigger.Spawn();
+
             float clickRecovery;
 
             if (MAU000.isBroken)

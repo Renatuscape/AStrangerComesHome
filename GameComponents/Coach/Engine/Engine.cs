@@ -5,6 +5,7 @@ using UnityEngine;
 public class Engine : MonoBehaviour
 {
     public TransientDataScript transientData;
+    public SpawnParticlesTrigger spawnParticlesTrigger;
     static Engine instance;
 
     public float skillEngineBoostEfficiency;
@@ -118,6 +119,8 @@ public class Engine : MonoBehaviour
         if (TransientDataScript.GameState == GameState.Overworld && !clickDelay)
         {
             clickDelay = true;
+            spawnParticlesTrigger.Spawn();
+
             if (TransientDataScript.GameState == GameState.Overworld && transientData.engineBoost < transientData.maxEngineBoost)
             {
                 if (MEC002.isBroken)
