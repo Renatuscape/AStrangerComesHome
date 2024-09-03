@@ -85,7 +85,7 @@ public class CharacterNode : MonoBehaviour
 
     public void RefreshNode()
     {
-        if (character == null)
+        if (character == null || string.IsNullOrEmpty(character.objectID))
         {
             AttemptSpawn();
         }
@@ -145,21 +145,26 @@ public class CharacterNode : MonoBehaviour
 
     bool AttemptChecks()
     {
+        Debug.Log("CNode: Attempting checks for " + generatedNodeID);
         bool passedCustomRequirements;
         bool passedDialogueRequirements;
         bool isAlreadySpawned = character != null && WorldNodeTracker.CheckIfCharacterExistsInDifferentNode(this);
 
         if (customRequirements == null)
         {
+            Debug.Log("CNode: Found no custom requirements.");
             passedCustomRequirements = true;
         }
         else
         {
+            Debug.Log("CNode: Checking custom requirements.");
             passedCustomRequirements = RequirementChecker.CheckPackage(customRequirements);
         }
 
         if (string.IsNullOrEmpty(activeDialogueID))
         {
+            Debug.Log("CNode: No active dialogue ID given. Checking for any relevant dialogue.");
+
             if (allowOverride)
             {
                 passedDialogueRequirements = HasAnyRelevantDialogue();
@@ -172,11 +177,24 @@ public class CharacterNode : MonoBehaviour
         else
         {
             Dialogue dialogue = Dialogues.FindByID(activeDialogueID);
-            passedDialogueRequirements = RequirementChecker.CheckDialogueRequirements(dialogue);
+            Debug.Log("CNode: Force autonode was " + dialogue.forceAutoNode);
+            Debug.Log("CNode: Location was " + RequirementChecker.CheckAgainstCurrentLocation(dialogue.checks.locationID));
+
+            if (dialogue.forceAutoNode && RequirementChecker.CheckAgainstCurrentLocation(dialogue.checks.locationID))
+            {
+                Debug.Log("CNode: Dialogue requirements returned true due to forceAutoNode.");
+                passedDialogueRequirements = true;
+            }
+            else
+            {
+                Debug.Log("CNode: Running dialogue checks.");
+                passedDialogueRequirements = RequirementChecker.CheckDialogueRequirements(dialogue);
+            }
+
             Debug.Log("CNode: PassedDialogueRequirements = " + passedDialogueRequirements);
         }
 
-        //Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}. Is already spawned: {isAlreadySpawned}");
+        Debug.Log($"Attempted to spawn {characterID}. Dialogue requirements: {passedDialogueRequirements}. Custom requirements passed: {passedCustomRequirements}. Is already spawned: {isAlreadySpawned}");
         return passedCustomRequirements && passedDialogueRequirements && !isAlreadySpawned;
     }
 
@@ -239,7 +257,7 @@ public class CharacterNode : MonoBehaviour
                     !string.IsNullOrEmpty(dialogue.checks.locationID) &&
                     dialogue.stageType == StageType.Dialogue)
                 {
-                    if (RequirementChecker.CheckDialogueRequirements(dialogue))
+                    if (dialogue.forceAutoNode || RequirementChecker.CheckDialogueRequirements(dialogue))
                     {
                         string speaker;
 
@@ -362,14 +380,24 @@ public class CharacterNode : MonoBehaviour
         if (character.objectID != null)
         {
             var dialogues = Dialogues.GetDialoguesBySpeaker(character.objectID, true);
-
+            Debug.Log("CNode: Checking for any relevant dialogue. Dialogues " + (dialogues == null ? "was null" : $"has {dialogues.Count} items."));
             foreach ( var dialogue in dialogues)
             {
-                var passed = dialogue.CheckRequirements();
+                Debug.Log($"CNode: Checking dialogue {dialogue.objectID}. ForceAutoNode is " + dialogue.forceAutoNode);
 
-                if (passed)
+                if (dialogue.forceAutoNode && RequirementChecker.CheckAgainstCurrentLocation(dialogue.checks.locationID))
                 {
+                    Debug.Log("CNode: At least one relevant dialogue forced auto-node. Returning true.");
                     return true;
+                }
+                else
+                {
+                    bool passed = dialogue.CheckRequirements();
+                    
+                    if (passed)
+                    {
+                        return true;
+                    }
                 }
             }
         }
