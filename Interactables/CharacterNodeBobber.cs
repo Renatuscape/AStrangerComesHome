@@ -42,7 +42,7 @@ public class CharacterNodeBobber : MonoBehaviour
     public void EnableBobber(Character incomingCharacter, SpriteRenderer rendIn = null)
     {
         isCheckedSinceStateChange = true;
-        Debug.Log("CBob: Attempting to set up bobber: " + incomingCharacter.objectID);
+        // Debug.Log("CBob: Attempting to set up bobber: " + incomingCharacter.objectID);
         character = incomingCharacter;
 
         if (!ready)
@@ -59,7 +59,7 @@ public class CharacterNodeBobber : MonoBehaviour
 
         if (ready)
         {
-            Debug.Log("CBob: Bobber was ready. Running checks on : " + character.objectID);
+            // Debug.Log("CBob: Bobber was ready. Running checks on : " + character.objectID);
             if (!alwaysHideBobber && character != null)
             {
                 if (alwaysShowBobber)
@@ -68,18 +68,18 @@ public class CharacterNodeBobber : MonoBehaviour
                 }
                 else if (CharacterHasActiveShops() || CharacterHasActiveDialogue())
                 {
-                    Debug.Log("Cbob: " + character.objectID + " bobber passed shop or dialogue test.");
+                    // Debug.Log("Cbob: " + character.objectID + " bobber passed shop or dialogue test.");
                     ShowBobber();
                 }
                 else
                 {
-                    Debug.Log("Cbob: " + character.objectID + " bobber failed shop or dialogue test.");
+                    // Debug.Log("Cbob: " + character.objectID + " bobber failed shop or dialogue test.");
                     HideBobber();
                 }
             }
             else
             {
-                Debug.Log("Cbob: Character was null or .");
+                // Debug.Log("Cbob: Character was null or .");
                 HideBobber();
             }
         }
@@ -108,12 +108,12 @@ public class CharacterNodeBobber : MonoBehaviour
         {
             if (dialogue.questStage < 100 && dialogue.stageType == StageType.Dialogue && dialogue.CheckRequirements())
             {
-                Debug.Log("CBob: " + dialogue.objectID + " returned true when setting up bobber for " + character.objectID);
+                // Debug.Log("CBob: " + dialogue.objectID + " returned true when setting up bobber for " + character.objectID);
                 return true;
             }
         }
 
-        Debug.Log("CBob: Dialogue returned false when setting up bobber for " + character.objectID);
+        // Debug.Log("CBob: Dialogue returned false when setting up bobber for " + character.objectID);
         return false;
     }
 
@@ -123,13 +123,13 @@ public class CharacterNodeBobber : MonoBehaviour
         {
             if ((character.type == CharacterType.Generic || Player.GetCount(character.objectID, name) > 0) && shop.CheckRequirements())
             {
-                Debug.Log("CBob: " + shop.objectID + " returned true when setting up bobber for " + character.objectID);
+                // Debug.Log("CBob: " + shop.objectID + " returned true when setting up bobber for " + character.objectID);
                 rend.sprite = iconShop;
                 return true;
             }
         }
 
-        Debug.Log("CBob: Shop returned false when setting up bobber for" + character.objectID);
+        // Debug.Log("CBob: Shop returned false when setting up bobber for" + character.objectID);
         return false;
     }
 }
