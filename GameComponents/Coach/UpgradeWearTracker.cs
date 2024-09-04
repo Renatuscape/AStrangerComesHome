@@ -7,6 +7,7 @@ public static class UpgradeWearTracker
 {
     public static int upgradeHealthPerLevel = 500;
     public static float upgradeWearMultiplier = 0.8f;
+    public static float wearThreshold = 0.85f;
 
     public static float CalculateMaxWear(int level)
     {
@@ -73,7 +74,7 @@ public static class UpgradeWearTracker
                 randomUpgrade.amount += wearLevel;
             }
 
-            if (randomUpgrade.amount >= maxWear * 0.85f)
+            if (randomUpgrade.amount >= maxWear * wearThreshold)
             {
                 var upgrade = Upgrades.FindByID(randomUpgrade.objectID);
 
@@ -93,6 +94,25 @@ public static class UpgradeWearTracker
                     LogAlert.QueueTextAlert($"{upgrade.name} has degraded by a level.");
                     AudioManager.PlaySoundEffect("drumDoubleTap");
                 }
+            }
+        }
+    }
+
+    public static void CheckForBrokenCondition()
+    {
+
+        foreach (var entry in Player.upgradeWear)
+        {
+            float maxWear = CalculateMaxWear(Player.GetCount(entry.objectID, "name"));
+            var upgrade = Upgrades.FindByID(entry.objectID);
+
+            if (entry.amount >= maxWear * wearThreshold)
+            {
+                upgrade.isBroken = true;
+            }
+            else
+            {
+                upgrade.isBroken = false;
             }
         }
     }
