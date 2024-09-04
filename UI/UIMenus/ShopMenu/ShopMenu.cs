@@ -203,7 +203,7 @@ public class ShopMenu : MonoBehaviour
 
     public void HighlightShopItem(Item item)
     {
-        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false, true) + "</size></b>\n" + item.rarity;
+        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false, false) + "</size></b>\n" + item.rarity;
         itemPrice.text = $"Buy price: " + activeShop.CalculateBuyFromShopPrice(item).ToString();
         itemValue.text = $"Value: {item.basePrice}";
         itemNumberInInventory.text = $"({Player.GetCount(item.objectID, name)} in inventory)";
@@ -213,7 +213,7 @@ public class ShopMenu : MonoBehaviour
     }
     public void HighlightPlayerItem(Item item)
     {
-        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false, true) + "</size></b>\n" + item.rarity;
+        itemNamePlate.text = "<b><size=32>" + Items.GetEmbellishedItemText(item, false, false, false, false) + "</size></b>\n" + item.rarity;
         itemPrice.text = "Sell price: " + activeShop.CalculateSellFromInventoryPrice(item).ToString();
         itemValue.text = $"Value: {item.basePrice}";
         itemNumberInInventory.text = "";
