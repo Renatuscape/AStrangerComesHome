@@ -76,6 +76,12 @@ public class ItemIconData : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void Return(string caller)
     {
+        printPrice = false;
+        printRarity = false;
+        printSeedData = false;
+        printType = false;
+        disableFloatText = false;
+
         //Debug.Log("Attempting to return ItemIconData with gameobject name " + gameObject.name);
 
         var inventoryHelper = gameObject.GetComponent<PageinatedInventoryHelper>();
