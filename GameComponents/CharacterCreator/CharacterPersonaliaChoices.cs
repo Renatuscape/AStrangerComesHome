@@ -9,7 +9,7 @@ public class CharacterPersonaliaChoices : MonoBehaviour
     {
         { 0, new(){"He", "Him", "His" } },
         { 1, new(){"She", "Her", "Her" } },
-        { 2, new(){"They", "Them", "Theirs" } },
+        { 2, new(){"They", "Them", "Their" } },
         { 3, new(){"It", "It", "Its" } },
     };
     public DataManagerScript dataManager;
