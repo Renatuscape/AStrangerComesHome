@@ -190,6 +190,7 @@ public class GameManagerScript : MonoBehaviour
         questTracker.StartTracking();
         alchemyTracker.StartTracking();
         passengerManager.Initialise();
+        UpgradeWearTracker.CheckForBrokenCondition();
         mapComponent.PlaceMarker(new Vector3(-100, -100));
     }
 
@@ -223,6 +224,8 @@ public class GameManagerScript : MonoBehaviour
         {
             planter.weeds = 0;
         }
+
+        UpgradeWearTracker.CheckForBrokenCondition();
 
         mapComponent.PlaceMarker(new Vector3(dataManager.mapPositionX, dataManager.mapPositionY));
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
