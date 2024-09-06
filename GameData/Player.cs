@@ -207,6 +207,29 @@ public static class Player
             foundEntry = new() { objectID = objectID, amount = amount };
             inventoryList.Add(foundEntry);
         }
+
+        if (objectID.Contains("-MATCH"))
+        {
+            if (amount > 0)
+            {
+                LogAlert.QueueTextAlert("Two lights draw closer.");
+            }
+            else if (amount < 0)
+            {
+                LogAlert.QueueTextAlert("Two lights drift apart.");
+            }
+        }
+        else
+        {
+            if (amount > 0)
+            {
+                LogAlert.QueueTextAlert("A red thread spins.");
+            }
+            else if (amount < 0)
+            {
+                LogAlert.QueueTextAlert("A red thread frays.");
+            }
+        }
     }
 
     static int FindObjectAndAddUpToMax(string objectID, int amount, bool doNotLog = false)
