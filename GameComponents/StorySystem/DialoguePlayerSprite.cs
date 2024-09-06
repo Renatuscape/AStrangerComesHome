@@ -77,6 +77,11 @@ public class DialoguePlayerSprite : MonoBehaviour
         //Image lipTint = images.FirstOrDefault(i => i.name.Contains("LipTint"));
         //Image browColour = images.FirstOrDefault(i => i.name.Contains("BrowColour"));
 
+        if (!gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(true);
+            Debug.Log("Dialogue player sprite was not active. Attempting to activate.");
+        }
         if (imgExpression != null)
         {
             imgExpression.sprite = package.expression;
