@@ -10,9 +10,9 @@ public class DialogueBackgroundManager : MonoBehaviour
     public Image bgImage;
     public Image bgSolid;
 
-    float fastFade = 0.01f;
-    float normalFade = 0.02f;
-    float slowFade = 0.03f;
+    float fastFade = 0.07f;
+    float normalFade = 0.03f;
+    float slowFade = 0.005f;
 
     float fadeSpeed;
 
@@ -27,21 +27,23 @@ public class DialogueBackgroundManager : MonoBehaviour
         behaviour["SolidWhite"] = () => SolidWhite();
         behaviour["FadeSolidIn"] = () => StartCoroutine(FadeIn(bgSolid));
         behaviour["FadeSolidOut"] = () => StartCoroutine(FadeOut(bgSolid));
-        behaviour["FadeImageOut"] = () => StartCoroutine(FadeOut(bgImage));
         behaviour["FadeImageIn"] = () => StartCoroutine(FadeIn(bgImage));
+        behaviour["FadeImageOut"] = () => StartCoroutine(FadeOut(bgImage));
         behaviour["OnWhite"] = () => { bgSolid.color = Color.white; };
     }
 
     void SolidBlack()
     {
+        Debug.Log("BGM: Solid back was called. Image set to transparent.");
         bgSolid.color = new Color(0, 0, 0, 1);
-        bgImage.color = new Color(0, 0, 0, 0);
+        bgImage.color = new Color(1, 1, 1, 0);
     }
 
     void SolidWhite()
     {
+        Debug.Log("BGM: Solid white was called. Image set to transparent.");
         bgSolid.color = new Color(1, 1, 1, 1);
-        bgImage.color = new Color(0, 0, 0, 0);
+        bgImage.color = new Color(1, 1, 1, 0);
     }
 
     private void OnDisable()
@@ -51,6 +53,7 @@ public class DialogueBackgroundManager : MonoBehaviour
 
     public void ClearBackground()
     {
+        Debug.Log("BGM: Clear background was called. Image and solid set to transparent.");
         StopAllCoroutines();
         bgSolid.color = new Color(0, 0, 0, 0);
         bgImage.color = new Color(1, 1, 1, 0);
@@ -146,25 +149,34 @@ public class DialogueBackgroundManager : MonoBehaviour
 
     IEnumerator FadeIn(Image target)
     {
+        Debug.Log("BGM: Attempting to fade in " + target);
+        Debug.Log("BGM: Fade speed is " + fadeSpeed);
+
         float alpha = 0;
 
         while (alpha < 1)
         {
             target.color = new Color(target.color.r, target.color.g, target.color.b, alpha);
-            alpha += 0.03f;
+            alpha += fadeSpeed;
             yield return new WaitForSeconds(fadeSpeed);
         }
+
+        Debug.Log("BGM: Completed fade in of " + target);
     }
 
     IEnumerator FadeOut(Image target)
     {
+        Debug.Log("BGM: Attempting to fade out " + target);
+        Debug.Log("BGM: Fade speed is " + fadeSpeed);
         float alpha = target.color.a;
 
         while (alpha > 0)
         {
             target.color = new Color(target.color.r, target.color.g, target.color.b, alpha);
-            alpha += 0.03f;
-            yield return new WaitForSeconds(fadeSpeed);
+            alpha -= fadeSpeed;
+            yield return new WaitForSeconds(0.05f);
         }
+
+        Debug.Log("BGM: Completed fade out of " + target);
     }
 }
