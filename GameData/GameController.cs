@@ -19,7 +19,6 @@ public class GameController : MonoBehaviour
         var gameState = TransientDataScript.GameState;
 
         if (gameState == GameState.Loading ||
-            gameState == GameState.StartMenu ||
             gameState == GameState.MainMenu ||
             gameState == GameState.ShopMenu ||
             gameState == GameState.CharacterCreation ||
@@ -93,11 +92,12 @@ public class GameController : MonoBehaviour
 
     private void HandleEscapeKey()
     {
+        Debug.Log("Escape key was pressed");
+
         switch (TransientDataScript.GameState)
         {
             case GameState.Overworld:
                 ToggleCoachCamera(false);
-                Debug.Log("Escape key was pressed");
                 TransientDataScript.gameManager.menuSystem.startMenu.SetActive(true);
                 break;
             case GameState.MapMenu:
@@ -106,20 +106,33 @@ public class GameController : MonoBehaviour
             case GameState.JournalMenu:
                 TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
                 break;
+            case GameState.StartMenu:
+                TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
+                break;
         }
     }
 
     private void EngineClick()
     {
-        TransientDataScript.gameManager.coachEngine.BoostClick();
+        if (TransientDataScript.GameState == GameState.Overworld)
+        {
+            TransientDataScript.gameManager.coachEngine.BoostClick();
+        }
     }
     private void ManaClick()
     {
-        TransientDataScript.gameManager.manaConverter.ManaClick();
+        if (TransientDataScript.GameState == GameState.Overworld)
+        {
+            TransientDataScript.gameManager.manaConverter.ManaClick();
+        }
     }
+
     private void ToggleEngineState()
     {
-        ToggleEngineState(TransientDataScript.transientData.engineState != EngineState.Off ? EngineState.Off : EngineState.FirstGear);
+        if (TransientDataScript.GameState == GameState.Overworld)
+        {
+            ToggleEngineState(TransientDataScript.transientData.engineState != EngineState.Off ? EngineState.Off : EngineState.FirstGear);
+        }
     }
 
     private void ToggleEngineState(EngineState targetState)
