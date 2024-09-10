@@ -44,7 +44,7 @@ public class GardenCoachPlanters : MonoBehaviour
 
     public void CheckUnlockedPlanters()
     {
-        int unlockedCoachPlanters = Player.GetCount(StaticTags.UnlockedPlanters, name);
+        int unlockedCoachPlanters = Player.GetCount(StaticTags.CoachPlanters, name);
 
         if (unlockedCoachPlanters < 3)
         {

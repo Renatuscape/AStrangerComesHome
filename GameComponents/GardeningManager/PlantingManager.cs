@@ -35,7 +35,7 @@ public class PlantingManager : MonoBehaviour
 
     private void OnEnable()
     {
-        unlockedPlanters = Player.GetCount(StaticTags.UnlockedPlanters, name);
+        unlockedPlanters = Player.GetCount(StaticTags.CoachPlanters, name);
 
         planterFrame.SetActive(false);
         readyToPlant = false;
@@ -78,7 +78,7 @@ public class PlantingManager : MonoBehaviour
 
     private void UpdatePlanterIcons()
     {
-        unlockedPlanters = Player.GetCount(StaticTags.UnlockedPlanters, name);
+        unlockedPlanters = Player.GetCount(StaticTags.CoachPlanters, name);
 
         if (unlockedPlanters > 0)
         {
@@ -161,7 +161,7 @@ public class PlantingManager : MonoBehaviour
     private void DynamicPlanterSelection()
     {
         Debug.Log("Attempting to dynamically select next planter");
-        int plantersUnlocked = Player.GetCount(StaticTags.UnlockedPlanters, name);
+        int plantersUnlocked = Player.GetCount(StaticTags.CoachPlanters, name);
         int occupiedPlanters = 0;
         foreach (var planter in dataManager.planters)
         {
