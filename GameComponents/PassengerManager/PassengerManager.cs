@@ -109,11 +109,12 @@ public class PassengerManager : MonoBehaviour
 
     public static void GlobalPushPassengerSpawn()
     {
-        if (instance != null)
+        if (instance != null && !TransientDataScript.transientData.currentRegion.disablePassengers)
         {
             instance.PassengerTick();
         }
     }
+
     void PassengerTick()
     {
         if (isReady && TransientDataScript.IsTimeFlowing())
