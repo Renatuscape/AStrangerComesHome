@@ -38,7 +38,7 @@ public static class StaticTags
     public static string TotalFare { get; } = "SCR001";
     public static string AccountBalance { get; } = "SCR002";
     public static string CurrentDebt { get; } = "SCR003";
-    public static string UnlockedPlanters { get; } = "SCR004";
+    public static string CoachPlanters { get; } = "SCR004";
     public static string CoachSynths { get; } = "SCR010";
     public static string GuildLicense { get; } = "SCR012";
     public static string PlayerDeath { get; } = "SCR017";
