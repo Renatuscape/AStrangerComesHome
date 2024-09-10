@@ -8,6 +8,7 @@ public class Region
 {
     public string objectID; //REGION#
     public string name;
+    public bool disablePassengers;
     public int columns;
     public int rows;
     public List<AutoMapData> mapLayout = new();
