@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using UnityEngine.UI;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO.Ports;
+
+// This class loads book TEXT objects and pairs it with ITEM objects of the book type where ID matches. For book TEXT of the letter type, it always generates a new letter ITEM and adds to the item main list.
+// Must always be initialised AFTER the ItemManager
 public class BookManager : MonoBehaviour
 {
     public List<Book> debugItemList = Books.all;
