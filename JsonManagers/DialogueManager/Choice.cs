@@ -17,6 +17,9 @@ public class Choice
     public string successText;
     public string failureSpeaker;
     public string failureText;
+    public Gate gate;
+    public bool gateOnFailOnly = false;
+    public bool gateOnFailAndSuccess = false;
 
     public RequirementPackage checks;
     //public List<IdIntPair> requirements;
