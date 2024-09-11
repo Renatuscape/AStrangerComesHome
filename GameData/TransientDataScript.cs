@@ -126,7 +126,7 @@ public class TransientDataScript : MonoBehaviour
     public static void TravelByGate(Gate gate)
     {
         Debug.Log("Travel by Gate called at TransientDataScript");
-        GameObject.Find("GameManager").GetComponent<GameManagerScript>().mapComponent.TravelByGate(gate);
+        gameManager.mapComponent.TravelByGate(gate);
         AudioManager.FadeToStop();
     }
 
