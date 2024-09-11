@@ -54,24 +54,28 @@ public static class DialogueSetup
     }
     static void ParseDialogueSteps(Dialogue dialogue)
     {
-        //Debug.Log($"parsing ${dialogue.objectID}" +
-        //    $"\n Content count: {dialogue.content.Count}");
+        dialogue.dialogueEvents = CreateEventsFromStringList(dialogue.content);
+    }
 
-        for (int i = 0; i < dialogue.content.Count; i = i + 2)
+    public static List<DialogueEvent> CreateEventsFromStringList (List<string> content)
+    {
+        List<DialogueEvent> events = new();
+
+        for (int i = 0; i < content.Count; i = i + 2)
         {
             // PARSE SPEAKER TAG
-            var speakerLine = dialogue.content[i];
+            var speakerLine = content[i];
 
             if (!speakerLine.Contains("-")) // Treat as old step
             {
-                string speakerTag = dialogue.content[i];
+                string speakerTag = content[i];
                 Character foundSpeaker = Characters.all.Find((s) => s.dialogueTag.ToLower() == speakerTag.ToLower());
                 if (foundSpeaker != null)
                 {
                     // PARSE CONTENT AND ADD EVENT
-                    DialogueEvent dEvent = new () { speaker = foundSpeaker, eventName = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
-                    dEvent.content = dialogue.content[i + 1];
-                    dialogue.dialogueEvents.Add(dEvent);
+                    DialogueEvent dEvent = new() { speaker = foundSpeaker, eventName = $"{foundSpeaker.name} - step{Mathf.FloorToInt(i / 2 + 1)}" };
+                    dEvent.content = content[i + 1];
+                    events.Add(dEvent);
 
                     if (string.IsNullOrEmpty(dEvent.startingPlacement) && string.IsNullOrEmpty(dEvent.targetPlacement))
                     {
@@ -80,7 +84,7 @@ public static class DialogueSetup
                 }
                 else
                 {
-                    Debug.LogError($"Could not parse dialogue content for {dialogue.questID} stage {dialogue.questStage} because speaker tag \"{speakerTag}\" return null.");
+                    Debug.LogError($"Could not parse dialogue content for content stage {i} ({content[i]}) because speaker tag \"{speakerTag}\" return null.");
                 }
             }
             else
@@ -88,8 +92,8 @@ public static class DialogueSetup
                 try
                 {
                     DialogueEvent dEvent = ParseDialogueEventID(speakerLine);
-                    dEvent.content = dialogue.content[i + 1];
-                    dialogue.dialogueEvents.Add(dEvent);
+                    dEvent.content = content[i + 1];
+                    events.Add(dEvent);
 
                     if (string.IsNullOrEmpty(dEvent.startingPlacement) && string.IsNullOrEmpty(dEvent.targetPlacement))
                     {
@@ -98,10 +102,12 @@ public static class DialogueSetup
                 }
                 catch
                 {
-                    Debug.LogError($"Something went wrong when attempting to parse content for {dialogue.objectID} step {i}.");
+                    Debug.LogError($"Something went wrong when attempting to parse content for step {i} ({content[i + 1]} ).");
                 }
             }
         }
+
+        return events;
     }
 
     public static DialogueEvent ParseDialogueEventID(string eventID)
