@@ -13,13 +13,15 @@ public class StartMenuScript : MonoBehaviour
         controllerMenu.SetActive(false);
     }
 
-    public void ToggleControlMenu()
-    {
-        controllerMenu.SetActive(!controllerMenu.activeInHierarchy);
-    }
-
     public void ToggleSettingsMenu()
     {
         settingsMenu.Open();
+    }
+
+    private void OnDisable()
+    {
+        TransientDataScript.gameManager.saveDataManager.gameObject.SetActive(false);
+        controllerMenu.SetActive(false);
+        settingsMenu.Close();
     }
 }
