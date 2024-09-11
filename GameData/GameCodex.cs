@@ -51,6 +51,10 @@ public static class GameCodex
         {
             return Upgrades.FindByID(objectID);
         }
+        else if (identifier == "MEM")
+        {
+            return Memories.FindByID(objectID);
+        }
 
         return null;
     }
