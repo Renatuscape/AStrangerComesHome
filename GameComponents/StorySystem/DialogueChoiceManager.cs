@@ -59,19 +59,26 @@ public class DialogueChoiceManager : MonoBehaviour
         choiceContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
         Canvas.ForceUpdateCanvases();
     }
+
     public void MakeChoice(Choice choice)
     {
         bool choiceResult = choice.AttemptAllChecks(true, out List<IdIntPair> missingItems);
-        //Debug.Log($"Choice resulted in {choiceResult}." +
-        //    $"\nRequirements passed: {passedRequirements}." +
-        //    $"\nRestrictions passed: {passedRestrictions}." +
-        //    $"\nMissing item count: {missingItems.Count}");
 
         dialogueMenu.HandleChoiceResult(choice, choiceResult, missingItems);
 
         foreach (Transform child in choiceContainer.transform)
         {
             Destroy(child.gameObject);
+        }
+
+        if (choice.gate != null && !string.IsNullOrEmpty(choice.gate.destinationRegion))
+        {
+            if (choice.gateOnFailAndSuccess ||
+                (choiceResult && !choice.gateOnFailOnly)
+                || (!choiceResult && choice.gateOnFailOnly))
+            {
+                TransientDataScript.TravelByGate(choice.gate);
+            }
         }
 
         gameObject.SetActive(false);
