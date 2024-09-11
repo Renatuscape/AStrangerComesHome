@@ -62,7 +62,7 @@ public class AutoMapTravelManager
                                 }
                                 else
                                 {
-                                    TransientDataScript.PushAlert($"{gate.failText}");
+                                    LogAlert.QueueTextAlert($"{DialogueTagParser.ParseText(gate.failText)}");
                                     autoMap.transientData.currentLocation = null;
                                 }
                             }
