@@ -8,6 +8,9 @@ public class Region
 {
     public string objectID; //REGION#
     public string name;
+    public string themeDay;
+    public string themeEvening;
+    public string themeNight;
     public bool disablePassengers;
     public int columns;
     public int rows;
