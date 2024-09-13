@@ -101,18 +101,39 @@ public class AutoMap : MonoBehaviour
     {
         Debug.Log("Travel by gate initiated at AutoMap");
 
-        Region destinationRegion = Regions.FindByID(gate.destinationRegion);
-
-        if (destinationRegion != null)
+        if (gate.disallowPassengers)
         {
-            Debug.Log($"Travel by gate calling ChangeMap for {destinationRegion.objectID}");
-            ChangeMap(destinationRegion, gate.xCoordinate, gate.yCoordinate);
-            transientData.currentLocation = null;
-            mapMarker.transform.position = playerToken.transform.position;
+            var dataManager = TransientDataScript.gameManager.dataManager;
+
+            if (dataManager.seatA.isActive || dataManager.seatB.isActive)
+            {
+                LogAlert.QueueTextAlert("I cannot take passengers through here.");
+            }
+            else
+            {
+                Travel();
+            }
         }
         else
         {
-            Debug.Log($"{gate.objectID}'s region could not be found by ID {gate.destinationRegion}");
+            Travel();
+        }
+
+        void Travel()
+        {
+            Region destinationRegion = Regions.FindByID(gate.destinationRegion);
+
+            if (destinationRegion != null)
+            {
+                Debug.Log($"Travel by gate calling ChangeMap for {destinationRegion.objectID}");
+                ChangeMap(destinationRegion, gate.xCoordinate, gate.yCoordinate);
+                transientData.currentLocation = null;
+                mapMarker.transform.position = playerToken.transform.position;
+            }
+            else
+            {
+                Debug.Log($"{gate.objectID}'s region could not be found by ID {gate.destinationRegion}");
+            }
         }
     }
 
