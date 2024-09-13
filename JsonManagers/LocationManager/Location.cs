@@ -81,6 +81,7 @@ public class Gate
     public string name;
     public string description;
     public string failText;
+    public bool disallowPassengers = false; // Prevent travel if there are passengers on board
     public bool isHiddenBeforeCheck = false; //Does not appear as an option unless checks are cleared 
     public string destinationRegion;
     public float xCoordinate;
