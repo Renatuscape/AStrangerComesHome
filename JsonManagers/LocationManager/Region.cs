@@ -12,6 +12,7 @@ public class Region
     public string themeEvening;
     public string themeNight;
     public bool disablePassengers;
+    public bool disableStars;
     public int columns;
     public int rows;
     public List<AutoMapData> mapLayout = new();
