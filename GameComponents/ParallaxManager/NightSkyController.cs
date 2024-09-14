@@ -24,6 +24,26 @@ public class NightSkyController : MonoBehaviour
 
     public void GlobalPushRefreshSky()
     {
+        if (TransientDataScript.transientData.currentRegion.disableStars)
+        {
+            if (starList.Count > 0)
+            {
+                foreach (var star in starList)
+                {
+                    Destroy(star.gameObject);
+                }
+            }
+            starList.Clear();
+
+        }
+        else
+        {
+            CheckStarCount();
+        }
+    }
+
+    public void CheckStarCount()
+    {
         if (TransientDataScript.IsTimeFlowing())
         {
             timeOfDay = dataManager.timeOfDay;
