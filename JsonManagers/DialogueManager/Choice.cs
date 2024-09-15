@@ -70,36 +70,48 @@ public class Choice
         return successfulDelivery;
     }
 
-    public void GrantRewards()
+    public void GrantRewards(bool isMemory = false)
     {
-        // Debug.Log($"Delivering reward for successful choice: {optionText}");
-        foreach (IdIntPair entry in rewards)
+        if (isMemory)
         {
-            // Debug.Log($"Delivered {entry.objectID} ({entry.amount})");
+            // Check if memory reward has been claimed
+        }
+        else
+        {
+            PayOut();
+        }
 
-            var foundObject = GameCodex.GetBaseObject(entry.objectID); // ensure any item ID is trimmed properly
-
-            if (foundObject != null)
+        void PayOut()
+        {
+            // Debug.Log($"Delivering reward for successful choice: {optionText}");
+            foreach (IdIntPair entry in rewards)
             {
-                if (foundObject.objectType == ObjectType.Quest)
+                // Debug.Log($"Delivered {entry.objectID} ({entry.amount})");
+
+                var foundObject = GameCodex.GetBaseObject(entry.objectID); // ensure any item ID is trimmed properly
+
+                if (foundObject != null)
                 {
-                    Player.SetQuest(entry.objectID, entry.amount);
+                    if (foundObject.objectType == ObjectType.Quest)
+                    {
+                        Player.SetQuest(entry.objectID, entry.amount);
+                    }
+                    else
+                    {
+                        Player.Add(new IdIntPair() { objectID = foundObject.objectID, amount = entry.amount, description = entry.description });
+                    }
                 }
                 else
                 {
-                    Player.Add(new IdIntPair() { objectID = foundObject.objectID, amount = entry.amount, description = entry.description });
-                }
-            }
-            else
-            {
-                if (entry.objectID.Length > 8 && entry.objectID.Contains("-Q"))//objectID.Substring(6, 2) == "-Q")Substring(6, 2) == "-Q")
-                {
-                    Player.SetQuest(entry.objectID, entry.amount);
-                }
-                else
-                {
-                    Debug.Log($"{entry.objectID} NOT FOUND IN GAME CODEX. INTENTIONAL?");
-                    Player.Add(new IdIntPair() { objectID = entry.objectID, amount = entry.amount, description = entry.description });
+                    if (entry.objectID.Length > 8 && entry.objectID.Contains("-Q"))//objectID.Substring(6, 2) == "-Q")Substring(6, 2) == "-Q")
+                    {
+                        Player.SetQuest(entry.objectID, entry.amount);
+                    }
+                    else
+                    {
+                        Debug.Log($"{entry.objectID} NOT FOUND IN GAME CODEX. INTENTIONAL?");
+                        Player.Add(new IdIntPair() { objectID = entry.objectID, amount = entry.amount, description = entry.description });
+                    }
                 }
             }
         }
