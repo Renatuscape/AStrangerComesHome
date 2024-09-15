@@ -1,0 +1,69 @@
+﻿using UnityEngine;
+
+public class InteractableNodeMemory : InteractableNode
+{
+    // Use NodeID to in hierarchy to set the memory ID
+
+    public Memory memory;
+    bool isReady = false;
+    private void OnEnable()
+    {
+        if (Player.GetCount(nodeID, name)  > 0) // Additional memories cannot be gained from locations, only quests/events
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            Setup();
+        }
+    }
+
+    void Setup()
+    {
+        memory = Memories.FindByID(nodeID);
+        animatedSprite = AnimationLibrary.GetAnimatedObject("MemoryShard" + (memory.isUnique ? "_Unique" : ""));
+
+        if (animatedSprite != null && rend != null)
+        {
+            var idleAnim = animatedSprite.GetAnimationType(AnimationType.idle);
+
+            if (idleAnim != null)
+            {
+                StartCoroutine(Animate(idleAnim, true));
+            }
+
+        }
+        else
+        {
+            Debug.LogWarning(nodeID + " node could not animate. AnimatedSprite or SpriteRenderer was null.");
+        }
+
+        isReady = true;
+    }
+
+    private void OnMouseDown()
+    {
+        if (isReady && TransientDataScript.IsTimeFlowing())
+        {
+            CollectMemory();
+        }
+    }
+
+    void CollectMemory()
+    {
+        col.enabled = false;
+        Player.Add(nodeID);
+
+        var useAnim = animatedSprite.GetAnimationType(AnimationType.use);
+
+        if (useAnim != null)
+        {
+            StartCoroutine(AnimateAndFadeOut(useAnim, true));
+        }
+        else
+        {
+            Debug.LogWarning(nodeID + " node found no animation of the USE type. Check animation library or MemoryShard animations.");
+            StartCoroutine(FadeOutObject());
+        }
+    }
+}
