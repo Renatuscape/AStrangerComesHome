@@ -70,11 +70,21 @@ public class Choice
         return successfulDelivery;
     }
 
-    public void GrantRewards(bool isMemory = false)
+    public void GrantRewards(string memoryID = "")
     {
-        if (isMemory)
+        if (!string.IsNullOrEmpty(memoryID))
         {
-            // Check if memory reward has been claimed
+            var loot = Player.GetCount("MemoryLoot_" + memoryID, "GrantRewards Memory Check");
+
+            if (loot > 0)
+            {
+                Player.Add("MemoryLoot_" + memoryID, 1, true);
+                PayOut();
+            }
+            else
+            {
+                Debug.Log("MemoryLoot_" + memoryID + " entry existed in player inventory. ");
+            }
         }
         else
         {
