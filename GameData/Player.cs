@@ -146,6 +146,11 @@ public static class Player
             AddTimer(objectID);
             return 0;
         }
+        else if (objectID.Contains("MemoryLoot_"))
+        {
+            inventoryList.Add(new IdIntPair() {objectID = objectID, amount = amount });
+            return 1;
+        }
 
         return FindObjectAndAddUpToMax(objectID, amount, doNotLog);
     }
