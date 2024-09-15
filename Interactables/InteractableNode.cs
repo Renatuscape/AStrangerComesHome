@@ -28,6 +28,25 @@ public class InteractableNode : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    internal IEnumerator AnimateAndFadeOut(AnimationData animationData, bool fadeAlpha)
+    {
+        StartCoroutine(Animate(animationData, false));
+        float animationTime = animationData.frameRate * animationData.frames.Count;
+
+        if (fadeAlpha)
+        {
+            float fadeBegin = animationTime - 0.44f;
+            yield return new WaitForSeconds(fadeBegin);
+
+            StartCoroutine(FadeOutObject());
+        }
+        else
+        {
+            yield return new WaitForSeconds(animationTime);
+            gameObject.SetActive(false);
+        }
+    }
+
     internal IEnumerator Animate(AnimationData animationData, bool loop, bool startFromCustom = false)
     {
         if (animationData != null)
