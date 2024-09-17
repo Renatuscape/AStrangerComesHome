@@ -182,6 +182,12 @@ public static class RequirementChecker
 
     public static bool CheckPackage(RequirementPackage package)
     {
+        if (package == null)
+        {
+            Debug.Log("Requirement package was null. Returning true.");
+            return true;
+        }
+
         if (!CheckRequirements(package.requirements))
         {
             // Debug.Log("Package failed at requirements.");
