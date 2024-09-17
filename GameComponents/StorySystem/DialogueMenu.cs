@@ -14,7 +14,7 @@ public class DialogueMenu : MonoBehaviour
     public Quest activeQuest;
     public string initiatingNPC;
     public bool doNotReopenTopic = false;
-
+    public bool memoryMode = true;
     private void OnEnable()
     {
         choiceManager.gameObject.SetActive(false);
@@ -22,6 +22,8 @@ public class DialogueMenu : MonoBehaviour
 
     public void StartDialogue(Quest quest, string speakerID, bool doNotReopenTopic, bool clearBackground)
     {
+        memoryMode = false;
+
         if (clearBackground)
         {
             backgroundManager.ClearBackground();
@@ -34,6 +36,17 @@ public class DialogueMenu : MonoBehaviour
         Dialogue dialogue = GetDialogue(activeQuest);
 
         dialogueDisplay.StartDialogue(dialogue, true);
+    }
+
+    public void StartMemory(Memory memory)
+    {
+        memoryMode = true;
+        activeQuest = null;
+        doNotReopenTopic = true;
+        backgroundManager.ClearBackground();
+        choiceManager.gameObject.SetActive(false);
+
+        dialogueDisplay.StartDialogue(memory.dialogue, true);
     }
 
     public void SetUpBackground(string backgroundID)
@@ -55,12 +68,12 @@ public class DialogueMenu : MonoBehaviour
 
     public void HandleChoiceResult(Choice choice, bool isSuccess, List<IdIntPair> missingItems)
     {
-        if (isSuccess)
+        if (!memoryMode && isSuccess)
         {
             Player.SetQuest(activeQuest.objectID, choice.advanceTo);
         }
 
-        if (!isSuccess && choice.advanceToOnFailure > -1)
+        if (!memoryMode && !isSuccess && choice.advanceToOnFailure > -1)
         {
             Debug.Log("Choice failed, and choice had valid advanceToOnFailure value.");
             Player.SetQuest(activeQuest.objectID, choice.advanceToOnFailure);
@@ -146,6 +159,7 @@ public class DialogueMenu : MonoBehaviour
 
     void ReturnToOverWorld()
     {
+        Debug.Log("DiaMenu called ReturnToOverworld().");
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
     }
 
