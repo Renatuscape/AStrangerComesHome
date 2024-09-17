@@ -63,6 +63,23 @@ public class StorySystem : MonoBehaviour
         }
     }
 
+    public void StartMemory(Memory memory) //called primarily from topic manager
+    {
+        Debug.Log($"Attempting to start memory {memory.objectID}");
+        TransientDataScript.SetGameState(GameState.Dialogue, "StorySystem Memory", gameObject);
+        button.GetComponentInChildren<TextMeshProUGUI>().font = fontManager.body.font;
+
+        topicMenu.SetActive(false);
+        dialogueMenu.SetActive(true);
+        dialogueMenu.GetComponent<DialogueMenu>().StartMemory(memory);
+        Debug.Log($"Starting dialogue for memory {memory.objectID}.");
+
+        if (!dialogueMenu.activeInHierarchy)
+        {
+            Debug.Log("Something disabled the dialogue menu.");
+        }
+    }
+
     public void CloseTopicMenuAndLeave()
     {
         topicMenu.SetActive(false);
