@@ -7,22 +7,33 @@ using UnityEngine;
 [System.Serializable]
 public class Memory : BaseObject
 {
-    public bool isUnique;
-    public Sprite sprite;
+    public bool isUnique; // Unique memories cannot be lost, nor can you randomly find extra copies anywhere
+    public bool contentWarning; // If this is flagged, bring up a pop-up warning and print the DESCRIPTION before proceeding to dialogue reader
     public Dialogue dialogue;
 
     public void Initialise()
     {
-        if (objectID.Contains("-UNI"))
+        if (isUnique)
         {
-            isUnique = true;
-            objectID = objectID.Split('-')[0];
+            maxValue = 1;
+        }
+        else
+        {
+            maxValue = 3;
         }
 
         objectType = ObjectType.Memory;
-        dialogue.objectID = objectID;
+        dialogue.stageType = StageType.Memory;
+        dialogue.objectID = objectID + "-D";
+        dialogue.questID = objectID + "-Q";
         dialogue.speakerID = "MEMORY";
-        DialogueSetup.InitialiseDialogue(dialogue);
+
+        if (string.IsNullOrEmpty(dialogue.topicName))
+        {
+            dialogue.topicName = name;
+        }
+
+        dialogue.dialogueEvents = DialogueSetup.CreateEventsFromStringList(dialogue.content);
        
         if (dialogue.choices == null || dialogue.choices.Count == 0)
         {
