@@ -22,15 +22,11 @@ public class Choice
     public bool gateOnFailAndSuccess = false;
 
     public RequirementPackage checks;
-    //public List<IdIntPair> requirements;
-    //public List<IdIntPair> restrictions;
 
     public List<IdIntPair> deliveries; // deliveryRequirements;
     public List<IdIntPair> rewards;
 
     public ChoiceNodeData nodeData;
-    public DialogueEvent successEvent;
-    public DialogueEvent failureEvent;
 
     public bool AttemptAllChecks(bool grantRewards, out List<IdIntPair> missingItems)
     {
@@ -48,6 +44,11 @@ public class Choice
     {
         bool successfulDelivery = true;
         missingItems = new();
+        
+        if (deliveries == null)
+        {
+            return true;
+        }
 
         foreach (IdIntPair entry in deliveries)
         {
@@ -79,7 +80,11 @@ public class Choice
             if (loot > 0)
             {
                 Player.Add("MemoryLoot_" + memoryID, 1, true);
-                PayOut();
+
+                if (rewards != null)
+                {
+                    PayOut();
+                }
             }
             else
             {
@@ -88,7 +93,10 @@ public class Choice
         }
         else
         {
-            PayOut();
+            if (rewards != null)
+            {
+                PayOut();
+            }
         }
 
         void PayOut()
