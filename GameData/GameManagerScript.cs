@@ -21,6 +21,7 @@ public class GameManagerScript : MonoBehaviour
     public RegionManager regionManager;
     public RecipeManager recipeManager;
     public BookManager bookManager;
+    public MemoryManager memoryManager;
     public GlobalTimerUpdater globalTimer;
 
     public GameObject gameComponentMaster;
@@ -128,6 +129,9 @@ public class GameManagerScript : MonoBehaviour
 
         await questManager.StartLoading();
         Debug.Log("STARTUP: Loading quests async completed");
+
+        await memoryManager.StartLoading();
+        Debug.Log("STARTUP: Loading memories async completed");
 
         await GuildRewardLoader.StartLoading(menuSystem.guildMenu.rewardsMenu);
         Debug.Log("STARTUP: Loading guild rewards async completed");
