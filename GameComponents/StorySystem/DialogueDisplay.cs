@@ -96,7 +96,7 @@ public class DialogueDisplay : MonoBehaviour
 
         textSoundEffect.volume = GlobalSettings.EffectVolume - 0.1f;
 
-        if (dialogue.stageType != StageType.Dialogue)
+        if (dialogue.stageType != StageType.Dialogue && dialogue.stageType != StageType.Memory)
         {
             Debug.LogWarning("Attempted to start a non-dialogue event. Was the choice leading to " + dialogue.objectID + " missing endConversation: true?");
             Debug.LogWarning("Ending dialogue early.");
