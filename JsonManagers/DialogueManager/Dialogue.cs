@@ -27,19 +27,12 @@ public class Dialogue
     public List<DialogueEvent> dialogueEvents = new(); // new version of step with more data
 
     public RequirementPackage checks;
-    //public List<IdIntPair> requirements = new();
-    //public List<IdIntPair> restrictions = new();
-    //public string locationID;
-    //public float startTime = 0;
-    //public float endTime = 0;
-    //public int minimumDaysPassed;
 
     public bool disableAutoNode = false;
     public bool forceAutoNode = false; // Will forcibly display node on failed checks. Location MUST STILL BE ACCURATE
     public List<Choice> choices = new(); //LEAVE CHOICES BLANK TO LOOP DIALOGUE WITHOUT PROGRESSION
     public List<IdIntPair> taskTracking = new(); // For quests with multiple, non-chronological requirements that should be tracked in the journal. More responsive and situational than hints.
     public bool autoProgressStage = false; //automatically go to next stage when step is completed
-    //public bool noLeaveButton = true; //if this is enabled, it is impossible to leave dialogue until you reach a choice
 
     public bool CheckRequirements()
     {
