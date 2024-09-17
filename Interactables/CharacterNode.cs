@@ -131,7 +131,10 @@ public class CharacterNode : MonoBehaviour
 
     public void TemporarilyHide()
     {
-        StartCoroutine(FadeOutNode(false));
+        if (gameObject.activeInHierarchy)
+        {
+            StartCoroutine(FadeOutNode(false));
+        }
     }
 
     void HideNode()
