@@ -343,6 +343,17 @@ public static class Player
                 LogAlert.QueueTextAlert($"{upgrade.name} upgraded!");
             }
         }
+        else if (baseObject.objectType == ObjectType.Memory)
+        {
+            if (value < 0)
+            {
+                LogAlert.QueueTextAlert($"A memory fades.");
+            }
+            else
+            {
+                LogAlert.QueueTextAlert($"A memory grows brighter.");
+            }
+        }
     }
 
     public static int GetCount(string searchID, string caller)
