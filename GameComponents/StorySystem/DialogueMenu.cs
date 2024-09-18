@@ -126,7 +126,7 @@ public class DialogueMenu : MonoBehaviour
     {
         Debug.Log("DIALOGUE: ENDING DIALOGUE.");
 
-        if (choice != null && choice.nodeData.removeSpeakerNode)
+        if (choice != null && choice.nodeData != null && choice.nodeData.removeSpeakerNode)
         {
             var speaker = choice.nodeData.nodeID;
             if (string.IsNullOrEmpty(speaker))
