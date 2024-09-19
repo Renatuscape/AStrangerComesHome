@@ -14,6 +14,7 @@ public class DataManagerScript : MonoBehaviour
     public string saveID;
 
     //SETTINGS
+    public bool autoPlayMemories;
     public bool saveOnDeath;
     public bool randomiseOnDeath;
     public bool disableCustomisationOnDeath;
@@ -61,14 +62,19 @@ public class DataManagerScript : MonoBehaviour
         lastVersionSaved = "none";
         saveID = Random.Range(100000, 999999).ToString();
         saveSlot = -1;
+
+        // Settings
+        autoPlayMemories = false;
+
+        // Player Data
         playerName = "Morgan";
         playerNameColour = "597266";
         playerGender = "Male";
         pronounSub = "He";
         pronounObj = "Him";
         pronounGen = "His";
-        headIndex = 0;
         playerSprite.ResetValues();
+        headIndex = 0;
 
         totalGameDays = 0;
         timeOfDay = 0.3f;
