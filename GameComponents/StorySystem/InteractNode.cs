@@ -18,7 +18,6 @@ public class InteractNode : MonoBehaviour
     public Dialogue memory;
     public Dialogue itemNode;
     public Character character;
-    public MemoryMenu memoryMenu;
 
     public AnimatedSprite placeholderNpc; //Retrieve information from AnimationLibrary
     public List<Sprite> itemCrate;
@@ -93,10 +92,6 @@ public class InteractNode : MonoBehaviour
             {
                 HandleNpcClick();
             }
-            else if (isSpawningMemory)
-            {
-                HandleMemoryClick();
-            }
             else if (isSpawningItem)
             {
                 HandleItemClick();
@@ -130,27 +125,7 @@ public class InteractNode : MonoBehaviour
         Debug.Log($"Opening interact menu with {character.name}");
         InteractMenu.Open(character);
     }
-    private void HandleMemoryClick()
-    {
-        if (memoryMenu == null)
-        {
-            Debug.Log("Getting memory menu");
-            memoryMenu = TransientDataScript.GetStorySystem().memoryMenu;
-        }
-        if (memoryMenu != null)
-        {
-            bool isSuccess = memoryMenu.InitialiseReader(memoryNode.objectID, memoryNode.amount);
 
-            if (!isSuccess)
-            {
-                Debug.Log("Memory initialisation failed");
-            }
-            else
-            {
-                Debug.Log("Memory initialisation succeeded");
-            }
-        }
-    }
     private void HandleItemClick()
     {
         AudioManager.PlaySoundEffect("cloth3");

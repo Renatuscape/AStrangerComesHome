@@ -11,7 +11,6 @@ public class StorySystem : MonoBehaviour
     public GameObject dialogueMenu;
     public GameObject popUpMenu;
     public GameState previousGameState = GameState.Overworld;
-    public MemoryMenu memoryMenu;
     public string activeSpeaker;
 
     public DialoguePortraitManager portraitManager;
