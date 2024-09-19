@@ -9,18 +9,23 @@ public class SettingsMenu : MonoBehaviour
     public DataManagerScript dataManager;
     public Toggle toggleCoachExterior;
     public Toggle toggleTrueName;
+    public Toggle toggleAutoPlayMemories;
     public Toggle toggleRandomiseOnDeath;
     public Toggle toggleCustomisationOnDeath;
     public Toggle toggleForceSaveOnDeath;
+   
 
     public TMP_Dropdown resolutionDropdown;
     public GameObject content;
     public GameObject behaviourPanel;
 
+    public TextMeshProUGUI currentResolution;
+
     void Start()
     {
         toggleCoachExterior.onValueChanged.AddListener(ToggleAlwaysHideCoachExterior);
         toggleTrueName.onValueChanged.AddListener(ToggleTrueName);
+        toggleAutoPlayMemories.onValueChanged.AddListener(ToggleAutoPlayMemories);
 
         resolutionDropdown.onValueChanged.AddListener(ResolutionDropDown);
 
@@ -60,6 +65,25 @@ public class SettingsMenu : MonoBehaviour
     void OnEnable()
     {
         toggleCoachExterior.isOn = GlobalSettings.AlwaysHideCoachExterior;
+        toggleAutoPlayMemories.isOn = dataManager.autoPlayMemories;
+        UpdateResolutionText();
+    }
+
+    void UpdateResolutionText()
+    {
+        if (Screen.fullScreen)
+        {
+            currentResolution.text = $"Full Screen ({Screen.width}x{Screen.height})";
+        }
+        else
+        {
+            currentResolution.text = $"Windowed ({Screen.width}x{Screen.height})";
+        }
+    }
+
+    void ToggleAutoPlayMemories(bool toggle)
+    {
+        dataManager.autoPlayMemories = toggle;
     }
 
     void ToggleAlwaysHideCoachExterior(bool toggle)
@@ -90,6 +114,7 @@ public class SettingsMenu : MonoBehaviour
                 break;
         }
 
+        UpdateResolutionText();
         Debug.Log(Screen.currentResolution);
     }
 }
