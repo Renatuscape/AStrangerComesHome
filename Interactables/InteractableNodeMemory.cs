@@ -5,7 +5,6 @@ public class InteractableNodeMemory : InteractableNode
     // Use NodeID to in hierarchy to set the memory ID
 
     public Memory memory;
-    public bool autoPlayMemory;
     bool isReady = false;
     private void OnEnable()
     {
@@ -71,9 +70,9 @@ public class InteractableNodeMemory : InteractableNode
         {
             CollectMemory();
 
-            if (autoPlayMemory)
+            if (TransientDataScript.gameManager.dataManager.autoPlayMemories)
             {
-                TransientDataScript.gameManager.storySystem.StartMemory(memory);
+                MemoryMenu.PlayMemory(memory, false);
             }
         }
     }
