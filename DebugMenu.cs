@@ -60,6 +60,16 @@ public class DebugMenu : MonoBehaviour
         TransientDataScript.gameManager.dataManager.seatB.isActive = false;
     }
 
+    public void ForgetMemory()
+    {
+        SpellCompendium.ForgetMemory();
+    }
+
+    public void RecoverMemory()
+    {
+        SpellCompendium.RecoverMemory();
+    }
+
     public void EnableDemoMode()
     {
         Player.Add(StaticTags.Alchemy, 1, true);
