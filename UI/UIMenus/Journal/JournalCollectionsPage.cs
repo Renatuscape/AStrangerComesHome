@@ -3,11 +3,13 @@ using UnityEngine;
 
 public enum CollectionPage
 {
+    None,
     Recipes,
     Treasures,
     Letters,
     People,
-    Books
+    Books,
+    Memories
 }
 
 public class JournalCollectionsPage : MonoBehaviour
@@ -17,7 +19,13 @@ public class JournalCollectionsPage : MonoBehaviour
     public GameObject recipes;
     public GameObject people;
     public GameObject treasures;
+    public GameObject memories;
     public CollectionsBooks books;
+
+    private void Awake()
+    {
+        ChangePage(CollectionPage.None);
+    }
 
     public void EnableRecipes()
     {
@@ -44,11 +52,17 @@ public class JournalCollectionsPage : MonoBehaviour
         ChangePage(CollectionPage.Books);
     }
 
+    public void EnableMemories()
+    {
+        ChangePage(CollectionPage.Memories);
+    }
+
     void ChangePage(CollectionPage page)
     {
         recipes.SetActive(page == CollectionPage.Recipes);
         people.SetActive(page == CollectionPage.People);
         treasures.SetActive(page == CollectionPage.Treasures);
+        memories.SetActive(page == CollectionPage.Memories);
 
         if (page == CollectionPage.Books)
         {
