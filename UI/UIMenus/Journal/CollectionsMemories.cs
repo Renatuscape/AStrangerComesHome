@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CollectionsMemories : MonoBehaviour
@@ -20,7 +21,9 @@ public class CollectionsMemories : MonoBehaviour
 
     IEnumerator SpawnMemoryEntries()
     {
-        foreach (var memory in Memories.all)
+        var sortedMemories = Memories.all.OrderBy(m => !m.isUnique).ThenBy(m => m.objectID);
+
+        foreach (var memory in sortedMemories)
         {
             var newMemory = Instantiate(memoryPrefab);
 
