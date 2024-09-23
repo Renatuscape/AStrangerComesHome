@@ -44,7 +44,7 @@ public class InteractableNodeMemory : InteractableNode
 
     void Setup()
     {
-        animatedSprite = AnimationLibrary.GetAnimatedObject("MemoryShard" + (memory.isUnique ? "_Unique" : ""));
+        animatedSprite = AnimationLibrary.GetAnimatedObject("MemoryShard");// + (memory.isUnique ? "_Unique" : ""));
 
         if (animatedSprite != null && rend != null)
         {
