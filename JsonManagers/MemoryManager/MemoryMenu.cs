@@ -33,7 +33,7 @@ public class MemoryMenu : MonoBehaviour
             if (forceConfirm || memory.contentWarning)
             {
                 instance.SetUpText(memory);
-                instance.menuCanvas.SetActive(false);
+                instance.menuCanvas.SetActive(true);
             }
             else
             {
