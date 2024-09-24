@@ -85,6 +85,7 @@ public class AnimationData
     public AnimationType type;
     public int customLoopStart;
     public bool disallowLooping;
+    public float delayBeforeLoop = 0;
     public float frameRate = 0.1f;
     public List<Sprite> frames;
 }
