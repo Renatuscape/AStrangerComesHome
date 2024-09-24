@@ -124,7 +124,16 @@ public class DialogueDisplay : MonoBehaviour
 
                 if (string.IsNullOrEmpty(titleText))
                 {
-                    titleText = Quests.FindByID(dialogue.questID).name;
+                    var quest = Quests.FindByID(dialogue.questID);
+
+                    if (quest != null)
+                    {
+                        titleText = quest.name;
+                    }
+                    else
+                    {
+                        titleText = "???";
+                    }
                 }
 
                 PrintToChatLog(DialogueTagParser.ParseText(titleText).ToUpper(), false, false);
