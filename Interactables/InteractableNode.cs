@@ -51,6 +51,7 @@ public class InteractableNode : MonoBehaviour
     {
         if (animationData != null)
         {
+
             int index = 0;
 
             if (startFromCustom)
@@ -58,7 +59,7 @@ public class InteractableNode : MonoBehaviour
                 index = animationData.customLoopStart;
             }
 
-            int maxIndex = animationData.frames.Count - 1;
+            int maxIndex = animationData.frames.Count;
 
             while (index < maxIndex)
             {
@@ -69,6 +70,11 @@ public class InteractableNode : MonoBehaviour
 
             if (loop && !animationData.disallowLooping)
             {
+                if (loop)
+                {
+                    rend.sprite = animationData.frames[0];
+                    yield return new WaitForSeconds(animationData.delayBeforeLoop - animationData.frameRate);
+                }
                 StartCoroutine(Animate(animationData, true));
             }
         }
