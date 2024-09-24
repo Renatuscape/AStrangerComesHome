@@ -347,11 +347,25 @@ public static class Player
         {
             if (value < 0)
             {
-                LogAlert.QueueTextAlert($"A memory fades.");
+                if (GetCount(baseObject.objectID, "Memory Log from Player") < 1)
+                {
+                    LogAlert.QueueTextAlert($"A memory slips from me.");
+                }
+                else
+                {
+                    LogAlert.QueueTextAlert($"A memory dims.");
+                }
             }
             else
             {
-                LogAlert.QueueTextAlert($"A memory grows brighter.");
+                if (GetCount(baseObject.objectID, "Memory Log from Player") == 1)
+                {
+                    LogAlert.QueueTextAlert($"I recall a memory.");
+                }
+                else
+                {
+                    LogAlert.QueueTextAlert($"A memory grows brighter.");
+                }
             }
         }
     }
