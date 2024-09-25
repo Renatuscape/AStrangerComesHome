@@ -89,5 +89,7 @@ public class DeathManager : MonoBehaviour
         characterCreator.gameObject.SetActive(true);
 
         killScreen.SetActive(false);
+
+        SpellCompendium.ForgetMemory();
     }
 }
