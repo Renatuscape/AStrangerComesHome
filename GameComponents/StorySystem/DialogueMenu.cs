@@ -10,6 +10,7 @@ public class DialogueMenu : MonoBehaviour
     public DialogueDisplay dialogueDisplay;
     public DialogueChoiceManager choiceManager;
     public DialogueBackgroundManager backgroundManager;
+    public DialogueMemoryFilter memoryFilter;
 
     public Quest activeQuest;
     public string initiatingNPC;
@@ -23,6 +24,7 @@ public class DialogueMenu : MonoBehaviour
     public void StartDialogue(Quest quest, string speakerID, bool doNotReopenTopic, bool clearBackground)
     {
         memoryMode = false;
+        memoryFilter.CloseMemoryFilter();
 
         if (clearBackground)
         {
@@ -47,6 +49,7 @@ public class DialogueMenu : MonoBehaviour
         choiceManager.gameObject.SetActive(false);
 
         dialogueDisplay.StartDialogue(memory.dialogue, true);
+        memoryFilter.StartMemoryFilter();
     }
 
     public void SetUpBackground(string backgroundID)
