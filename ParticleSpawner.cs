@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// OBSOLETE. Replace with new type if found.
 public class ParticleSpawner : MonoBehaviour
 {
     public List<GameObject> spawnTargets;
