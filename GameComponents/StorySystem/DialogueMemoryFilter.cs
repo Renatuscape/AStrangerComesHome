@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// For displaying visual effects during a memory playback
 public class DialogueMemoryFilter : MonoBehaviour
 {
     public GameObject canvas;
