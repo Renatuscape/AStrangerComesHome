@@ -59,6 +59,10 @@ public class PageinatedList : MonoBehaviour
 
             return prefabs;
         }
+        else
+        {
+            btnNextPage.gameObject.SetActive(false);
+        }
 
         return null;
     }
