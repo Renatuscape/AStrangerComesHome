@@ -9,6 +9,7 @@ public class JournalStatisticsPage : MonoBehaviour
     public FontManager fontManager;
     public DataManagerScript dataManager;
     public PageinatedList pageinatedList;
+    public RectTransform pageinatedContainer;
     public Button btnSkills;
     public Button btnSpheres;
     public Button btnUpgrades;
@@ -107,20 +108,34 @@ public class JournalStatisticsPage : MonoBehaviour
         upgradeContainer.gameObject.SetActive(false);
         otherContainer.gameObject.SetActive(true);
 
-        List<IdIntPair> list = new List<IdIntPair>();
+        //List<IdIntPair> list = new List<IdIntPair>();
+        ListCategory gardeningSkills = new() { categoryName = "Gardening", listContent = new()};
+        ListCategory alchemySkills = new() { categoryName = "Alchemy", listContent = new()};
+        ListCategory magicSkills = new() { categoryName = "Magic", listContent = new()};
 
         foreach (var skill in Skills.all)
         {
             if (!skill.objectID.Contains("ATT") && Player.GetEntry(skill.objectID, "Journal Statistics", out var entry))
             {
-                IdIntPair newEntry = new();
-                newEntry.objectID = entry.objectID;
-                newEntry.description = skill.name + $" {entry.amount}";
-                list.Add(newEntry);
+                IdIntPair newEntry = new() { objectID = entry.objectID, description = skill.name + $" {entry.amount}" };
+
+                if (skill.objectID.Contains("GAR"))
+                {
+                    gardeningSkills.listContent.Add(newEntry);
+                }
+                else if (skill.objectID.Contains("ALC"))
+                {
+                    alchemySkills.listContent.Add(newEntry);
+                }
+                else if (skill.objectID.Contains("MAG"))
+                {
+                    magicSkills.listContent.Add(newEntry);
+                }
             }
         }
 
-        pageinatedList.InitialiseWithoutCategories(list);
+        pageinatedContainer.sizeDelta = new Vector2(pageinatedContainer.sizeDelta.x, 435);
+        pageinatedList.InitialiseWithCategories(new List<ListCategory>() { gardeningSkills, alchemySkills, magicSkills });
     }
 
     public void EnableSphereList()
@@ -141,6 +156,7 @@ public class JournalStatisticsPage : MonoBehaviour
             }
         }
 
+        pageinatedContainer.sizeDelta = new Vector2(pageinatedContainer.sizeDelta.x, 500);
         pageinatedList.InitialiseWithoutCategories(list);
     }
     void UpdateUpgradeNumbers()
