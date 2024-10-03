@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,11 +12,13 @@ public class PageinatedList : MonoBehaviour
     public GameObject listItemPrefab;
     public GameObject listContainer;
     public GameObject categoryContainer;
-    public List<IdIntPair> content;
-    public List<GameObject> prefabs = new();
+    public List<GameObject> categoryPrefabs = new();
+    public List<GameObject> entryPrefabs = new();
     public int pageLimit;
     public int pageIndex;
     public List<ListPage> pages = new();
+    public List<ListPage> pageArchive = new();
+    public List<string> categoryNames = new();
 
     public Button btnNextPage;
 
@@ -34,15 +37,61 @@ public class PageinatedList : MonoBehaviour
             OpenPage(pageIndex);
         });
     }
-    public List<GameObject> InitialiseWithoutCategories(List<IdIntPair> listItems)
+
+    public List<GameObject> InitialiseWithCategories(List<ListCategory> categoryList)
     {
-        if (listItems.Count > 0)
+        categoryNames.Clear();
+
+        if (categoryList.Count > 0)
+        {
+            foreach (var list in categoryList)
+            {
+                noCategories = true;
+                categoryContainer.gameObject.SetActive(false);
+                pageLimit = CalculatePageLimit();
+                BuildPages(list.categoryName, list.listContent);
+                categoryNames.Add(list.categoryName);
+                CreateCategory(list.categoryName);
+            }
+
+            gameObject.SetActive(true);
+
+            pageArchive = new List<ListPage>(pages);
+
+            ChangeCategory(categoryNames[0]);
+
+            return entryPrefabs;
+        }
+        else
+        {
+            btnNextPage.gameObject.SetActive(false);
+        }
+
+        return null;
+    }
+
+    void CreateCategory(string categoryName)
+    {
+        var newCategory = Instantiate(categoryPrefab);
+        newCategory.name = "btn" + categoryName;
+        newCategory.transform.SetParent(categoryContainer.transform, false);
+        categoryPrefabs.Add(newCategory);
+
+        var script = newCategory.AddComponent<ListCategoryPrefab>();
+        script.title.text = categoryName;
+        script.btnCategory.onClick.AddListener(() => ChangeCategory(categoryName));
+    }
+
+    public List<GameObject> InitialiseWithoutCategories(List<IdIntPair> entryList)
+    {
+        categoryNames.Clear();
+
+        if (entryList.Count > 0)
         {
             noCategories = true;
             categoryContainer.gameObject.SetActive(false);
-            content = listItems;
             pageLimit = CalculatePageLimit();
-            BuildPages("Default");
+            BuildPages("Default", entryList);
             gameObject.SetActive(true);
 
             if (pages.Count < 2)
@@ -57,7 +106,7 @@ public class PageinatedList : MonoBehaviour
             pageIndex = 1;
             OpenPage(pageIndex);
 
-            return prefabs;
+            return entryPrefabs;
         }
         else
         {
@@ -88,7 +137,7 @@ public class PageinatedList : MonoBehaviour
         }
     }
 
-    void BuildPages(string categoryName)
+    void BuildPages(string categoryName, List<IdIntPair> content)
     {
         ClearPrefabs();
 
@@ -127,7 +176,7 @@ public class PageinatedList : MonoBehaviour
                 newItem.SetActive(false);
 
                 currentPage.listItems.Add(newItem);
-                prefabs.Add(newItem);
+                entryPrefabs.Add(newItem);
 
                 i++;
             }
@@ -136,12 +185,18 @@ public class PageinatedList : MonoBehaviour
 
     void ClearPrefabs()
     {
-        foreach (var obj in prefabs)
+        foreach (var obj in entryPrefabs)
         {
             Destroy(obj);
         }
 
-        prefabs.Clear();
+        foreach (var obj in categoryPrefabs)
+        {
+            Destroy(obj);
+        }
+
+        entryPrefabs.Clear();
+        categoryPrefabs.Clear();
         pages.Clear();
     }
 
@@ -163,6 +218,35 @@ public class PageinatedList : MonoBehaviour
     {
         ClearPrefabs();
     }
+
+    void ChangeCategory(string category)
+    {
+        pages.Clear();
+
+        foreach (var page in pageArchive)
+        {
+            if (page.category == category)
+            {
+                pages.Add(page);
+            }
+        }
+
+        if (pages.Count < 2)
+        {
+            btnNextPage.gameObject.SetActive(false);
+        }
+        else
+        {
+            btnNextPage.gameObject.SetActive(true);
+        }
+
+        if (pageIndex >= pages.Count)
+        {
+            pageIndex = 1;
+        }
+
+        OpenPage(pageIndex);
+    }
 }
 
 [Serializable]
@@ -171,4 +255,17 @@ public class ListPage
     public string category;
     public int pageNumber;
     public List<GameObject> listItems;
+}
+
+[Serializable]
+public class ListCategory
+{
+    public string categoryName;
+    public List<IdIntPair> listContent;
+}
+
+public class ListCategoryPrefab: MonoBehaviour
+{
+    public TextMeshProUGUI title;
+    public Button btnCategory;
 }
