@@ -1,13 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PageinatedList : MonoBehaviour
 {
-    public bool noCategories;
     public GameObject categoryPrefab;
     public GameObject listItemPrefab;
     public GameObject listContainer;
@@ -40,14 +38,15 @@ public class PageinatedList : MonoBehaviour
 
     public List<GameObject> InitialiseWithCategories(List<ListCategory> categoryList)
     {
-        categoryNames.Clear();
+        ClearPrefabs();
+
+        Debug.Log("PList: Initialising with categories. List entries: " + categoryList.Count);
 
         if (categoryList.Count > 0)
         {
             foreach (var list in categoryList)
             {
-                noCategories = true;
-                categoryContainer.gameObject.SetActive(false);
+                Debug.Log("PList: Settomg up category: " + list.categoryName);
                 pageLimit = CalculatePageLimit();
                 BuildPages(list.categoryName, list.listContent);
                 categoryNames.Add(list.categoryName);
@@ -55,8 +54,14 @@ public class PageinatedList : MonoBehaviour
             }
 
             gameObject.SetActive(true);
+            categoryContainer.SetActive(true);
 
-            pageArchive = new List<ListPage>(pages);
+            pageArchive = new List<ListPage>();
+
+            foreach (var page in pages)
+            {
+                pageArchive.Add(page);
+            }
 
             ChangeCategory(categoryNames[0]);
 
@@ -72,23 +77,27 @@ public class PageinatedList : MonoBehaviour
 
     void CreateCategory(string categoryName)
     {
+        Debug.Log("PList: Attempting to create category: " + categoryName);
+        Debug.Log("PList: Number of categories currently: " + categoryPrefabs.Count);
+
         var newCategory = Instantiate(categoryPrefab);
         newCategory.name = "btn" + categoryName;
         newCategory.transform.SetParent(categoryContainer.transform, false);
         categoryPrefabs.Add(newCategory);
 
-        var script = newCategory.AddComponent<ListCategoryPrefab>();
+        var script = newCategory.GetComponent<ListCategoryPrefab>();
         script.title.text = categoryName;
         script.btnCategory.onClick.AddListener(() => ChangeCategory(categoryName));
+
+        Debug.Log("PList: Updated number of categories: " + categoryPrefabs.Count);
     }
 
     public List<GameObject> InitialiseWithoutCategories(List<IdIntPair> entryList)
     {
-        categoryNames.Clear();
+        ClearPrefabs();
 
         if (entryList.Count > 0)
         {
-            noCategories = true;
             categoryContainer.gameObject.SetActive(false);
             pageLimit = CalculatePageLimit();
             BuildPages("Default", entryList);
@@ -139,8 +148,6 @@ public class PageinatedList : MonoBehaviour
 
     void BuildPages(string categoryName, List<IdIntPair> content)
     {
-        ClearPrefabs();
-
         int i = 0;
         int pageNumber = 1;
         ListPage currentPage = new();
@@ -197,6 +204,7 @@ public class PageinatedList : MonoBehaviour
 
         entryPrefabs.Clear();
         categoryPrefabs.Clear();
+        categoryNames.Clear();
         pages.Clear();
     }
 
@@ -229,6 +237,11 @@ public class PageinatedList : MonoBehaviour
             {
                 pages.Add(page);
             }
+
+            foreach (var listItem in page.listItems)
+            {
+                listItem.SetActive(false);
+            }
         }
 
         if (pages.Count < 2)
@@ -240,7 +253,7 @@ public class PageinatedList : MonoBehaviour
             btnNextPage.gameObject.SetActive(true);
         }
 
-        if (pageIndex >= pages.Count)
+        if (pageIndex >= pages.Count || pageIndex == 0)
         {
             pageIndex = 1;
         }
@@ -262,10 +275,4 @@ public class ListCategory
 {
     public string categoryName;
     public List<IdIntPair> listContent;
-}
-
-public class ListCategoryPrefab: MonoBehaviour
-{
-    public TextMeshProUGUI title;
-    public Button btnCategory;
 }
