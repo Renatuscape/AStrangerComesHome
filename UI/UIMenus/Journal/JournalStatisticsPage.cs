@@ -134,6 +134,25 @@ public class JournalStatisticsPage : MonoBehaviour
             }
         }
 
+        if (gardeningSkills.listContent.Count == 0)
+        {
+            IdIntPair newEntry = new();
+            newEntry.description = "No gardening skills";
+            gardeningSkills.listContent.Add(newEntry);
+        }
+        if (alchemySkills.listContent.Count == 0)
+        {
+            IdIntPair newEntry = new();
+            newEntry.description = "No alchemy skills";
+            alchemySkills.listContent.Add(newEntry);
+        }
+        if (magicSkills.listContent.Count == 0)
+        {
+            IdIntPair newEntry = new();
+            newEntry.description = "No magic skills";
+            magicSkills.listContent.Add(newEntry);
+        }
+
         pageinatedContainer.sizeDelta = new Vector2(pageinatedContainer.sizeDelta.x, 435);
         pageinatedList.InitialiseWithCategories(new List<ListCategory>() { gardeningSkills, alchemySkills, magicSkills });
     }
