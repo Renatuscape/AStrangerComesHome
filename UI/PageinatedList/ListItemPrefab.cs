@@ -7,4 +7,5 @@ public class ListItemPrefab: MonoBehaviour
     public IdIntPair entry;
     public TextMeshProUGUI textMesh;
     public Image bgImage;
+    public Button button;
 }
