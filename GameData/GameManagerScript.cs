@@ -133,7 +133,7 @@ public class GameManagerScript : MonoBehaviour
         await memoryManager.StartLoading();
         Debug.Log("STARTUP: Loading memories async completed");
 
-        await GuildRewardLoader.StartLoading(menuSystem.guildMenu.rewardsMenu);
+        await GuildRewardLoader.StartLoading(menuSystem.guildMenu);
         Debug.Log("STARTUP: Loading guild rewards async completed");
 
         DialogueTagParser.UpdateTags(dataManager);
