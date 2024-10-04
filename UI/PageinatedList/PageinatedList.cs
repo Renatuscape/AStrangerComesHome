@@ -19,7 +19,7 @@ public class PageinatedList : MonoBehaviour
     public List<string> categoryNames = new();
 
     public Button btnNextPage;
-
+    public bool clearManually;
     private void Start()
     {
         btnNextPage.onClick.RemoveAllListeners();
@@ -36,8 +36,10 @@ public class PageinatedList : MonoBehaviour
         });
     }
 
-    public List<GameObject> InitialiseWithCategories(List<ListCategory> categoryList)
+    public List<GameObject> InitialiseWithCategories(List<ListCategory> categoryList, bool clearManually = false)
     {
+        this.clearManually = clearManually;
+
         ClearPrefabs();
 
         Debug.Log("PList: Initialising with categories. List entries: " + categoryList.Count);
@@ -92,8 +94,10 @@ public class PageinatedList : MonoBehaviour
         Debug.Log("PList: Updated number of categories: " + categoryPrefabs.Count);
     }
 
-    public List<GameObject> InitialiseWithoutCategories(List<IdIntPair> entryList)
+    public List<GameObject> InitialiseWithoutCategories(List<IdIntPair> entryList, bool clearManually = false)
     {
+        this.clearManually = clearManually;
+
         ClearPrefabs();
 
         if (entryList.Count > 0)
@@ -190,7 +194,7 @@ public class PageinatedList : MonoBehaviour
         }
     }
 
-    void ClearPrefabs()
+    public void ClearPrefabs()
     {
         foreach (var obj in entryPrefabs)
         {
@@ -205,6 +209,7 @@ public class PageinatedList : MonoBehaviour
         entryPrefabs.Clear();
         categoryPrefabs.Clear();
         categoryNames.Clear();
+        pageArchive.Clear();
         pages.Clear();
     }
 
@@ -224,7 +229,10 @@ public class PageinatedList : MonoBehaviour
 
     private void OnDisable()
     {
-        ClearPrefabs();
+        if (!clearManually)
+        {
+            ClearPrefabs();
+        }
     }
 
     void ChangeCategory(string category)
