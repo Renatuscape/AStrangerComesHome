@@ -3,15 +3,24 @@ using System.IO;
 using UnityEngine;
 using System.Threading.Tasks;
 
+[System.Serializable]
+public class GuildRewardsData //Necessary for Unity to read the .json contents as an object
+{
+    public List<GuildRewardTier> totalPassengers;
+    public List<GuildRewardTier> totalFare;
+    public List<GuildRewardTier> misc;
+}
+
 public static class GuildRewardLoader
 {
-    public static GuildRewardsMenu guildRewards;
     public static bool isLoaded = false;
-    public static Task StartLoading(GuildRewardsMenu guildRewardsMenu)
+    public static GuildMenu guildData;
+    public static Task StartLoading(GuildMenu guildMenu)
     {
+        guildData = guildMenu;
+
         if (!isLoaded)
         {
-            guildRewards = guildRewardsMenu;
             List<Task> loadingTasks = new List<Task>();
 
             Task loadingTask = LoadFromJsonAsync("GuildRewards.json");
@@ -23,14 +32,6 @@ public static class GuildRewardLoader
         {
             return null;
         }
-    }
-
-    [System.Serializable]
-    public class GuildRewardsData //Necessary for Unity to read the .json contents as an object
-    {
-        public List<GuildRewardTier> totalPassengers;
-        public List<GuildRewardTier> totalFare;
-        public List<GuildRewardTier> misc;
     }
 
     public static async Task LoadFromJsonAsync(string fileName)
@@ -46,18 +47,20 @@ public static class GuildRewardLoader
             {
                 if (dataWrapper.totalPassengers.Count > 0)
                 {
-                    var tiers = new List<GuildRewardTier>(guildRewards.rewardTiersMisc);
-                    tiers.AddRange(dataWrapper.totalPassengers);
-                    tiers.AddRange(dataWrapper.totalFare);
+                    guildData.loadedRewards = dataWrapper;
 
-                    foreach (var tier in tiers)
+                    foreach (var tier in guildData.loadedRewards.totalPassengers)
                     {
                         tier.tierID = "GuildLootTier_" + tier.tierID;
                     }
-
-                    guildRewards.rewardTiersTotalPassengers = dataWrapper.totalPassengers;
-                    guildRewards.rewardTiersTotalFare = dataWrapper.totalFare;
-                    guildRewards.rewardTiersMisc = dataWrapper.misc;
+                    foreach (var tier in guildData.loadedRewards.misc)
+                    {
+                        tier.tierID = "GuildLootTier_" + tier.tierID;
+                    }
+                    foreach (var tier in guildData.loadedRewards.totalFare)
+                    {
+                        tier.tierID = "GuildLootTier_" + tier.tierID;
+                    }
 
                     isLoaded = true;
                 }
