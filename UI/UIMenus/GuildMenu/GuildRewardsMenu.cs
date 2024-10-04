@@ -1,42 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 public class GuildRewardsMenu : MonoBehaviour
 {
-    public GameObject rewardContainerPassengers;
-    public GameObject rewardContainerFare;
-    public GameObject rewardContainerMisc;
+    public PageinatedList pageinatedList;
 
-    public List<Button> btnsCollectPassengers;
-    public List<Button> btnsCollectFare;
-    public List<Button> btnsCollectMisc;
-
-    public List<GuildRewardTier> rewardTiersTotalPassengers;
-    public List<GuildRewardTier> rewardTiersTotalFare;
-    public List<GuildRewardTier> rewardTiersMisc;
+    public List<GuildRewardPrefab> tierPrefabs;
     public bool isGuildmaster;
     public int totalPassengers;
     public int totalFare;
 
-    private void OnDisable()
-    {
-        List<Button> buttons = new(btnsCollectPassengers);
-        buttons.AddRange(btnsCollectFare);
-        buttons.AddRange(btnsCollectMisc);
-
-        foreach (var tier in buttons)
-        {
-            Destroy(tier.gameObject);
-        }
-
-        btnsCollectPassengers.Clear();
-        btnsCollectFare.Clear();
-        btnsCollectMisc.Clear();
-
-    }
-    public void Initialise(bool initiatedByGuildmaster, int totalPassengers, int totalFare)
+    public void Initialise(bool initiatedByGuildmaster, GuildRewardsData rewardsData) // Run when on opening the guild menu
     {
         if (gameObject.activeInHierarchy)
         {
@@ -45,151 +21,78 @@ public class GuildRewardsMenu : MonoBehaviour
         else
         {
             isGuildmaster = initiatedByGuildmaster;
-            this.totalFare = totalFare;
-            this.totalPassengers = totalPassengers;
             
             gameObject.SetActive(true);
-            SetUpRewards();
-
+            SetUpRewards(rewardsData);
         }
     }
 
-    void SetUpRewards()
+    void SetUpRewards(GuildRewardsData rewardsData)
     {
-        foreach (var tier in rewardTiersTotalPassengers)
+        CleanUp();
+
+        List<IdIntPair> fareTierIDs = new();
+        List<IdIntPair> passengerTierIDs = new();
+        List<IdIntPair> miscTierIDs = new();
+
+        foreach (var tier in rewardsData.totalFare)
         {
-            var button = PrintTier(tier, "Passengers ferried:", btnsCollectPassengers, rewardContainerPassengers);
-            tier.Setup(totalPassengers, button);
+            string tierName = $"{tier.requirements[0].amount} Shillings Earned";
+            fareTierIDs.Add(new IdIntPair() { objectID = tier.tierID, description = tierName});
         }
-        foreach (var tier in rewardTiersTotalFare)
+        foreach (var tier in rewardsData.totalPassengers)
         {
-            var button = PrintTier(tier, "Total fare earned:", btnsCollectFare, rewardContainerFare);
-            tier.Setup(totalFare, button);
+            string tierName = $"{tier.requirements[0].amount} Passengers Served";
+            passengerTierIDs.Add(new IdIntPair() { objectID = tier.tierID, description = tierName });
+        }
+        foreach (var tier in rewardsData.misc)
+        {
+            miscTierIDs.Add(new IdIntPair() { objectID = tier.tierID, description = $"{tier.tierName}: <color=#A45807>{tier.description}</color>"});
         }
 
-        int rewardCount = 1;
-        foreach (var tier in rewardTiersMisc)
+        var listCategory = new List<ListCategory>() {
+            new() { categoryName = "Total Fare", listContent = fareTierIDs},
+            new() { categoryName = "Total Passengers", listContent = passengerTierIDs},
+            new() { categoryName = "Bonuses", listContent = miscTierIDs},
+        };
+
+        var prefabs = pageinatedList.InitialiseWithCategories(listCategory);
+
+        List<GuildRewardTier> allRewardsData = new();
+        allRewardsData.AddRange(rewardsData.totalFare);
+        allRewardsData.AddRange(rewardsData.totalPassengers);
+        allRewardsData.AddRange(rewardsData.misc);
+
+        foreach (var prefab in prefabs)
         {
-            tier.requiredCount = rewardCount;
-            rewardCount++;
+            var prefabScript = prefab.AddComponent<GuildRewardPrefab>();
+            var listScript = prefab.GetComponent<ListItemPrefab>();
 
-            var button = PrintMiscTier(tier);
-            tier.Setup(0, button);
-        }
-    }
+            var matchingTierData = allRewardsData.FirstOrDefault(r => r.tierID == listScript.entry.objectID);
 
-
-    Button PrintTier(GuildRewardTier tier, string tierText, List<Button> buttonList, GameObject parentContainer)
-    {
-        Button newButton = GetButton($"{(string.IsNullOrEmpty(tier.description) ? "" : $"<b>{tier.description}</b>\n")}{tierText} {tier.requiredCount}");
-
-        if (tier.playerCount < tier.requiredCount)
-        {
-            newButton.interactable = false;
-        }
-        else
-        {
-            if (!isGuildmaster)
+            if (matchingTierData == null)
             {
-                newButton.onClick.AddListener(() =>
-                {
-                    LogAlert.QueueTextAlert("I can pick up this reward at the Guild headquarters in the Capital.");
-                });
+                Debug.Log("GWM: Matching tier data was null for list item " + listScript.entry.objectID);
             }
-            else
-            {
-                newButton.onClick.AddListener(() =>
-                {
-                    if (tier.playerCount >= tier.requiredCount)
-                    {
-                        newButton.interactable = false;
-                        tier.Claim();
-                    }
-                });
-            }
+
+            tierPrefabs.Add(prefabScript);
+            prefabScript.Setup(listScript, matchingTierData);
         }
 
-        newButton.gameObject.transform.SetParent(parentContainer.transform);
-        buttonList.Add(newButton);
-        StartCoroutine(RefreshCanvas());
-        return newButton;
+        CheckAllTiers();
     }
 
-    IEnumerator RefreshCanvas()
+    public void CheckAllTiers()
     {
-    var rewardContainerLayout = rewardContainerPassengers.GetComponent<VerticalLayoutGroup>();
-    var fareContainerLayout = rewardContainerFare.GetComponent<VerticalLayoutGroup>();
-        var rewardConttainerLayout = rewardContainerMisc.GetComponent<VerticalLayoutGroup>();
-
-
-        if (rewardContainerLayout != null)
+        foreach (var item in tierPrefabs)
         {
-            rewardContainerLayout.enabled = false;
-            Canvas.ForceUpdateCanvases();
-            yield return null;
-
-            rewardContainerLayout.enabled = true;
-            yield return null;
-            Canvas.ForceUpdateCanvases();
-
-            fareContainerLayout.enabled = false;
-            Canvas.ForceUpdateCanvases();
-            yield return null;
-
-            fareContainerLayout.enabled = true;
-            yield return null;
-
-            rewardConttainerLayout.enabled = false;
-            Canvas.ForceUpdateCanvases();
-            yield return null;
-
-            rewardConttainerLayout.enabled = true;
-            yield return null;
-            Canvas.ForceUpdateCanvases();
+            item.CheckState();
         }
-        yield return null;
-        Canvas.ForceUpdateCanvases();
     }
 
-    Button PrintMiscTier(GuildRewardTier tier)
+    public void CleanUp()
     {
-        Button newButton = GetButton($"<b>Bonus Reward #{tier.requiredCount}</b>\n{tier.description}");
-
-        if (!RequirementChecker.CheckRequirements(tier.requirements))
-        {
-            newButton.interactable = false;
-        }
-        else
-        {
-            if (!isGuildmaster)
-            {
-                newButton.onClick.AddListener(() =>
-                {
-                    LogAlert.QueueTextAlert("I can pick up this reward at the Guild headquarters in the Capital.");
-                });
-            }
-            else
-            {
-                newButton.onClick.AddListener(() =>
-                {
-                    if (RequirementChecker.CheckRequirements(tier.requirements))
-                    {
-                        newButton.interactable = false;
-                        tier.Claim();
-                    }
-                });
-            }
-        }
-
-        newButton.gameObject.transform.SetParent(rewardContainerMisc.transform);
-        btnsCollectMisc.Add(newButton);
-        StartCoroutine(RefreshCanvas());
-
-        return newButton;
-    }
-
-    Button GetButton(string name)
-    {
-        return BoxFactory.CreateButton(name).GetComponent<Button>();
+        tierPrefabs.Clear();
+        pageinatedList.ClearPrefabs();
     }
 }
