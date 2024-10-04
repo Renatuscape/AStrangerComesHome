@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class GuildMenu : MonoBehaviour
 {
+    public GuildRewardsData loadedRewards;
     public PortraitRenderer portraitRenderer;
     public Character character;
     public GuildRewardsMenu rewardsMenu;
@@ -48,7 +49,7 @@ public class GuildMenu : MonoBehaviour
     void InitialiseRewardsMenu()
     {
         rewardsMenu.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 2000, 0);
-        rewardsMenu.Initialise(character.objectID == StaticTags.Guildmaster, totalPassengers, totalFare);
+        rewardsMenu.Initialise(character.objectID == StaticTags.Guildmaster, loadedRewards);
     }
 
     public void ToggleRewardsMenu()
@@ -56,6 +57,7 @@ public class GuildMenu : MonoBehaviour
         if (rewardsMenu.transform.localPosition.y > -20)
         {
             rewardsMenu.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, -20, 0);
+            // rewardsMenu.CheckAllTiers();
         }
         else
         {
@@ -65,6 +67,7 @@ public class GuildMenu : MonoBehaviour
 
     public void Close()
     {
+        rewardsMenu.CleanUp();
         rewardsMenu.gameObject.SetActive(false);
         gameObject.SetActive(false);
         TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
