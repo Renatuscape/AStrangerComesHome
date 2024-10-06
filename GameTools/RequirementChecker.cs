@@ -7,38 +7,16 @@ public static class RequirementChecker
     {
         if (string.IsNullOrEmpty(gender))
         {
-                return true;
+            return true;
         }
         else
         {
             return gender == TransientDataScript.gameManager.dataManager.playerGender;
         }
-
     }
 
     public static bool CheckDialogueRequirements(Dialogue dialogue)
     {
-        ////Debug.Log("Attempting to check requirements for dialogue " + dialogue.objectID);
-
-        //bool timeCheck = CheckTime(dialogue.startTime, dialogue.endTime);
-        //bool locationCheck = CheckAgainstCurrentLocation(dialogue.locationID);
-        //bool requirementCheck = CheckRequirements(dialogue.requirements);
-        //bool restrictionCheck = CheckRestrictions(dialogue.restrictions);
-
-        ////Debug.Log("Time check was " + timeCheck);
-        ////Debug.Log("Location check was " + locationCheck);
-        ////Debug.Log("Requirement check was " + requirementCheck);
-        ////Debug.Log("Restriction check was " + restrictionCheck);
-
-        //if (timeCheck && locationCheck && requirementCheck && restrictionCheck)
-        //{
-        //    return true;
-        //}
-        //else
-        //{
-        //    return false;
-        //}
-
         return CheckPackage(dialogue.checks);
     }
 
@@ -106,6 +84,7 @@ public static class RequirementChecker
 
         return CheckAgainstCurrentLocation(requiredLocation);
     }
+
     public static bool CheckAgainstCurrentLocation(Location requiredLocation)
     {
         if (requiredLocation == null)
@@ -167,7 +146,7 @@ public static class RequirementChecker
     {
         if (conditions != null && conditions.Count > 0)
         {
-            foreach (var condition  in conditions)
+            foreach (var condition in conditions)
             {
                 if (!condition.Check())
                 {
@@ -175,9 +154,23 @@ public static class RequirementChecker
                 }
             }
         }
-
-
         return true;
+    }
+
+    public static bool CheckForTag(BaseObject obj, string tag)
+    {
+        if (obj.tagsArray != null)
+        {
+            foreach (var t in obj.tagsArray)
+            {
+                if (t == tag)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public static bool CheckPackage(RequirementPackage package)
