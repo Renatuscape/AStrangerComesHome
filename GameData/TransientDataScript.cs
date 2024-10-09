@@ -307,6 +307,7 @@ public class TransientDataScript : MonoBehaviour
         QuestResetter.Tick();
         Player.CheckTimers();
         WorldNodeTracker.UpdateNodesOnDayTick();
+        PassengerSatisfaction.DailyTick();
 
         if (GetDaysPassed() % 7 == 0)
         {
@@ -315,8 +316,11 @@ public class TransientDataScript : MonoBehaviour
                 gameManager.dataManager.giftedThisWeek.Clear();
             }
         }
+    }
 
-
+    public static void HourlyTick()
+    {
+        PassengerSatisfaction.HourlyTick();
     }
 
     public static bool GiftCheck(Character character)
