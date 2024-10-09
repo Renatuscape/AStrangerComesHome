@@ -6,6 +6,7 @@ public class PassengerManager : MonoBehaviour
 {
     public DataManagerScript dataManager;
     public static PassengerManager instance;
+    public PassengerSatisfaction passengerSatisfaction;
     public GameObject waitingPrefab;
     public PassengerPrefabScript passengerA;
     public PassengerPrefabScript passengerB;
@@ -20,7 +21,6 @@ public class PassengerManager : MonoBehaviour
     public void Initialise()
     {
         instance = this;
-        dataManager = GameObject.Find("DataManager").GetComponent<DataManagerScript>();
 
         dataManager.seatA.seatID = "A";
         passengerA.gameObject.SetActive(false);
@@ -70,9 +70,11 @@ public class PassengerManager : MonoBehaviour
             dataManager.seatA.origin = origin;
             dataManager.seatA.destination = destination;
             dataManager.seatA.spriteID = passengerSprite.name;
+            dataManager.seatA.satisfaction = 3;
 
             passengerA.gameObject.SetActive(true);
             passengerA.UpdatePassengerData();
+            passengerSatisfaction.NewPassengerA();
         }
         else if (dataManager.seatB.isActive == false)
         {
@@ -80,6 +82,7 @@ public class PassengerManager : MonoBehaviour
             dataManager.seatB.passengerName = passengerName;
             dataManager.seatB.origin = origin;
             dataManager.seatB.destination = destination;
+            dataManager.seatB.satisfaction = 3;
 
             while (dataManager.seatA.spriteID == passengerSprite.name)
             {
@@ -90,6 +93,7 @@ public class PassengerManager : MonoBehaviour
 
             passengerB.gameObject.SetActive(true);
             passengerB.UpdatePassengerData();
+            passengerSatisfaction.NewPassengerB();
         }
     }
     public void PassengerSpawner()
