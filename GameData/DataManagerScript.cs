@@ -51,6 +51,7 @@ public class DataManagerScript : MonoBehaviour
     //PASSENGER DATA
     public PassengerData seatA;
     public PassengerData seatB;
+    public List<IdIntPair> passengerFood;
 
     //CRAFTING DATA
     public List<SynthesiserData> alchemySynthesisers;
@@ -170,5 +171,7 @@ public class PassengerData
     public Location origin;
     public Location destination;
     public int fare;
+    public float satisfaction;
+    public bool isFedToday;
     public List<string> dialogueIDs;
 }
