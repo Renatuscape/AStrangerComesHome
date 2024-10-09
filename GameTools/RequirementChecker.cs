@@ -173,6 +173,34 @@ public static class RequirementChecker
         return false;
     }
 
+    public static bool CheckForTags(BaseObject obj, List<string> tags, int tagsNeeded = 0)
+    {
+        if (obj.tagsArray != null)
+        {
+            if (tagsNeeded == 0)
+            {
+                tagsNeeded = tags.Count;
+            }
+
+            int tagsFound = 0;
+
+            foreach (var t in obj.tagsArray)
+            {
+                if (tags.Contains(t))
+                {
+                    tagsFound++;
+                }
+
+                if (tagsNeeded == tagsFound)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public static bool CheckPackage(RequirementPackage package)
     {
         if (package == null)
