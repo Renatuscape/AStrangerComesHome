@@ -14,8 +14,9 @@ public class PassengerSatisfaction : MonoBehaviour
     public bool dinnerForB;
     public bool debugMode;
 
-    public List<Item> viableFoodItems;
+    public static List<Item> viableFoodItems;
     public List<Item> debugStockList;
+
     private void Start()
     {
         instance = this;
@@ -94,14 +95,14 @@ public class PassengerSatisfaction : MonoBehaviour
 
     bool RollForMealtime(ref float chance)
     {
-        if (dataManager.timeOfDay > 0.85f || Random.Range(0f, 100f) < chance)
+        if (dataManager.timeOfDay > 0.9f || Random.Range(0f, 100f) < chance)
         {
             chance = 5;
             return true;
         }
         else
         {
-            chance += 10;
+            chance += 2;
             return false;
         }
     }
@@ -282,12 +283,12 @@ public class PassengerSatisfaction : MonoBehaviour
 
     public void NewPassengerA()
     {
-        feedChanceA = Random.Range(5f, 60f);
+        feedChanceA = Random.Range(5f, 20f);
     }
 
     public void NewPassengerB()
     {
-        feedChanceB = Random.Range(5f, 60f);
+        feedChanceB = Random.Range(5f, 20f);
     }
 
     public static void DailyTick()
@@ -303,6 +304,14 @@ public class PassengerSatisfaction : MonoBehaviour
         if (instance != null)
         {
             instance.Hourly();
+        }
+    }
+
+    public static void ForceUpdateViableInventory()
+    {
+        if (instance != null)
+        {
+            instance.FindViableFoodItems();
         }
     }
 }
