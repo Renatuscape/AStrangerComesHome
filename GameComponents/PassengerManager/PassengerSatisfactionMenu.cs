@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class PassengerSatisfactionMenu : MonoBehaviour
 {
@@ -52,6 +51,8 @@ public class PassengerSatisfactionMenu : MonoBehaviour
 
     void SetUpStockList()
     {
+        stockPrefabs.Clear();
+
         if (dataManager.passengerFood.Count > 0)
         {
             var stockObjects = stockedFood.InitialiseWithoutCategories(dataManager.passengerFood);
@@ -77,6 +78,8 @@ public class PassengerSatisfactionMenu : MonoBehaviour
 
     void SetUpInventoryList()
     {
+        inventoryPrefabs.Clear();
+
         var inventoryList = availableInventory.InitialiseWithoutCategories(GetViableInventoryItems());
 
         foreach (var invObject in inventoryList)
@@ -88,6 +91,15 @@ public class PassengerSatisfactionMenu : MonoBehaviour
             invPrefab.item = Items.FindByID(invPrefab.listPrefab.entry.objectID);
 
             invPrefab.UpdateValues();
+
+            if (invPrefab.item != null && !string.IsNullOrEmpty(invPrefab.item.objectID))
+            {
+                invPrefab.listPrefab.button.onClick.AddListener(() => AddItemToStock(invPrefab));
+            }
+            else
+            {
+                invPrefab.listPrefab.button.interactable = false;
+            }
 
             inventoryPrefabs.Add(invPrefab);
         }
@@ -119,58 +131,76 @@ public class PassengerSatisfactionMenu : MonoBehaviour
 
         return inventoryItems;
     }
-}
 
-public class SatisfactionStockPrefab : MonoBehaviour
-{
-    public Item item;
-    public ListItemPrefab listPrefab;
-
-    public void UpdateValues()
+    void AddItemToStock(SatisfactionInventoryPrefab invPrefab)
     {
-        if (item != null && listPrefab.entry != null && !string.IsNullOrEmpty(item.name))
+        if (invPrefab.item != null && !string.IsNullOrEmpty(invPrefab.item.objectID))
         {
-            if (listPrefab.entry.amount == 0)
+            var count = Player.GetCount(invPrefab.item.objectID, name);
+
+            if (count > 0)
             {
-                gameObject.SetActive(false);
+                var stockEntry = dataManager.passengerFood.FirstOrDefault(e => e.objectID == invPrefab.item.objectID);
+
+                if (stockEntry == null)
+                {
+                    stockEntry = new() { objectID = invPrefab.item.objectID };
+                    dataManager.passengerFood.Add(stockEntry);
+                }
+
+                if (stockEntry.amount < 30)
+                {
+                    stockEntry.amount++;
+                    count--;
+                    Player.Remove(invPrefab.item.objectID);
+
+                    bool foundPrefab = false;
+
+                    foreach (var script in stockPrefabs)
+                    {
+                        if (script.item.objectID == invPrefab.item.objectID)
+                        {
+                            foundPrefab = true;
+                            script.UpdateValues();
+                            break;
+                        }
+                    }
+
+                    if (!foundPrefab)
+                    {
+                        SetUpStockList();
+                    }
+
+                    LogAlert.QueueTextAlert($"Added {invPrefab.item.name} to stock.");
+                }
+                else
+                {
+                    LogAlert.QueueTextAlert($"Added {invPrefab.item.name} to stock.");
+                }
             }
             else
             {
-                gameObject.SetActive(true);
-                listPrefab.textMesh.text = $"{item.name} ({listPrefab.entry.amount})";
+                LogAlert.QueueTextAlert($"Not enough {invPrefab.item.name} in inventory.");
             }
-        }
-        else if (listPrefab.entry == null || listPrefab.entry.objectID != "ALERT")
-        {
-            gameObject.SetActive(false);
-        }
-    }
-}
 
-public class SatisfactionInventoryPrefab : MonoBehaviour
-{
-    public Item item;
-    public ListItemPrefab listPrefab;
-
-    public void UpdateValues()
-    {
-        if (item != null && !string.IsNullOrEmpty(item.name))
-        {
-            var count = Player.GetCount(item.objectID, name);
 
             if (count == 0)
             {
-                gameObject.SetActive(false);
+                invPrefab.gameObject.SetActive(false);
             }
             else
             {
-                gameObject.SetActive(true);
-                listPrefab.textMesh.text = $"{item.name} ({Player.GetCount(item.objectID, name)})";
+                invPrefab.UpdateValues();
             }
         }
-        else if (listPrefab.entry == null || listPrefab.entry.objectID != "ALERT")
+        else
         {
-            gameObject.SetActive(false);
+            Debug.LogWarning("Inventory prefab had no item.");
         }
+    }
+
+    void RemoveItemFromStock(SatisfactionStockPrefab stockPrefab)
+    {
+
     }
 }
