@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PassengerSatisfactionMenu : MonoBehaviour
 {
+    public static bool isActive;
     public DataManagerScript dataManager;
     public GameObject canvasObject;
     public PageinatedList stockedFood;
@@ -17,13 +18,6 @@ public class PassengerSatisfactionMenu : MonoBehaviour
         canvasObject.SetActive(false);
     }
 
-    private void OnEnable()
-    {
-        if (TransientDataScript.IsTimeFlowing())
-        {
-            Initialise();
-        }
-    }
     public void Initialise()
     {
         if (PassengerSatisfaction.viableFoodItems == null || PassengerSatisfaction.viableFoodItems.Count == 0)
@@ -31,6 +25,7 @@ public class PassengerSatisfactionMenu : MonoBehaviour
             PassengerSatisfaction.ForceUpdateViableInventory();
         }
 
+        isActive = true;
         canvasObject.SetActive(true);
         Clear();
         SetUpStockList();
@@ -39,6 +34,7 @@ public class PassengerSatisfactionMenu : MonoBehaviour
 
     public void Close()
     {
+        isActive = false;
         canvasObject.SetActive(false);
         Clear();
     }
@@ -64,8 +60,19 @@ public class PassengerSatisfactionMenu : MonoBehaviour
                 stockPrefab.listPrefab = stockObject.GetComponent<ListItemPrefab>();
 
                 stockPrefab.item = Items.FindByID(stockPrefab.listPrefab.entry.objectID);
+                SetUpListDisplays(stockPrefab.listPrefab, stockPrefab.item);
 
                 stockPrefab.UpdateValues();
+
+                if (stockPrefab.item != null && !string.IsNullOrEmpty(stockPrefab.item.objectID))
+                {
+                    stockPrefab.listPrefab.button.onClick.AddListener(() => RemoveItemFromStock(stockPrefab));
+                }
+                else
+                {
+                    stockPrefab.listPrefab.button.transition = UnityEngine.UI.Selectable.Transition.None;
+                    stockPrefab.listPrefab.button.interactable = false;
+                }
 
                 stockPrefabs.Add(stockPrefab);
             }
@@ -89,6 +96,7 @@ public class PassengerSatisfactionMenu : MonoBehaviour
             invPrefab.listPrefab = invObject.GetComponent<ListItemPrefab>();
 
             invPrefab.item = Items.FindByID(invPrefab.listPrefab.entry.objectID);
+            SetUpListDisplays(invPrefab.listPrefab, invPrefab.item);
 
             invPrefab.UpdateValues();
 
@@ -98,10 +106,24 @@ public class PassengerSatisfactionMenu : MonoBehaviour
             }
             else
             {
+                invPrefab.listPrefab.button.transition = UnityEngine.UI.Selectable.Transition.None;
                 invPrefab.listPrefab.button.interactable = false;
             }
 
             inventoryPrefabs.Add(invPrefab);
+        }
+    }
+
+    void SetUpListDisplays(ListItemPrefab listItem, Item item)
+    {
+        if (listItem != null && item != null)
+        {
+            listItem.CreateItemTags(item);
+
+            if (!string.IsNullOrEmpty(item.objectID))
+            {
+                listItem.DisplayItemSprite(item.objectID);
+            }
         }
     }
 
@@ -134,73 +156,113 @@ public class PassengerSatisfactionMenu : MonoBehaviour
 
     void AddItemToStock(SatisfactionInventoryPrefab invPrefab)
     {
-        if (invPrefab.item != null && !string.IsNullOrEmpty(invPrefab.item.objectID))
+        var count = Player.GetCount(invPrefab.item.objectID, name);
+
+        if (count > 0)
         {
-            var count = Player.GetCount(invPrefab.item.objectID, name);
+            var stockEntry = dataManager.passengerFood.FirstOrDefault(e => e.objectID == invPrefab.item.objectID);
 
-            if (count > 0)
+            if (stockEntry == null)
             {
-                var stockEntry = dataManager.passengerFood.FirstOrDefault(e => e.objectID == invPrefab.item.objectID);
+                stockEntry = new() { objectID = invPrefab.item.objectID };
+                dataManager.passengerFood.Add(stockEntry);
+            }
 
-                if (stockEntry == null)
+            if (stockEntry.amount < 10)
+            {
+                stockEntry.amount++;
+                count--;
+                Player.Remove(invPrefab.item.objectID);
+
+                bool foundPrefab = false;
+
+                foreach (var script in stockPrefabs)
                 {
-                    stockEntry = new() { objectID = invPrefab.item.objectID };
-                    dataManager.passengerFood.Add(stockEntry);
-                }
-
-                if (stockEntry.amount < 30)
-                {
-                    stockEntry.amount++;
-                    count--;
-                    Player.Remove(invPrefab.item.objectID);
-
-                    bool foundPrefab = false;
-
-                    foreach (var script in stockPrefabs)
+                    if (script.item != null && script.item.objectID == invPrefab.item.objectID)
                     {
-                        if (script.item.objectID == invPrefab.item.objectID)
-                        {
-                            foundPrefab = true;
-                            script.UpdateValues();
-                            break;
-                        }
+                        foundPrefab = true;
+                        script.UpdateValues();
+                        break;
                     }
-
-                    if (!foundPrefab)
-                    {
-                        SetUpStockList();
-                    }
-
-                    LogAlert.QueueTextAlert($"Added {invPrefab.item.name} to stock.");
                 }
-                else
+
+                if (!foundPrefab)
                 {
-                    LogAlert.QueueTextAlert($"Added {invPrefab.item.name} to stock.");
+                    SetUpStockList();
                 }
+
+                LogAlert.QueueTextAlert($"Added {invPrefab.item.name} to stock.");
             }
             else
             {
-                LogAlert.QueueTextAlert($"Not enough {invPrefab.item.name} in inventory.");
-            }
-
-
-            if (count == 0)
-            {
-                invPrefab.gameObject.SetActive(false);
-            }
-            else
-            {
-                invPrefab.UpdateValues();
+                LogAlert.QueueTextAlert($"Stock is already full on {invPrefab.item.name}.");
             }
         }
         else
         {
-            Debug.LogWarning("Inventory prefab had no item.");
+            LogAlert.QueueTextAlert($"Not enough {invPrefab.item.name} in inventory.");
+        }
+
+
+        if (count == 0)
+        {
+            SetUpInventoryList();
+        }
+        else
+        {
+            invPrefab.UpdateValues();
         }
     }
 
     void RemoveItemFromStock(SatisfactionStockPrefab stockPrefab)
     {
+        var stockEntry = dataManager.passengerFood.FirstOrDefault(e => e.objectID == stockPrefab.item.objectID);
 
+        if (stockEntry == null)
+        {
+            Debug.LogWarning("Could not find entry in stock.");
+            stockPrefab.gameObject.SetActive(false);
+        }
+        else
+        {
+            var added = Player.Add(stockEntry.objectID);
+
+            if (added == 1)
+            {
+                stockEntry.amount--;
+                LogAlert.QueueTextAlert($"Retrieved {stockPrefab.item.name} from stock.");
+
+                bool foundPrefab = false;
+
+                foreach (var script in inventoryPrefabs)
+                {
+                    if (script.item != null && script.item.objectID == stockPrefab.item.objectID)
+                    {
+                        foundPrefab = true;
+                        script.UpdateValues();
+                        break;
+                    }
+                }
+
+                if (!foundPrefab)
+                {
+                    SetUpInventoryList();
+                }
+            }
+            else if (added == 0)
+            {
+                LogAlert.QueueTextAlert($"No more room in inventory for {stockPrefab.item.name}.");
+            }
+
+            if (stockEntry.amount == 0)
+            {
+                dataManager.passengerFood.Remove(stockEntry);
+                SetUpStockList();
+            }
+            else
+            {
+                stockPrefab.UpdateValues();
+            }
+        }
     }
 }
