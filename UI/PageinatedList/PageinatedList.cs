@@ -181,8 +181,9 @@ public class PageinatedList : MonoBehaviour
             {
                 var newItem = Instantiate(listItemPrefab);
                 newItem.transform.SetParent(listContainer.transform, false);
-                newItem.GetComponent<ListItemPrefab>().entry = entry;
-                newItem.GetComponent<ListItemPrefab>().textMesh.text = DialogueTagParser.ParseText(entry.description);
+                var script = newItem.GetComponent<ListItemPrefab>();
+                script.entry = entry;
+                script.textMesh.text = DialogueTagParser.ParseText(entry.description);
 
                 newItem.SetActive(false);
 
