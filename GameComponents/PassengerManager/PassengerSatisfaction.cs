@@ -97,8 +97,17 @@ public class PassengerSatisfaction : MonoBehaviour
     {
         if (dataManager.timeOfDay > 0.9f || Random.Range(0f, 100f) < chance)
         {
-            chance = 5;
-            return true;
+            if (!PassengerSatisfactionMenu.isActive)
+            {
+                chance = 5;
+                return true;
+            }
+            else
+            {
+                LogAlert.QueueTextAlert("Passengers are unable to eat while I am handling the food stock.");
+                chance += 2;
+                return false;
+            }
         }
         else
         {
