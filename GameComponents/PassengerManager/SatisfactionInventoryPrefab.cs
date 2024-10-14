@@ -17,7 +17,7 @@ public class SatisfactionInventoryPrefab : MonoBehaviour
             }
             else
             {
-                gameObject.SetActive(true);
+                //gameObject.SetActive(true);
                 listPrefab.textMesh.text = $"{item.name} ({Player.GetCount(item.objectID, name)})";
             }
         }

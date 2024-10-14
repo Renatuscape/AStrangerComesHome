@@ -15,7 +15,7 @@ public class SatisfactionStockPrefab : MonoBehaviour
             }
             else
             {
-                gameObject.SetActive(true);
+                //gameObject.SetActive(true);
                 listPrefab.textMesh.text = $"{item.name} ({listPrefab.entry.amount})";
             }
         }
