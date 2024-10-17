@@ -6,6 +6,7 @@ public class InteractableBobber : MonoBehaviour
 {
     public GameObject bobberObject;
     public bool ready = false;
+    public bool disable = false;
     private void OnEnable()
     {
         if (!ready)
@@ -16,7 +17,14 @@ public class InteractableBobber : MonoBehaviour
     }
     private void Update()
     {
-        if (ready && TransientDataScript.CameraView == CameraView.Normal && TransientDataScript.GameState == GameState.Overworld)
+        if (disable)
+        {
+            if (bobberObject.activeInHierarchy)
+            {
+                bobberObject.SetActive(false);
+            }
+        }
+        else if (ready && TransientDataScript.CameraView == CameraView.Normal && TransientDataScript.GameState == GameState.Overworld)
         {
             if (!bobberObject.activeInHierarchy)
             {
