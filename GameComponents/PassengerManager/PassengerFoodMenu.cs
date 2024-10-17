@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PassengerSatisfactionMenu : MonoBehaviour
+public class PassengerFoodMenu : MonoBehaviour
 {
     public static bool isActive;
     public DataManagerScript dataManager;
@@ -20,16 +20,19 @@ public class PassengerSatisfactionMenu : MonoBehaviour
 
     public void Initialise()
     {
-        if (PassengerSatisfaction.viableFoodItems == null || PassengerSatisfaction.viableFoodItems.Count == 0)
+        if (PassengerSatisfaction.isEnabled)
         {
-            PassengerSatisfaction.ForceUpdateViableInventory();
-        }
+            if (PassengerFoodManager.viableFoodItems == null || PassengerFoodManager.viableFoodItems.Count == 0)
+            {
+                PassengerSatisfaction.ForceUpdateViableInventory();
+            }
 
-        isActive = true;
-        canvasObject.SetActive(true);
-        Clear();
-        SetUpStockList();
-        SetUpInventoryList();
+            isActive = true;
+            canvasObject.SetActive(true);
+            Clear();
+            SetUpStockList();
+            SetUpInventoryList();
+        }
     }
 
     public void Close()
@@ -131,9 +134,9 @@ public class PassengerSatisfactionMenu : MonoBehaviour
     {
         var inventoryItems = new List<IdIntPair>();
 
-        Debug.Log($"PassSat: Viable food item list contained {PassengerSatisfaction.viableFoodItems.Count}.");
+        Debug.Log($"PassSat: Viable food item list contained {PassengerFoodManager.viableFoodItems.Count}.");
 
-        foreach (var item in PassengerSatisfaction.viableFoodItems)
+        foreach (var item in PassengerFoodManager.viableFoodItems)
         {
             int count = Player.GetCount(item.objectID, name);
 
