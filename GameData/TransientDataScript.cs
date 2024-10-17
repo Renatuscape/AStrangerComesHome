@@ -114,6 +114,11 @@ public class TransientDataScript : MonoBehaviour
                     gameManager.questTracker.RunCheck();
                     Engine.SyncUpgrades();
                     ManaConverter.SyncUpgrades();
+
+                    if (!PassengerSatisfaction.isEnabled)
+                    {
+                        PassengerSatisfaction.CheckUnlockState();
+                    }
                 }
             }
         }
