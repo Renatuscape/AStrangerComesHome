@@ -173,5 +173,6 @@ public class PassengerData
     public int fare;
     public float satisfaction;
     public bool isFedToday;
+    public float eatingChance;
     public List<string> dialogueIDs;
 }
