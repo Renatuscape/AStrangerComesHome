@@ -52,6 +52,7 @@ public class DataManagerScript : MonoBehaviour
     public PassengerData seatA;
     public PassengerData seatB;
     public List<IdIntPair> passengerFood;
+    public List<PassengerReview> reviews;
 
     //CRAFTING DATA
     public List<SynthesiserData> alchemySynthesisers;
@@ -173,6 +174,18 @@ public class PassengerData
     public int fare;
     public float satisfaction;
     public bool isFedToday;
+    public bool leavesReview;
     public float eatingChance;
     public List<string> dialogueIDs;
+}
+
+[Serializable]
+public class PassengerReview
+{
+    public int score;
+    public int time;                // Time of review measured in days passed on review time
+    public string passengerName;    // Store passenger name for print
+    public string comment;          // Store generated comment for print
+    public string originID;         // Store to get route statistics
+    public string destinationID;
 }
