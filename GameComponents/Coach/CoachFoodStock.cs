@@ -44,16 +44,18 @@ public class CoachFoodStock : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log("Detected click on food stock.");
-        satisfactionMenu.Initialise();
-
-        var count = Player.GetCount(StaticTags.OnBoardService, name);
-
-        if (count == 1)
+        if (TransientDataScript.CameraView != CameraView.Normal)
         {
-            Player.Add(StaticTags.OnBoardService);
-        }
+            satisfactionMenu.Initialise();
 
-        bobber.disable = true;
+            var count = Player.GetCount(StaticTags.OnBoardService, name);
+
+            if (count == 1)
+            {
+                Player.Add(StaticTags.OnBoardService);
+            }
+
+            bobber.disable = true;
+        }
     }
 }
