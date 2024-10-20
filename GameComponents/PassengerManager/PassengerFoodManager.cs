@@ -82,13 +82,13 @@ public static class PassengerFoodManager
             else
             {
                 LogAlert.QueueTextAlert("Passengers are unable to eat while I am handling the food stock.");
-                passengerData.eatingChance += 2;
+                passengerData.eatingChance += 5;
                 return false;
             }
         }
         else
         {
-            passengerData.eatingChance += 2;
+            passengerData.eatingChance += 5;
             return false;
         }
     }
@@ -160,6 +160,7 @@ public static class PassengerFoodManager
         if (dataManager.passengerFood.Count == 0)
         {
             LogAlert.QueueTextAlert($"{passenger.passengerName} would have liked a meal.");
+            passenger.satisfaction -= 0.5f;
         }
         else
         {
