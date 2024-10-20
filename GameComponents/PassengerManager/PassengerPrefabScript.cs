@@ -104,8 +104,12 @@ public class PassengerPrefabScript : MonoBehaviour
                 if (Random.Range(0, 100) > 80 - (fate * 4))
                 {
                     Player.Add(spiritEssence.objectID);
-                    TransientDataScript.PushAlert($"{passengerData.passengerName} dropped some Spirit Essence.");
                     AudioManager.PlaySoundEffect("cloth3");
+                }
+
+                if (Player.GetCount(StaticTags.OnBoardService, name) > 1)
+                {
+                    PassengerReviewManager.RollForReview(passengerData);
                 }
 
                 passengerData.isActive = false;
