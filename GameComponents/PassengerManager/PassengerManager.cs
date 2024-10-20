@@ -69,8 +69,10 @@ public class PassengerManager : MonoBehaviour
             dataManager.seatA.origin = origin;
             dataManager.seatA.destination = destination;
             dataManager.seatA.spriteID = passengerSprite.name;
-            dataManager.seatA.satisfaction = 3;
+            dataManager.seatA.satisfaction = 3.5f;
+            dataManager.seatA.isFedToday = false;
             dataManager.seatA.eatingChance = Random.Range(5f, 15f);
+            dataManager.seatA.leavesReview = Random.value <= 0.3f;
 
             passengerA.gameObject.SetActive(true);
             passengerA.UpdatePassengerData();
@@ -81,8 +83,10 @@ public class PassengerManager : MonoBehaviour
             dataManager.seatB.passengerName = passengerName;
             dataManager.seatB.origin = origin;
             dataManager.seatB.destination = destination;
-            dataManager.seatB.satisfaction = 3;
+            dataManager.seatB.satisfaction = 3.5f;
+            dataManager.seatB.isFedToday = false;
             dataManager.seatB.eatingChance = Random.Range(5f, 15f);
+            dataManager.seatB.leavesReview = Random.value <= 0.3f;
 
             while (dataManager.seatA.spriteID == passengerSprite.name)
             {
