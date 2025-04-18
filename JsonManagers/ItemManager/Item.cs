@@ -37,11 +37,11 @@ public static class Items
 
     public static void DebugList()
     {
-        Debug.LogWarning("Items.DebugList() called");
+        Log.Write("Items.DebugList() called. Item count was " + all.Count);
 
         foreach (Item item in all)
         {
-            Debug.Log($"Item ID: {item.objectID}\tItem Name: {item.name}");
+            Log.Write($"Item ID: {item.objectID}\tItem Name: {item.name}");
         }
     }
 
