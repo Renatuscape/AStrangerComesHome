@@ -30,9 +30,10 @@ public class SpriteFactory : MonoBehaviour
 
     TaskCompletionSource<bool> buildCompleteTaskSource;
 
-    void Start()
+    private void Awake()
     {
         instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public static Sprite GetPassengerByID(string spriteID)
