@@ -1,25 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class JsonLoaderItems : JsonLoader
 {
-    public List<Item> debugItemList;
     public JsonLoaderItems()
     {
-        displayName = "test items"; // This accesses the inherited field
+        displayName = "items"; // This accesses the inherited field
         path += "/JsonData/Items/"; // Add to the streaming path
-    }
-
-    [System.Serializable]
-    public class DataWrapper //Necessary for Unity to read the .json contents as an object
-    {
-        public Item[] items;
     }
 
     public override Task StartLoading()
     {
+        // Multi-file loader setup
+
         List<Task> loadingTasks = new List<Task>();
 
         var info = new DirectoryInfo(path);
@@ -50,10 +46,10 @@ public class JsonLoaderItems : JsonLoader
             {
                 if (dataWrapper.items != null)
                 {
-                    foreach (Item item in dataWrapper.items)
+                    foreach (Item entry in dataWrapper.items)
                     {
-                        // InitialiseItem(item, Items.all);
-                        debugItemList.Add(item);
+                        ItemManager.Initialise(entry);
+                        Repository.instance.items.Add(entry);
                     }
 
                     Log.Write($"All {displayName.ToUpper()} successfully loaded from Json file {fileName}.");
