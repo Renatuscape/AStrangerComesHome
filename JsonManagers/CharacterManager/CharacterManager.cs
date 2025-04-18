@@ -1,78 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using UnityEngine.UI;
-using System.Threading.Tasks;
-
 public class CharacterManager : MonoBehaviour
 {
-    public List<Character> debugCharacterList = Characters.all;
-    public bool allObjecctsLoaded = false;
-    public int filesLoaded;
-    public int numberOfFilesToLoad;
-
-    public Task StartLoading()
-    {
-        List<Task> loadingTasks = new List<Task>();
-
-        gameObject.SetActive(true);
-        filesLoaded = 0;
-        numberOfFilesToLoad = 1;
-
-        Task loadingTask = LoadFromJsonAsync("Characters.json");
-
-        return Task.WhenAll(loadingTasks);
-    }
-
-    [System.Serializable]
-    public class CharactersWrapper //Necessary for Unity to read the .json contents as an object
-    {
-        public Character[] characters;
-    }
-
-    public async Task LoadFromJsonAsync(string fileName)
-    {
-        string jsonPath = Application.streamingAssetsPath + "/JsonData/Characters/" + fileName;
-
-        if (File.Exists(jsonPath))
-        {
-            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
-            CharactersWrapper dataWrapper = JsonUtility.FromJson<CharactersWrapper>(jsonData);
-
-            if (dataWrapper != null)
-            {
-                if (dataWrapper.characters != null)
-                {
-                    foreach (Character character in dataWrapper.characters)
-                    {
-                        InitialiseCharacter(character, Characters.all);
-                    }
-                    filesLoaded++;
-                    if (filesLoaded == numberOfFilesToLoad)
-                    {
-                        allObjecctsLoaded = true;
-                        Debug.Log("All CHARACTERS successfully loaded from Json.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Character array is null in JSON data. Check that the list has a wrapper with the \'characters\' tag and that the object class is tagged serializable.");
-                }
-            }
-            else
-            {
-                Debug.LogError("JSON data is malformed. No wrapper found?");
-                Debug.Log(jsonData); // Log the JSON data for inspection
-            }
-        }
-        else
-        {
-            Debug.LogError("JSON file not found: " + jsonPath);
-        }
-    }
-
-    public static void InitialiseCharacter(Character character, List<Character> characterList)
+    public static void Initialise(Character character)
     {
         character.objectType = ObjectType.Character;
         character.maxValue = StaticGameValues.maxCharacterValue;
@@ -92,12 +21,11 @@ public class CharacterManager : MonoBehaviour
 
         character.NameSetup();
         objectIDReader(ref character);
-        characterList.Add(character);
+        FindSprite(character);
     }
 
-    public static void objectIDReader(ref Character character)
+    public static void FindSprite(Character character)
     {
-        character.type = TypeFinder(ref character);
         character.spriteCollection = SpriteFactory.GetUiSprite(character.objectID);
 
         if (character.spriteCollection != null)
@@ -109,6 +37,13 @@ public class CharacterManager : MonoBehaviour
             Debug.LogError($"{character.objectID}.image was null. Could not create sprite.");
         }
     }
+
+    public static void objectIDReader(ref Character character)
+    {
+        character.type = TypeFinder(ref character);
+
+    }
+
     public static CharacterType TypeFinder(ref Character character)
     {
         var objectID = character.objectID;
