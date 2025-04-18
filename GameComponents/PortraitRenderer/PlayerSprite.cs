@@ -19,6 +19,11 @@ public class PlayerSprite : MonoBehaviour
 
     public Image lipTint;
 
+    private void Awake()
+    {
+        spriteFactory = SpriteFactory.instance;
+    }
+
     private void OnEnable()
     {
         UpdateAllFromGameData(out var hair, out var eyes, out var body);
