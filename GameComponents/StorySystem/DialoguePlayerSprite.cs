@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class DialoguePlayerSprite : MonoBehaviour
 {
     public PlayerSprite playerSprite;
-    public CharacterExpressionCatalogue expressionCatalogue;
     public List<Image> images = new();
     public List<Image> referenceImages = new();
     public Image imgExpression;
@@ -26,9 +25,9 @@ public class DialoguePlayerSprite : MonoBehaviour
     }
     public void CycleExpressions()
     {
-        if (expressionCatalogue != null)
+        if (SpriteFactory.instance.expressionCatalogue != null)
         {
-            SetExpression(expressionCatalogue.GetNextPackageByIndex(false));
+            SetExpression(SpriteFactory.instance.expressionCatalogue.GetNextPackageByIndex(false));
         }
         else
         {
@@ -56,12 +55,12 @@ public class DialoguePlayerSprite : MonoBehaviour
 
     public void SetExpressionToDefault()
     {
-        SetExpression(expressionCatalogue.GetPackageByID("DEFAULT"));
+        SetExpression(SpriteFactory.instance.expressionCatalogue.GetPackageByID("DEFAULT"));
     }
 
     public void SetExpression(string expressionID)
     {
-        var package = expressionCatalogue.GetPackageByID(expressionID);
+        var package = SpriteFactory.instance.expressionCatalogue.GetPackageByID(expressionID);
         if (package != null)
         {
             SetExpression(package);
