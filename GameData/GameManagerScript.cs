@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public class GameManagerScript : MonoBehaviour
 {
+    public static bool jsonDataLoaded = false;
     public static bool setUpReady = false;
 
     //ALL GAME COMPONENTS
@@ -57,8 +59,15 @@ public class GameManagerScript : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
-        TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
-        StartUpRoutine();
+        if (jsonDataLoaded)
+        {
+            TransientDataScript.SetGameState(GameState.Loading, name, gameObject);
+            StartUpRoutine();
+        }
+        else
+        {
+            SceneManager.LoadScene("GameLoader");
+        }
     }
 
     async void StartUpRoutine()
