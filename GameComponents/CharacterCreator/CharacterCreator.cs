@@ -34,6 +34,11 @@ public class CharacterCreator : MonoBehaviour
     public Toggle accentToggle;
     public Toggle trueNameToggle;
 
+    private void Awake()
+    {
+        spriteFactory = SpriteFactory.instance;
+    }
+
     private void OnEnable()
     {
         if (TransientDataScript.GameState == GameState.CharacterCreation)
