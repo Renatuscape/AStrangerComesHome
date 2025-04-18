@@ -2,74 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using UnityEngine.UI;
-using System.Threading.Tasks;
+
+// Set up skills with correct data after they are loaded from JSON
 public class SkillManager : MonoBehaviour
 {
-    public List<Skill> debugSkillList = Skills.all;
-    public bool allObjectsLoaded = false;
-    public int filesLoaded = 0;
-    public int numberOfFilesToLoad = 1;
-
-    public Task StartLoading()
-    {
-        gameObject.SetActive(true);
-        return LoadFromJsonAsync("Skills.json");
-    }
-
-    [System.Serializable]
-    public class SkillWrapper //Necessary for Unity to read the .json contents as an object
-    {
-        public Skill[] skills;
-    }
-
-    public async Task LoadFromJsonAsync(string fileName)
-    {
-        string jsonPath = Application.streamingAssetsPath + "/JsonData/Skills/" + fileName;
-
-        if (File.Exists(jsonPath))
-        {
-            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
-            SkillWrapper dataWrapper = JsonUtility.FromJson<SkillWrapper>(jsonData);
-
-            if (dataWrapper != null)
-            {
-                if (dataWrapper.skills != null)
-                {
-                    foreach (Skill skill in dataWrapper.skills)
-                    {
-                        InitialiseSkill(skill, Skills.all);
-                    }
-                    filesLoaded++;
-                    if (filesLoaded == numberOfFilesToLoad)
-                    {
-                        allObjectsLoaded = true;
-                        Debug.Log("All SKILLS successfully loaded from Json.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Skill array is null in JSON data. Check that the list has a wrapper with the \'skills\' tag.");
-                }
-            }
-            else
-            {
-                Debug.LogError("JSON data is malformed. No wrapper found?");
-                Debug.Log(jsonData); // Log the JSON data for inspection
-            }
-        }
-        else
-        {
-            Debug.LogError("JSON file not found: " + jsonPath);
-        }
-    }
-
-    public static void InitialiseSkill(Skill skill, List<Skill> skillList)
+    public static void Initialise(Skill skill)
     {
         skill.objectType = ObjectType.Skill;
 
         SkillIDReader(ref skill);
-        skillList.Add(skill);
 
         if (skill.maxValue == 0)
         {
