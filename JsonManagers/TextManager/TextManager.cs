@@ -8,9 +8,12 @@ public static class TextManager
         {"INTER0000", "New Game"},
         {"INTER0001", "Continue"},
     };
+}
 
-    public static string GetText(string tag)
+public static class Tag
+{
+    public static string Parse(string tag)
     {
-        return loadedText[tag];
+        return TextManager.loadedText[tag];
     }
 }
