@@ -1,88 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using System.Threading.Tasks;
 
+// Once items are loaded, set up the correct data here
 public class ItemManager : MonoBehaviour
 {
-    public List<Item> debugItemList = Items.all;
-    public bool allObjectsLoaded = false;
-    public int filesLoaded = 0;
-    public int numberOfFilesToLoad = 8;
-
-    public Task StartLoading()
-    {
-        List<Task> loadingTasks = new List<Task>();
-
-        gameObject.SetActive(true);
-        filesLoaded = 0;
-        numberOfFilesToLoad = 0;
-
-        var info = new DirectoryInfo(Application.streamingAssetsPath + "/JsonData/Items/");
-        var fileInfo = info.GetFiles();
-
-        foreach (var file in fileInfo)
-        {
-            if (file.Extension == ".json")
-            {
-                numberOfFilesToLoad++;
-                Task loadingTask = LoadFromJsonAsync(Path.GetFileName(file.FullName)); // Pass only the file name
-                loadingTasks.Add(loadingTask);
-            }
-        }
-
-        return Task.WhenAll(loadingTasks);
-    }
-
-    [System.Serializable]
-    public class ItemsWrapper //Necessary for Unity to read the .json contents as an object
-    {
-        public Item[] items;
-    }
-
-    public async Task LoadFromJsonAsync(string fileName)
-    {
-        string jsonPath = Application.streamingAssetsPath + "/JsonData/Items/" + fileName;
-
-        if (File.Exists(jsonPath))
-        {
-            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
-            ItemsWrapper dataWrapper = JsonUtility.FromJson<ItemsWrapper>(jsonData);
-
-            if (dataWrapper != null)
-            {
-                if (dataWrapper.items != null)
-                {
-                    foreach (Item item in dataWrapper.items)
-                    {
-                        InitialiseItem(item, Items.all);
-                    }
-                    filesLoaded++;
-                    if (filesLoaded == numberOfFilesToLoad)
-                    {
-                        allObjectsLoaded = true;
-                        Debug.Log("All ITEMS successfully loaded from Json.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Items array is null in JSON data. Check that the list has a wrapper with the \'items\' tag and that the object class is serializable.");
-                }
-            }
-            else
-            {
-                Debug.LogError("JSON data is malformed. No wrapper found?");
-                Debug.Log(jsonData); // Log the JSON data for inspection
-            }
-        }
-        else
-        {
-            Debug.LogError("JSON file not found: " + jsonPath);
-        }
-    }
-
-    public static void InitialiseItem(Item item, List<Item> itemList)
+    public static void Initialise(Item item)
     {
         // Set base object values
         item.objectType = ObjectType.Item;
@@ -113,14 +34,13 @@ public class ItemManager : MonoBehaviour
         }
 
         item.objectID = item.objectID.Split('-')[0];
-        itemList.Add(item);
+        item.sprite = SpriteFactory.GetItemSprite(item.objectID);
     }
 
     public static void ItemIDReader(ref Item item)
     {
         item.type = TypeFinder(ref item);
         item.rarity = RarityFinder(ref item);
-        item.sprite = SpriteFactory.GetItemSprite(item.objectID);
 
         if (item.objectID[11] == 'N')
         {
@@ -139,6 +59,7 @@ public class ItemManager : MonoBehaviour
             Debug.LogError($"{item.objectID} ID was not formatted correctly. Could not find N/S at index[12]");
         }
     }
+
     public static ItemType TypeFinder(ref Item item)
     {
         var objectID = item.objectID;
