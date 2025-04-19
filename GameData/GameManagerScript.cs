@@ -13,11 +13,8 @@ public class GameManagerScript : MonoBehaviour
     public DataManagerScript dataManager;
     public Canvas loadingCanvas;
 
-    public UpgradeManager upgradeManager;
     public QuestManager questManager;
     public DialogueManager dialogueManager;
-    public LocationManager locationManager;
-    public RegionManager regionManager;
     public RecipeManager recipeManager;
     public BookManager bookManager;
     public MemoryManager memoryManager;
@@ -62,7 +59,7 @@ public class GameManagerScript : MonoBehaviour
         }
         else
         {
-            Log.WriteError("JSON data was not loaded.");
+            Log.WriteError("JSON data was not loaded. Returning to Game Loader.");
             SceneManager.LoadScene("GameLoader");
         }
     }
@@ -70,7 +67,7 @@ public class GameManagerScript : MonoBehaviour
     async void StartUpRoutine()
     {
         loadingCanvas.gameObject.SetActive(true);
-        Debug.Log("RUNNING STARTUP ROUTINE");
+        Debug.Log("Starting up Game Manager");
 
         GlobalSettings.LoadSettings();
 
@@ -107,20 +104,14 @@ public class GameManagerScript : MonoBehaviour
 
     async Task InitiateJsonManagers()
     {
-        Debug.Log("INITIATING JSON MANAGERS");
+        Log.Write("Linking repository data");
 
-        regionManager.StartLoading();
-        locationManager.StartLoading();
-        upgradeManager.StartLoading();
-
+        Regions.all = Repository.instance.regions;
+        Locations.all = Repository.instance.locations;
+        Upgrades.all = Repository.instance.upgrades;
         Items.all = Repository.instance.items;
-        Debug.Log("STARTUP: Item sprites set up.");
-
         Skills.all = Repository.instance.skills;
-        Debug.Log("STARTUP: Loading skills async completed");
-
         Characters.all = Repository.instance.characters;
-        Debug.Log("STARTUP: Loading characters async completed");
 
         await recipeManager.StartLoading();
         Debug.Log("STARTUP: Loading recipes async completed");
