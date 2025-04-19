@@ -17,15 +17,17 @@ public class LoadOnStart : MonoBehaviour
 
     public static LoadOnStart instance;
 
-    float loaderStepDelay = 0.5f; // For testing
+    float loaderStepDelay = 0.2f; // For testing
 
     void Awake()
     {
         instance = this;
         loaders = new List<JsonLoader>()
         {
+            new JsonLoaderRegions(),
             new JsonLoaderItems(),
             new JsonLoaderSkills(),
+            new JsonLoaderUpgrades(),
             new JsonLoaderCharacters(),
         };
 
@@ -59,12 +61,11 @@ public class LoadOnStart : MonoBehaviour
             loadingBar.value++;
         }
 
-        // Loading has completed
         DisplayLoadMessage($"Starting up");
         loadingBar.value++;
-        Items.DebugList();
+
         GameManagerScript.jsonDataLoaded = true;
-        Log.Write("Loading GameScene.");
+
         await Task.Delay(TimeSpan.FromSeconds(loaderStepDelay));
         SceneManager.LoadScene("GameScene");
     }
