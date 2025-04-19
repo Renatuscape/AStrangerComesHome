@@ -6,66 +6,6 @@ using UnityEngine.UI;
 
 public class UpgradeManager : MonoBehaviour
 {
-    public List<Upgrade> debugItemList = Upgrades.all;
-    public bool allObjecctsLoaded = false;
-    public int filesLoaded = 0;
-    public int numberOfFilesToLoad = 1;
-    public void StartLoading()
-    {
-        gameObject.SetActive(true);
-        LoadFromJson("Upgrades.json");
-    }
-
-    [System.Serializable]
-    public class ItemsWrapper //Necessary for Unity to read the .json contents as an object
-    {
-        public Upgrade[] upgrades;
-    }
-
-    public void LoadFromJson(string fileName)
-    {
-        string jsonPath = Application.streamingAssetsPath + "/JsonData/Upgrades/" + fileName;
-
-        if (File.Exists(jsonPath))
-        {
-            string jsonData = File.ReadAllText(jsonPath);
-            ItemsWrapper dataWrapper = JsonUtility.FromJson<ItemsWrapper>(jsonData);
-
-            if (dataWrapper != null)
-            {
-                if (dataWrapper.upgrades != null)
-                {
-                    foreach (Upgrade skill in dataWrapper.upgrades)
-                    {
-                        InitialiseUpgrade(skill, Upgrades.all);
-                    }
-                    filesLoaded++;
-                    if (filesLoaded == numberOfFilesToLoad)
-                    {
-                        allObjecctsLoaded = true;
-                        Debug.Log("All UPGRADES successfully loaded from Json.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Upgrades array is null in JSON data. Check that the list has a wrapper with the \'upgrades\' tag.");
-                }
-            }
-            else
-            {
-                Debug.LogError("JSON data is malformed. No wrapper found?");
-                Debug.Log(jsonData); // Log the JSON data for inspection
-            }
-        }
-        else
-        {
-            Debug.LogError("JSON file not found: " + jsonPath);
-        }
-    }
-
-    //ITEM DISPLAY TEST
-    public GameObject itemDisplayer;
-    public Transform canvasTransform;
     public void DisplayItemSprite(Upgrade item, GameObject prefab, Transform parentTransform)
     {
         GameObject newItem = Instantiate(prefab, parentTransform);
@@ -74,13 +14,12 @@ public class UpgradeManager : MonoBehaviour
         imageComponent.sprite = item.sprite;
     }
 
-    public static void InitialiseUpgrade(Upgrade upgrade, List<Upgrade> upgradeList)
+    public static void Initialise(Upgrade upgrade)
     {
         upgrade.objectType = ObjectType.Upgrade;
         upgrade.maxValue = StaticGameValues.maxUpgradeValue;
 
         ItemIDReader(ref upgrade);
-        upgradeList.Add(upgrade);
     }
 
     public static void ItemIDReader(ref Upgrade upgrade)
