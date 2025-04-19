@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public abstract class JsonLoader : MonoBehaviour
+[Serializable]
+public abstract class JsonLoader
 {
     public string path = Application.streamingAssetsPath;
-    public string displayName = "Data";
+    public string displayName = "data";
     public abstract Task StartLoading();
 }
