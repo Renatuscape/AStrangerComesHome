@@ -4,15 +4,8 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
 
-public class UpgradeManager : MonoBehaviour
+public static class UpgradeManager
 {
-    public void DisplayItemSprite(Upgrade item, GameObject prefab, Transform parentTransform)
-    {
-        GameObject newItem = Instantiate(prefab, parentTransform);
-        newItem.name = item.name;
-        Image imageComponent = newItem.GetComponent<Image>();
-        imageComponent.sprite = item.sprite;
-    }
 
     public static void Initialise(Upgrade upgrade)
     {
