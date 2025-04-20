@@ -27,7 +27,14 @@ public static class Regions
 
     public static Region FindByID(string searchTerm)
     {
-        return all.FirstOrDefault(r => r.objectID == searchTerm);
+        if (all == null || all.Count == 0)
+        {
+            return Repository.instance.regions.FirstOrDefault(r => r.objectID == searchTerm);
+        }
+        else
+        {
+            return all.FirstOrDefault(r => r.objectID == searchTerm);
+        }
     }
 }
 
