@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class DialogueTagParser
 {
-    public static Dictionary<string, string> tags;
+    public static Dictionary<string, string> tags = new();
 
     public static string ParseText(string text)
     {
@@ -33,47 +33,114 @@ public static class DialogueTagParser
         return text;
     }
 
-    public static void UpdateTags(DataManagerScript dataManager) {
-        Debug.Log("Updating Dialogue Tags");
-
-        tags = new();
-        CreateTags(dataManager);
-    }
-    static void CreateTags(DataManagerScript dataManager)
+    public static void UpdateTags(DataManagerScript dataManager)
     {
-        //ADD PRONOUNS
-        tags.Add("|he|", Uncapitalise(dataManager.pronounSub));
-        tags.Add("|He|", Capitalise(dataManager.pronounSub));
-        tags.Add("|him|", Uncapitalise(dataManager.pronounObj));
-        tags.Add("|Him|", Capitalise(dataManager.pronounObj));
-        tags.Add("|his|", Uncapitalise(dataManager.pronounGen));
-        tags.Add("|His|", Capitalise(dataManager.pronounGen));
+        Report.Write("Updating Dialogue Tags");
 
-        string playerName = Characters.FindByID("ARC000").trueNamePlate ?? dataManager.playerName;
-        tags.Add("|Morgan|", Capitalise(playerName));
+        UpdatePlayerTags(dataManager);
+
+        foreach (Character c in Characters.all)
+        {
+            UpdateCharacterTags(c);
+        }
+    }
+
+    public static void CreateAllTags(DataManagerScript dataManager)
+    {
+        tags = new();
+
+        //ADD PLAYER
+        CreatePlayerTags(dataManager);
 
         //ADD CHARACTERS
 
         foreach (Character c in Characters.all)
         {
-            if (c.type == CharacterType.Arcana)
-            {
-                AddNewTag(Tag(c.objectID),          c.PersonaliseText(RemovePrefix(c.name)));
-                AddNewTag(Tag("The " + c.objectID), c.PersonaliseText(Capitalise(c.name)));
-                AddNewTag(Tag("the " + c.objectID), c.PersonaliseText(Uncapitalise(c.name)));
-
-                AddNewTag(Tag(c.dialogueTag),          c.PersonaliseText(RemovePrefix(c.GetNameOnly())));
-                AddNewTag(Tag("The " + c.dialogueTag), c.PersonaliseText(Capitalise(c.GetNameOnly())));
-                AddNewTag(Tag("the " + c.dialogueTag), c.PersonaliseText(Uncapitalise(c.GetNameOnly())));
-            }
-            else
-            {
-                AddNewTag(Tag(c.objectID), c.PersonaliseText(c.GetNameOnly()));
-                AddNewTag(Tag(c.dialogueTag), c.PersonaliseText(c.GetNameOnly()));
-            }
+            CreateCharacterTags(c);
         }
 
         Debug.Log($"Tags contain {tags.Count} entries:");
+    }
+
+    public static void UpdatePlayerTags(DataManagerScript dataManager)
+    {
+        //Add player pronouns
+        tags["|he|"] = Uncapitalise(dataManager.pronounSub);
+        tags["|He|"] = Capitalise(dataManager.pronounSub);
+        tags["|him|"] = Uncapitalise(dataManager.pronounObj);
+        tags["|Him|"] = Capitalise(dataManager.pronounObj);
+        tags["|his|"] = Uncapitalise(dataManager.pronounGen);
+        tags["|His|"] = Capitalise(dataManager.pronounGen);
+
+        //Add player name
+        string playerName = Characters.FindByID("ARC000").trueNamePlate ?? dataManager.playerName;
+        tags["|Morgan|"] = Capitalise(playerName);
+    }
+
+    public static void CreatePlayerTags(DataManagerScript dataManager)
+    {
+        if (dataManager == null)
+        {
+            // Add dummy data
+            tags.Add("|Morgan|", "Morgan");
+            tags.Add("|he|", "he");
+            tags.Add("|He|", "He");
+            tags.Add("|him|", "him");
+            tags.Add("|Him|", "Him");
+            tags.Add("|his|", "his");
+            tags.Add("|His|", "His");
+        }
+        else
+        {
+            //Add player name
+            string playerName = Characters.FindByID("ARC000").trueNamePlate ?? dataManager.playerName;
+            tags.Add("|Morgan|", Capitalise(playerName));
+
+            //Add player pronouns
+            tags.Add("|he|", Uncapitalise(dataManager.pronounSub));
+            tags.Add("|He|", Capitalise(dataManager.pronounSub));
+            tags.Add("|him|", Uncapitalise(dataManager.pronounObj));
+            tags.Add("|Him|", Capitalise(dataManager.pronounObj));
+            tags.Add("|his|", Uncapitalise(dataManager.pronounGen));
+            tags.Add("|His|", Capitalise(dataManager.pronounGen));
+        }
+    }
+
+    public static void CreateCharacterTags(Character c)
+    {
+        if (c.type == CharacterType.Arcana)
+        {
+            AddNewTag(Tag(c.objectID), c.PersonaliseText(RemovePrefix(c.name)));
+            AddNewTag(Tag("The " + c.objectID), c.PersonaliseText(Capitalise(c.name)));
+            AddNewTag(Tag("the " + c.objectID), c.PersonaliseText(Uncapitalise(c.name)));
+
+            AddNewTag(Tag(c.dialogueTag), c.PersonaliseText(RemovePrefix(c.GetNameOnly())));
+            AddNewTag(Tag("The " + c.dialogueTag), c.PersonaliseText(Capitalise(c.GetNameOnly())));
+            AddNewTag(Tag("the " + c.dialogueTag), c.PersonaliseText(Uncapitalise(c.GetNameOnly())));
+        }
+        else
+        {
+            AddNewTag(Tag(c.objectID), c.PersonaliseText(c.GetNameOnly()));
+            AddNewTag(Tag(c.dialogueTag), c.PersonaliseText(c.GetNameOnly()));
+        }
+    }
+
+    public static void UpdateCharacterTags(Character c)
+    {
+        if (c.type == CharacterType.Arcana)
+        {
+            tags[c.objectID] = c.PersonaliseText(RemovePrefix(c.name));
+            tags["The " + c.objectID] = c.PersonaliseText(Capitalise(c.name));
+            tags["the " + c.objectID] = c.PersonaliseText(Uncapitalise(c.name));
+            tags[c.dialogueTag] = c.PersonaliseText(RemovePrefix(c.GetNameOnly()));
+            tags["The " + c.dialogueTag] = c.PersonaliseText(Capitalise(c.GetNameOnly()));
+            tags["the " + c.dialogueTag] = c.PersonaliseText(Uncapitalise(c.GetNameOnly()));
+        }
+        else
+        {
+            tags[c.objectID] = c.PersonaliseText(c.GetNameOnly());
+            tags[c.dialogueTag] = c.PersonaliseText(c.GetNameOnly());
+        }
     }
 
     static void AddNewTag(string key, string value)
@@ -116,5 +183,13 @@ public static class DialogueTagParser
             text = text.Substring(4);
         }
         return text;
+    }
+
+    public static void DebugTags()
+    {
+        foreach (KeyValuePair<string, string> kvp in tags)
+        {
+            Report.Write("Tags entry: " + kvp.Key + ", " + kvp.Value);
+        }
     }
 }
