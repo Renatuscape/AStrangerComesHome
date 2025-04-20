@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LocationManager : MonoBehaviour
+public static class LocationManager
 {
     public static void Initialise(Location location)
     {
