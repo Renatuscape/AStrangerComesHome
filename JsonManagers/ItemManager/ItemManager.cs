@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // Once items are loaded, set up the correct data here
-public class ItemManager : MonoBehaviour
+public static class ItemManager
 {
     public static void Initialise(Item item)
     {
