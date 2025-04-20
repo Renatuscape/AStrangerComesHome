@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -7,9 +6,13 @@ public class LoadingTitleAnim : MonoBehaviour
 {
     TextMeshProUGUI mesh;
     float delay = 0.4f;
-    void Start()
+
+    private void Awake()
     {
         mesh = GetComponent<TextMeshProUGUI>();
+    }
+    void OnEnable()
+    {
         StartCoroutine("AnimateLoadingTitle");
     }
 
