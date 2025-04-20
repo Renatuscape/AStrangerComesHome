@@ -11,10 +11,8 @@ public class GameManagerScript : MonoBehaviour
 
     //ALL GAME COMPONENTS
     public DataManagerScript dataManager;
-    public Canvas loadingCanvas;
+    public static LoadingScreen loadingCanvas;
 
-    public QuestManager questManager;
-    public DialogueManager dialogueManager;
     public RecipeManager recipeManager;
     public BookManager bookManager;
     public MemoryManager memoryManager;
@@ -59,15 +57,18 @@ public class GameManagerScript : MonoBehaviour
         }
         else
         {
-            Log.WriteError("JSON data was not loaded. Returning to Game Loader.");
+            Report.WriteWarning("JSON data was not loaded. Returning to Game Loader.");
             SceneManager.LoadScene("GameLoader");
         }
     }
 
     async void StartUpRoutine()
     {
+        loadingCanvas.Simplify();
         loadingCanvas.gameObject.SetActive(true);
-        Debug.Log("Starting up Game Manager");
+        Report.Write("Starting up Game Manager");
+        Report.Write("Current tags:");
+        DialogueTagParser.DebugTags();
 
         GlobalSettings.LoadSettings();
 
@@ -99,12 +100,12 @@ public class GameManagerScript : MonoBehaviour
 
         loadingCanvas.gameObject.SetActive(false);
         setUpReady = true;
-        Debug.Log("COMPLETED STARTUP ROUTINE");
+        Report.Write("COMPLETED STARTUP ROUTINE");
     }
 
     async Task InitiateJsonManagers()
     {
-        Log.Write("Linking repository data");
+        Report.Write("Linking repository data");
 
         Regions.all = Repository.instance.regions;
         Locations.all = Repository.instance.locations;
@@ -112,24 +113,21 @@ public class GameManagerScript : MonoBehaviour
         Items.all = Repository.instance.items;
         Skills.all = Repository.instance.skills;
         Characters.all = Repository.instance.characters;
+        Dialogues.all = Repository.instance.dialogues;
+        Quests.all = Repository.instance.quests;
+
 
         await recipeManager.StartLoading();
-        Debug.Log("STARTUP: Loading recipes async completed");
+        Report.Write("STARTUP: Loading recipes async completed");
 
         await bookManager.StartLoading();
-        Debug.Log("STARTUP: Loading books async completed");
-
-        await dialogueManager.StartLoading();
-        Debug.Log("STARTUP: Loading dialogue async completed");
-
-        await questManager.StartLoading();
-        Debug.Log("STARTUP: Loading quests async completed");
+        Report.Write("STARTUP: Loading books async completed");
 
         await memoryManager.StartLoading();
-        Debug.Log("STARTUP: Loading memories async completed");
+        Report.Write("STARTUP: Loading memories async completed");
 
         await GuildRewardLoader.StartLoading(menuSystem.guildMenu);
-        Debug.Log("STARTUP: Loading guild rewards async completed");
+        Report.Write("STARTUP: Loading guild rewards async completed");
 
         DialogueTagParser.UpdateTags(dataManager);
     }
@@ -272,7 +270,7 @@ public class GameManagerScript : MonoBehaviour
 
     public void InitialiseMap()
     {
-        Debug.Log("Initialising map");
+        Report.Write("Initialising map");
         if (TransientDataScript.GameState != GameState.CharacterCreation)
         {
             TransientDataScript.SetGameState(GameState.Loading, this.name, gameObject);
@@ -280,7 +278,7 @@ public class GameManagerScript : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(dataManager.currentRegion))
         {
-            Debug.Log($"Region was null or whitespace: {dataManager.currentRegion}. Setting to REGION1 and default coordinates.");
+            Report.Write($"Region was null or whitespace: {dataManager.currentRegion}. Setting to REGION1 and default coordinates.");
             dataManager.currentRegion = "REGION1";
             dataManager.mapPositionX = 0;
             dataManager.mapPositionY = 0;
@@ -298,7 +296,7 @@ public class GameManagerScript : MonoBehaviour
 
         else
         {
-            Debug.Log($"Region by the ID {dataManager.currentRegion} not found.");
+            Report.Write($"Region by the ID {dataManager.currentRegion} not found.");
         }
 
 
