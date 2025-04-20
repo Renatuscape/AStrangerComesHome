@@ -17,7 +17,7 @@ public class LoadOnStart : MonoBehaviour
 
     public static LoadOnStart instance;
 
-    float loaderStepDelay = 0.2f; // For testing
+    float loaderStepDelay = 0.1f; // For testing
 
     void Awake()
     {
@@ -25,10 +25,13 @@ public class LoadOnStart : MonoBehaviour
         loaders = new List<JsonLoader>()
         {
             new JsonLoaderRegions(),
+            new JsonLoaderLocations(),
             new JsonLoaderItems(),
             new JsonLoaderSkills(),
             new JsonLoaderUpgrades(),
             new JsonLoaderCharacters(),
+            new JsonLoaderDialogues(),
+            new JsonLoaderQuests(),
         };
 
         int toLoad = loaders.Count;
@@ -55,7 +58,7 @@ public class LoadOnStart : MonoBehaviour
         foreach (var loader in loaders)
         {
             DisplayLoadMessage($"Organising {loader.displayName}");
-            Log.Write(loader.path);
+            Report.Write(loader.path);
             await loader.StartLoading();
             await Task.Delay(TimeSpan.FromSeconds(loaderStepDelay));
             loadingBar.value++;
@@ -72,7 +75,7 @@ public class LoadOnStart : MonoBehaviour
 
     void DisplayLoadMessage(string message)
     {
-        Log.Write(message);
+        Report.Write(message);
         if (loadingText != null)
         {
             loadingText.text = message;
