@@ -1,5 +1,5 @@
 using UnityEngine;
-public class CharacterManager : MonoBehaviour
+public static class CharacterManager
 {
     public static void Initialise(Character character)
     {
@@ -22,6 +22,7 @@ public class CharacterManager : MonoBehaviour
         character.NameSetup();
         objectIDReader(ref character);
         FindSprite(character);
+        DialogueTagParser.CreateCharacterTags(character);
     }
 
     public static void FindSprite(Character character)
