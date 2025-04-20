@@ -33,7 +33,7 @@ public class Memory : BaseObject
             dialogue.topicName = name;
         }
 
-        dialogue.dialogueEvents = DialogueSetup.CreateEventsFromStringList(dialogue.content);
+        dialogue.dialogueEvents = DialogueManager.CreateEventsFromStringList(dialogue.content);
        
         if (dialogue.choices == null || dialogue.choices.Count == 0)
         {
