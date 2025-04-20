@@ -180,20 +180,6 @@ public class GameController : MonoBehaviour
         }
     }
 
-    //private void ToggleJournalMenu(JournalMainPage mainPage)
-    //{
-    //    if (TransientDataScript.GameState == GameState.Overworld)
-    //    {
-    //        TransientDataScript.SetGameState(GameState.JournalMenu, name, gameObject);
-    //        TransientDataScript.gameManager.menuSystem.journalMenu.SetActive(true);
-    //        TransientDataScript.gameManager.menuSystem.journalMenu.GetComponent<Journal>().mainPage = mainPage;
-    //    }
-    //    else if (TransientDataScript.GameState == GameState.JournalMenu)
-    //    {
-    //        TransientDataScript.SetGameState(GameState.Overworld, name, gameObject);
-    //    }
-    //}
-
     private void ChangeResolution(int direction)
     {
         screenSetting = (screenSetting + direction) % 3;
@@ -201,11 +187,8 @@ public class GameController : MonoBehaviour
 
         switch (screenSetting)
         {
-            //case 0:
-            //    Screen.SetResolution(960, 540, false);
-            //    break;
             case 0:
-                Screen.SetResolution(1440, 810, false);
+                Screen.SetResolution(960, 540, false);
                 break;
             case 1:
                 Screen.SetResolution(1920, 1080, false);
