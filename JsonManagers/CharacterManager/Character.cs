@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,12 +78,18 @@ public class Character : BaseObject
 
     public string GetNameOnly()
     {
+        if (TransientDataScript.gameManager == null)
+        {
+            return name; 
+        }
+
         var nameUnlocked = TransientDataScript.gameManager.dataManager.unlockedNames.FirstOrDefault(n => n == objectID + "-NAME");
 
         if (nameUnlocked != null)
         {
             return trueName;
         }
+
         return name;
     }
 
@@ -116,9 +123,18 @@ public static class Characters
     {
         // Debug.Log("Attempting to find tag: " + searchWord);
 
-        Character found = all.Find((s) => s.dialogueTag.ToLower() == searchWord.ToLower());
+        Character found;
 
-        if (found is null)
+        if (all == null || all.Count == 0)
+        {
+            found = Repository.instance.characters.Find((s) => s.dialogueTag.ToLower() == searchWord.ToLower());
+        }
+        else
+        {
+            found = all.Find((s) => s.dialogueTag.ToLower() == searchWord.ToLower());
+        }
+
+        if (found == null)
         {
             Debug.LogWarning($"Find by tag returned no known character with name {searchWord}. Caller was {caller}. Check if you are passing an objectID or dialogueTag.");
         }
@@ -129,33 +145,23 @@ public static class Characters
 
     public static Character FindByID(string searchWord)
     {
-        if (all.Count == 0)
-        {
-            Debug.LogWarning("Characters.all was empty. Something called on Characters.FindByID before JSON was loaded.");
-            return null;
-        }
-        if (string.IsNullOrWhiteSpace(searchWord))
-        {
-            Debug.LogWarning($"Search term was null or white-space. Returned null. Ensure correct ID in calling script.");
-            return null;
-        }
-        foreach (Character c in all)
-        {
-            if (c.objectID == searchWord)
-            {
-                return c;
-            }
-        }
-        Debug.LogWarning("No character found with ID containing this search term: " + searchWord + ". Attempting to search by tag.");
+        Character character;
 
-        Character character = FindByTag(searchWord, "Characters.FindByID");
-
-        if (character is not null)
+        if (all == null || all.Count == 0)
         {
-            return character;
+            character = Repository.instance.characters.Find((s) => s.objectID.ToLower() == searchWord.ToLower());
+        }
+        else
+        {
+            character = all.Find((s) => s.objectID.ToLower() == searchWord.ToLower());
         }
 
-        return null;
+        if (character == null)
+        {
+            character = FindByTag(searchWord, "Characters.FindByID");
+        }
+
+        return character;
     }
 }
 
