@@ -4,7 +4,7 @@ using UnityEngine;
 using System.IO;
 
 // Set up skills with correct data after they are loaded from JSON
-public class SkillManager : MonoBehaviour
+public static class SkillManager
 {
     public static void Initialise(Skill skill)
     {
@@ -36,7 +36,7 @@ public class SkillManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"{skill.objectID}.image was null. Could not create sprite.");
+            Report.WriteError($"{skill.objectID}.image was null. Could not create sprite.");
         }
     }
     public static SkillType TypeFinder(ref string objectID)
@@ -72,7 +72,7 @@ public class SkillManager : MonoBehaviour
 
             if (!File.Exists(filePath))
             {
-                Debug.LogError($"Default image not found for type {objectID.Substring(0, 3)}! No image set for {objectID}");
+                Report.WriteError($"Default image not found for type {objectID.Substring(0, 3)}! No image set for {objectID}");
                 return null;
             }
         }
