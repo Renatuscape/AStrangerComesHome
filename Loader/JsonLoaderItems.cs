@@ -52,22 +52,22 @@ public class JsonLoaderItems : JsonLoader
                         Repository.instance.items.Add(entry);
                     }
 
-                    Log.Write($"All {displayName.ToUpper()} successfully loaded from Json file {fileName}.");
+                    Report.Write($"All {displayName.ToUpper()} successfully loaded from Json file {fileName}.");
                 }
                 else
                 {
-                    Log.WriteError($"Object array for {displayName.ToUpper()} is null in JSON data. Ensure that... \n\t - The JSON data is wrapped in one object\n\t - That the parent JSON object has a name corresponding to the data wrapper\n\t - That the C# class is serializable.");
+                    Report.WriteError($"Object array for {displayName.ToUpper()} is null in JSON data. Ensure that... \n\t - The JSON data is wrapped in one object\n\t - That the parent JSON object has a name corresponding to the data wrapper\n\t - That the C# class is serializable.");
                 }
             }
             else
             {
-                Log.WriteError("JSON data is malformed. No wrapper found?");
-                Log.Write("RAW JSON OUTPUT:\n" +jsonData); // Log the JSON data for inspection
+                Report.WriteError("JSON data is malformed. No wrapper found?");
+                Report.Write("RAW JSON OUTPUT:\n" +jsonData); // Log the JSON data for inspection
             }
         }
         else
         {
-            Log.WriteError("JSON file not found: " + jsonPath);
+            Report.WriteError("JSON file not found: " + jsonPath);
         }
     }
 }

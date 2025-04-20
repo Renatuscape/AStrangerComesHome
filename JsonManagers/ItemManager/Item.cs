@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -37,11 +38,11 @@ public static class Items
 
     public static void DebugList()
     {
-        Log.Write("Items.DebugList() called. Item count was " + all.Count);
+        Report.Write("Items.DebugList() called. Item count was " + all.Count);
 
         foreach (Item item in all)
         {
-            Log.Write($"Item ID: {item.objectID}\tItem Name: {item.name}");
+            Report.Write($"Item ID: {item.objectID}\tItem Name: {item.name}");
         }
     }
 
