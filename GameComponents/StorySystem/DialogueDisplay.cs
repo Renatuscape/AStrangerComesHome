@@ -217,7 +217,7 @@ public class DialogueDisplay : MonoBehaviour
 
             if (speakerSearch.Contains('-'))
             {
-                resultEvent = DialogueSetup.ParseDialogueEventID(speakerSearch);
+                resultEvent = DialogueManager.ParseDialogueEventID(speakerSearch);
                 isEvent = true;
             }
             else
