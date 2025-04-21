@@ -1,71 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using System.IO.Ports;
-using System.Threading.Tasks;
 
-public class RecipeManager : MonoBehaviour
+public static class RecipeManager
 {
-    public List<Recipe> debugItemList = Recipes.all;
-    public bool allObjecctsLoaded = false;
-    public int filesLoaded = 0;
-    public int numberOfFilesToLoad = 1;
-
-    public Task StartLoading()
-    {
-        gameObject.SetActive(true);
-        return LoadFromJsonAsync();
-    }
-
-    [System.Serializable]
-    public class ItemsWrapper //Necessary for Unity to read the .json contents as an object
-    {
-        public Recipe[] recipes;
-    }
-
-    public async Task LoadFromJsonAsync()
-    {
-        string jsonPath = Application.streamingAssetsPath + "/JsonData/Recipes/Recipes.json";
-
-        if (File.Exists(jsonPath))
-        {
-            string jsonData = await Task.Run(() => File.ReadAllText(jsonPath));
-            ItemsWrapper dataWrapper = JsonUtility.FromJson<ItemsWrapper>(jsonData);
-
-            if (dataWrapper != null)
-            {
-                if (dataWrapper.recipes != null)
-                {
-                    foreach (Recipe recipe in dataWrapper.recipes)
-                    {
-                        InitialiseRecipe(recipe, Recipes.all);
-                    }
-                    filesLoaded++;
-                    if (filesLoaded == numberOfFilesToLoad)
-                    {
-                        allObjecctsLoaded = true;
-                        Debug.Log("All RECIPES successfully loaded from Json.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Recipes array is null in JSON data. Check that the list has a wrapper with the \'recipes\' tag and that the object class is serializable.");
-                }
-            }
-            else
-            {
-                Debug.LogError("JSON data is malformed. No wrapper found?");
-                Debug.Log(jsonData); // Log the JSON data for inspection
-            }
-        }
-        else
-        {
-            Debug.LogError("JSON file not found: " + jsonPath);
-        }
-    }
-
-    public static void InitialiseRecipe(Recipe recipe, List<Recipe> recipeList)
+    public static void Initialise(Recipe recipe)
     {
         recipe.objectType = ObjectType.Recipe;
         recipe.maxValue = StaticGameValues.maxRecipeValue;
@@ -97,8 +36,6 @@ public class RecipeManager : MonoBehaviour
 
         ParseID(recipe);
         SetRequiredLevel(recipe);
-
-        recipeList.Add(recipe);
     }
 
     public static void ParseID(Recipe recipe)
