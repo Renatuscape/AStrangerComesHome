@@ -7,7 +7,7 @@ public static class DialogueManager
     {
         if (string.IsNullOrEmpty(dialogue.objectID))
         {
-            Debug.Log($"Missing objectID for {dialogue}");
+            Report.Write($"Missing objectID for {dialogue}");
         }
         else
         {
@@ -82,7 +82,7 @@ public static class DialogueManager
                 }
                 else
                 {
-                    Debug.LogError($"Could not parse dialogue content for content stage {i} ({content[i]}) because speaker tag \"{speakerTag}\" return null. Tags in dictionary: " + DialogueTagParser.tags.Count);
+                    Report.WriteError($"Could not parse dialogue content for content stage {i} ({content[i]}) because speaker tag \"{speakerTag}\" return null. Tags in dictionary: " + DialogueTagParser.tags.Count);
                 }
             }
             else
@@ -100,7 +100,7 @@ public static class DialogueManager
                 }
                 catch
                 {
-                    Debug.LogError($"Something went wrong when attempting to parse content for step {i} ({content[i + 1]} ).");
+                    Report.WriteError($"Something went wrong when attempting to parse content for step {i} ({content[i + 1]} ).");
                 }
             }
         }
@@ -196,7 +196,7 @@ public static class DialogueManager
         }
         else
         {
-            Debug.LogWarning("Could not find speaker object for event ID " + eventID);
+            Report.WriteWarning("Could not find speaker object for event ID " + eventID);
             return null;
         }
     }
