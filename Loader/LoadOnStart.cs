@@ -32,6 +32,7 @@ public class LoadOnStart : MonoBehaviour
             new JsonLoaderCharacters(),
             new JsonLoaderDialogues(),
             new JsonLoaderQuests(),
+            new JsonLoaderRecipes(),
         };
 
         int toLoad = loaders.Count;
