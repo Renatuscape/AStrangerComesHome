@@ -13,7 +13,6 @@ public class GameManagerScript : MonoBehaviour
     public DataManagerScript dataManager;
     public static LoadingScreen loadingCanvas;
 
-    public RecipeManager recipeManager;
     public BookManager bookManager;
     public MemoryManager memoryManager;
     public GlobalTimerUpdater globalTimer;
@@ -115,10 +114,7 @@ public class GameManagerScript : MonoBehaviour
         Characters.all = Repository.instance.characters;
         Dialogues.all = Repository.instance.dialogues;
         Quests.all = Repository.instance.quests;
-
-
-        await recipeManager.StartLoading();
-        Report.Write("STARTUP: Loading recipes async completed");
+        Recipes.all = Repository.instance.recipes;
 
         await bookManager.StartLoading();
         Report.Write("STARTUP: Loading books async completed");
