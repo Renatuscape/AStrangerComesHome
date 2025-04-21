@@ -62,6 +62,11 @@ public static class Items
             searchWord = baseID;
         }
 
+        if (all == null || all.Count == 0)
+        {
+            return Repository.instance.items.FirstOrDefault(i => i.objectID.Contains(searchWord));
+        }
+
         return all.FirstOrDefault(i => i.objectID.Contains(searchWord));
     }
 
